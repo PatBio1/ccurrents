@@ -16,7 +16,7 @@ then
     exit
 fi
 
-
+# override version if needed
 # sfdx config:set apiVersion=54.0
 
 #create a scratch org for this branch
@@ -31,7 +31,7 @@ sfdx force:config:set defaultusername=$1
 sfdx force:source:push
 
 ## assign any required permission sets
-# sfdx force:user:permset:assign -n Proesis_permset
+sfdx force:user:permset:assign -n proesis
 
 ## run any anymous apex scripts to setup data, batches, etc...
 sfdx force:apex:execute -f dx-scripts/apex/anonymous_apex.cls

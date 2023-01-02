@@ -1,7 +1,7 @@
 {
     "orgName": "proesis-dx",
     "edition": "Partner Developer",
-    "features": ["PersonAccounts", "Knowledge", "ServiceCloud"],
+    "features": ["PersonAccounts", "Knowledge", "ServiceCloud", "EnableSetPasswordInApi"],
     "hasSampleData": true,
     "settings": {
         "chatterSettings": {

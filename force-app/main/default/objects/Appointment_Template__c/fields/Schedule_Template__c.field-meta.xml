@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Schedule_Template__c</fullName>
+    <description>The parent Schedule this Appointment Model belongs to</description>
+    <externalId>false</externalId>
+    <label>Schedule Template</label>
+    <referenceTo>Schedule_Template__c</referenceTo>
+    <relationshipLabel>Appointment Templates</relationshipLabel>
+    <relationshipName>Appointment_Templates</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>true</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>true</writeRequiresMasterRead>
+</CustomField>

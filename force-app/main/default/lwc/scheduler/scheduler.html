@@ -1,0 +1,58 @@
+<template>
+    
+    <article class="slds-card" style="background-color: #f5f0ff">
+        <div class="slds-card__body slds-card__body_inner">
+            <div class="slds-m-bottom_medium" style="font-size: 1.25em; font-weight: 700;">Schedule Your 1st Appointment</div>
+
+            <div class="slds-page-header">
+                <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                <div class="slds-media__figure">
+                <span class="slds-icon_container slds-icon-standard-opportunity" title="opportunity">
+                <svg class="slds-icon slds-page-header__icon" aria-hidden="true">
+                <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#opportunity"></use>
+                </svg>
+                <span class="slds-assistive-text">opportunity</span>
+                </span>
+                </div>
+                <div class="slds-media__body">
+                <div class="slds-page-header__name">
+                <div class="slds-page-header__name-title">
+                <h1>
+                <span class="slds-page-header__title slds-truncate">{center.name}</span>
+                </h1>
+                </div>
+                </div>
+                <p class="slds-page-header__name-meta">{center.address}</p>
+                </div>
+                </div>
+                </div>
+                </div>
+            </div>
+
+            <lightning-input type="date" label="Choose Date" value={appointmentDate} onchange={onAppointmentDateChange}></lightning-input>
+
+            <div class="slds-m-top_medium" style="font-size: 1.1em; font-weight: 700;">Select Time Slot</div>
+
+            <div class="slds-grid slds-wrap slds-gutters_xxx-small slds-m-top_small">
+                <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
+                    <div key={appointment.id} class="slds-col slds-size_1-of-4 slds-m-bottom_xx-small">
+                        <lightning-button label={appointment.name} stretch="true" class={appointment.classes} data-index={appointmentIndex} onclick={onAppointmentButtonClick}></lightning-button>
+                    </div>
+                </template>
+            </div>
+
+            <div class="slds-grid slds-gutters slds-m-top_medium">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-button label="Cancel" stretch="true" class="cancel-button"></lightning-button>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-button if:true={appointmentSelected} label="Schedule" variant="brand" stretch="true" class="schedule-button" onclick={onScheduleButtonClick}></lightning-button>
+                    <lightning-button if:false={appointmentSelected} label="Schedule" variant="brand" disabled="true" stretch="true" class="schedule-button"></lightning-button>
+                </div>
+            </div>
+        </div>
+    </article>
+
+</template>

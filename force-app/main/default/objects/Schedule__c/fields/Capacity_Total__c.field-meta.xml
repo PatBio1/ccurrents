@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Capacity_Total__c</fullName>
+    <description>The total number of booked Appointment slots.</description>
+    <externalId>false</externalId>
+    <label>Capacity Total</label>
+    <summarizedField>Appointment__c.Capacity__c</summarizedField>
+    <summaryForeignKey>Appointment__c.Schedule__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>

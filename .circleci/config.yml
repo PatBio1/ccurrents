@@ -1,0 +1,62 @@
+version: 2
+jobs: 
+  build: 
+    docker:
+      - image: cimg/node:19.3.0-browsers
+    steps: 
+      - checkout
+      - run: 
+          command: |
+              sudo npm install sfdx-cli --global
+          name: "Install sfdx"
+      - run:
+          command: |
+              sfdx update stable
+              sfdx --version
+              npm install
+              mkdir -p /tmp/artifacts/test_results
+          name: "Create Artifacts Dir"
+      - run: 
+          command: |
+              echo $SFDXURL_HUB > /tmp/sfdx.url
+              sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a circle_build_$CIRCLE_BUILD_NUM --setdefaultdevhubusername
+          name: "Authenticate to DevHub"
+      - run: 
+          command: "./dx-scripts/setup_scratch.sh circle_build_$CIRCLE_BUILD_NUM do_not_open_browser"
+          name: "Setup Scratch Org"
+      - run:
+          command: |
+            #run apex unit tests
+            sfdx force:apex:test:run --wait 6 --resultformat tap --codecoverage -d test_results
+          name: "Run Unit Tests"
+      - store_test_results:
+          path: test_results
+      - store_artifacts: 
+          destination: test-result.txt
+          path: test_results/test-result.txt
+      - run: 
+          command: "sfdx force:org:delete -p -u circle_build_$CIRCLE_BUILD_NUM"
+          name: "Delete Scratch Org"
+          when: always
+      - run: 
+          command: |
+              #convert DX to legacy metadata
+              sfdx force:source:convert -r force-app/main/default/ -d deploy
+  
+              cp -pr deploy /tmp/artifacts/deploy
+              
+              #update this to whatever the packaging branch should be!
+              if [[ $CIRCLE_BRANCH == "main" ]];
+              then 
+                #deploy master branch to pkg org
+                echo "deploy $CIRCLE_BRANCH to pkg org DISABLED"
+                # ./dx-scripts/deploy.sh pkg_org
+              else
+                #deploy CHECKONLY to other branches
+                echo "Not on Main Branch CHECKONLY - Deploy $CIRCLE_BRANCH to pkg org DISABLED"
+                # ./dx-scripts/deploy.sh pkg_org checkonly
+              fi
+          name: "Deploy To Packaging Org"
+      - store_artifacts: 
+          destination: ./artifacts
+          path: /tmp/artifacts

@@ -1,0 +1,40 @@
+:host .appointment-button {
+    --sds-c-button-neutral-color-background: #f5f0ff;
+    --sds-c-button-neutral-color-background-hover: #e5ddf4;
+    --sds-c-button-neutral-color-border: #e5ddf4;
+    --sds-c-button-neutral-color-border-hover: #e5ddf4;
+    --sds-c-button-text-color: #1f1e1f;
+    --sds-c-button-text-color-hover: #1f1e1f;
+}
+
+:host .appointment-button.selected {
+    --sds-c-button-neutral-color-background: #99429c;
+    --sds-c-button-neutral-color-background-hover: #e5ddf4;
+    --sds-c-button-neutral-color-border: #99429c;
+    --sds-c-button-neutral-color-border-hover: #e5ddf4;
+    --sds-c-button-text-color: white;
+    --sds-c-button-text-color-hover: #1f1e1f;
+}
+
+:host .cancel-button {
+    --sds-c-button-neutral-color-background: #f5f0ff;
+    --sds-c-button-neutral-color-background-hover: #e5ddf4;
+    --sds-c-button-neutral-color-border: #5c3e99;
+    --sds-c-button-neutral-color-border-hover: #5c3e99;
+    --sds-c-button-text-color: #5c3e99;
+    --sds-c-button-text-color-hover: #5c3e99;
+}
+
+:host .schedule-button {
+    --sds-c-button-brand-color-background: #5c3e99;
+    --sds-c-button-brand-color-border: #5c3e99;
+
+    --sds-c-button-brand-color-background-hover: #99429c;
+    --sds-c-button-brand-color-border-hover: #99429c;
+}
+
+:host .schedule-button[disabled], .schedule-button:disabled {
+    --sds-c-button-brand-color-background: #e5ddf4;
+    --sds-c-button-brand-color-border: #e5ddf4;
+}
+

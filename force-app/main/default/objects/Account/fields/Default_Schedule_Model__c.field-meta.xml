@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Default_Schedule_Model__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The default Schedule to be used when automatically creating Appointments in the future.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>The default Schedule to be used when automatically creating Appointments in the future.</inlineHelpText>
+    <label>Default Schedule Model</label>
+    <referenceTo>Schedule_Template__c</referenceTo>
+    <relationshipLabel>Accounts</relationshipLabel>
+    <relationshipName>Accounts</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Lookup</type>
+</CustomField>

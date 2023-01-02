@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Period__c</fullName>
+    <description>The frequency period of this Schedule Model</description>
+    <externalId>false</externalId>
+    <label>Period</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Week</fullName>
+                <default>false</default>
+                <label>Week (7 day)</label>
+            </value>
+            <value>
+                <fullName>Two Week</fullName>
+                <default>false</default>
+                <label>Two Week (14 day)</label>
+            </value>
+            <value>
+                <fullName>Month</fullName>
+                <default>false</default>
+                <label>Month (~30 day)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

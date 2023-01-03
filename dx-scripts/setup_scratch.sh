@@ -35,7 +35,8 @@ sfdx force:user:permset:assign -n proesis
 
 ## run any anymous apex scripts to setup data, batches, etc...
 sfdx force:apex:execute -f dx-scripts/apex/setup_sample_data.cls
-
+# add appointment slots for today in center 1
+sfdx force:apex:execute -f dx-scripts/apex/create_appointment_slots.cls
 
 if [ $# -eq 1 ]
 then

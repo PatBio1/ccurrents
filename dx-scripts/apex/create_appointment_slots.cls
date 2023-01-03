@@ -5,6 +5,6 @@ Time startTime = Time.newInstance(6, 0, 0, 0);
 Time endTime = Time.newInstance(21, 0, 0, 0);
 Integer incrementInMinutes = 10;
 Integer slotsPerIncrement = 1;
-Appointment__c[] appointments = ScheduleUtils.createDailySlots(centerId, day, startTime,endTime, 10, 1);
+Appointment__c[] appointments = ScheduleUtils.createDailySlots(centerId, day, startTime,endTime, incrementInMinutes, slotsPerIncrement);
 
 insert appointments;

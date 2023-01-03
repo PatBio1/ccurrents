@@ -6,6 +6,7 @@ public with sharing class SchedulerController {
         try {
             Account account = [
                 SELECT
+                    Id,
                     Name,
                     ShippingStreet
                 FROM
@@ -17,6 +18,7 @@ public with sharing class SchedulerController {
             ];
 
             Center center = new Center();
+            center.id = account.id;
             center.name = account.Name;
             center.address = account.ShippingStreet;
             system.debug(center);
@@ -90,6 +92,9 @@ public with sharing class SchedulerController {
     }
 
     public class Center {
+
+        @AuraEnabled
+        public String id {get; set;}
 
         @AuraEnabled
         public String name {get; set;}

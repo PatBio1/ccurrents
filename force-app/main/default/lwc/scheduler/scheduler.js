@@ -6,7 +6,7 @@ import scheduleVisit from '@salesforce/apex/SchedulerController.scheduleVisit';
 export default class Scheduler extends LightningElement {
 
     loading = true;
-    centerId = '0010300000l4UwVAAU';
+    centerId ;
     donorId = '003Dn000006euP5IAI';
     appointmentDate;
     center = {};
@@ -81,7 +81,7 @@ export default class Scheduler extends LightningElement {
         getCenter(request).then(response => {
             console.log('response', response);
             this.center = response;
-
+            this.centerId = response.id;
             this.loadAppointments();
         }).catch((error) => {
             console.log(error);

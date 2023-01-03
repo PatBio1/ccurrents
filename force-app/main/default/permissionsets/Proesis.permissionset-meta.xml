@@ -4,6 +4,14 @@
         <application>proesis</application>
         <visible>true</visible>
     </applicationVisibilities>
+    <classAccesses>
+        <apexClass>ScheduleUtils</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SchedulerController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Proesis</label>
     <objectPermissions>
@@ -44,6 +52,10 @@
     </objectPermissions>
     <tabSettings>
         <tab>Appointment__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>Scheduling</tab>
         <visibility>Visible</visibility>
     </tabSettings>
 </PermissionSet>

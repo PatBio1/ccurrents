@@ -49,7 +49,7 @@ public with sharing class ScheduleUtils {
         system.debug('Slots per Day: '+ totalSlotsCreated);
         system.assertEquals(totalSlotsCreated, appointments.size());
 
-        return new Appointment__c[]{};
+        return appointments;
     }
     
 }

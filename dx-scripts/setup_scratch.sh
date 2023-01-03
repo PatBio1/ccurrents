@@ -34,7 +34,7 @@ sfdx force:source:push
 sfdx force:user:permset:assign -n proesis
 
 ## run any anymous apex scripts to setup data, batches, etc...
-sfdx force:apex:execute -f dx-scripts/apex/anonymous_apex.cls
+sfdx force:apex:execute -f dx-scripts/apex/setup_sample_data.cls
 
 
 if [ $# -eq 1 ]

@@ -2,19 +2,24 @@ public with sharing class SchedulerController {
 
     @AuraEnabled
     public static Center getCenter(Id centerId) {
+        String centerName = 'Center 1'; //hardcoded for now
         try {
             Account account = [
                 SELECT
-                    Name
+                    Name,
+                    ShippingStreet
                 FROM
                     Account
                 WHERE
-                    Id = :centerId
+                    Name = :centerName
+                AND 
+                    recordType.DeveloperName = 'Center'
             ];
 
             Center center = new Center();
             center.name = account.Name;
-            center.address = '123 Main Street';
+            center.address = account.ShippingStreet;
+            system.debug(center);
             return center;
         } catch (Exception e) {
             String message = e.getMessage() + ' -- ' + e.getStackTraceString();

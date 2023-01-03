@@ -6,7 +6,7 @@ import scheduleVisit from '@salesforce/apex/SchedulerController.scheduleVisit';
 export default class Scheduler extends LightningElement {
 
     loading = true;
-    centerId = '001Dn00000Br6lLIAR';
+    centerId = '0010300000l4UwVAAU';
     donorId = '003Dn000006euP5IAI';
     appointmentDate;
     center = {};

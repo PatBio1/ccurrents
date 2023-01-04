@@ -1,14 +1,18 @@
 public with sharing class ScheduleUtils {
   
 
-    public static Appointment__c[] createDailySlots(Date day, Time startTime, Time endTime, Integer incrementInMinutes, Integer slotsPerIncrement){
+    public static Appointment__c[] createDailySlots(Id centerId, Date day, Time startTime, Time endTime, Integer incrementInMinutes, Integer slotsPerIncrement){
         DateTime startDT = DateTime.newInstance(day, startTime);
         DateTime endDT = DateTime.newInstance(day, endTime);
 
-        //Convert from GMT to Localtime
-        Integer offset = UserInfo.getTimezone().getOffset(startDT);
-        startDT = startDT.addSeconds(offset/1000);
-        endDT = endDT.addSeconds(offset/1000);
+        Schedule__c schedule = [
+            SELECT id 
+            FROM Schedule__c
+            WHERE Center__c =: centerId
+            AND Begin_Date__c <=: day
+            AND End_Date__c >=: day
+        ];
+        system.debug('schedule' + schedule);
         
         Long startMS = startDT.getTime();
         Long endMS = endDT.getTime();
@@ -22,7 +26,9 @@ public with sharing class ScheduleUtils {
         
         Appointment__c[] appointments = new Appointment__c[]{
             new Appointment__c(
-                Datetime__c = startDT
+                Datetime__c = startDT,
+                Schedule__c = schedule.Id,
+                Duration__c = incrementInMinutes
             )
         };
         for(Integer i=1; i< incrementsPerDay; i++){
@@ -31,7 +37,9 @@ public with sharing class ScheduleUtils {
             for(Integer j=0;j< slotsPerIncrement; j++){
                 system.debug('add slots');
                 appointments.add(new Appointment__c(
-                    Datetime__c = incrementDT
+                    Datetime__c = incrementDT,
+                    Schedule__c = schedule.Id,
+                    Duration__c = incrementInMinutes
                 ));
             }
         }
@@ -48,7 +56,10 @@ public with sharing class ScheduleUtils {
         Long totalSlotsCreated =  incrementsPerDay * slotsPerIncrement;
         system.debug('Slots per Day: '+ totalSlotsCreated);
         system.assertEquals(totalSlotsCreated, appointments.size());
-
+        for (Appointment__c app: appointments){
+            system.debug(app.Schedule__c);
+        }
+        
         return appointments;
     }
     

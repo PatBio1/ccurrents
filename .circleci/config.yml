@@ -11,7 +11,7 @@ jobs:
           name: "Install sfdx"
       - run:
           command: |
-              sfdx update stable
+              npm update --global sfdx-cli
               sfdx --version
               npm install
               mkdir -p /tmp/artifacts/test_results

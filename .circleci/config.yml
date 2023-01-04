@@ -13,7 +13,6 @@ jobs:
           command: |
               sudo npm update --global sfdx-cli
               sfdx --version
-              npm install
               mkdir -p /tmp/artifacts/test_results
           name: "Create Artifacts Dir"
       - run: 

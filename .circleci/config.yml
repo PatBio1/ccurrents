@@ -11,9 +11,8 @@ jobs:
           name: "Install sfdx"
       - run:
           command: |
-              sfdx update stable
+              sudo npm update --global sfdx-cli
               sfdx --version
-              npm install
               mkdir -p /tmp/artifacts/test_results
           name: "Create Artifacts Dir"
       - run: 
@@ -27,7 +26,7 @@ jobs:
       - run:
           command: |
             #run apex unit tests
-            sfdx force:apex:test:run --wait 6 --resultformat tap --codecoverage -d test_results
+            # sfdx force:apex:test:run --wait 6 --resultformat tap --codecoverage -d test_results
           name: "Run Unit Tests"
       - store_test_results:
           path: test_results

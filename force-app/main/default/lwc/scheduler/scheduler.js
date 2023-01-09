@@ -1,12 +1,15 @@
 import { track, LightningElement } from 'lwc';
+import labels from 'c/labelService';
 import getCenter from '@salesforce/apex/SchedulerController.getCenter';
 import getAppointments from '@salesforce/apex/SchedulerController.getAppointments';
 import scheduleVisit from '@salesforce/apex/SchedulerController.scheduleVisit';
 
 export default class Scheduler extends LightningElement {
 
+    labels = labels;
+
     loading = true;
-    centerId ;
+    centerId = '001Dn00000Br6lLIAR';
     donorId = '003Dn000006euP5IAI';
     appointmentDate;
     center = {};
@@ -29,6 +32,14 @@ export default class Scheduler extends LightningElement {
         this.appointmentDate = event.detail.value;
 
         this.loadAppointments();
+    }
+
+    onViewCenterClick() {
+        this.dispatchEvent(new CustomEvent('redirect', {detail: {url: '/apex/Center'}}));
+    }
+
+    onChooseAnotherClinicClick(event) {
+        event.preventDefault();
     }
 
     onAppointmentButtonClick(event) {
@@ -81,7 +92,7 @@ export default class Scheduler extends LightningElement {
         getCenter(request).then(response => {
             console.log('response', response);
             this.center = response;
-            this.centerId = response.id;
+
             this.loadAppointments();
         }).catch((error) => {
             console.log(error);
@@ -105,6 +116,7 @@ export default class Scheduler extends LightningElement {
 
             this.appointments.forEach((appointment) => {
                 appointment.classes = 'appointment-button';
+                appointment.available = (appointment.availability > 0);
             });
         }).catch((error) => {
             console.log(error);

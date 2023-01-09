@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Cancel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Cancel</shortDescription>
+        <value>Cancel</value>
+    </labels>
+    <labels>
+        <fullName>Choose_Another_Clinic</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Choose Another Clinic</shortDescription>
+        <value>Choose another clinic</value>
+    </labels>
+    <labels>
+        <fullName>Choose_Date</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Choose Date</shortDescription>
+        <value>Choose Date</value>
+    </labels>
+    <labels>
+        <fullName>Per_Pt</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Per Pt</shortDescription>
+        <value>per pt</value>
+    </labels>
+    <labels>
+        <fullName>Schedule</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Schedule</shortDescription>
+        <value>Schedule</value>
+    </labels>
+    <labels>
+        <fullName>Schedule_Your_1st_Appointment</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Schedule Your 1st Appointment</shortDescription>
+        <value>Schedule Your 1st Appointment</value>
+    </labels>
+    <labels>
+        <fullName>Select_Time_Slot</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Select Time Slot</shortDescription>
+        <value>Select Time Slot</value>
+    </labels>
+</CustomLabels>

@@ -1,0 +1,12 @@
+.back-icon {
+    --lwc-colorTextIconDefault: #5c3e99;
+}
+
+.center-icon {
+    --lwc-colorTextIconDefault: #99429c;
+}
+
+:host .main-tabs {
+    --sds-c-tabs-item-color-border-active: #99429c;
+    --sds-c-tabs-item-color-border-hover: #99429c;
+}

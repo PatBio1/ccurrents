@@ -6,7 +6,6 @@ public with sharing class SchedulerController {
         try {
             Account account = [
                 SELECT
-                    Id,
                     Name,
                     ShippingStreet
                 FROM
@@ -21,7 +20,6 @@ public with sharing class SchedulerController {
             center.id = account.id;
             center.name = account.Name;
             center.address = account.ShippingStreet;
-            system.debug(center);
             return center;
         } catch (Exception e) {
             String message = e.getMessage() + ' -- ' + e.getStackTraceString();
@@ -40,7 +38,7 @@ public with sharing class SchedulerController {
 
             List<Appointment__c> appointmentRecords = [
                 SELECT
-                    Datetime__c
+                    Datetime__c, Availability__c
                 FROM
                     Appointment__c
                 WHERE
@@ -58,7 +56,8 @@ public with sharing class SchedulerController {
             for (Appointment__c appointmentRecord : appointmentRecords) {
                 Appointment appointment = new Appointment();
                 appointment.id = appointmentRecord.Id;
-                appointment.name = appointmentRecord.Datetime__c.format('H:mm');
+                appointment.name = appointmentRecord.Datetime__c.format('h:mm');
+                appointment.availability = (appointmentRecord.Availability__c == null ? 0 : appointmentRecord.Availability__c.intValue());
                 appointments.add(appointment);
             }
 
@@ -111,6 +110,9 @@ public with sharing class SchedulerController {
 
         @AuraEnabled
         public String name {get; set;}
+
+        @AuraEnabled
+        public Integer availability {get; set;}
 
     }
 

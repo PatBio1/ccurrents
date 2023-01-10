@@ -9,7 +9,7 @@ export default class Scheduler extends LightningElement {
     labels = labels;
 
     loading = true;
-    centerId = '001Dn00000Br6lLIAR';
+    centerId = null;
     donorId = '003Dn000006euP5IAI';
     appointmentDate;
     center = {};
@@ -92,7 +92,7 @@ export default class Scheduler extends LightningElement {
         getCenter(request).then(response => {
             console.log('response', response);
             this.center = response;
-
+            this.centerId = response.id;
             this.loadAppointments();
         }).catch((error) => {
             console.log(error);

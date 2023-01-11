@@ -10,7 +10,9 @@ public with sharing class ScheduleUtils {
         Time endTime = Time.newInstance(21, 0, 0, 0); //9PM
         //figure out business days in range (M-F for now)
         Set<String> daysClosed  = new Set<String>{'Saturday','Sunday'};
-        Integer daysInRange = startDate.daysBetween(endDate);
+        Integer daysInRange = startDate.daysBetween(endDate) + 1; //add 1 to account for first day
+        
+        System.debug('daysInRange : ' + daysInRange);
 
         for(Integer i=0; i<daysInRange; i++){
             Date appDate = startDate.addDays(i);
@@ -18,8 +20,8 @@ public with sharing class ScheduleUtils {
             String dayOfWeek=dt.format('EEEE');
             //make sure day is a weekday/workday
             if(! daysClosed.contains(dayOfWeek)){
-                System.debug('Day : ' + dayOfWeek);
-                System.debug('incrementInMinutes : ' + incrementInMinutes + '  slotsPerInterval: ' + slotsPerInterval);
+                // System.debug('Day : ' + dayOfWeek);
+                // System.debug('incrementInMinutes : ' + incrementInMinutes + '  slotsPerInterval: ' + slotsPerInterval);
                 appointmentRecords.addAll(
                     createDailySlots(centerId, appDate, startTime, endTime, incrementInMinutes, slotsPerInterval)
                 );
@@ -58,32 +60,28 @@ public with sharing class ScheduleUtils {
             new Appointment__c(
                 Datetime__c = startDT,
                 Schedule__c = schedule.Id,
-                Duration__c = incrementInMinutes
+                Duration__c = incrementInMinutes,
+                Capacity__c = slotsPerIncrement
             )
         };
         for(Integer i=1; i< incrementsPerDay; i++){
             DateTime incrementDT = appointments[i-1].Datetime__c.addMinutes(incrementInMinutes);
-    
-            for(Integer j=0;j< slotsPerIncrement; j++){
-                // system.debug('add slots');
-                appointments.add(new Appointment__c(
+            appointments.add(new Appointment__c(
                     Datetime__c = incrementDT,
                     Schedule__c = schedule.Id,
-                    Duration__c = incrementInMinutes
+                    Duration__c = incrementInMinutes,
+                    Capacity__c = slotsPerIncrement
                 ));
-            }
+            
         }
 
-        system.debug('Total hours: '+ hours);
-        system.debug('Total Minutes: '+ minutes);
-        system.debug('Increments per Day: '+ incrementsPerDay);
-       
+        system.debug('Total hours per day: '+ hours);
+        system.debug('Total Minutes per day: '+ minutes);
+        system.debug('appointment__c per Day : '+ incrementsPerDay);
+        
         Long totalSlotsCreated =  incrementsPerDay * slotsPerIncrement;
         system.debug('Slots per Day: '+ totalSlotsCreated);
-        system.assertEquals(totalSlotsCreated, appointments.size());
-        for (Appointment__c app: appointments){
-            system.debug(app.Schedule__c);
-        }
+        system.assertEquals(incrementsPerDay, appointments.size());
         
         return appointments;
     }

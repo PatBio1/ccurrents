@@ -83,10 +83,10 @@ public with sharing class ScheduleUtils_Test {
 
         // create a set of appointment slots
         Date startDate =  Date.newInstance(2023, 1, 10);
-        Date endDate = startDate.addDays(30);
+        Date endDate = Date.newInstance(2023, 1, 11);
         Id loyaltyTier = null;
         Integer intervalsPerHour = 6; //10 minutes apart
-        Integer slotsPerInterval = 1;
+        Integer slotsPerInterval = 5;
 
         Account center1 = [SELECT Id FROM Account WHERE Name = 'Center 1'];
 
@@ -96,6 +96,21 @@ public with sharing class ScheduleUtils_Test {
         insert appointments;
 
         Test.stopTest();
-        system.assertEquals(1980,appointments.size());
+        //2 days *
+         
+        // 2 days * 15 hours * 1
+        system.assertEquals(180,appointments.size());
+        system.assertEquals(slotsPerInterval, appointments[0].Capacity__c);
+        
+        
+        //first appointment should be 9:00AM on first day
+        DateTime firstTime = DateTime.newInstance(startDate, Time.newInstance(6, 0, 0, 0));
+        system.assertEquals(firstTime, appointments[0].Datetime__c);
+
+        //last appointment should be 8:50PM on last day
+        DateTime lastTime = DateTime.newInstance(endDate, Time.newInstance(20, 50, 0, 0));
+        system.assertEquals(lastTime, appointments[179].Datetime__c);
+        
+        system.assertEquals(slotsPerInterval, appointments[179].Capacity__c);
     }
 }

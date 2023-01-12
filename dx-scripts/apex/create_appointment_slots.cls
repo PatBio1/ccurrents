@@ -1,10 +1,13 @@
 // create a set of appointment slots
-Id centerId = [SELECT Id FROM Account WHERE Name = 'Center 1'].Id;
-Date day = Date.today();
-Time startTime = Time.newInstance(6, 0, 0, 0);
-Time endTime = Time.newInstance(21, 0, 0, 0);
-Integer incrementInMinutes = 10;
-Integer slotsPerIncrement = 1;
-Appointment__c[] appointments = ScheduleUtils.createDailySlots(centerId, day, startTime,endTime, incrementInMinutes, slotsPerIncrement);
+Date startDate = Date.today();
+Date endDate = Date.today().addDays(30);
+Id loyaltyTier = null;
+Integer intervalsPerHour = 6; //10 minutes apart
+Integer slotsPerInterval = 1;
+
+Account center1 = [SELECT Id FROM Account WHERE Name = 'Center 1'];
+
+//scheduleRange(Id centerId, Date startDate, Date endDate, Id loyaltyTier, Integer intervalsPerHour, Integer slotsPerInterval)
+Appointment__c[] appointments = ScheduleUtils.scheduleRange(center1.id,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
 
 insert appointments;

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Open__c</fullName>
+    <description>Date format &quot;h:mm a&quot; (see: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html) e.g. &quot;8:30 am&quot;</description>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <inlineHelpText>Enter in format &quot;h:mm a&quot; e.g. &quot;6:30 am&quot;</inlineHelpText>
+    <label>Open</label>
+    <length>8</length>
+    <required>true</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

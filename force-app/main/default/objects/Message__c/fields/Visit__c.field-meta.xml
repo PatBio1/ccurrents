@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Visit__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Any optionally associated Visit related to the message</description>
+    <externalId>false</externalId>
+    <label>Visit</label>
+    <referenceTo>Visit__c</referenceTo>
+    <relationshipLabel>Messages</relationshipLabel>
+    <relationshipName>Messages</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

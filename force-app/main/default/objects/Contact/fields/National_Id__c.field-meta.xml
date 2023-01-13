@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>National_Id__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <complianceGroup>PII;HIPAA</complianceGroup>
+    <description>An encrypted unique identifier for a Donor e.g. US SSN, US DLN, MEX ID, CA ID are all valid values for this field, each with its own format.</description>
+    <externalId>false</externalId>
+    <label>National Id</label>
+    <length>175</length>
+    <maskChar>asterisk</maskChar>
+    <maskType>all</maskType>
+    <required>false</required>
+    <securityClassification>Confidential</securityClassification>
+    <type>EncryptedText</type>
+</CustomField>

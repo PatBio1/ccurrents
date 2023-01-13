@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>isAddressesVerified__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>If all addresses for this PersonAccount have been verified then TRUE else FALSE; should be unchecked anytime any address is created/updated</description>
+    <externalId>false</externalId>
+    <label>Addresses Verified?</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

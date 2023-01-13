@@ -202,10 +202,6 @@
                 <behavior>Edit</behavior>
                 <field>Description</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>Services__c</field>
-            </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>
     </layoutSections>
@@ -223,14 +219,6 @@
         <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
-    <relatedLists>
-        <fields>Name</fields>
-        <fields>Place</fields>
-        <fields>Visitor</fields>
-        <fields>PlannedVisitStartTime</fields>
-        <fields>Status</fields>
-        <relatedList>Visits</relatedList>
-    </relatedLists>
     <relatedLists>
         <fields>FULL_NAME</fields>
         <fields>CORE.USERS.EMAIL</fields>

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Center</fullName>
+    <fullName>Donor</fullName>
     <active>true</active>
-    <description>Center for plasma collection services.</description>
-    <label>Center</label>
+    <label>Donor</label>
     <picklistValues>
         <picklist>AccountSource</picklist>
         <values>
@@ -192,6 +191,21 @@
         </values>
         <values>
             <fullName>Utilities</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Level__pc</picklist>
+        <values>
+            <fullName>Primary</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Secondary</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tertiary</fullName>
             <default>false</default>
         </values>
     </picklistValues>

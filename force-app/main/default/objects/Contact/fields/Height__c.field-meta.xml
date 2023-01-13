@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Height__c</fullName>
+    <businessStatus>Active</businessStatus>
+    <complianceGroup>PII;HIPAA</complianceGroup>
+    <description>Height in inches of measurement</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Height inches</inlineHelpText>
+    <label>Height</label>
+    <precision>4</precision>
+    <required>false</required>
+    <scale>1</scale>
+    <securityClassification>Confidential</securityClassification>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

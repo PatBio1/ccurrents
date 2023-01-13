@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>New</fullName>
+        <default>true</default>
+        <label>New</label>
+    </customValue>
+    <customValue>
+        <fullName>Registered</fullName>
+        <default>false</default>
+        <label>Registered</label>
+    </customValue>
+    <customValue>
+        <fullName>Verified</fullName>
+        <default>false</default>
+        <label>Verified</label>
+    </customValue>
+    <customValue>
+        <fullName>Scheduled</fullName>
+        <default>false</default>
+        <label>Scheduled</label>
+    </customValue>
+    <customValue>
+        <fullName>Eligible</fullName>
+        <default>false</default>
+        <label>Eligible</label>
+    </customValue>
+    <customValue>
+        <fullName>Ineligible</fullName>
+        <default>false</default>
+        <label>Ineligible</label>
+    </customValue>
+    <customValue>
+        <fullName>Excluded</fullName>
+        <default>false</default>
+        <label>Excluded</label>
+    </customValue>
+    <description>All status options for a Donor except Lead:
+Donor&lt;Registered&gt; Are in the system as a potential donor Q: Do we need in between states Pending Qualification
+Donor&lt;Verified&gt; Has filled out all Profile Info, Social Pic, and has verified email and SMS Donor&lt;Scheduled&gt; Has an appointment to assess their fitness for donation
+Donor&lt;Eligible&gt; Has met all criteria for donation and eligibility datetime is today or in the past.
+Donor&lt;Ineligible&gt; Has met all criteria for donation, but has become ineligible for numerous medical reasons e.g. has the flu, pregnant, etc. thus Eligibility datetime in the future.
+Donor&lt;Excluded&gt; Can never donate blood; eligibility date -&gt; 9999
+ Donor&lt;Lead&gt; (not a part of this object def but is a Lead RT)</description>
+    <masterLabel>Donor Status</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>

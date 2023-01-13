@@ -143,8 +143,8 @@
     <allowInChatterGroups>false</allowInChatterGroups>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <description>A summary level object that represents a time frame of Appointment child records.</description>
-    <enableActivities>true</enableActivities>
+    <description>Hours of business available for scheduling Donors</description>
+    <enableActivities>false</enableActivities>
     <enableBulkApi>false</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
@@ -154,13 +154,12 @@
     <enableSharing>false</enableSharing>
     <enableStreamingApi>false</enableStreamingApi>
     <externalSharingModel>ControlledByParent</externalSharingModel>
-    <label>Schedule</label>
+    <label>Business Hours</label>
     <nameField>
-        <displayFormat>SCH-{0}</displayFormat>
-        <label>Schedule Name</label>
-        <type>AutoNumber</type>
+        <label>Business Hours Name</label>
+        <type>Text</type>
     </nameField>
-    <pluralLabel>Schedules</pluralLabel>
+    <pluralLabel>Business Hours</pluralLabel>
     <searchLayouts></searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>

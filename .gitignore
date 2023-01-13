@@ -9,3 +9,11 @@ artifacts
 force-app/main/default/appMenus/AppSwitcher.appMenu-meta.xml
 .DS_Store
 .sf/config.json
+.eslintignore
+jest.config.js
+package.json
+proesis.iml
+
+# Illuminated Cloud IDE Cruft
+.idea
+IlluminatedCloud

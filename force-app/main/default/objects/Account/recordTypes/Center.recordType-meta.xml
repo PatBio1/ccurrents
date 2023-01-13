@@ -249,6 +249,25 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>Services__c</picklist>
+        <values>
+            <fullName>Donation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Medical%3A Annual Physical</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Medical%3A Consultation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Medical%3A New Donor</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Type</picklist>
         <values>
             <fullName>Channel Partner %2F Reseller</fullName>

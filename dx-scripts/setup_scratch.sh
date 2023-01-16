@@ -31,7 +31,7 @@ sfdx force:config:set defaultusername=$1
 sfdx force:source:push
 
 ## assign any required permission sets
-sfdx force:user:permset:assign -n proesis
+sfdx force:user:permset:assign -n ProesisAdministrator
 
 ## run any anymous apex scripts to setup data, batches, etc...
 sfdx force:apex:execute -f dx-scripts/apex/setup_sample_data.cls

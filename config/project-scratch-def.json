@@ -15,6 +15,9 @@
         },
         "communitiesSettings": {
             "enableNetworksEnabled": true
+        },
+        "accountSettings": {
+            "enableRelateContactToMultipleAccounts": true
         }
     }
 }

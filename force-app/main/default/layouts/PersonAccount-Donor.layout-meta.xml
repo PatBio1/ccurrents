@@ -4,6 +4,7 @@
     <excludeButtons>CreateAccountChannel</excludeButtons>
     <excludeButtons>CreateCallList</excludeButtons>
     <excludeButtons>CreateSurveyInvitation</excludeButtons>
+    <excludeButtons>DataDotComClean</excludeButtons>
     <excludeButtons>IncludeOffline</excludeButtons>
     <excludeButtons>LoginToPortalAsPersonUser</excludeButtons>
     <excludeButtons>PartnerScorecard</excludeButtons>
@@ -291,6 +292,10 @@
     </platformActionList>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>Center__c</fields>
+        <fields>Appointment__c</fields>
+        <fields>Status__c</fields>
+        <fields>Type__c</fields>
         <relatedList>Visit__c.Donor__c</relatedList>
     </relatedLists>
     <relatedLists>

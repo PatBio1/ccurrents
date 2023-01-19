@@ -90,6 +90,24 @@
         <type>Flexipage</type>
         <pageOrSobjectType>Message__c</pageOrSobjectType>
     </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Schedule_Org_Wide_Record_Page</content>
+        <formFactor>Small</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Schedule__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Schedule_Org_Wide_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Schedule__c</pageOrSobjectType>
+    </actionOverrides>
     <brand>
         <headerColor>#5C3E99</headerColor>
         <logo>ProesisAppLogoSquare</logo>
@@ -106,6 +124,7 @@
     <navType>Standard</navType>
     <tabs>standard-Account</tabs>
     <tabs>Message__c</tabs>
+    <tabs>Schedule__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Proesis_Marketing_UtilityBar</utilityBar>
 </CustomApplication>

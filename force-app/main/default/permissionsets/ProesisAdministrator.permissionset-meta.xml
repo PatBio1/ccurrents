@@ -444,6 +444,10 @@
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
+        <tab>Schedule__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
         <tab>Scheduling</tab>
         <visibility>Visible</visibility>
     </tabSettings>

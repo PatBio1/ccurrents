@@ -36,6 +36,24 @@
         <type>Flexipage</type>
         <pageOrSobjectType>Appointment__c</pageOrSobjectType>
     </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Appointment_Template_Org_Wide_Record_Page</content>
+        <formFactor>Small</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Appointment_Template__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Appointment_Template_Org_Wide_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Appointment_Template__c</pageOrSobjectType>
+    </actionOverrides>
     <brand>
         <headerColor>#5C3E99</headerColor>
         <logo>ProesisAppLogoSquare</logo>
@@ -51,6 +69,8 @@
     <label>Proesis Operations</label>
     <navType>Standard</navType>
     <tabs>standard-Account</tabs>
+    <tabs>Appointment__c</tabs>
+    <tabs>Appointment_Template__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Proesis_Operations_UtilityBar</utilityBar>
 </CustomApplication>

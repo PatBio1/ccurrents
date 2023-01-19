@@ -12,10 +12,6 @@
         <application>Proesis_Operations</application>
         <visible>true</visible>
     </applicationVisibilities>
-    <applicationVisibilities>
-        <application>proesis</application>
-        <visible>true</visible>
-    </applicationVisibilities>
     <classAccesses>
         <apexClass>ScheduleUtils</apexClass>
         <enabled>true</enabled>
@@ -440,7 +436,7 @@
         <visible>true</visible>
     </recordTypeVisibilities>
     <tabSettings>
-        <tab>Appointment__c</tab>
+        <tab>Appointment_Template__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>

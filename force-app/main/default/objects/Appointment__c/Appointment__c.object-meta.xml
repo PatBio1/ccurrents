@@ -168,7 +168,12 @@
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Appointments</pluralLabel>
-    <searchLayouts></searchLayouts>
+    <searchLayouts>
+        <searchResultsAdditionalFields>Schedule__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Datetime__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Capacity__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Booked__c</searchResultsAdditionalFields>
+    </searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>

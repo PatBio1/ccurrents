@@ -436,11 +436,11 @@
         <visible>true</visible>
     </recordTypeVisibilities>
     <tabSettings>
-        <tab>Appointment__c</tab>
+        <tab>Appointment_Template__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
-        <tab>Appointment_Template__c</tab>
+        <tab>Appointment__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
@@ -457,6 +457,10 @@
     </tabSettings>
     <tabSettings>
         <tab>Transaction__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>Visit__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
 </PermissionSet>

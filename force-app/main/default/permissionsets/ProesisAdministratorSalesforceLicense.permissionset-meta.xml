@@ -16,7 +16,7 @@
         <enabled>true</enabled>
         <name>Default_Business_Hours__mdt</name>
     </customMetadataTypeAccesses>
-    <description>Full administrative access (including view &amp; modify all) to all Proesis applications, objects, components, etc.</description>
+    <description>Full administrative access (including view &amp; modify all) to all Proesis applications, objects, components, etc, for Salesforce licensed users, to see tabs.</description>
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Active__c</field>
@@ -293,7 +293,8 @@
         <readable>true</readable>
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
-    <label>Proesis Administrator</label>
+    <label>Proesis Administrator (Salesforce License)</label>
+    <license>Salesforce</license>
     <objectPermissions>
         <allowCreate>true</allowCreate>
         <allowDelete>true</allowDelete>
@@ -427,6 +428,10 @@
         <recordType>PersonAccount.Donor</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
+    <tabSettings>
+        <tab>standard-Account</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
     <tabSettings>
         <tab>Appointment_Template__c</tab>
         <visibility>Visible</visibility>

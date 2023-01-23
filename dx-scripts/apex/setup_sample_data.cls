@@ -30,19 +30,22 @@ Account[] centers = new Account[]{
         Name = 'Center 1',
         RecordTypeID = centerRecordTypeID,
         ShippingStreet = '111 1st St',
-        ExternalID__c = 'center-111'
+        ExternalID__c = 'center-111',
+        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation'
     ),
     new Account(
         Name = 'Center 2',
         RecordTypeID = centerRecordTypeID,
         ShippingStreet = '222 @nd St',
-        ExternalID__c = 'center-222'
+        ExternalID__c = 'center-222',
+        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation'
     ),
     new Account(
         Name = 'Center 3',
         RecordTypeID = centerRecordTypeID,
         ShippingStreet = '333 3rd St',
-        ExternalID__c = 'center-333'
+        ExternalID__c = 'center-333',
+        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation'
     )
 };
 

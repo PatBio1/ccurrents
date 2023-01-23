@@ -51,6 +51,10 @@
                 <behavior>Edit</behavior>
                 <field>DonorId__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Last_Used_Center__pc</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -223,6 +227,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Ethnicity__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>How_will_you_get_to_the_Center__pc</field>
             </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>

@@ -12,8 +12,8 @@
                 <field>Name</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
-                <field>Center__c</field>
+                <behavior>Edit</behavior>
+                <field>Donation_Type__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>

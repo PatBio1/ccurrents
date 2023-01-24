@@ -4,6 +4,7 @@
     <excludeButtons>CreateAccountChannel</excludeButtons>
     <excludeButtons>CreateCallList</excludeButtons>
     <excludeButtons>CreateSurveyInvitation</excludeButtons>
+    <excludeButtons>DataDotComClean</excludeButtons>
     <excludeButtons>DisablePartnerPortalAccount</excludeButtons>
     <excludeButtons>IncludeOffline</excludeButtons>
     <excludeButtons>LoginToPortalAsPersonUser</excludeButtons>
@@ -50,6 +51,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>DonorId__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Last_Used_Center__pc</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -170,6 +175,25 @@
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
+        <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Behavior</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>hasViewedIntroVideo__pc</field>
+            </layoutItems>
+        </layoutColumns>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Languages__pc</field>
+            </layoutItems>
+        </layoutColumns>
+        <style>TwoColumnsLeftToRight</style>
+    </layoutSections>
+    <layoutSections>
         <customLabel>false</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
@@ -223,6 +247,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Ethnicity__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>How_will_you_get_to_the_Center__pc</field>
             </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>
@@ -321,7 +349,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h8G0000015N8d</masterLabel>
+        <masterLabel>00hDM000002Kfp1</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

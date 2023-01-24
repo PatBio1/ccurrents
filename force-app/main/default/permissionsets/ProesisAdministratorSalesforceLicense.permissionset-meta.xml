@@ -179,6 +179,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.hasViewedIntroVideo__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.isAddressesVerified__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -429,10 +434,6 @@
         <visible>true</visible>
     </recordTypeVisibilities>
     <tabSettings>
-        <tab>standard-Account</tab>
-        <visibility>Visible</visibility>
-    </tabSettings>
-    <tabSettings>
         <tab>Appointment_Template__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
@@ -458,6 +459,10 @@
     </tabSettings>
     <tabSettings>
         <tab>Visit__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>standard-Account</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <userPermissions>

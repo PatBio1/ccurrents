@@ -128,54 +128,40 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
-        <content>Visit_Org_Wide_Record_Page</content>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
         <formFactor>Large</formFactor>
-        <skipRecordTypeSelect>false</skipRecordTypeSelect>
-        <type>Flexipage</type>
+        <type>Default</type>
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <comment>Action override created by Lightning App Builder during activation.</comment>
-        <content>Visit_Org_Wide_Record_Page</content>
         <formFactor>Small</formFactor>
-        <skipRecordTypeSelect>false</skipRecordTypeSelect>
-        <type>Flexipage</type>
-    </actionOverrides>
-    <actionOverrides>
-        <actionName>View</actionName>
         <type>Default</type>
     </actionOverrides>
     <allowInChatterGroups>false</allowInChatterGroups>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <description>A Visit by a Donor at a specific Appointment date and time.</description>
-    <enableActivities>true</enableActivities>
+    <description>The types of Donations supported by a Center</description>
+    <enableActivities>false</enableActivities>
     <enableBulkApi>false</enableBulkApi>
-    <enableFeeds>true</enableFeeds>
-    <enableHistory>true</enableHistory>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
     <enableLicensing>false</enableLicensing>
     <enableReports>true</enableReports>
     <enableSearch>true</enableSearch>
     <enableSharing>false</enableSharing>
     <enableStreamingApi>false</enableStreamingApi>
-    <externalSharingModel>ControlledByParent</externalSharingModel>
-    <label>Visit</label>
+    <externalSharingModel>Private</externalSharingModel>
+    <label>Center Donation Type</label>
     <nameField>
-        <displayFormat>V-{0}</displayFormat>
-        <label>Visit Name</label>
-        <trackFeedHistory>false</trackFeedHistory>
-        <trackHistory>false</trackHistory>
+        <displayFormat>CDT-{0}</displayFormat>
+        <label>Center Donation Type Name</label>
         <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>Visits</pluralLabel>
-    <searchLayouts>
-        <searchResultsAdditionalFields>Center__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Appointment__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Donor__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Status__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Type__c</searchResultsAdditionalFields>
-    </searchLayouts>
-    <sharingModel>ControlledByParent</sharingModel>
+    <pluralLabel>Center Donation Types</pluralLabel>
+    <searchLayouts></searchLayouts>
+    <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>

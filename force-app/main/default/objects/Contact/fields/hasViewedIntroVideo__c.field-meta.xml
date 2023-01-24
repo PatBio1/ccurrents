@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>hasViewedIntroVideo__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Tracks if Donor has viewed an intro video</description>
+    <externalId>false</externalId>
+    <label>Has Viewed Intro Video</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

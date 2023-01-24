@@ -189,6 +189,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.hasViewedIntroVideo__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.isAddressesVerified__c</field>
         <readable>true</readable>
     </fieldPermissions>

@@ -31,7 +31,7 @@ Account[] donors = new Account[]{
     ),
     new Account(
         FirstName = 'Betty',
-        LastName = 'Bleeder',
+        LastName = 'Bond',
         RecordTypeID = donorRecordTypeId,
         ExternalID__c = 'donor-67890'
     )

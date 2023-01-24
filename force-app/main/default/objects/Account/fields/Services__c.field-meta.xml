@@ -4,7 +4,7 @@
     <description>The services offered at a given donation Center</description>
     <externalId>false</externalId>
     <label>Services</label>
-    <required>true</required>
+    <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <type>MultiselectPicklist</type>
     <valueSet>

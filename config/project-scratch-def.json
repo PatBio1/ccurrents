@@ -21,6 +21,9 @@
         },
         "experienceBundleSettings": {
             "enableExperienceBundleMetadata": true
+        },
+        "accountSettings": {
+            "enableRelateContactToMultipleAccounts": true
         }
     }
 }

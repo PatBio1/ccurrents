@@ -1,21 +1,31 @@
 import { track, LightningElement } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import labels from 'c/labelService';
 import getCenter from '@salesforce/apex/SchedulerController.getCenter';
 import getAppointments from '@salesforce/apex/SchedulerController.getAppointments';
 import scheduleVisit from '@salesforce/apex/SchedulerController.scheduleVisit';
 
-export default class Scheduler extends LightningElement {
+export default class Scheduler extends NavigationMixin(LightningElement) {
 
     labels = labels;
-
+    currentPage = 'Scheduler';
+geo;
     loading = true;
-    centerId = null;
-    donorId = '003Dn000006euP5IAI';
     appointmentDate;
     center = {};
+    showTabs = false;
     @track appointments = [];
+    @track appointmentGroups = {};
 
     appointmentSelected = false;
+
+    get showScheduler() {
+        return (this.currentPage === 'Scheduler');
+    }
+
+    get showCenter() {
+        return (this.currentPage === 'Center');
+    }
 
     connectedCallback() {
         const now = new Date();
@@ -34,11 +44,19 @@ export default class Scheduler extends LightningElement {
         this.loadAppointments();
     }
 
-    onViewCenterClick() {
-        this.dispatchEvent(new CustomEvent('redirect', {detail: {url: '/apex/Center'}}));
+    onToggleTabsClick() {
+        this.showTabs = !this.showTabs;
     }
 
-    onChooseAnotherClinicClick(event) {
+    onViewCenterClick() {
+        this.currentPage = 'Center';
+    }
+
+    onBackButtonClick() {
+        this.currentPage = 'Scheduler';
+    }
+
+    onChooseAnotherCenterClick(event) {
         event.preventDefault();
     }
 
@@ -59,13 +77,37 @@ export default class Scheduler extends LightningElement {
         this.appointmentSelected = appointment.selected;
     }
 
+    onCancelButtonClick() {
+        this[NavigationMixin.Navigate]({
+            type: 'comm__loginPage',
+            attributes: {
+                actionName: 'logout'
+            }
+        });
+/*
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                // Get the Latitude and Longitude from Geolocation API
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+
+                console.log('latitude', latitude);
+                console.log('longitude', longitude);
+                this.geo = latitude;
+            });
+        } else {
+            console.log('no geolocation!!');
+            this.geo = 'no geolocation!!';
+        }
+*/
+    }
+
     onScheduleButtonClick() {
         this.loading = true;
 
         const selectedAppointment = this.appointments.find((appointment) => appointment.selected);
 
         const request = {
-            donorId: this.donorId,
             appointmentId: selectedAppointment.id
         };
 
@@ -73,6 +115,13 @@ export default class Scheduler extends LightningElement {
 
         scheduleVisit(request).then(response => {
             console.log('response', response);
+
+            this[NavigationMixin.Navigate]({
+                type: 'comm__namedPage',
+                attributes: {
+                    name: 'appointments__c'
+                }
+            });
         }).catch((error) => {
             console.log(error);
         }).finally(() => {
@@ -84,7 +133,6 @@ export default class Scheduler extends LightningElement {
         this.loading = true;
 
         const request = {
-            centerId: this.centerId
         };
 
         console.log('request', JSON.stringify(request));
@@ -92,7 +140,7 @@ export default class Scheduler extends LightningElement {
         getCenter(request).then(response => {
             console.log('response', response);
             this.center = response;
-            this.centerId = response.id;
+
             this.loadAppointments();
         }).catch((error) => {
             console.log(error);
@@ -104,7 +152,7 @@ export default class Scheduler extends LightningElement {
         this.loading = true;
 
         const request = {
-            centerId: this.centerId,
+            centerId: this.center.id,
             appointmentDate: this.appointmentDate
         };
 
@@ -112,7 +160,14 @@ export default class Scheduler extends LightningElement {
 
         getAppointments(request).then(response => {
             console.log('response', response);
-            this.appointments = response;
+            //this.appointments = response;
+            this.appointments = [];
+
+            this.appointmentGroups = response;
+
+            this.appointments.push.apply(this.appointments, this.appointmentGroups.morningAppointments);
+            this.appointments.push.apply(this.appointments, this.appointmentGroups.afternoonAppointments);
+            this.appointments.push.apply(this.appointments, this.appointmentGroups.eveningAppointments);
 
             this.appointments.forEach((appointment) => {
                 appointment.classes = 'appointment-button';

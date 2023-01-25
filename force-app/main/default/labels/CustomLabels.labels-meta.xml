@@ -49,4 +49,165 @@
         <shortDescription>Select Time Slot</shortDescription>
         <value>Select Time Slot</value>
     </labels>
+    <labels>
+        <fullName>About_Donation_Experience</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>About Donation Experience</shortDescription>
+        <value>About the Donation Experience</value>
+    </labels>
+    <labels>
+        <fullName>Already_Have_An_Account</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Already Have An Account</shortDescription>
+        <value>I already have an account</value>
+    </labels>
+    <labels>
+        <fullName>Back</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Back</shortDescription>
+        <value>Back</value>
+    </labels>
+    <labels>
+        <fullName>Back_To_Homepage</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Back To Homepage</shortDescription>
+        <value>Back to Homepage</value>
+    </labels>
+    <labels>
+        <fullName>Basic_Profile</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Basic Profile</shortDescription>
+        <value>Basic Profile</value>
+    </labels>
+    <labels>
+        <fullName>Centers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Centers</shortDescription>
+        <value>Centers</value>
+    </labels>
+    <labels>
+        <fullName>Choose_A_Center</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Choose A Center</shortDescription>
+        <value>Choose a Center</value>
+    </labels>
+    <labels>
+        <fullName>Choose_Another_Center</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Choose Another Center</shortDescription>
+        <value>Choose another center</value>
+    </labels>
+    <labels>
+        <fullName>English</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>English</shortDescription>
+        <value>English</value>
+    </labels>
+    <labels>
+        <fullName>First_Name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>First Name</shortDescription>
+        <value>First Name</value>
+    </labels>
+    <labels>
+        <fullName>Join_Us</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Join Us</shortDescription>
+        <value>Join Us</value>
+    </labels>
+    <labels>
+        <fullName>Last_Name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Last Name</shortDescription>
+        <value>Last Name</value>
+    </labels>
+    <labels>
+        <fullName>Middle_Name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Middle Name</shortDescription>
+        <value>Middle Name</value>
+    </labels>
+    <labels>
+        <fullName>My_Appointments</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>My Appointments</shortDescription>
+        <value>My Appointments</value>
+    </labels>
+    <labels>
+        <fullName>My_Rewards</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>My Rewards</shortDescription>
+        <value>My Rewards</value>
+    </labels>
+    <labels>
+        <fullName>Next</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Next</shortDescription>
+        <value>Next</value>
+    </labels>
+    <labels>
+        <fullName>Past</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Past</shortDescription>
+        <value>Past</value>
+    </labels>
+    <labels>
+        <fullName>Plasma_Donation_Saves_Lives</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Plasma Donation Saves Lives</shortDescription>
+        <value>Plasma donation saves lives and helps you achieve your financial goals faster.</value>
+    </labels>
+    <labels>
+        <fullName>Recommended_To_You</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Recommended To You</shortDescription>
+        <value>Recommended to you</value>
+    </labels>
+    <labels>
+        <fullName>Scheduled</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Scheduled</shortDescription>
+        <value>Scheduled</value>
+    </labels>
+    <labels>
+        <fullName>Spanish</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Spanish</shortDescription>
+        <value>Spanish</value>
+    </labels>
+    <labels>
+        <fullName>Tell_Us_About_You</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Tell Us About You</shortDescription>
+        <value>Tell us About You</value>
+    </labels>
+    <labels>
+        <fullName>Welcome_To_Proesis</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Welcome To Proesis</shortDescription>
+        <value>Welcome to Proesis</value>
+    </labels>
 </CustomLabels>

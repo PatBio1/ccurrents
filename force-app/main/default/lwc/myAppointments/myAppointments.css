@@ -1,0 +1,35 @@
+@import 'c/sharedCss';
+
+:host .view-button {
+    --sds-c-button-neutral-color-background: #f5f0ff;
+    --sds-c-button-neutral-color-background-hover: #d1c7e4;
+    --sds-c-button-neutral-color-border: #d1c7e4;
+    --sds-c-button-neutral-color-border-hover: #d1c7e4;
+
+    --sds-c-button-brand-color-background: red;
+
+    --sds-c-button-color-background: red;
+    --sds-c-button-color-border: green;
+    --sds-c-button-stateful-color-background-selected: orange;
+    --sds-c-button-outline-brand-color-background: pink;
+
+    --sds-c-button-text-color: red;
+}
+
+.visit-icon {
+    --lwc-colorTextIconDefault: #8979a9;
+}
+
+.no-appointments .slds-illustration__stroke-primary {
+    fill: #E7DCED;
+    stroke: #A58DB2;
+}
+
+.no-appointments .slds-illustration__stroke-secondary {
+    fill: var(--pro-background-color);
+    stroke: #E7DCED;
+}
+
+.no-appointments .slds-illustration__fill-secondary {
+    fill: #E7DCED;
+}

@@ -1,0 +1,49 @@
+{
+  "id" : "68772c5d-0aca-4fd9-ac55-f99f28e0c0a0",
+  "mobilePublisherAppUpdateConfig" : {
+    "forceAppUpdate" : true,
+    "enableAppUpdate" : true,
+    "minVersion" : {
+      "ios" : {
+        "version" : "10.0"
+      },
+      "android" : {
+        "version" : "10.1"
+      }
+    }
+  },
+  "nativeMobileNavConfig" : {
+    "showBackButton" : true,
+    "showHamburgerMenuWithBackButton" : false
+  },
+  "nativeTabMenu" : {
+    "branding" : {
+      "iconTintColor" : "#88D3FF",
+      "iconTintColorUnselected" : "#E5DDF4",
+      "barTintColor" : "#5C3E99"
+    },
+    "menuItems" : [ {
+      "name" : "",
+      "targetUrl" : "/",
+      "iconAsset" : "home3"
+    }, {
+      "name" : "",
+      "targetUrl" : "/appointments",
+      "iconAsset" : "event7"
+    }, {
+      "name" : "",
+      "targetUrl" : "/schedule",
+      "iconAsset" : "new3"
+    }, {
+      "name" : "",
+      "targetUrl" : "/rewards",
+      "iconAsset" : "money4"
+    }, {
+      "name" : "",
+      "targetUrl" : "/centers",
+      "iconAsset" : "account8"
+    } ]
+  },
+  "showHamburgerMenu" : true,
+  "type" : "nativeConfig"
+}

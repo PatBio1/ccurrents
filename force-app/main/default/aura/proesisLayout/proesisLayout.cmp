@@ -1,0 +1,13 @@
+<aura:component implements="forceCommunity:themeLayout" access="global">
+
+    <aura:attribute name="search" type="Aura.Component[]"/>
+    <aura:attribute name="sidebarFooter" type="Aura.Component[]"/>
+
+    <div style="background-color:#5C3E99; padding: 10px;">
+        <div class="logoContainer"></div>
+    </div>
+    <div>
+        {!v.body}
+    </div>
+
+</aura:component>

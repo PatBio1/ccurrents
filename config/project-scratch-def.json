@@ -1,7 +1,8 @@
 {
     "orgName": "proesis-dx",
     "edition": "Partner Developer",
-    "features": ["PersonAccounts", "Knowledge", "ServiceCloud", "EnableSetPasswordInApi"],
+    "features": ["PersonAccounts",  "ServiceCloud", "EnableSetPasswordInApi","Sites","Communities",
+    "ContactsToMultipleAccounts"],
     "hasSampleData": true,
     "settings": {
         "chatterSettings": {
@@ -15,6 +16,11 @@
         },
         "communitiesSettings": {
             "enableNetworksEnabled": true
+        },"siteSettings": {
+            "enableEnhancedSitesAndContentPlatform" : true
+        },
+        "experienceBundleSettings": {
+            "enableExperienceBundleMetadata": true
         },
         "accountSettings": {
             "enableRelateContactToMultipleAccounts": true

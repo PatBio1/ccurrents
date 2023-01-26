@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run: 
           command: |
-              sudo npm install sfdx-cli --global
+              sudo npm install --global sfdx-cli@7.182.1
           name: "Install sfdx"
       - run:
           command: |

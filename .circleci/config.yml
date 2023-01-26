@@ -19,6 +19,8 @@ jobs:
           command: |
               echo $SFDXURL_HUB > /tmp/sfdx.url
               sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a circle_build_$CIRCLE_BUILD_NUM --setdefaultdevhubusername
+              echo $SFDXURL_INTQA > /tmp/sfdx.url
+              sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a INTQA
           name: "Authenticate to DevHub"
       - run: 
           command: "./dx-scripts/setup_scratch.sh circle_build_$CIRCLE_BUILD_NUM do_not_open_browser"
@@ -47,13 +49,18 @@ jobs:
               #update this to whatever the packaging branch should be!
               if [[ $CIRCLE_BRANCH == "main" ]];
               then 
-                #deploy master branch to pkg org
-                echo "deploy $CIRCLE_BRANCH to pkg org DISABLED"
+                #deploy master branch to main org
+                echo "deploy $CIRCLE_BRANCH to main org DISABLED"
                 # ./dx-scripts/deploy.sh pkg_org
+              elif [[ $CIRCLE_BRANCH == "intqa" ]];
+              then
+                #deploy INTQA branch to INTQA org
+                echo "deploy $CIRCLE_BRANCH to INTQA org ENABLED"
+                ./dx-scripts/deploy.sh INTQA
               else
                 #deploy CHECKONLY to other branches
-                echo "Not on Main Branch CHECKONLY - Deploy $CIRCLE_BRANCH to pkg org DISABLED"
-                # ./dx-scripts/deploy.sh pkg_org checkonly
+                echo "Not on Main Branch CHECKONLY - Deploy $CIRCLE_BRANCH to INTQA org ENABLED"
+                ./dx-scripts/deploy.sh INTQA checkonly
               fi
           name: "Deploy To Packaging Org"
       - store_artifacts: 

@@ -31,8 +31,8 @@
     <gatherCustomerSentimentData>false</gatherCustomerSentimentData>
     <networkMemberGroups>
         <permissionSet>ProesisCommunityDonor</permissionSet>
-        <profile>admin</profile>
         <profile>customer community login user</profile>
+        <profile>admin</profile>
     </networkMemberGroups>
     <networkPageOverrides>
         <changePasswordPageOverrideSetting>Standard</changePasswordPageOverrideSetting>
@@ -41,7 +41,7 @@
         <loginPageOverrideSetting>Designer</loginPageOverrideSetting>
         <selfRegProfilePageOverrideSetting>Designer</selfRegProfilePageOverrideSetting>
     </networkPageOverrides>
-    <picassoSite>Proesis_Aura_Test</picassoSite>
+    <picassoSite>Proesis_Aura_Test1</picassoSite>
     <selfRegProfile>customer community login user</selfRegProfile>
     <selfRegistration>true</selfRegistration>
     <sendWelcomeEmail>true</sendWelcomeEmail>

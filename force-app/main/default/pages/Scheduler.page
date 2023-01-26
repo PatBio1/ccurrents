@@ -1,4 +1,4 @@
-<apex:page>
+<apex:page >
 
 <style>
     body {
@@ -6,7 +6,7 @@
     }
 </style>
 
-<apex:includeLightning/>
+<apex:includeLightning />
 
 <div id="scheduler"/>
 

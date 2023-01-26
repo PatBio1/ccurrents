@@ -87,10 +87,6 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>YearStarted</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Default_Schedule_Model__c</field>
             </layoutItems>
         </layoutColumns>

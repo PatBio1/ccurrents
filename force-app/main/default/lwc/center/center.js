@@ -1,9 +1,12 @@
 import { LightningElement } from 'lwc';
+import labels from 'c/labelService';
 
 export default class Center extends LightningElement {
 
-    onBackClick() {
-        this.dispatchEvent(new CustomEvent('redirect', {detail: {url: '/apex/Scheduler'}}));
+    labels = labels;
+
+    onBackButtonClick() {
+        this.dispatchEvent(new CustomEvent('back'));
     }
 
 }

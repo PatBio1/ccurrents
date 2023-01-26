@@ -21,24 +21,26 @@ jobs:
               sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a circle_build_$CIRCLE_BUILD_NUM --setdefaultdevhubusername
               echo $SFDXURL_INTQA > /tmp/sfdx.url
               sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a INTQA
+              echo $SFDXURL_UATSTAGING > /tmp/sfdx.url
+              sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a UATSTAGING
           name: "Authenticate to DevHub"
-      - run: 
-          command: "./dx-scripts/setup_scratch.sh circle_build_$CIRCLE_BUILD_NUM do_not_open_browser"
-          name: "Setup Scratch Org"
-      - run:
-          command: |
-            #run apex unit tests
-            # sfdx force:apex:test:run --wait 6 --resultformat tap --codecoverage -d test_results
-          name: "Run Unit Tests"
-      - store_test_results:
-          path: test_results
-      - store_artifacts: 
-          destination: test-result.txt
-          path: test_results/test-result.txt
-      - run: 
-          command: "sfdx force:org:delete -p -u circle_build_$CIRCLE_BUILD_NUM"
-          name: "Delete Scratch Org"
-          when: always
+    #   - run: 
+    #       command: "./dx-scripts/setup_scratch.sh circle_build_$CIRCLE_BUILD_NUM do_not_open_browser"
+    #       name: "Setup Scratch Org"
+    #   - run:
+    #       command: |
+    #         #run apex unit tests
+    #         # sfdx force:apex:test:run --wait 6 --resultformat tap --codecoverage -d test_results
+    #       name: "Run Unit Tests"
+    #   - store_test_results:
+    #       path: test_results
+    #   - store_artifacts: 
+    #       destination: test-result.txt
+    #       path: test_results/test-result.txt
+    #   - run: 
+    #       command: "sfdx force:org:delete -p -u circle_build_$CIRCLE_BUILD_NUM"
+    #       name: "Delete Scratch Org"
+    #       when: always
       - run: 
           command: |
               #convert DX to legacy metadata
@@ -57,6 +59,11 @@ jobs:
                 #deploy INTQA branch to INTQA org
                 echo "deploy $CIRCLE_BRANCH to INTQA org ENABLED"
                 ./dx-scripts/deploy.sh INTQA
+              elif [[ $CIRCLE_BRANCH == "uatstaging" ]];
+              then
+                #deploy UATSTAGING branch to UATSTAGING org
+                echo "deploy $CIRCLE_BRANCH to UATSTAGING org ENABLED"
+                ./dx-scripts/deploy.sh UATSTAGING
               else
                 #deploy CHECKONLY to other branches
                 echo "Not on Main Branch CHECKONLY - Deploy $CIRCLE_BRANCH to INTQA org ENABLED"

@@ -1,0 +1,99 @@
+<template>
+
+    <div if:false={showCenter} class="slds-var-p-around_medium">
+        <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+
+        <div class="title-medium slds-text-align_center slds-m-vertical_large">
+            {labels.chooseACenter}
+        </div>
+
+        <div class="slds-progress">
+            <ol class="slds-progress__list">
+                <li class="slds-progress__item slds-is-active">
+                    <button class="slds-button slds-progress__marker">
+                        <span class="slds-assistive-text">Step 1 - Active</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item">
+                    <button class="slds-button slds-progress__marker">
+                        <span class="slds-assistive-text">Step 2</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item">
+                    <button class="slds-button slds-progress__marker">
+                        <span class="slds-assistive-text">Step 3</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item">
+                    <button class="slds-button slds-progress__marker">
+                        <span class="slds-assistive-text">Step 4</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item">
+                    <button class="slds-button slds-progress__marker">
+                        <span class="slds-assistive-text">Step 5</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item">
+                    <button class="slds-button slds-progress__marker">
+                        <span class="slds-assistive-text">Step 6</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item">
+                    <button class="slds-button slds-progress__marker">
+                        <span class="slds-assistive-text">Step 7</span>
+                    </button>
+                </li>
+            </ol>
+            <div class="slds-progress-bar slds-progress-bar_x-small" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" role="progressbar">
+                <span class="slds-progress-bar__value" style="width:0%">
+                    <span class="slds-assistive-text">Progress: 0%</span>
+                </span>
+            </div>
+        </div>
+
+        <div class=" slds-m-vertical_large">
+            <template for:each={centers} for:item="center" for:index="centerIndex">
+                <div key={center.id} class="slds-grid slds-gutters slds-m-top_medium">
+                    <div class="slds-col slds-size_2-of-3">
+                        <div class="slds-page-header" style="background-color: #f5f0ff; padding: 0;">
+                            <div class="slds-page-header__row">
+                                <div class="slds-page-header__col-title">
+                                    <div class="slds-media">
+                                        <div class="slds-media__figure">
+                                            <lightning-input if:false={center.selected} type="checkbox" variant="label-hidden" data-index={centerIndex} onchange={onCenterChange}></lightning-input>
+                                            <lightning-input if:true={center.selected} type="checkbox" variant="label-hidden" checked data-index={centerIndex} onchange={onCenterChange}></lightning-input>
+                                        </div>
+                                        <div class="slds-media__body">
+                                            <div class="slds-page-header__name">
+                                                <div class="slds-page-header__name-title">
+                                                    <h1>
+                                                        <lightning-icon icon-name="utility:company" size="x-small" class="center-icon" onclick={onToggleTabsClick}></lightning-icon>
+                                                        <span class="slds-page-header__title slds-truncate" style="color: #000; display: inline;">{center.name}</span>
+                                                    </h1>
+                                                </div>
+                                            </div>
+                                            <p class="slds-page-header__name-meta" style="color: #8979a9;">{center.address}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3 slds-text-align_right">
+                        <span style="color: #000;"><strong>$20 {labels.perPt}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></span><lightning-icon icon-name="utility:chevronright" size="x-small" class="view-center-icon" onclick={onViewCenterClick}></lightning-icon><br/>
+                        <p style="color: #8979a9;">{center.distance}</p>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <lightning-button if:true={centerSelected} label={labels.next} variant="brand" stretch="true" class="primary-button" onclick={onNextButtonClick}></lightning-button>
+        <button if:false={centerSelected} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.next}</button>
+    </div>
+
+    <div if:true={showCenter}>
+        <c-center onback={onCenterBackButtonClick}></c-center>
+    </div>
+
+</template>

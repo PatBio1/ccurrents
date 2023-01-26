@@ -1,0 +1,45 @@
+{
+  "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
+  "componentName" : "siteforce:sldsOneColLayout",
+  "id" : "742febe3-6d85-4567-9ae3-266c7e3b8ca6",
+  "label" : "Schedule",
+  "regions" : [ {
+    "id" : "7ac9a1b3-e1ad-45ac-a0a3-bef76baa0858",
+    "regionName" : "header",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : { },
+      "componentName" : "c:SchedulerWrapper",
+      "id" : "007ce436-f2d4-4d7d-b86d-4c8a9c48110d",
+      "renderPriority" : "NEUTRAL",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "744dce95-cdf8-4b0c-a3e0-bb6f599df9f9",
+    "regionName" : "content",
+    "type" : "region"
+  }, {
+    "id" : "c1d8b777-062a-46ac-8951-dd9d5df06078",
+    "regionName" : "footer",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : {
+        "customHeadTags" : "",
+        "description" : "",
+        "title" : "Schedule"
+      },
+      "componentName" : "forceCommunity:seoAssistant",
+      "id" : "37e7f7dd-3906-4cd9-a3eb-94a78d5dd4a6",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "386bf718-b118-4757-9984-9deee8eba778",
+    "regionName" : "sfdcHiddenRegion",
+    "type" : "region"
+  } ],
+  "themeLayoutType" : "KEg3kA3MunIOnpvEUYA8EXxeKjluzc",
+  "type" : "view",
+  "viewType" : "custom-schedule"
+}

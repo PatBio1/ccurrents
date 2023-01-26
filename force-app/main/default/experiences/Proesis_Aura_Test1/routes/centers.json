@@ -1,0 +1,11 @@
+{
+  "activeViewId" : "9ef1a041-4fb6-4a93-962e-f7ecd8a4b61e",
+  "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
+  "configurationTags" : [ ],
+  "id" : "0a6fc9db-fc19-4e0f-8756-45809adf39d3",
+  "label" : "Centers",
+  "pageAccess" : "UseParent",
+  "routeType" : "custom-centers",
+  "type" : "route",
+  "urlPrefix" : "centers"
+}

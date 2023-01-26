@@ -1,0 +1,61 @@
+:host {
+    --pro-background-color: #f5f0ff; /* TODO: get from style guide */
+
+    --sds-c-input-color-background: var(--pro-background-color);
+    --sds-c-input-color-border: #d1c7e4; /* TODO: get from style guide */
+    --sds-c-input-text-color: #000;
+
+    --sds-c-tabs-item-color-border-active: #99429c;
+    --sds-c-tabs-item-color-border-hover: #99429c;
+    --sds-c-tabs-item-text-color-active: #000;
+
+    --sds-c-checkbox-color-border: #5c3e99;
+    --sds-c-checkbox-color-background: var(--pro-background-color);
+    --sds-c-checkbox-color-background-checked: #5c3e99;
+    --sds-c-checkbox-color-border-checked: #5c3e99;
+    --sds-c-checkbox-mark-color-foreground: var(--pro-background-color);
+}
+
+:host .primary-button {
+    --sds-c-button-brand-color-background: #5C3E99;
+    --sds-c-button-brand-color-border: #5C3E99;
+    --sds-c-button-brand-color-background-hover: #99429C;
+    --sds-c-button-brand-color-border-hover: #99429C;
+}
+
+.primary-button[disabled], .primary-button:disabled {
+    background-color: #d1c7e4; /* TODO: get from style guide */
+    border-color: #d1c7e4; /* TODO: get from style guide */
+}
+
+:host .secondary-button {
+    --sds-c-button-neutral-color-background: var(--pro-background-color);
+    --sds-c-button-neutral-color-background-hover: var(--pro-background-color);
+    --sds-c-button-neutral-color-border: #5c3e99;
+    --sds-c-button-neutral-color-border-hover: #99429C;
+    --sds-c-button-text-color: #5c3e99;
+    --sds-c-button-text-color-hover: #99429C;
+}
+
+:host .tertiary-button {
+    --sds-c-button-text-color: #5c3e99;
+    --sds-c-button-text-color-hover: #99429C;
+}
+
+.title-large {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #000;
+}
+
+.title-medium {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #000;
+}
+
+.title-small {
+    font-size: 1.0rem;
+    font-weight: 600;
+    color: #000;
+}

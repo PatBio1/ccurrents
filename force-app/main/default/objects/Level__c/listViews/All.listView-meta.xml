@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All</fullName>
+    <columns>NAME</columns>
+    <columns>Donation_Type__c</columns>
+    <columns>Donation_Threshold__c</columns>
+    <columns>Threshold_Payment__c</columns>
+    <columns>Threshold_Points__c</columns>
+    <columns>Donation_Payment__c</columns>
+    <columns>Donation_Points__c</columns>
+    <columns>Schedule_Rights__c</columns>
+    <columns>Next_Level__c</columns>
+    <filterScope>Everything</filterScope>
+    <label>All</label>
+</ListView>

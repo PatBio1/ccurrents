@@ -1,0 +1,5 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes">
+
+<c:scheduler/>
+
+</aura:component>

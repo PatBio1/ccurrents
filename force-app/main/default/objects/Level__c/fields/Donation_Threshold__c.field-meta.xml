@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Donation_Threshold__c</fullName>
+    <description>Number of donations where Level is valid e.g. 31 means the Level applies at 31st donation.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>The donation number where this Level applies</inlineHelpText>
+    <label>Donation Threshold</label>
+    <precision>3</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

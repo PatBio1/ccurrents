@@ -1,0 +1,45 @@
+{
+  "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
+  "componentName" : "siteforce:sldsOneColLayout",
+  "id" : "9c25e2e8-e4b7-4fc5-a1b2-0f20ede5d783",
+  "label" : "Rewards",
+  "regions" : [ {
+    "id" : "de68e80c-6791-4c23-9bbc-060fb2b4b324",
+    "regionName" : "header",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : { },
+      "componentName" : "c:RewardsWrapper",
+      "id" : "bd08615c-928e-429a-98d5-0f508b1b136e",
+      "renderPriority" : "NEUTRAL",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "eb7ca149-f704-42e9-a69b-7ad484123302",
+    "regionName" : "content",
+    "type" : "region"
+  }, {
+    "id" : "69a46c84-c234-4929-acca-d4f6fb8155d0",
+    "regionName" : "footer",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : {
+        "customHeadTags" : "",
+        "description" : "",
+        "title" : "Rewards"
+      },
+      "componentName" : "forceCommunity:seoAssistant",
+      "id" : "f34eff11-3ef7-476d-9f58-bfe67eef365c",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "221cf7a0-8a39-4163-9ea8-9f44c63feeca",
+    "regionName" : "sfdcHiddenRegion",
+    "type" : "region"
+  } ],
+  "themeLayoutType" : "KEg3kA3MunIOnpvEUYA8EXxeKjluzc",
+  "type" : "view",
+  "viewType" : "custom-rewards"
+}

@@ -1,3 +1,5 @@
+@import 'c/sharedCss';
+
 /*
 .slds-scope .slds-page-header {
     background-color: var(--lwc-pageHeaderColorBackground,rgb(243, 243, 243));
@@ -10,12 +12,6 @@
 
 .view-center-icon {
     --lwc-colorTextIconDefault: #5c3e99;
-}
-
-:host {
-    --sds-c-input-color-background: #f5f0ff;
-    --sds-c-input-color-border: #d1c7e4;
-    --sds-c-input-text-color: #000;
 }
 
 :host .appointment-button {
@@ -40,25 +36,4 @@
     background-color: #d1c7e4;
     border-color: #d1c7e4;
     color: #1f1e1f;
-}
-
-:host .cancel-button {
-    --sds-c-button-neutral-color-background: #f5f0ff;
-    --sds-c-button-neutral-color-background-hover: #d1c7e4;
-    --sds-c-button-neutral-color-border: #5c3e99;
-    --sds-c-button-neutral-color-border-hover: #5c3e99;
-    --sds-c-button-text-color: #5c3e99;
-    --sds-c-button-text-color-hover: #5c3e99;
-}
-
-:host .schedule-button {
-    --sds-c-button-brand-color-background: #5c3e99;
-    --sds-c-button-brand-color-border: #5c3e99;
-    --sds-c-button-brand-color-background-hover: #99429c;
-    --sds-c-button-brand-color-border-hover: #99429c;
-}
-
-.schedule-button[disabled], .schedule-button:disabled {
-    background-color: #d1c7e4;
-    border-color: #d1c7e4;
 }

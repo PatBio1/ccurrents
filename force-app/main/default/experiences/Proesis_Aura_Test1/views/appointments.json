@@ -1,0 +1,45 @@
+{
+  "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
+  "componentName" : "siteforce:sldsOneColLayout",
+  "id" : "7f4bc0b7-7225-450b-b5eb-107b673c8488",
+  "label" : "Appointments",
+  "regions" : [ {
+    "id" : "bd237c17-df3a-43f9-9f32-205a0fb95281",
+    "regionName" : "header",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : { },
+      "componentName" : "c:AppointmentsWrapper",
+      "id" : "609e0464-5571-4eaa-beb9-ac10cbb3edc8",
+      "renderPriority" : "NEUTRAL",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "4eaafe78-e921-4ac1-8537-381c0518ee68",
+    "regionName" : "content",
+    "type" : "region"
+  }, {
+    "id" : "865ca978-fc32-4fe2-b96b-42d5038bd4c2",
+    "regionName" : "footer",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : {
+        "customHeadTags" : "",
+        "description" : "",
+        "title" : "Appointments"
+      },
+      "componentName" : "forceCommunity:seoAssistant",
+      "id" : "f1055e66-27d6-46ff-b6a2-2a54a2072874",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "1a436340-46e8-4337-8e5a-5ec1131caf77",
+    "regionName" : "sfdcHiddenRegion",
+    "type" : "region"
+  } ],
+  "themeLayoutType" : "KEg3kA3MunIOnpvEUYA8EXxeKjluzc",
+  "type" : "view",
+  "viewType" : "custom-appointments"
+}

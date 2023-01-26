@@ -22,8 +22,8 @@
     <redirectToCustomDomain>false</redirectToCustomDomain>
     <referrerPolicyOriginWhenCrossOrigin>true</referrerPolicyOriginWhenCrossOrigin>
     <selfRegPage>CommunitiesSelfReg</selfRegPage>
-    <siteAdmin>josh+proesispoc1@ccurrents.com</siteAdmin>
-    <siteGuestRecordDefaultOwner>josh+proesispoc1@ccurrents.com</siteGuestRecordDefaultOwner>
+    <siteAdmin>proesis@ccurrents.com</siteAdmin>
+    <siteGuestRecordDefaultOwner>proesis@ccurrents.com</siteGuestRecordDefaultOwner>
     <siteType>ChatterNetwork</siteType>
     <urlPathPrefix>ProesisAuraTest</urlPathPrefix>
 </CustomSite>

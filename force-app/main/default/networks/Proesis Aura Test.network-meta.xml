@@ -41,7 +41,7 @@
         <loginPageOverrideSetting>Designer</loginPageOverrideSetting>
         <selfRegProfilePageOverrideSetting>Designer</selfRegProfilePageOverrideSetting>
     </networkPageOverrides>
-    <picassoSite>Proesis_Aura_Test1</picassoSite>
+    <picassoSite>Proesis_Aura_Test</picassoSite>
     <selfRegProfile>customer community login user</selfRegProfile>
     <selfRegistration>true</selfRegistration>
     <sendWelcomeEmail>true</sendWelcomeEmail>

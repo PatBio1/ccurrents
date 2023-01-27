@@ -14,7 +14,7 @@ fi
 ALIAS=$1
 CHECKONLY=$2
 DEPLOYDIR=$3
-TESTLEVEL='RunSpecifiedTests'
+TESTLEVEL='RunLocalTests'
 SPECIFIED_TESTS='ScheduleUtils_Test'
 
 if [ -z "$CHECKONLY" ]
@@ -33,7 +33,8 @@ else
     echo 'new deploy dir'
 fi
 
-sfdx force:mdapi:deploy $CHECKONLY -w -1 --deploydir $DEPLOYDIR -u $ALIAS --testlevel $TESTLEVEL --runtests $SPECIFIED_TESTS
+sfdx force:mdapi:deploy $CHECKONLY -w -1 --deploydir $DEPLOYDIR -u $ALIAS --testlevel $TESTLEVEL 
+# --runtests $SPECIFIED_TESTS
 
 
 sleep 5s

@@ -14,16 +14,14 @@ jobs:
               sudo npm update --global sfdx-cli
               sfdx --version
               mkdir -p /tmp/artifacts/test_results
-          name: "Create Artifacts Dir"
+          name: "Update sfdx"
       - run: 
           command: |
-            #   echo $SFDXURL_HUB > /tmp/sfdx.url
-            #   sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a circle_build_$CIRCLE_BUILD_NUM --setdefaultdevhubusername
               echo $SFDXURL_INTQA > /tmp/sfdx.url
               sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a INTQA
               echo $SFDXURL_UATSTAGING > /tmp/sfdx.url
               sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a UATSTAGING
-          name: "Authenticate to DevHub"
+          name: "Authenticate to Orgs"
       - run: 
           command: |
               #convert DX to legacy metadata
@@ -52,7 +50,7 @@ jobs:
                 echo "Not on Main Branch CHECKONLY - Deploy $CIRCLE_BRANCH to INTQA org ENABLED"
                 ./dx-scripts/deploy.sh INTQA checkonly
               fi
-          name: "Deploy To Packaging Org"
+          name: "Deploy To Permanent Branch/Orgs"
       - store_artifacts: 
           destination: ./artifacts
           path: /tmp/artifacts

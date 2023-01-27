@@ -14,7 +14,7 @@ fi
 ALIAS=$1
 CHECKONLY=$2
 DEPLOYDIR=$3
-TESTLEVEL='RunLocalTests'
+TESTLEVEL='NoTestRun'
 SPECIFIED_TESTS='ScheduleUtils_Test'
 
 if [ -z "$CHECKONLY" ]

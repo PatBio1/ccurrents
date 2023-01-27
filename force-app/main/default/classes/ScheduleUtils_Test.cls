@@ -4,7 +4,7 @@ public with sharing class ScheduleUtils_Test {
     @TestSetup
     static void makeData(){
         Id centerRecordTypeID =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Center').getRecordTypeId();
-        Id personAccountRecordTypeId =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('PersonAccount').getRecordTypeId();
+        Id personAccountRecordTypeId =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Donor').getRecordTypeId();
 
         system.debug('centerRecordTypeID' + centerRecordTypeID);
         system.debug('personAccountRecordTypeId' + personAccountRecordTypeId);

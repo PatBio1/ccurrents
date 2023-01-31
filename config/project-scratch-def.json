@@ -24,6 +24,10 @@
         },
         "accountSettings": {
             "enableRelateContactToMultipleAccounts": true
+        },
+        "nameSettings":{
+            "enableMiddleName": true,
+            "enableNameSuffix": true
         }
     }
 }

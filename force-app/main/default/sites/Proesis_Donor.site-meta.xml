@@ -18,12 +18,12 @@
     <genericErrorPage>Exception</genericErrorPage>
     <inMaintenancePage>InMaintenance</inMaintenancePage>
     <indexPage>CommunitiesLanding</indexPage>
-    <masterLabel>Proesis Aura Test</masterLabel>
+    <masterLabel>Proesis Donor</masterLabel>
     <redirectToCustomDomain>false</redirectToCustomDomain>
     <referrerPolicyOriginWhenCrossOrigin>true</referrerPolicyOriginWhenCrossOrigin>
     <selfRegPage>CommunitiesSelfReg</selfRegPage>
     <siteAdmin>proesis@ccurrents.com</siteAdmin>
     <siteGuestRecordDefaultOwner>proesis@ccurrents.com</siteGuestRecordDefaultOwner>
     <siteType>ChatterNetwork</siteType>
-    <urlPathPrefix>ProesisAuraTest</urlPathPrefix>
+    <urlPathPrefix>ProesisDonor</urlPathPrefix>
 </CustomSite>

@@ -623,6 +623,10 @@
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
+        <tab>Center_Scheduling</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
         <tab>Donation_Type__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>

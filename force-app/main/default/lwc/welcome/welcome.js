@@ -53,7 +53,7 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     onLanguageChange(event) {
         this.language = event.detail.value;
 
-        location.href = '/ProesisAuraTest/s/?language=' + this.language;
+        location.href = '/ProesisDonor/s/?language=' + this.language;
     }
 
     onJoinUsButtonClick() {

@@ -183,6 +183,7 @@
     <tabs>Schedule__c</tabs>
     <tabs>Transaction__c</tabs>
     <tabs>Visit__c</tabs>
+    <tabs>Center_Scheduling</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Proesis_Center_Management_UtilityBar</utilityBar>
 </CustomApplication>

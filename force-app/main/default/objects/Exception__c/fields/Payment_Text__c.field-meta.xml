@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payment_Text__c</fullName>
+    <description>This will be included on the Payment sent to the Donor</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Description of Payment Exception SENT TO DONOR</inlineHelpText>
+    <label>Payment Text</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>TextArea</type>
+</CustomField>

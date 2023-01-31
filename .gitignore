@@ -13,7 +13,10 @@ force-app/main/default/appMenus/AppSwitcher.appMenu-meta.xml
 jest.config.js
 package.json
 proesis.iml
+*.log
+*.csv
 
 # Illuminated Cloud IDE Cruft
 .idea
 IlluminatedCloud
+force-app/main/default/profiles/*

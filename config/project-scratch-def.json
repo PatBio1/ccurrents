@@ -1,6 +1,6 @@
 {
     "orgName": "proesis-dx",
-    "edition": "Partner Developer",
+    "edition": "Developer",
     "features": ["PersonAccounts",  "ServiceCloud", "EnableSetPasswordInApi","Sites","Communities",
     "ContactsToMultipleAccounts"],
     "hasSampleData": true,

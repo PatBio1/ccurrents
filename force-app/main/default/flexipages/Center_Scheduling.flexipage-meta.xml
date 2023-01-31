@@ -4,6 +4,14 @@
         <itemInstances>
             <componentInstance>
                 <componentName>centerScheduler</componentName>
+                    <name>decorate</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>richTextValue</name>
+                    <value>&lt;p&gt;Center Scheduling&lt;/p&gt;</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:richText</componentName>
                 <identifier>c_centerScheduler</identifier>
             </componentInstance>
         </itemInstances>

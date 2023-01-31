@@ -614,10 +614,6 @@
         <recordType>PersonAccount.Donor</recordType>
         <visible>true</visible>
     </recordTypeVisibilities>
-    <recordTypeVisibilities>
-        <recordType>PersonAccount.PersonAccount</recordType>
-        <visible>true</visible>
-    </recordTypeVisibilities>
     <tabSettings>
         <tab>Appointment_Template__c</tab>
         <visibility>Visible</visibility>

@@ -1,30 +1,30 @@
 public without sharing class SchedulerController {
 
-/*
-Lead lead = new Lead();
-lead.FirstName = 'First';
-lead.LastName = 'Last';
-lead.Email = 'demo@proesis.com';
-insert lead;
+    @AuraEnabled
+    public static Id upsertLead(Profile profile) {
+        try {
+            Lead lead = new Lead();
+            lead.Id = profile.id;
+            lead.FirstName = profile.firstName;
+            lead.MiddleName = profile.middleName;
+            lead.LastName = profile.lastName;
+            lead.Email = profile.email;
+            lead.MobilePhone = profile.mobilePhone;
+            lead.Street = profile.street;
+            lead.City = profile.city;
+            lead.State = profile.state;
+            lead.PostalCode = profile.postalCode;
+            upsert lead;
 
-System.debug(lead);
+            return lead.Id;
+        } catch (Exception e) {
+            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
 
-LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
-
-Database.LeadConvert leadConvert = new Database.LeadConvert();
-leadConvert.setLeadId('00QDn000004EnQ7MAK');
-leadConvert.setConvertedStatus(leadStatus.MasterLabel);
-leadConvert.setDoNotCreateOpportunity(true);
-
-Database.LeadConvertResult lcr = Database.convertLead(leadConvert);
-
-System.debug(lcr);
-
-
-
-
-    System.debug(userId);
-*/
+            AuraHandledException ahe = new AuraHandledException(message);
+            ahe.setMessage(message);
+            throw ahe;
+        }
+    }
 
     @AuraEnabled
     public static Id createAccount() {
@@ -59,8 +59,21 @@ System.debug(lcr);
     }
 
     @AuraEnabled
-    public static Id createUser(Id accountId) {
+    public static Id createUser(Profile profile) {
         try {
+            LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
+
+            Database.LeadConvert leadConvert = new Database.LeadConvert();
+            leadConvert.setLeadId(profile.id);
+            leadConvert.setConvertedStatus(leadStatus.MasterLabel);
+            leadConvert.setDoNotCreateOpportunity(true);
+
+            Database.LeadConvertResult lcr = Database.convertLead(leadConvert);
+
+            System.debug(lcr);
+
+            Id accountId = lcr.getAccountId();
+
             Account account = [
                 SELECT
                     FirstName, LastName, PersonEmail, PersonContactId
@@ -69,15 +82,15 @@ System.debug(lcr);
                 WHERE
                     Id = :accountId
             ];
-
+System.debug('### account='+account);
             String nickname = account.FirstName.substring(0, 1) + account.LastName;
-            String username = nickname + '@proesispoc.com';
+            String username = nickname + '@' + UserInfo.getOrganizationName() + '.com';
 
             User user = new user();
             user.FirstName = account.FirstName;
             user.LastName = account.LastName;
             user.Email = account.PersonEmail;
-            user.Alias = nickname.abbreviate(8); // only 8 characters
+            user.Alias = nickname.abbreviate(8);
             user.Username = username;
             user.CommunityNickname = nickname.abbreviate(40);
             user.LocaleSidKey = 'en_US';
@@ -87,14 +100,16 @@ System.debug(lcr);
             user.EmailEncodingKey = 'UTF-8';
             user.ContactId = account.PersonContactId;
             user.IsActive = true;
+            insert user;
+System.debug('### user='+user);
 
-            //Id userId = Site.createExternalUser(user, account.Id, 'ccurrents', false);
-            Id userId = Site.createPortalUser(user, account.Id, 'ccurrents', false);
+            System.setPassword(user.Id, 'ccurrents1');
+            //assign Proesis Community Donor permset
 
-            return userId;
+            return user.Id;
         } catch (Exception e) {
             String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-
+System.debug('### Exception='+message);
             AuraHandledException ahe = new AuraHandledException(message);
             ahe.setMessage(message);
             throw ahe;
@@ -348,6 +363,40 @@ System.debug(lcr);
 
         @AuraEnabled
         public String status {get; set;}
+
+    }
+
+    public class Profile {
+
+        @AuraEnabled
+        public Id id {get; set;}
+
+        @AuraEnabled
+        public String firstName {get; set;}
+
+        @AuraEnabled
+        public String middleName {get; set;}
+
+        @AuraEnabled
+        public String lastName {get; set;}
+
+        @AuraEnabled
+        public String email {get; set;}
+
+        @AuraEnabled
+        public String mobilePhone {get; set;}
+
+        @AuraEnabled
+        public String street {get; set;}
+
+        @AuraEnabled
+        public String city {get; set;}
+
+        @AuraEnabled
+        public String state {get; set;}
+
+        @AuraEnabled
+        public String postalCode {get; set;}
 
     }
 

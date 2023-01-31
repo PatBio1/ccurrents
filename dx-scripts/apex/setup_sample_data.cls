@@ -42,25 +42,38 @@ upsert donors ExternalID__c;
 //Create Donation Centers
 Account[] centers = new Account[]{
     new Account(
-        Name = 'Center 1',
+        Name = 'Proesis HQ',
         RecordTypeID = centerRecordTypeID,
-        ShippingStreet = '111 1st St',
         ExternalID__c = 'center-111',
-        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation'
+        Services__c = 'Medical: Consultation'
     ),
     new Account(
-        Name = 'Center 2',
+        Name = 'Proesis Miramar',
         RecordTypeID = centerRecordTypeID,
-        ShippingStreet = '222 @nd St',
+        BillingStreet = '7901 Riviera Blvd',
+        BillingCity = 'Miramar',
+        BillingState = 'FL',
+        BillingPostalCode = '33023',
+        BillingCountry = 'US',
+        Geolocation__Latitude__s = 25.973030,
+        Geolocation__Longitude__s = -80.242049,
         ExternalID__c = 'center-222',
-        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation'
+        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
+        Site = 'P-01'
     ),
     new Account(
-        Name = 'Center 3',
+        Name = 'Proesis Dallas',
         RecordTypeID = centerRecordTypeID,
-        ShippingStreet = '333 3rd St',
+        BillingStreet = '1080 N Westmoreland Rd',
+        BillingCity = 'Dallas',
+        BillingState = 'TX',
+        BillingPostalCode = '75311',
+        BillingCountry = 'US',
+        Geolocation__Latitude__s = 32.78411048612642,
+        Geolocation__Longitude__s = -96.87149106359581,
         ExternalID__c = 'center-333',
-        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation'
+        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
+        Site = 'P-02'
     )
 };
 

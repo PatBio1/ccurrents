@@ -22,6 +22,10 @@
     border-color: #99429C;
 }
 
+.slds-progress__item.slds-is-completed .slds-progress__marker {
+    border-color: var(--pro-background-color);
+}
+
 .slds-progress-bar {
     background-color: #D1C7E4;
 }

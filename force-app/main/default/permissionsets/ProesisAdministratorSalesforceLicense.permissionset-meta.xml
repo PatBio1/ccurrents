@@ -269,11 +269,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Exception__c.Donation_Type__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Exception__c.Increment__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -310,11 +305,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Level__c.Donation_Threshold__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Level__c.Donation_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -420,11 +410,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Visit__c.Donation_Complete__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Visit__c.Donation_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

@@ -7,6 +7,7 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     labels = labels;
     currentPage = 'Home';
     language = 'en_US';
+    center;
 
     get showHome() {
         return (this.currentPage === 'Home');
@@ -46,7 +47,8 @@ export default class Welcome extends NavigationMixin(LightningElement) {
         this.currentPage = 'Home';
     }
 
-    onNextButtonClick() {
+    onNextButtonClick(event) {
+        this.center = event.detail.selectedCenter;
         this.currentPage = 'Profile';
     }
 

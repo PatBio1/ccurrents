@@ -74,7 +74,9 @@ export default class ClinicChooser extends LightningElement {
     }
 
     onNextButtonClick() {
-        this.dispatchEvent(new CustomEvent('next'));
+        const selectedCenter = this.centers.find((center) => center.selected);
+
+        this.dispatchEvent(new CustomEvent('next', {detail: {selectedCenter: selectedCenter}}));
     }
 
 }

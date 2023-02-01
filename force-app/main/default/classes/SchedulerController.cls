@@ -82,6 +82,12 @@ public without sharing class SchedulerController {
                 WHERE
                     Id = :accountId
             ];
+
+            AccountContactRelation accountContactRelation = new AccountContactRelation();
+            accountContactRelation.AccountId = profile.centerId;
+            accountContactRelation.ContactId = lcr.getContactId();
+            insert accountContactRelation;
+
 System.debug('### account='+account);
             String nickname = account.FirstName.substring(0, 1) + account.LastName;
             String username = nickname + '@' + UserInfo.getOrganizationName() + '.com';
@@ -95,21 +101,37 @@ System.debug('### account='+account);
             user.CommunityNickname = nickname.abbreviate(40);
             user.LocaleSidKey = 'en_US';
             user.TimeZoneSidKey = 'America/New_York';
-            user.ProfileId = [SELECT Id FROM Profile WHERE Name = 'Customer Community Login User'].Id;
+            user.ProfileId = [SELECT Id FROM Profile WHERE Name = 'ProesisCustomerLoginMinimumAccess'].Id;
             user.LanguageLocaleKey = 'en_US';
             user.EmailEncodingKey = 'UTF-8';
             user.ContactId = account.PersonContactId;
             user.IsActive = true;
-            insert user;
 System.debug('### user='+user);
 
-            System.setPassword(user.Id, 'ccurrents1');
-            //assign Proesis Community Donor permset
+            Id userId = Site.createExternalUser(user, account.Id, 'ccurrents1', false);
 
-            return user.Id;
+            return userId;
         } catch (Exception e) {
             String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-System.debug('### Exception='+message);
+
+            AuraHandledException ahe = new AuraHandledException(message);
+            ahe.setMessage(message);
+            throw ahe;
+        }
+    }
+
+    @AuraEnabled
+    public static void assignPermissionSet(Id userId) {
+        try {
+            PermissionSet guestPermissionSet = [SELECT Id FROM PermissionSet WHERE Label = 'Proesis Community Donor'];
+
+            PermissionSetAssignment psa = new PermissionSetAssignment();
+            psa.PermissionSetId = guestPermissionSet.Id;
+            psa.AssigneeId = userId;
+            insert psa;
+        } catch (Exception e) {
+            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
+
             AuraHandledException ahe = new AuraHandledException(message);
             ahe.setMessage(message);
             throw ahe;
@@ -370,6 +392,9 @@ System.debug('### Exception='+message);
 
         @AuraEnabled
         public Id id {get; set;}
+
+        @AuraEnabled
+        public Id centerId {get; set;}
 
         @AuraEnabled
         public String firstName {get; set;}

@@ -1,24 +1,24 @@
 
-Id centerRecordTypeID =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Center').getRecordTypeId();
-Id donorRecordTypeId =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Donor').getRecordTypeId();
+Id centerRecordTypeID = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Center').getRecordTypeId();
+Id donorRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Donor').getRecordTypeId();
 
-system.debug('centerRecordTypeID' + centerRecordTypeID);
-system.debug('donorRecordTypeId' + donorRecordTypeId);
+System.debug('centerRecordTypeID' + centerRecordTypeID);
+System.debug('donorRecordTypeId' + donorRecordTypeId);
 
 // Cleanup krufty Entitlements, Cases, Opportunities, Contacts and Accounts
-List<Entitlement> ent2Del = [select id, Name from entitlement];
+List<Entitlement> ent2Del = [SELECT Id FROM entitlement];
 delete ent2Del;
 
-List<Case> cases2Del = [select Id from Case];
+List<Case> cases2Del = [SELECT Id FROM Case];
 delete cases2Del;
 
-List<Opportunity> opps2Del = [select Id from Opportunity];
+List<Opportunity> opps2Del = [SELECT Id FROM Opportunity];
 delete opps2Del;
 
-List<Contact> contacts2Del = [select Id from Contact where isPersonAccount=false];
+List<Contact> contacts2Del = [SELECT Id FROM Contact WHERE IsPersonAccount = false];
 delete contacts2Del;
 
-List<Account> accounts2Del = [select Id from Account];
+List<Account> accounts2Del = [SELECT Id FROM Account];
 delete accounts2Del;
 
 // Create Donors
@@ -39,7 +39,7 @@ Account[] donors = new Account[]{
 
 upsert donors ExternalID__c;
 
-//Create Donation Centers
+// Create Donation Centers
 Account[] centers = new Account[]{
     new Account(
         Name = 'Proesis HQ',
@@ -78,7 +78,6 @@ Account[] centers = new Account[]{
 };
 
 upsert centers ExternalID__c; 
-
 
 Schedule__c[] schedules = new Schedule__c[]{
     new Schedule__c(

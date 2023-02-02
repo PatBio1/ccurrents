@@ -26,6 +26,8 @@ sfdx force:org:create --durationdays 30 -s -f config/project-scratch-def.json -a
 #set the default scratch org name
 sfdx force:config:set defaultusername=$1
 
+#install the marketing cloud connect package (source has dependencies on this package)
+sfdx force:package:install --package MarketingCloud -w 10
 
 ## push local code artifacts to scratch org
 sfdx force:source:push

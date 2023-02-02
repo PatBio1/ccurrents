@@ -2,7 +2,24 @@
 public with sharing class TestUtil {
 
     public static User createAdminUser() {
-        return new User(Id=UserInfo.getUserId());
+        String userEmail = 'admin@' + UserInfo.getOrganizationId() + '.test.com';
+
+        User user = new User(
+            FirstName = 'Admin',
+            LastName = 'User',
+            Email = userEmail,
+            Username = userEmail,
+            Alias = 'admin',
+            Phone = '800-555-1212',
+            ProfileId = UserInfo.getProfileId(),
+            TimeZoneSidKey = 'America/New_York',
+            LocaleSidKey = 'en_US',
+            EmailEncodingKey = 'ISO-8859-1',
+            LanguageLocaleKey = 'en_US'
+        );
+        insert user;
+
+        return user;
     }
 
     public static User createExperienceUser() {

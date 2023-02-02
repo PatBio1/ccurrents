@@ -145,6 +145,10 @@
         <name>Street_Address</name>
     </customLabels>
     <customLabels>
+        <label>Sufijo</label>
+        <name>Suffix</name>
+    </customLabels>
+    <customLabels>
         <label>Cuéntanos acerca de ti</label>
         <name>Tell_Us_About_You</name>
     </customLabels>

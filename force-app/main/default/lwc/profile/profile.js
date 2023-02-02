@@ -1,5 +1,6 @@
-import { api, LightningElement } from 'lwc';
+import { api, track, LightningElement } from 'lwc';
 import labels from 'c/labelService';
+import util from 'c/util';
 import upsertLead from '@salesforce/apex/SchedulerController.upsertLead';
 import createUser from '@salesforce/apex/SchedulerController.createUser';
 import assignPermissionSet from '@salesforce/apex/SchedulerController.assignPermissionSet';
@@ -8,7 +9,7 @@ export default class ClinicChooser extends LightningElement {
 
     labels = labels;
     currentPage = 'Basic Profile';
-    profile = {};
+    @track profile = {};
 
     @api center;
 
@@ -28,8 +29,24 @@ export default class ClinicChooser extends LightningElement {
         return true;
     }
 
+    get suffixOptions() {
+        return [
+            {label: 'Jr', value: 'Jr'},
+            {label: 'II', value: 'II'},
+            {label: 'Sr', value: 'Sr'},
+            {label: 'III', value: 'III'},
+            {label: 'IV', value: 'IV'},
+            {label: 'V', value: 'V'},
+        ];
+    }
+
     get basicProfileValid() {
-        return true;
+        return (
+            util.isNotBlank(this.profile.firstName) &&
+            util.isNotBlank(this.profile.lastName) &&
+            util.isNotBlank(this.profile.email) &&
+            util.isNotBlank(this.profile.mobilePhone)
+        );
     }
 
     renderedCallback() {

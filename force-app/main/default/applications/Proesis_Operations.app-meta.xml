@@ -162,6 +162,42 @@
         <type>Flexipage</type>
         <pageOrSobjectType>Visit__c</pageOrSobjectType>
     </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Lead_Org_Wide_Record_Page</content>
+        <formFactor>Small</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Lead</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Lead_Org_Wide_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Lead</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Campaign_Org_Wide_Record_Page</content>
+        <formFactor>Small</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Campaign</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Campaign_Org_Wide_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Campaign</pageOrSobjectType>
+    </actionOverrides>
     <brand>
         <headerColor>#5C3E99</headerColor>
         <logo>ProesisAppLogoSquare</logo>
@@ -176,13 +212,22 @@
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
     <label>Proesis Operations</label>
     <navType>Standard</navType>
+    <tabs>standard-Lead</tabs>
     <tabs>standard-Account</tabs>
-    <tabs>Appointment__c</tabs>
     <tabs>Appointment_Template__c</tabs>
-    <tabs>Message__c</tabs>
+    <tabs>Schedule_Template__c</tabs>
     <tabs>Schedule__c</tabs>
+    <tabs>Center_Scheduling</tabs>
+    <tabs>Level__c</tabs>
+    <tabs>Donation_Type__c</tabs>
+    <tabs>Center_Donation_Type__c</tabs>
+    <tabs>Appointment__c</tabs>
+    <tabs>Message__c</tabs>
     <tabs>Transaction__c</tabs>
     <tabs>Visit__c</tabs>
+    <tabs>standard-report</tabs>
+    <tabs>standard-Dashboard</tabs>
+    <tabs>standard-Feed</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Proesis_Operations_UtilityBar</utilityBar>
 </CustomApplication>

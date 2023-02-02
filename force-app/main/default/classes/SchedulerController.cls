@@ -54,6 +54,7 @@ public without sharing class SchedulerController {
             AccountContactRelation accountContactRelation = new AccountContactRelation();
             accountContactRelation.AccountId = profile.centerId;
             accountContactRelation.ContactId = lcr.getContactId();
+            accountContactRelation.Roles = 'Donor';
             insert accountContactRelation;
 
 System.debug('### account='+account);
@@ -157,6 +158,8 @@ System.debug('### user='+user);
                     AccountContactRelation
                 WHERE
                     ContactId = :user.ContactId
+                AND
+                    Roles INCLUDES ('Donor')
             ];
 
             Account account = relations[0].Account;

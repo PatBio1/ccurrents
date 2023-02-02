@@ -1,5 +1,6 @@
-@RestResource(urlMapping='/Donor/*')
+//@RestResource(urlMapping='/Donor/*')
 global without sharing class DonorService {
+/*
     global class DonorClass {
         public String donor_number;
         public String enroll_id;
@@ -90,5 +91,5 @@ global without sharing class DonorService {
         // be used to find the new donor and update with the payload values particularly the donor_number (DonorID)
         // otherwise 2) the donor_number will be used to update the existing Donor as an external_ID from the BECS/Nexlynk system
     }
-
+*/
 }

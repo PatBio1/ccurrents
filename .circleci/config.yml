@@ -47,8 +47,8 @@ jobs:
                 ./dx-scripts/deploy.sh UATSTAGING
               else
                 #deploy CHECKONLY to other branches
-                echo "Not on Main Branch CHECKONLY - Deploy $CIRCLE_BRANCH to INTQA org ENABLED"
-                ./dx-scripts/deploy.sh INTQA checkonly
+                echo "Not on Main Branch CHECKONLY - Deploy $CIRCLE_BRANCH to UATSTAGING org ENABLED"
+                ./dx-scripts/deploy.sh UATSTAGING checkonly
               fi
           name: "Deploy To Permanent Branch/Orgs"
       - store_artifacts: 

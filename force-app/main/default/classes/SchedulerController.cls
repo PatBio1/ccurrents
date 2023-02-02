@@ -27,38 +27,6 @@ public without sharing class SchedulerController {
     }
 
     @AuraEnabled
-    public static Id createAccount() {
-        try {
-            Lead lead = new Lead();
-            lead.FirstName = 'First';
-            lead.LastName = 'Last';
-            lead.Email = 'demo@proesis.com';
-            insert lead;
-
-            System.debug(lead);
-
-            LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
-
-            Database.LeadConvert leadConvert = new Database.LeadConvert();
-            leadConvert.setLeadId(lead.Id);
-            leadConvert.setConvertedStatus(leadStatus.MasterLabel);
-            leadConvert.setDoNotCreateOpportunity(true);
-
-            Database.LeadConvertResult lcr = Database.convertLead(leadConvert);
-
-            System.debug(lcr);
-
-            return lcr.getAccountId();
-        } catch (Exception e) {
-            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-
-            AuraHandledException ahe = new AuraHandledException(message);
-            ahe.setMessage(message);
-            throw ahe;
-        }
-    }
-
-    @AuraEnabled
     public static Id createUser(Profile profile) {
         try {
             LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
@@ -82,6 +50,13 @@ public without sharing class SchedulerController {
                 WHERE
                     Id = :accountId
             ];
+
+            AccountContactRelation accountContactRelation = new AccountContactRelation();
+            accountContactRelation.AccountId = profile.centerId;
+            accountContactRelation.ContactId = lcr.getContactId();
+            accountContactRelation.Roles = 'Donor';
+            insert accountContactRelation;
+
 System.debug('### account='+account);
             String nickname = account.FirstName.substring(0, 1) + account.LastName;
             String username = nickname + '@' + UserInfo.getOrganizationName() + '.com';
@@ -95,21 +70,37 @@ System.debug('### account='+account);
             user.CommunityNickname = nickname.abbreviate(40);
             user.LocaleSidKey = 'en_US';
             user.TimeZoneSidKey = 'America/New_York';
-            user.ProfileId = [SELECT Id FROM Profile WHERE Name = 'Customer Community Login User'].Id;
+            user.ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id;
             user.LanguageLocaleKey = 'en_US';
             user.EmailEncodingKey = 'UTF-8';
             user.ContactId = account.PersonContactId;
             user.IsActive = true;
-            insert user;
 System.debug('### user='+user);
 
-            System.setPassword(user.Id, 'ccurrents1');
-            //assign Proesis Community Donor permset
+            Id userId = Site.createExternalUser(user, account.Id, 'ccurrents1', false);
 
-            return user.Id;
+            return userId;
         } catch (Exception e) {
             String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-System.debug('### Exception='+message);
+
+            AuraHandledException ahe = new AuraHandledException(message);
+            ahe.setMessage(message);
+            throw ahe;
+        }
+    }
+
+    @AuraEnabled
+    public static void assignPermissionSet(Id userId) {
+        try {
+            PermissionSet permissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.EXPERIENCE_PERMISSION_SET_NAME];
+
+            PermissionSetAssignment psa = new PermissionSetAssignment();
+            psa.PermissionSetId = permissionSet.Id;
+            psa.AssigneeId = userId;
+            insert psa;
+        } catch (Exception e) {
+            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
+
             AuraHandledException ahe = new AuraHandledException(message);
             ahe.setMessage(message);
             throw ahe;
@@ -125,7 +116,7 @@ System.debug('### Exception='+message);
                 FROM
                     Account
                 WHERE
-                    RecordType.Name = 'Center'
+                    RecordTypeId = :Constants.CENTER_RECORD_TYPE_ID
                 AND
                     Site != null
                 ORDER BY
@@ -167,6 +158,8 @@ System.debug('### Exception='+message);
                     AccountContactRelation
                 WHERE
                     ContactId = :user.ContactId
+                AND
+                    Roles INCLUDES ('Donor')
             ];
 
             Account account = relations[0].Account;
@@ -280,9 +273,16 @@ System.debug('### Exception='+message);
         try {
             User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
 
+            Appointment__c appointment = [SELECT Schedule__r.Center__c FROM Appointment__c WHERE Id = :appointmentId];
+
+            Center_Donation_Type__c centerDonationType = [
+                SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :appointment.Schedule__r.Center__c LIMIT 1
+            ];
+
             Visit__c visit = new Visit__c();
             visit.Donor__c = user.ContactId;
             visit.Appointment__c = appointmentId;
+            visit.Center_Donation_Type__c = centerDonationType.Id;
             visit.Status__c = 'Scheduled';
             insert visit;
 
@@ -370,6 +370,9 @@ System.debug('### Exception='+message);
 
         @AuraEnabled
         public Id id {get; set;}
+
+        @AuraEnabled
+        public Id centerId {get; set;}
 
         @AuraEnabled
         public String firstName {get; set;}

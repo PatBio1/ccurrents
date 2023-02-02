@@ -325,7 +325,6 @@
         <fields>Center__c</fields>
         <fields>Appointment__c</fields>
         <fields>Status__c</fields>
-        <fields>Donation_Type__c</fields>
         <fields>Donation_Volume__c</fields>
         <relatedList>Visit__c.Donor__c</relatedList>
     </relatedLists>

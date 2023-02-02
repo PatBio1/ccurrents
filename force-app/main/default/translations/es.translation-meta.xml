@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Translations xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customLabels>
+        <label>Acerca de la experiencia de donación</label>
+        <name>About_Donation_Experience</name>
+    </customLabels>
+    <customLabels>
+        <label>Dirección</label>
+        <name>Address</name>
+    </customLabels>
+    <customLabels>
+        <label>Ya tengo una cuenta</label>
+        <name>Already_Have_An_Account</name>
+    </customLabels>
+    <customLabels>
+        <label>Atrás</label>
+        <name>Back</name>
+    </customLabels>
+    <customLabels>
+        <label>Volver a la página de inicio</label>
+        <name>Back_To_Homepage</name>
+    </customLabels>
+    <customLabels>
+        <label>Perfil básico</label>
+        <name>Basic_Profile</name>
+    </customLabels>
+    <customLabels>
+        <label>Cancelar</label>
+        <name>Cancel</name>
+    </customLabels>
+    <customLabels>
+        <label>Centros</label>
+        <name>Centers</name>
+    </customLabels>
+    <customLabels>
+        <label>Elige un Centro</label>
+        <name>Choose_A_Center</name>
+    </customLabels>
+    <customLabels>
+        <label>Elige otro centro</label>
+        <name>Choose_Another_Center</name>
+    </customLabels>
+    <customLabels>
+        <label>Elija Fecha</label>
+        <name>Choose_Date</name>
+    </customLabels>
+    <customLabels>
+        <label>Ciudad</label>
+        <name>City</name>
+    </customLabels>
+    <customLabels>
+        <label>Confirmar contraseña</label>
+        <name>Confirm_Password</name>
+    </customLabels>
+    <customLabels>
+        <label>Correo electrónico</label>
+        <name>Email</name>
+    </customLabels>
+    <customLabels>
+        <label>Inglés</label>
+        <name>English</name>
+    </customLabels>
+    <customLabels>
+        <label>Introducir la contraseña</label>
+        <name>Enter_Password</name>
+    </customLabels>
+    <customLabels>
+        <label>Primer nombre</label>
+        <name>First_Name</name>
+    </customLabels>
+    <customLabels>
+        <label>Únete a nosotros</label>
+        <name>Join_Us</name>
+    </customLabels>
+    <customLabels>
+        <label>Apellido</label>
+        <name>Last_Name</name>
+    </customLabels>
+    <customLabels>
+        <label>Segundo nombre</label>
+        <name>Middle_Name</name>
+    </customLabels>
+    <customLabels>
+        <label>Mobile Phone</label>
+        <name>Mobile_Phone</name>
+    </customLabels>
+    <customLabels>
+        <label>Mis citas</label>
+        <name>My_Appointments</name>
+    </customLabels>
+    <customLabels>
+        <label>Mi recompensa</label>
+        <name>My_Rewards</name>
+    </customLabels>
+    <customLabels>
+        <label>Próximo</label>
+        <name>Next</name>
+    </customLabels>
+    <customLabels>
+        <label>Pasado</label>
+        <name>Past</name>
+    </customLabels>
+    <customLabels>
+        <label>por pt</label>
+        <name>Per_Pt</name>
+    </customLabels>
+    <customLabels>
+        <label>La donación de plasma salva vidas y lo ayuda a alcanzar sus metas financieras más rápido.</label>
+        <name>Plasma_Donation_Saves_Lives</name>
+    </customLabels>
+    <customLabels>
+        <label>Recomendado para ti</label>
+        <name>Recommended_To_You</name>
+    </customLabels>
+    <customLabels>
+        <label>Programar</label>
+        <name>Schedule</name>
+    </customLabels>
+    <customLabels>
+        <label>Programe su primera cita</label>
+        <name>Schedule_Your_1st_Appointment</name>
+    </customLabels>
+    <customLabels>
+        <label>Programado</label>
+        <name>Scheduled</name>
+    </customLabels>
+    <customLabels>
+        <label>Seleccionar franja horaria</label>
+        <name>Select_Time_Slot</name>
+    </customLabels>
+    <customLabels>
+        <label>Establece tu contraseña</label>
+        <name>Set_Your_Password</name>
+    </customLabels>
+    <customLabels>
+        <label>Español</label>
+        <name>Spanish</name>
+    </customLabels>
+    <customLabels>
+        <label>Provincia</label>
+        <name>State</name>
+    </customLabels>
+    <customLabels>
+        <label>Dirección</label>
+        <name>Street_Address</name>
+    </customLabels>
+    <customLabels>
+        <label>Cuéntanos acerca de ti</label>
+        <name>Tell_Us_About_You</name>
+    </customLabels>
+    <customLabels>
+        <label>Bienvenidos a Proesis</label>
+        <name>Welcome_To_Proesis</name>
+    </customLabels>
+    <customLabels>
+        <label>Código postal</label>
+        <name>Zip_Code</name>
+    </customLabels>
+</Translations>

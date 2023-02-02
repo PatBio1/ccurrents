@@ -4,7 +4,6 @@
     <columns>NAME</columns>
     <columns>Center__c</columns>
     <columns>Appointment__c</columns>
-    <columns>Donor__c</columns>
     <columns>Status__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>

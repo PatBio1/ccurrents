@@ -1,13 +1,16 @@
-import { LightningElement } from 'lwc';
+import { api, LightningElement } from 'lwc';
 import labels from 'c/labelService';
 import upsertLead from '@salesforce/apex/SchedulerController.upsertLead';
 import createUser from '@salesforce/apex/SchedulerController.createUser';
+import assignPermissionSet from '@salesforce/apex/SchedulerController.assignPermissionSet';
 
 export default class ClinicChooser extends LightningElement {
 
     labels = labels;
     currentPage = 'Basic Profile';
     profile = {};
+
+    @api center;
 
     get showBasicProfile() {
         return (this.currentPage === 'Basic Profile');
@@ -27,6 +30,10 @@ export default class ClinicChooser extends LightningElement {
 
     get basicProfileValid() {
         return true;
+    }
+
+    renderedCallback() {
+        console.log('render center', JSON.stringify(this.center));
     }
 
     onFieldChange(event) {
@@ -73,6 +80,8 @@ export default class ClinicChooser extends LightningElement {
     }
 
     onPasswordNextButtonClick() {
+        this.profile.centerId = this.center.id;
+
         const request = {
             profile: this.profile
         };
@@ -81,40 +90,24 @@ export default class ClinicChooser extends LightningElement {
 
         createUser(request).then(response => {
             console.log('createUser response', response);
+
+            this.assignPermissions(response);
         }).catch((error) => {
             console.log(error);
         });
     }
 
     onNextButtonClick() {
-        //this.dispatchEvent(new CustomEvent('next'));
-
-        this.nextStep('001Dn00000ETrbLIAT');
-/*
-        const request = {
-        };
-
-        console.log('createAccount request', JSON.stringify(request));
-
-        createAccount(request).then(response => {
-            console.log('createAccount response', response);
-
-            this.nextStep(response);
-        }).catch((error) => {
-            console.log(error);
-        });
-*/
     }
 
-    nextStep(accountId) {
+    assignPermissions(userId) {
         const request = {
-            accountId: accountId
+            userId: userId
         };
 
-        console.log('createUser request', JSON.stringify(request));
+        console.log('assignPermissionSet request', JSON.stringify(request));
 
-        createUser(request).then(response => {
-            console.log('createUser response', response);
+        assignPermissionSet(request).then(response => {
         }).catch((error) => {
             console.log(error);
         });

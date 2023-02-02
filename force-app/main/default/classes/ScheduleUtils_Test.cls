@@ -52,7 +52,6 @@ public with sharing class ScheduleUtils_Test {
 
         upsert centers ExternalID__c; 
 
-
         Schedule__c[] schedules = new Schedule__c[]{
             new Schedule__c(
                 Center__c = centers[0].Id, 
@@ -73,11 +72,9 @@ public with sharing class ScheduleUtils_Test {
 
         insert schedules;
     }
-    
-    
+
     @isTest
     static void ScheduleUtils_Test() {
-
         Appointment__c[] appointments;
         Test.startTest();
 

@@ -7,7 +7,7 @@ For all work items, tracking, please refer to our [Proesis Build Project](https:
 
 ### quick setup
 - setup proesis dev hub as your default devhub
-- run `./dx-scripts/setup-scratch <scratch org alias>`
+- run `./dx-scripts/setup_scratch <scratch org alias>`
 
 ### A decent overview of the workflow for our devops:
   1. Pull a new project directory via git clone, done often until you feel more confident about your git skillz.

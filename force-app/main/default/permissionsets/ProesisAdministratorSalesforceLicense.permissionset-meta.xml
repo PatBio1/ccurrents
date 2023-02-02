@@ -628,6 +628,10 @@
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
+        <tab>Schedule_Template__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
         <tab>Schedule__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>

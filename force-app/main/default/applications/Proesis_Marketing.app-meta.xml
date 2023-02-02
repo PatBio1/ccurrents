@@ -180,6 +180,24 @@
         <type>Flexipage</type>
         <pageOrSobjectType>Lead</pageOrSobjectType>
     </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Campaign_Org_Wide_Record_Page</content>
+        <formFactor>Small</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Campaign</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Campaign_Org_Wide_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Campaign</pageOrSobjectType>
+    </actionOverrides>
     <brand>
         <headerColor>#5C3E99</headerColor>
         <logo>ProesisAppLogoSquare</logo>
@@ -194,10 +212,15 @@
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
     <label>Proesis Marketing</label>
     <navType>Standard</navType>
+    <tabs>standard-Campaign</tabs>
+    <tabs>standard-Lead</tabs>
     <tabs>standard-Account</tabs>
     <tabs>Message__c</tabs>
-    <tabs>Schedule__c</tabs>
     <tabs>Transaction__c</tabs>
+    <tabs>Visit__c</tabs>
+    <tabs>standard-report</tabs>
+    <tabs>standard-Dashboard</tabs>
+    <tabs>standard-Feed</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Proesis_Marketing_UtilityBar</utilityBar>
 </CustomApplication>

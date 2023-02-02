@@ -158,8 +158,15 @@
             </div>
         </div>
 
-        <lightning-button if:true={basicProfileValid} label={labels.next} variant="brand" stretch="true" class="primary-button" onclick={onAddressNextButtonClick}></lightning-button>
-        <button if:false={basicProfileValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.next}</button>
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-button label={labels.previous} stretch="true" class="secondary-button" onclick={onAddressPreviousButtonClick}></lightning-button>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-button if:true={basicProfileValid} label={labels.next} variant="brand" stretch="true" class="primary-button" onclick={onAddressNextButtonClick}></lightning-button>
+                <button if:false={basicProfileValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.next}</button>
+            </div>
+        </div>
     </div>
 
     <div if:true={showPassword} class="slds-var-p-around_medium">

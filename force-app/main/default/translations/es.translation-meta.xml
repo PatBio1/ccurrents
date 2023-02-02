@@ -109,6 +109,10 @@
         <name>Plasma_Donation_Saves_Lives</name>
     </customLabels>
     <customLabels>
+        <label>Previo</label>
+        <name>Previous</name>
+    </customLabels>
+    <customLabels>
         <label>Recomendado para ti</label>
         <name>Recommended_To_You</name>
     </customLabels>

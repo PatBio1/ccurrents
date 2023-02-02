@@ -190,6 +190,13 @@
         <value>Plasma donation saves lives and helps you achieve your financial goals faster.</value>
     </labels>
     <labels>
+        <fullName>Previous</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Previous</shortDescription>
+        <value>Previous</value>
+    </labels>
+    <labels>
         <fullName>Recommended_To_You</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -253,6 +260,13 @@
         <value>Street Address</value>
     </labels>
     <labels>
+        <fullName>Suffix</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Suffix</shortDescription>
+        <value>Suffix</value>
+    </labels>
+    <labels>
         <fullName>Tell_Us_About_You</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -272,12 +286,5 @@
         <protected>true</protected>
         <shortDescription>Zip Code</shortDescription>
         <value>Zip Code</value>
-    </labels>
-    <labels>
-        <fullName>Suffix</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Suffix</shortDescription>
-        <value>Suffix</value>
     </labels>
 </CustomLabels>

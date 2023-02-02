@@ -25,6 +25,7 @@ import next from '@salesforce/label/c.Next';
 import past from '@salesforce/label/c.Past';
 import perPt from '@salesforce/label/c.Per_Pt';
 import plasmaDonationSavesLives from '@salesforce/label/c.Plasma_Donation_Saves_Lives';
+import previous from '@salesforce/label/c.Previous';
 import recommendedToYou from '@salesforce/label/c.Recommended_To_You';
 import schedule from '@salesforce/label/c.Schedule';
 import scheduled from '@salesforce/label/c.Scheduled';
@@ -74,6 +75,7 @@ const labels = {
     past,
     perPt,
     plasmaDonationSavesLives,
+    previous,
     recommendedToYou,
     schedule,
     scheduled,

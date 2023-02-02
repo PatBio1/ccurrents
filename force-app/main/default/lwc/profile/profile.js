@@ -80,6 +80,10 @@ export default class ClinicChooser extends LightningElement {
         });
     }
 
+    onAddressPreviousButtonClick() {
+
+    }
+
     onAddressNextButtonClick() {
         const request = {
             profile: this.profile

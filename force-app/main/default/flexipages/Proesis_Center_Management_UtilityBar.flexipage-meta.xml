@@ -80,11 +80,11 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>entityName</name>
-                    <value>et4ae5__abTest__c</value>
+                    <value>Account</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>filterName</name>
-                    <value>et4ae5__All</value>
+                    <value>Proesis_Centers</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>height</name>

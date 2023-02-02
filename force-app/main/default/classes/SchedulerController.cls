@@ -8,6 +8,7 @@ public without sharing class SchedulerController {
             lead.FirstName = profile.firstName;
             lead.MiddleName = profile.middleName;
             lead.LastName = profile.lastName;
+            lead.Suffix = profile.suffix;
             lead.Email = profile.email;
             lead.MobilePhone = profile.mobilePhone;
             lead.Street = profile.street;
@@ -382,6 +383,9 @@ System.debug('### user='+user);
 
         @AuraEnabled
         public String lastName {get; set;}
+
+        @AuraEnabled
+        public String suffix {get; set;}
 
         @AuraEnabled
         public String email {get; set;}

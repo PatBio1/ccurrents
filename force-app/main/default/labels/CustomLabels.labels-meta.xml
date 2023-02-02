@@ -273,4 +273,11 @@
         <shortDescription>Zip Code</shortDescription>
         <value>Zip Code</value>
     </labels>
+    <labels>
+        <fullName>Suffix</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Suffix</shortDescription>
+        <value>Suffix</value>
+    </labels>
 </CustomLabels>

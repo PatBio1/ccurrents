@@ -34,6 +34,7 @@ import setYourPassword from '@salesforce/label/c.Set_Your_Password';
 import spanish from '@salesforce/label/c.Spanish';
 import state from '@salesforce/label/c.State';
 import streetAddress from '@salesforce/label/c.Street_Address';
+import suffix from '@salesforce/label/c.Suffix';
 import tellUsAboutYou from '@salesforce/label/c.Tell_Us_About_You';
 import welcomeToProesis from '@salesforce/label/c.Welcome_To_Proesis';
 import zipCode from '@salesforce/label/c.Zip_Code';
@@ -82,6 +83,7 @@ const labels = {
     spanish,
     state,
     streetAddress,
+    suffix,
     tellUsAboutYou,
     welcomeToProesis,
     zipCode

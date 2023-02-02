@@ -68,6 +68,9 @@
                 <lightning-input type="text" label={labels.lastName} data-field="lastName" onchange={onFieldChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">
+                <lightning-combobox label={labels.suffix} options={suffixOptions} data-field="suffix" onchange={onFieldChange}></lightning-combobox>
+            </div>
+            <div class="slds-m-bottom_small">
                 <lightning-input type="email" label={labels.email} data-field="email" onchange={onFieldChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">

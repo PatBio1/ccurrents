@@ -177,12 +177,18 @@
     <label>Proesis Operations</label>
     <navType>Standard</navType>
     <tabs>standard-Account</tabs>
-    <tabs>Appointment__c</tabs>
     <tabs>Appointment_Template__c</tabs>
-    <tabs>Message__c</tabs>
+    <tabs>Schedule_Template__c</tabs>
     <tabs>Schedule__c</tabs>
+    <tabs>Level__c</tabs>
+    <tabs>Donation_Type__c</tabs>
+    <tabs>Center_Donation_Type__c</tabs>
+    <tabs>Appointment__c</tabs>
+    <tabs>Message__c</tabs>
     <tabs>Transaction__c</tabs>
     <tabs>Visit__c</tabs>
+    <tabs>standard-report</tabs>
+    <tabs>standard-Dashboard</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Proesis_Operations_UtilityBar</utilityBar>
 </CustomApplication>

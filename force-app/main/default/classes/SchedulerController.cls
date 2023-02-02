@@ -27,38 +27,6 @@ public without sharing class SchedulerController {
     }
 
     @AuraEnabled
-    public static Id createAccount() {
-        try {
-            Lead lead = new Lead();
-            lead.FirstName = 'First';
-            lead.LastName = 'Last';
-            lead.Email = 'demo@proesis.com';
-            insert lead;
-
-            System.debug(lead);
-
-            LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
-
-            Database.LeadConvert leadConvert = new Database.LeadConvert();
-            leadConvert.setLeadId(lead.Id);
-            leadConvert.setConvertedStatus(leadStatus.MasterLabel);
-            leadConvert.setDoNotCreateOpportunity(true);
-
-            Database.LeadConvertResult lcr = Database.convertLead(leadConvert);
-
-            System.debug(lcr);
-
-            return lcr.getAccountId();
-        } catch (Exception e) {
-            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-
-            AuraHandledException ahe = new AuraHandledException(message);
-            ahe.setMessage(message);
-            throw ahe;
-        }
-    }
-
-    @AuraEnabled
     public static Id createUser(Profile profile) {
         try {
             LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
@@ -101,7 +69,7 @@ System.debug('### account='+account);
             user.CommunityNickname = nickname.abbreviate(40);
             user.LocaleSidKey = 'en_US';
             user.TimeZoneSidKey = 'America/New_York';
-            user.ProfileId = [SELECT Id FROM Profile WHERE Name = 'ProesisCustomerLoginMinimumAccess'].Id;
+            user.ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id;
             user.LanguageLocaleKey = 'en_US';
             user.EmailEncodingKey = 'UTF-8';
             user.ContactId = account.PersonContactId;
@@ -123,10 +91,10 @@ System.debug('### user='+user);
     @AuraEnabled
     public static void assignPermissionSet(Id userId) {
         try {
-            PermissionSet guestPermissionSet = [SELECT Id FROM PermissionSet WHERE Label = 'Proesis Community Donor'];
+            PermissionSet permissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.EXPERIENCE_PERMISSION_SET_NAME];
 
             PermissionSetAssignment psa = new PermissionSetAssignment();
-            psa.PermissionSetId = guestPermissionSet.Id;
+            psa.PermissionSetId = permissionSet.Id;
             psa.AssigneeId = userId;
             insert psa;
         } catch (Exception e) {
@@ -147,7 +115,7 @@ System.debug('### user='+user);
                 FROM
                     Account
                 WHERE
-                    RecordType.Name = 'Center'
+                    RecordTypeId = :Constants.CENTER_RECORD_TYPE_ID
                 AND
                     Site != null
                 ORDER BY
@@ -302,9 +270,16 @@ System.debug('### user='+user);
         try {
             User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
 
+            Appointment__c appointment = [SELECT Schedule__r.Center__c FROM Appointment__c WHERE Id = :appointmentId];
+
+            Center_Donation_Type__c centerDonationType = [
+                SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :appointment.Schedule__r.Center__c LIMIT 1
+            ];
+
             Visit__c visit = new Visit__c();
             visit.Donor__c = user.ContactId;
             visit.Appointment__c = appointmentId;
+            visit.Center_Donation_Type__c = centerDonationType.Id;
             visit.Status__c = 'Scheduled';
             insert visit;
 

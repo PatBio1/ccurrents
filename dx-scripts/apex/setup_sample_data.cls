@@ -1,38 +1,27 @@
 
-Id centerRecordTypeID = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Center').getRecordTypeId();
-Id donorRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Donor').getRecordTypeId();
-
-System.debug('centerRecordTypeID' + centerRecordTypeID);
-System.debug('donorRecordTypeId' + donorRecordTypeId);
-
 // Cleanup krufty Entitlements, Cases, Opportunities, Contacts and Accounts
-List<Entitlement> ent2Del = [SELECT Id FROM entitlement];
-delete ent2Del;
+delete [SELECT Id FROM Entitlement];
 
-List<Case> cases2Del = [SELECT Id FROM Case];
-delete cases2Del;
+delete [SELECT Id FROM Case];
 
-List<Opportunity> opps2Del = [SELECT Id FROM Opportunity];
-delete opps2Del;
+delete [SELECT Id FROM Opportunity];
 
-List<Contact> contacts2Del = [SELECT Id FROM Contact WHERE IsPersonAccount = false];
-delete contacts2Del;
+delete [SELECT Id FROM Contact WHERE IsPersonAccount = false];
 
-List<Account> accounts2Del = [SELECT Id FROM Account];
-delete accounts2Del;
+delete [SELECT Id FROM Account];
 
 // Create Donors
 Account[] donors = new Account[]{
     new Account(
         FirstName = 'Danny',
         LastName = 'Donor',
-        RecordTypeID = donorRecordTypeId,
+        RecordTypeID = Constants.DONOR_RECORD_TYPE_ID,
         ExternalID__c = 'donor-12345'
     ),
     new Account(
         FirstName = 'Betty',
         LastName = 'Bond',
-        RecordTypeID = donorRecordTypeId,
+        RecordTypeID = Constants.DONOR_RECORD_TYPE_ID,
         ExternalID__c = 'donor-67890'
     )
 };
@@ -43,13 +32,13 @@ upsert donors ExternalID__c;
 Account[] centers = new Account[]{
     new Account(
         Name = 'Proesis HQ',
-        RecordTypeID = centerRecordTypeID,
+        RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
         ExternalID__c = 'center-111',
         Services__c = 'Medical: Consultation'
     ),
     new Account(
         Name = 'Proesis Miramar',
-        RecordTypeID = centerRecordTypeID,
+        RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
         BillingStreet = '7901 Riviera Blvd',
         BillingCity = 'Miramar',
         BillingState = 'FL',
@@ -63,7 +52,7 @@ Account[] centers = new Account[]{
     ),
     new Account(
         Name = 'Proesis Dallas',
-        RecordTypeID = centerRecordTypeID,
+        RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
         BillingStreet = '1080 N Westmoreland Rd',
         BillingCity = 'Dallas',
         BillingState = 'TX',

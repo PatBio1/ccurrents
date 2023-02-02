@@ -1,5 +1,5 @@
 User guestUser = [SELECT Id FROM User WHERE Name = 'Proesis Donor Site Guest User'];
-PermissionSet guestPermissionSet = [SELECT Id FROM PermissionSet WHERE Label = 'Proesis Mobile Guest User'];
+PermissionSet guestPermissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.EXPERIENCE_GUEST_PERMISSION_SET_NAME];
 
 PermissionSetAssignment psa = new PermissionSetAssignment(
     PermissionSetId = guestPermissionSet.Id,

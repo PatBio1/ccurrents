@@ -13,4 +13,4 @@ rm -rf deploy
 sfdx force:source:convert -r force-app/main/default/ -d deploy
 
 
-./dx-scripts/deploy.sh $1
+./dx-scripts/deploy.sh $1 checkonly

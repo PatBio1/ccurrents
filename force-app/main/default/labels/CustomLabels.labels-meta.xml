@@ -190,6 +190,13 @@
         <value>Plasma donation saves lives and helps you achieve your financial goals faster.</value>
     </labels>
     <labels>
+        <fullName>Previous</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Previous</shortDescription>
+        <value>Previous</value>
+    </labels>
+    <labels>
         <fullName>Recommended_To_You</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -246,11 +253,25 @@
         <value>State</value>
     </labels>
     <labels>
-        <fullName>Street_Address</fullName>
+        <fullName>Street_Address_1</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Street Address</shortDescription>
-        <value>Street Address</value>
+        <shortDescription>Street Address 1</shortDescription>
+        <value>Street Address 1</value>
+    </labels>
+    <labels>
+        <fullName>Street_Address_2</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Street Address 2</shortDescription>
+        <value>Street Address 2</value>
+    </labels>
+    <labels>
+        <fullName>Suffix</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Suffix</shortDescription>
+        <value>Suffix</value>
     </labels>
     <labels>
         <fullName>Tell_Us_About_You</fullName>
@@ -274,10 +295,66 @@
         <value>Zip Code</value>
     </labels>
     <labels>
-        <fullName>Suffix</fullName>
+        <fullName>How_Will_You_Get_To_Center</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Suffix</shortDescription>
-        <value>Suffix</value>
+        <shortDescription>How Will You Get To Center</shortDescription>
+        <value>How will you get to the center?</value>
+    </labels>
+    <labels>
+        <fullName>Nickname</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Nickname</shortDescription>
+        <value>Nickname</value>
+    </labels>
+    <labels>
+        <fullName>Bus</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Bus</shortDescription>
+        <value>Bus</value>
+    </labels>
+    <labels>
+        <fullName>Car</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Car</shortDescription>
+        <value>Car</value>
+    </labels>
+    <labels>
+        <fullName>Taxi</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Taxi</shortDescription>
+        <value>Taxi</value>
+    </labels>
+    <labels>
+        <fullName>Walk</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Walk</shortDescription>
+        <value>Walk</value>
+    </labels>
+    <labels>
+        <fullName>Personal_Information</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Personal Information</shortDescription>
+        <value>Personal Information</value>
+    </labels>
+    <labels>
+        <fullName>Social_Picture</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Social Picture</shortDescription>
+        <value>Social Picture</value>
+    </labels>
+    <labels>
+        <fullName>Congratulations</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Congratulations</shortDescription>
+        <value>Congratulations</value>
     </labels>
 </CustomLabels>

@@ -5,6 +5,7 @@
     <recordTypeVisibilities>
         <default>true</default>
         <recordType>PersonAccount.Donor</recordType>
+        <personAccountDefault>true</personAccountDefault>
         <visible>true</visible>
     </recordTypeVisibilities>
     <userLicense>Customer Community Login</userLicense>

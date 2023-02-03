@@ -4,6 +4,10 @@
     --lwc-colorTextIconDefault: #99429c;
 }
 
+.photo-icon {
+    --lwc-colorTextIconDefault: #e5ddf4;
+}
+
 .slds-progress {
     max-width: unset;
 }

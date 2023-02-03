@@ -25,8 +25,16 @@
         <name>Basic_Profile</name>
     </customLabels>
     <customLabels>
+        <label>Autobús</label>
+        <name>Bus</name>
+    </customLabels>
+    <customLabels>
         <label>Cancelar</label>
         <name>Cancel</name>
+    </customLabels>
+    <customLabels>
+        <label>Auto</label>
+        <name>Car</name>
     </customLabels>
     <customLabels>
         <label>Centros</label>
@@ -53,6 +61,10 @@
         <name>Confirm_Password</name>
     </customLabels>
     <customLabels>
+        <label>Felicidades</label>
+        <name>Congratulations</name>
+    </customLabels>
+    <customLabels>
         <label>Correo electrónico</label>
         <name>Email</name>
     </customLabels>
@@ -67,6 +79,10 @@
     <customLabels>
         <label>Primer nombre</label>
         <name>First_Name</name>
+    </customLabels>
+    <customLabels>
+        <label>¿Cómo vas a llegar al centro?</label>
+        <name>How_Will_You_Get_To_Center</name>
     </customLabels>
     <customLabels>
         <label>Únete a nosotros</label>
@@ -97,12 +113,20 @@
         <name>Next</name>
     </customLabels>
     <customLabels>
+        <label>Apodo</label>
+        <name>Nickname</name>
+    </customLabels>
+    <customLabels>
         <label>Pasado</label>
         <name>Past</name>
     </customLabels>
     <customLabels>
         <label>por pt</label>
         <name>Per_Pt</name>
+    </customLabels>
+    <customLabels>
+        <label>Informacion personal</label>
+        <name>Personal_Information</name>
     </customLabels>
     <customLabels>
         <label>La donación de plasma salva vidas y lo ayuda a alcanzar sus metas financieras más rápido.</label>
@@ -137,6 +161,10 @@
         <name>Set_Your_Password</name>
     </customLabels>
     <customLabels>
+        <label>imagen social</label>
+        <name>Social_Picture</name>
+    </customLabels>
+    <customLabels>
         <label>Español</label>
         <name>Spanish</name>
     </customLabels>
@@ -145,16 +173,28 @@
         <name>State</name>
     </customLabels>
     <customLabels>
-        <label>Dirección</label>
-        <name>Street_Address</name>
+        <label>Dirección 1</label>
+        <name>Street_Address_1</name>
+    </customLabels>
+    <customLabels>
+        <label>Dirección 2</label>
+        <name>Street_Address_2</name>
     </customLabels>
     <customLabels>
         <label>Sufijo</label>
         <name>Suffix</name>
     </customLabels>
     <customLabels>
+        <label>Taxi</label>
+        <name>Taxi</name>
+    </customLabels>
+    <customLabels>
         <label>Cuéntanos acerca de ti</label>
         <name>Tell_Us_About_You</name>
+    </customLabels>
+    <customLabels>
+        <label>Caminar</label>
+        <name>Walk</name>
     </customLabels>
     <customLabels>
         <label>Bienvenidos a Proesis</label>

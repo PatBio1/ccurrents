@@ -45,6 +45,10 @@
                 <behavior>Edit</behavior>
                 <field>Last_Used_Center__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Street_Line_2__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

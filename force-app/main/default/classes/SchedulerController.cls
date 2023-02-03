@@ -12,9 +12,11 @@ public without sharing class SchedulerController {
             lead.Email = profile.email;
             lead.MobilePhone = profile.mobilePhone;
             lead.Street = profile.street;
+            lead.Street_Line_2__c = profile.street2;
             lead.City = profile.city;
             lead.State = profile.state;
             lead.PostalCode = profile.postalCode;
+            lead.How_will_you_get_to_the_Center__c = profile.howGetToCenter;
             upsert lead;
 
             return lead.Id;
@@ -58,9 +60,8 @@ public without sharing class SchedulerController {
             accountContactRelation.Roles = 'Donor';
             insert accountContactRelation;
 
-System.debug('### account='+account);
             String nickname = account.FirstName.substring(0, 1) + account.LastName;
-            String username = nickname + '@' + UserInfo.getOrganizationName() + '.com';
+            String username = account.PersonEmail + Constants.USERNAME_SUFFIX;
 
             User user = new user();
             user.FirstName = account.FirstName;
@@ -397,6 +398,9 @@ System.debug('### user='+user);
         public String street {get; set;}
 
         @AuraEnabled
+        public String street2 {get; set;}
+
+        @AuraEnabled
         public String city {get; set;}
 
         @AuraEnabled
@@ -404,6 +408,9 @@ System.debug('### user='+user);
 
         @AuraEnabled
         public String postalCode {get; set;}
+
+        @AuraEnabled
+        public String howGetToCenter {get; set;}
 
     }
 

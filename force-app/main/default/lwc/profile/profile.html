@@ -59,22 +59,22 @@
             </div>
 
             <div class="slds-m-bottom_small">
-                <lightning-input type="text" label={labels.firstName} data-field="firstName" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="text" label={labels.firstName} value={profile.firstName} data-field="firstName" onchange={onFieldChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">
-                <lightning-input type="text" label={labels.middleName} data-field="middleName" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="text" label={labels.middleName} value={profile.middleName} data-field="middleName" onchange={onFieldChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">
-                <lightning-input type="text" label={labels.lastName} data-field="lastName" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="text" label={labels.lastName} value={profile.lastName} data-field="lastName" onchange={onFieldChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">
-                <lightning-combobox label={labels.suffix} options={suffixOptions} data-field="suffix" onchange={onFieldChange}></lightning-combobox>
+                <lightning-combobox label={labels.suffix} options={suffixOptions} value={profile.suffix} data-field="suffix" onchange={onFieldChange}></lightning-combobox>
             </div>
             <div class="slds-m-bottom_small">
-                <lightning-input type="email" label={labels.email} data-field="email" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="email" label={labels.email} value={profile.email} data-field="email" onchange={onFieldChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">
-                <lightning-input type="tel" label={labels.mobilePhone} data-field="mobilePhone" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="tel" label={labels.mobilePhone} value={profile.mobilePhone} data-field="mobilePhone" onchange={onFieldChange}></lightning-input>
             </div>
         </div>
 
@@ -142,24 +142,150 @@
             </div>
 
             <div class="slds-m-bottom_small">
-                <lightning-input type="text" label={labels.streetAddress} data-field="street" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="text" label={labels.streetAddress1} value={profile.street} data-field="street" onchange={onFieldChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">
-                <lightning-input type="text" label={labels.city} data-field="city" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="text" label={labels.streetAddress2} value={profile.street2} data-field="street2" onchange={onFieldChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">
-                <lightning-input type="text" label={labels.state} data-field="state" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="text" label={labels.city} value={profile.city} data-field="city" onchange={onFieldChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">
-                <lightning-input type="text" label={labels.zipCode} data-field="postalCode" onchange={onFieldChange}></lightning-input>
+                <lightning-combobox label={labels.state} options={stateOptions} value={profile.state} data-field="state" onchange={onFieldChange}></lightning-combobox>
             </div>
             <div class="slds-m-bottom_small">
+                <lightning-input type="text" label={labels.zipCode} value={profile.postalCode} data-field="postalCode" onchange={onFieldChange}></lightning-input>
+            </div>
+            <div class="slds-m-bottom_small">
+                <label class="slds-form-element__label slds-no-flex">{labels.howWillYouGetToCenter}</label>
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input if:false={carSelected} type="checkbox" label={labels.car} data-type="Car" onchange={onHowGetToCenterChange}></lightning-input>
+                        <lightning-input if:true={carSelected} type="checkbox" label={labels.car} data-type="Car" onchange={onHowGetToCenterChange} checked></lightning-input>
 
+                        <lightning-input if:false={busSelected} type="checkbox" label={labels.bus} data-type="Bus" onchange={onHowGetToCenterChange}></lightning-input>
+                        <lightning-input if:true={busSelected} type="checkbox" label={labels.bus} data-type="Bus" onchange={onHowGetToCenterChange} checked></lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input if:false={walkSelected} type="checkbox" label={labels.walk} data-type="Walk" onchange={onHowGetToCenterChange}></lightning-input>
+                        <lightning-input if:true={walkSelected} type="checkbox" label={labels.walk} data-type="Walk" onchange={onHowGetToCenterChange} checked></lightning-input>
+
+                        <lightning-input if:false={taxiSelected} type="checkbox" label={labels.taxi} data-type="Taxi" onchange={onHowGetToCenterChange}></lightning-input>
+                        <lightning-input if:true={taxiSelected} type="checkbox" label={labels.taxi} data-type="Taxi" onchange={onHowGetToCenterChange} checked></lightning-input>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <lightning-button if:true={basicProfileValid} label={labels.next} variant="brand" stretch="true" class="primary-button" onclick={onAddressNextButtonClick}></lightning-button>
-        <button if:false={basicProfileValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.next}</button>
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-button label={labels.previous} stretch="true" class="secondary-button" onclick={onAddressPreviousButtonClick}></lightning-button>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-button if:true={addressValid} label={labels.next} variant="brand" stretch="true" class="primary-button" onclick={onAddressNextButtonClick}></lightning-button>
+                <button if:false={addressValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.next}</button>
+            </div>
+        </div>
+    </div>
+
+    <div if:true={showPicture} class="slds-var-p-around_medium">
+        <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+
+        <div class="title-medium slds-text-align_center slds-m-vertical_large">
+            {labels.tellUsAboutYou}
+        </div>
+
+        <div class="slds-progress">
+            <ol class="slds-progress__list">
+                <li class="slds-progress__item slds-is-completed">
+                    <button class="slds-button slds-button_icon slds-progress__marker slds-progress__marker_icon" title="Step 1 - Completed">
+                        <lightning-icon icon-name="utility:success" size="x-small"></lightning-icon>
+                      <span class="slds-assistive-text">Step 1 - Completed</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item slds-is-completed">
+                    <button class="slds-button slds-button_icon slds-progress__marker slds-progress__marker_icon" title="Step 2 - Completed">
+                        <lightning-icon icon-name="utility:success" size="x-small"></lightning-icon>
+                      <span class="slds-assistive-text">Step 2 - Completed</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item slds-is-completed">
+                    <button class="slds-button slds-button_icon slds-progress__marker slds-progress__marker_icon" title="Step 3 - Completed">
+                        <lightning-icon icon-name="utility:success" size="x-small"></lightning-icon>
+                      <span class="slds-assistive-text">Step 3 - Completed</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item slds-is-active">
+                    <button class="slds-button slds-progress__marker">
+                        <span class="slds-assistive-text">Step 4 - Active</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item">
+                    <button class="slds-button slds-progress__marker">
+                        <span class="slds-assistive-text">Step 5</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item">
+                    <button class="slds-button slds-progress__marker">
+                        <span class="slds-assistive-text">Step 6</span>
+                    </button>
+                </li>
+                <li class="slds-progress__item">
+                    <button class="slds-button slds-progress__marker">
+                        <span class="slds-assistive-text">Step 7</span>
+                    </button>
+                </li>
+            </ol>
+            <div class="slds-progress-bar slds-progress-bar_x-small" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" role="progressbar">
+                <span class="slds-progress-bar__value" style="width:0%">
+                    <span class="slds-assistive-text">Progress: 0%</span>
+                </span>
+            </div>
+        </div>
+
+        <div class=" slds-m-vertical_large">
+            <div class="title-small slds-text-align_center">
+                {labels.personalInformation}
+            </div>
+
+            <div class="slds-m-bottom_small">
+                <lightning-input type="text" label={labels.nickname} value={profile.nickname} data-field="nickname" onchange={onFieldChange}></lightning-input>
+            </div>
+            <div class="slds-m-bottom_small">
+                <div class="slds-form-element">
+                    <span class="slds-form-element__label">{labels.socialPicture}</span>
+                    <div class="slds-form-element__control">
+                        <div class="slds-file-selector slds-file-selector_images">
+                            <div class="slds-file-selector__dropzone" style="height: 200px;">
+                                <input type="file" class="slds-file-selector__input slds-assistive-text" accept="image/png" id="file-upload-input-59"/>
+                                <label class="slds-file-selector__body" for="file-upload-input-59" id="file-selector-secondary-label58">
+                                    <lightning-icon icon-name="utility:photo" size="x-small" class="photo-icon"></lightning-icon><br/><br/>
+
+                                    <lightning-button icon-name="utility:upload" label="Upload a photo" class="slds-file-selector__button secondary-button"></lightning-button>
+
+                                    <!--
+                                    <span class="slds-file-selector__button slds-button slds-button_neutral">
+                                        <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                            <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#upload"></use>
+                                        </svg>
+                                    </span>Upload a photo -->
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-button label={labels.previous} stretch="true" class="secondary-button" onclick={onPicturePreviousButtonClick}></lightning-button>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-button if:true={pictureValid} label={labels.next} variant="brand" stretch="true" class="primary-button" onclick={onPictureNextButtonClick}></lightning-button>
+                <button if:false={pictureValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.next}</button>
+            </div>
+        </div>
     </div>
 
     <div if:true={showPassword} class="slds-var-p-around_medium">
@@ -167,6 +293,12 @@
 
         <div class="title-medium slds-text-align_center slds-m-vertical_large">
             {labels.setYourPassword}
+        </div>
+
+        <div class="slds-text-align_center slds-m-vertical_large">
+            Password should consist of min 8 characters:
+            numbers, at least 1 uppercase and 1 special 
+            character.
         </div>
 
         <div class="slds-progress">
@@ -220,15 +352,34 @@
 
         <div class="slds-m-vertical_large">
             <div class="slds-m-bottom_small">
-                <lightning-input type="text" label={labels.enterPassword} data-field="streetAddress" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="password" label={labels.enterPassword} data-field="password" onchange={onFieldChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">
-                <lightning-input type="text" label={labels.confirmPassword} data-field="city" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="password" label={labels.confirmPassword} data-field="passwordConfirm" onchange={onFieldChange}></lightning-input>
             </div>
         </div>
 
-        <lightning-button if:true={basicProfileValid} label={labels.next} variant="brand" stretch="true" class="primary-button" onclick={onPasswordNextButtonClick}></lightning-button>
-        <button if:false={basicProfileValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.next}</button>
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-button label={labels.previous} stretch="true" class="secondary-button" onclick={onPasswordPreviousButtonClick}></lightning-button>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-button if:true={passwordValid} label={labels.next} variant="brand" stretch="true" class="primary-button" onclick={onPasswordNextButtonClick}></lightning-button>
+                <button if:false={passwordValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.next}</button>
+            </div>
+        </div>
+    </div>
+
+    <div if:true={showCongratulations} class="slds-var-p-around_medium">
+        <div class="title-medium slds-text-align_center slds-m-vertical_large">
+            {labels.congratulations}
+        </div>
+
+        <div class="slds-text-align_center slds-m-vertical_large">
+            The account verified successfully!
+        </div>
+
+        <button class="slds-button slds-button_brand slds-button_stretch primary-button slds-m-bottom_medium" onclick={onScheduleButtonClick}>Schedule Appointment</button>
     </div>
 
 </template>

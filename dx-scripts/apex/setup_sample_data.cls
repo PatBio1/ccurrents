@@ -66,7 +66,31 @@ Account[] centers = new Account[]{
     )
 };
 
-upsert centers ExternalID__c; 
+upsert centers ExternalID__c;
+
+List<Business_Hours__c> proesisMiramarHours = new List<Business_Hours__c>();
+Id proesisMirimar = [SELECT Id FROM Account WHERE Name = 'Proesis Miramar'][0].Id;
+
+for (Default_Business_Hours__mdt defaultTime : [SELECT Id, Label, Close__c, Index__c, IsClosed__c, Open__c FROM Default_Business_Hours__mdt]) {
+    String todayString = String.valueOf(Datetime.now().date());
+    Datetime closingTime = Datetime.valueOf(String.valueOf(todayString + ' ' + defaultTime.Close__c) + ':00');
+    Datetime openTime = Datetime.valueOf(String.valueOf(todayString + ' ' + defaultTime.Open__c + ':00'));
+
+    Business_Hours__c newBH = new Business_Hours__c();
+    newBH.Name = defaultTime.Label;
+    newBH.Center__c = proesisMirimar;
+    newBH.Close__c = Time.newInstance(closingTime.hour(), closingTime.minute(), closingTime.second(), closingTime.millisecond());
+    newBH.Index__c = defaultTime.Index__c;
+    newBH.isClosed__c = defaultTime.IsClosed__c;
+    newBH.Open__c = Time.newInstance(openTime.hour(), openTime.minute(), openTime.second(), openTime.millisecond());
+
+    proesisMiramarHours.add(newBH);
+}
+
+// see if we have these - CMD should be in MD and setup
+if (!proesisMiramarHours.isEmpty()) {
+    insert proesisMiramarHours;
+}
 
 Schedule__c[] schedules = new Schedule__c[]{
     new Schedule__c(

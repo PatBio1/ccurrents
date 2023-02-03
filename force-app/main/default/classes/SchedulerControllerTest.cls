@@ -198,8 +198,8 @@ public with sharing class SchedulerControllerTest {
         System.runAs(TestUtil.createExperienceUser()) {
             SchedulerController.AppointmentGroups appointmentGroups = SchedulerController.getAppointments(center.Id, Date.newInstance(2023, 1, 10));
 
-            System.assertEquals(0, appointmentGroups.morningAppointments.size());
-            System.assertEquals(1, appointmentGroups.afternoonAppointments.size());
+            System.assertEquals(1, appointmentGroups.morningAppointments.size());
+            System.assertEquals(0, appointmentGroups.afternoonAppointments.size());
             System.assertEquals(0, appointmentGroups.eveningAppointments.size());
         }
     }

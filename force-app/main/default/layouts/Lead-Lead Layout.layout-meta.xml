@@ -40,6 +40,10 @@
                 <behavior>Edit</behavior>
                 <field>Email</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Street_Line_2__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>

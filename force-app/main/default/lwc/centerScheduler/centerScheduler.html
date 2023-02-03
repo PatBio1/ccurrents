@@ -1,5 +1,6 @@
 <template>
   <article class="slds-card">
+
       <div class="slds-card__header slds-grid slds-gutters">
           <div class="slds-col slds-size_2-of-12">
            <lightning-combobox
@@ -122,8 +123,56 @@
           </div>
         </template>
       </div>
-      <footer class="slds-card__footer">
+      <footer class="slds-card__footer ">
         
+        <div class="slds-grid slds-wrap chart">
+
+          <!-- header row -->
+          
+          <div class="slds-col slds-size_12-of-12 chart-header">
+            <span class="header-date">Monday, 1 November</span>
+          </div>
+
+          <!-- subheaders -->
+          
+          <div class="slds-col slds-size_1-of-12 chart-header-sub" style="text-align: left;">
+            Time
+          </div>
+
+          <div class="slds-col slds-size_1-of-12 chart-header-sub">
+            Available
+          </div>
+
+          <div class="slds-col slds-size_1-of-12 chart-header-sub">
+            Filled
+          </div>
+
+          <div class="slds-col slds-size_9-of-12 chart-header-sub" style="text-align: left;">
+            Donors
+          </div>
+
+          <!-- content rows -->
+
+          <div class="slds-col slds-size_1-of-12 chart-data" style="text-align: left;" >
+            8:00 AM
+          </div>
+
+          <div class="slds-col slds-size_1-of-12 chart-data">
+            5
+          </div>
+
+          <div class="slds-col slds-size_1-of-12 chart-data">
+            5
+          </div>
+
+          <div class="slds-col slds-size_9-of-12 chart-data" style="text-align: left;">
+            &nbsp;
+          </div>
+
+        </div>
+
+
+
       </footer>
     </article>
 </template>

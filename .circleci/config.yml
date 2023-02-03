@@ -21,6 +21,8 @@ jobs:
               sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a INTQA
               echo $SFDXURL_UATSTAGING > /tmp/sfdx.url
               sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a UATSTAGING
+              echo $SFDXURL_PROD > /tmp/sfdx.url
+              sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a PROD
           name: "Authenticate to Orgs"
       - run: 
           command: |
@@ -33,8 +35,8 @@ jobs:
               if [[ $CIRCLE_BRANCH == "main" ]];
               then 
                 #deploy master branch to main org
-                echo "deploy $CIRCLE_BRANCH to main org DISABLED"
-                # ./dx-scripts/deploy.sh pkg_org
+                echo "CHECKONLY deploy $CIRCLE_BRANCH to main org ENABLED"
+                ./dx-scripts/deploy.sh PROD checkonly
               elif [[ $CIRCLE_BRANCH == "intqa" ]];
               then
                 #deploy INTQA branch to INTQA org
@@ -47,8 +49,8 @@ jobs:
                 ./dx-scripts/deploy.sh UATSTAGING
               else
                 #deploy CHECKONLY to other branches
-                echo "Not on Main Branch CHECKONLY - Deploy $CIRCLE_BRANCH to INTQA org ENABLED"
-                ./dx-scripts/deploy.sh INTQA checkonly
+                echo "Not on Main Branch CHECKONLY - Deploy $CIRCLE_BRANCH to PROD org ENABLED"
+                ./dx-scripts/deploy.sh PROD checkonly
               fi
           name: "Deploy To Permanent Branch/Orgs"
       - store_artifacts: 

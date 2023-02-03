@@ -4,7 +4,7 @@ public with sharing class ScheduleUtils_Test {
     @TestSetup
     static void makeData(){
         Id centerRecordTypeID =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Center').getRecordTypeId();
-        Id personAccountRecordTypeId =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('PersonAccount').getRecordTypeId();
+        Id personAccountRecordTypeId =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Donor').getRecordTypeId();
 
         system.debug('centerRecordTypeID' + centerRecordTypeID);
         system.debug('personAccountRecordTypeId' + personAccountRecordTypeId);
@@ -52,32 +52,29 @@ public with sharing class ScheduleUtils_Test {
 
         upsert centers ExternalID__c; 
 
-
         Schedule__c[] schedules = new Schedule__c[]{
             new Schedule__c(
                 Center__c = centers[0].Id, 
-                Begin_Date__c = Date.today().addDays(-10),
-                End_Date__c = Date.today().addDays(30)
+                Begin_Date__c =  Date.newInstance(2023, 1, 10).addDays(-10),
+                End_Date__c =  Date.newInstance(2023, 1, 10).addDays(30)
             ),
             new Schedule__c(
                 Center__c = centers[1].Id,
-                Begin_Date__c = Date.today().addDays(-10),
-                End_Date__c = Date.today().addDays(30)
+                Begin_Date__c =  Date.newInstance(2023, 1, 10).addDays(-10),
+                End_Date__c =  Date.newInstance(2023, 1, 10).addDays(30)
             ),
             new Schedule__c(
                 Center__c = centers[2].Id,
-                Begin_Date__c = Date.today().addDays(-10),
-                End_Date__c = Date.today().addDays(30)
+                Begin_Date__c =  Date.newInstance(2023, 1, 10).addDays(-10),
+                End_Date__c =  Date.newInstance(2023, 1, 10).addDays(30)
             )
         };
 
         insert schedules;
     }
-    
-    
+
     @isTest
     static void ScheduleUtils_Test() {
-
         Appointment__c[] appointments;
         Test.startTest();
 

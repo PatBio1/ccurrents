@@ -26,6 +26,9 @@ sfdx force:org:create --durationdays 30 -s -f config/project-scratch-def.json -a
 #set the default scratch org name
 sfdx force:config:set defaultusername=$1
 
+#install the marketing cloud connect package (source has dependencies on this package)
+# commenting for now - will add back later when dependencies introduced into source
+# sfdx force:package:install --package MarketingCloud -w 10
 
 ## push local code artifacts to scratch org
 sfdx force:source:push
@@ -34,7 +37,10 @@ sfdx force:source:push
 sfdx force:user:permset:assign -n ProesisAdministratorSalesforceLicense
 
 ## run any anymous apex scripts to setup data, batches, etc...
+sfdx force:apex:execute -f dx-scripts/apex/setup_users.cls
+
 sfdx force:apex:execute -f dx-scripts/apex/setup_sample_data.cls
+
 # add appointment slots for today in center 1
 sfdx force:apex:execute -f dx-scripts/apex/create_appointment_slots.cls
 

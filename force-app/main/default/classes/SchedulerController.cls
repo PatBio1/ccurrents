@@ -1,54 +1,25 @@
 public without sharing class SchedulerController {
 
-/*
-Lead lead = new Lead();
-lead.FirstName = 'First';
-lead.LastName = 'Last';
-lead.Email = 'demo@proesis.com';
-insert lead;
-
-System.debug(lead);
-
-LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
-
-Database.LeadConvert leadConvert = new Database.LeadConvert();
-leadConvert.setLeadId('00QDn000004EnQ7MAK');
-leadConvert.setConvertedStatus(leadStatus.MasterLabel);
-leadConvert.setDoNotCreateOpportunity(true);
-
-Database.LeadConvertResult lcr = Database.convertLead(leadConvert);
-
-System.debug(lcr);
-
-
-
-
-    System.debug(userId);
-*/
-
     @AuraEnabled
-    public static Id createAccount() {
+    public static Id upsertLead(Profile profile) {
         try {
             Lead lead = new Lead();
-            lead.FirstName = 'First';
-            lead.LastName = 'Last';
-            lead.Email = 'demo@proesis.com';
-            insert lead;
+            lead.Id = profile.id;
+            lead.FirstName = profile.firstName;
+            lead.MiddleName = profile.middleName;
+            lead.LastName = profile.lastName;
+            lead.Suffix = profile.suffix;
+            lead.Email = profile.email;
+            lead.MobilePhone = profile.mobilePhone;
+            lead.Street = profile.street;
+            lead.Street_Line_2__c = profile.street2;
+            lead.City = profile.city;
+            lead.State = profile.state;
+            lead.PostalCode = profile.postalCode;
+            lead.How_will_you_get_to_the_Center__c = profile.howGetToCenter;
+            upsert lead;
 
-            System.debug(lead);
-
-            LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
-
-            Database.LeadConvert leadConvert = new Database.LeadConvert();
-            leadConvert.setLeadId(lead.Id);
-            leadConvert.setConvertedStatus(leadStatus.MasterLabel);
-            leadConvert.setDoNotCreateOpportunity(true);
-
-            Database.LeadConvertResult lcr = Database.convertLead(leadConvert);
-
-            System.debug(lcr);
-
-            return lcr.getAccountId();
+            return lead.Id;
         } catch (Exception e) {
             String message = e.getMessage() + ' -- ' + e.getStackTraceString();
 
@@ -59,8 +30,21 @@ System.debug(lcr);
     }
 
     @AuraEnabled
-    public static Id createUser(Id accountId) {
+    public static Id createUser(Profile profile) {
         try {
+            LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
+
+            Database.LeadConvert leadConvert = new Database.LeadConvert();
+            leadConvert.setLeadId(profile.id);
+            leadConvert.setConvertedStatus(leadStatus.MasterLabel);
+            leadConvert.setDoNotCreateOpportunity(true);
+
+            Database.LeadConvertResult lcr = Database.convertLead(leadConvert);
+
+            System.debug(lcr);
+
+            Id accountId = lcr.getAccountId();
+
             Account account = [
                 SELECT
                     FirstName, LastName, PersonEmail, PersonContactId
@@ -70,28 +54,52 @@ System.debug(lcr);
                     Id = :accountId
             ];
 
+            AccountContactRelation accountContactRelation = new AccountContactRelation();
+            accountContactRelation.AccountId = profile.centerId;
+            accountContactRelation.ContactId = lcr.getContactId();
+            accountContactRelation.Roles = 'Donor';
+            insert accountContactRelation;
+
             String nickname = account.FirstName.substring(0, 1) + account.LastName;
-            String username = nickname + '@proesispoc.com';
+            String username = account.PersonEmail + Constants.USERNAME_SUFFIX;
 
             User user = new user();
             user.FirstName = account.FirstName;
             user.LastName = account.LastName;
             user.Email = account.PersonEmail;
-            user.Alias = nickname.abbreviate(8); // only 8 characters
+            user.Alias = nickname.abbreviate(8);
             user.Username = username;
             user.CommunityNickname = nickname.abbreviate(40);
             user.LocaleSidKey = 'en_US';
             user.TimeZoneSidKey = 'America/New_York';
-            user.ProfileId = [SELECT Id FROM Profile WHERE Name = 'Customer Community Login User'].Id;
+            user.ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id;
             user.LanguageLocaleKey = 'en_US';
             user.EmailEncodingKey = 'UTF-8';
             user.ContactId = account.PersonContactId;
             user.IsActive = true;
+System.debug('### user='+user);
 
-            //Id userId = Site.createExternalUser(user, account.Id, 'ccurrents', false);
-            Id userId = Site.createPortalUser(user, account.Id, 'ccurrents', false);
+            Id userId = Site.createExternalUser(user, account.Id, 'ccurrents1', false);
 
             return userId;
+        } catch (Exception e) {
+            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
+
+            AuraHandledException ahe = new AuraHandledException(message);
+            ahe.setMessage(message);
+            throw ahe;
+        }
+    }
+
+    @AuraEnabled
+    public static void assignPermissionSet(Id userId) {
+        try {
+            PermissionSet permissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.EXPERIENCE_PERMISSION_SET_NAME];
+
+            PermissionSetAssignment psa = new PermissionSetAssignment();
+            psa.PermissionSetId = permissionSet.Id;
+            psa.AssigneeId = userId;
+            insert psa;
         } catch (Exception e) {
             String message = e.getMessage() + ' -- ' + e.getStackTraceString();
 
@@ -110,7 +118,7 @@ System.debug(lcr);
                 FROM
                     Account
                 WHERE
-                    RecordType.Name = 'Center'
+                    RecordTypeId = :Constants.CENTER_RECORD_TYPE_ID
                 AND
                     Site != null
                 ORDER BY
@@ -152,6 +160,8 @@ System.debug(lcr);
                     AccountContactRelation
                 WHERE
                     ContactId = :user.ContactId
+                AND
+                    Roles INCLUDES ('Donor')
             ];
 
             Account account = relations[0].Account;
@@ -265,9 +275,16 @@ System.debug(lcr);
         try {
             User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
 
+            Appointment__c appointment = [SELECT Schedule__r.Center__c FROM Appointment__c WHERE Id = :appointmentId];
+
+            Center_Donation_Type__c centerDonationType = [
+                SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :appointment.Schedule__r.Center__c LIMIT 1
+            ];
+
             Visit__c visit = new Visit__c();
             visit.Donor__c = user.ContactId;
             visit.Appointment__c = appointmentId;
+            visit.Center_Donation_Type__c = centerDonationType.Id;
             visit.Status__c = 'Scheduled';
             insert visit;
 
@@ -348,6 +365,52 @@ System.debug(lcr);
 
         @AuraEnabled
         public String status {get; set;}
+
+    }
+
+    public class Profile {
+
+        @AuraEnabled
+        public Id id {get; set;}
+
+        @AuraEnabled
+        public Id centerId {get; set;}
+
+        @AuraEnabled
+        public String firstName {get; set;}
+
+        @AuraEnabled
+        public String middleName {get; set;}
+
+        @AuraEnabled
+        public String lastName {get; set;}
+
+        @AuraEnabled
+        public String suffix {get; set;}
+
+        @AuraEnabled
+        public String email {get; set;}
+
+        @AuraEnabled
+        public String mobilePhone {get; set;}
+
+        @AuraEnabled
+        public String street {get; set;}
+
+        @AuraEnabled
+        public String street2 {get; set;}
+
+        @AuraEnabled
+        public String city {get; set;}
+
+        @AuraEnabled
+        public String state {get; set;}
+
+        @AuraEnabled
+        public String postalCode {get; set;}
+
+        @AuraEnabled
+        public String howGetToCenter {get; set;}
 
     }
 

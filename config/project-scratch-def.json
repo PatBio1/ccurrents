@@ -1,12 +1,25 @@
 {
     "orgName": "proesis-dx",
-    "edition": "Partner Developer",
+    "edition": "Developer",
     "features": ["PersonAccounts",  "ServiceCloud", "EnableSetPasswordInApi","Sites","Communities",
     "ContactsToMultipleAccounts"],
     "hasSampleData": true,
     "settings": {
+        "accountSettings": {
+            "enableRelateContactToMultipleAccounts": true
+        },
         "chatterSettings": {
             "enableChatter": true
+        },
+        "communitiesSettings": {
+            "enableNetworksEnabled": true
+        },
+        "experienceBundleSettings": {
+            "enableExperienceBundleMetadata": true
+        },
+        "languageSettings": {
+            "enableTranslationWorkbench": true,
+            "enableEndUserLanguages": true
         },
         "lightningExperienceSettings": {
             "enableS1DesktopEnabled": true
@@ -14,16 +27,12 @@
         "mobileSettings": {
             "enableS1EncryptedStoragePref2": false
         },
-        "communitiesSettings": {
-            "enableNetworksEnabled": true
-        },"siteSettings": {
+        "nameSettings": {
+            "enableMiddleName": true,
+            "enableNameSuffix": true
+        },
+        "siteSettings": {
             "enableEnhancedSitesAndContentPlatform" : true
-        },
-        "experienceBundleSettings": {
-            "enableExperienceBundleMetadata": true
-        },
-        "accountSettings": {
-            "enableRelateContactToMultipleAccounts": true
         }
     }
 }

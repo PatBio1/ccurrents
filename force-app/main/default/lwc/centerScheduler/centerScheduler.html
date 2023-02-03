@@ -1,0 +1,129 @@
+<template>
+  <article class="slds-card">
+      <div class="slds-card__header slds-grid slds-gutters">
+          <div class="slds-col slds-size_2-of-12">
+           <lightning-combobox
+              name="progress"
+              label="Choose Center"
+              value={value}
+              placeholder="Select Center"
+              options={centers}
+              onchange={changeCenter} ></lightning-combobox>
+          </div>
+          <div class="slds-col slds-size_2-of-12">
+            
+              <lightning-input 
+                type="date" 
+                name="input8" 
+                label="Choose Date" 
+                value="2023-09-07" 
+                min="2023-01-01" ></lightning-input>
+           
+          </div>
+          <div class="slds-col slds-size_4-of-12"></div>
+          <div class="slds-col slds-size_4-of-12 slds-align_absolute-center" >
+
+            
+              <lightning-button
+                variant="neutral"
+                label={filterLabel}
+                title="Toggle Filters"
+                icon-name="utility:filterList"
+                onclick={toggleFilters}
+                class="slds-p-around_xxx-small">
+            </lightning-button>
+            
+            &nbsp;
+            
+              <lightning-button
+                variant="neutral"
+                label="Refresh"
+                title="Refresh"
+                icon-name="utility:refresh"
+                class="slds-p-around_xxx-small">
+            </lightning-button>
+            
+              
+             
+          </div>
+
+
+      </div>
+      <div class="slds-card__body slds-card__body_inner">
+        <template if:true={showFilters}>
+          <div class="filters slds-grid slds-gutters">
+            <div class="slds-col slds-size_2-of-12">
+              <lightning-input 
+                type="time" 
+                name="start" 
+                label="Start Time" 
+                min="08:00:00.000"
+                max="15:00:00.000"
+                ></lightning-input>
+
+            </div>
+
+            <div class="slds-col slds-size_2-of-12">
+             
+              <lightning-input 
+                type="time" 
+                name="end" 
+                label="End Time" 
+                ></lightning-input>
+     
+            </div>
+
+            <div class="slds-col slds-size_2-of-12">
+              <lightning-combobox
+                name="progress"
+                label="Appointment Types"
+                value={value}
+                placeholder="Select Type"
+                options={appointmentTypes}
+                onchange={filterChange} ></lightning-combobox>
+
+            </div>
+
+            <div class="slds-col slds-size_2-of-12">
+              <lightning-combobox
+                name="progress"
+                label="Statuses"
+                value={value}
+                placeholder="Select Status"
+                options={statuses}
+                onchange={filterChange} ></lightning-combobox>
+
+            </div>
+
+            <div class="slds-col slds-size_4-of-12 slds-align_absolute-center" >
+
+            
+              <lightning-button
+                variant="neutral"
+                label="Apply"
+                title="Apply Filters"
+                class="apply-button">
+            </lightning-button>
+            
+            &nbsp;
+            
+              <lightning-button
+                variant="neutral"
+                label="Clear Filters"
+                title="Clear Filters"
+                icon-name="utility:clear"
+                class="slds-p-around_xxx-small">
+            </lightning-button>
+            
+              
+             
+          </div>
+
+          </div>
+        </template>
+      </div>
+      <footer class="slds-card__footer">
+        
+      </footer>
+    </article>
+</template>

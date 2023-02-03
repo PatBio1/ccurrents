@@ -192,7 +192,7 @@
                 <field>hasViewedIntroVideo__pc</field>
             </layoutItems>
         </layoutColumns>
-
+        <layoutColumns/>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
     <layoutSections>
@@ -243,7 +243,7 @@
                 <field>Description</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>Services__c</field>
             </layoutItems>
             <layoutItems>
@@ -319,13 +319,17 @@
             <actionType>StandardButton</actionType>
             <sortOrder>11</sortOrder>
         </platformActionListItems>
+        <platformActionListItems>
+            <actionName>NewTask</actionName>
+            <actionType>QuickAction</actionType>
+            <sortOrder>12</sortOrder>
+        </platformActionListItems>
     </platformActionList>
     <relatedLists>
         <fields>NAME</fields>
         <fields>Center__c</fields>
         <fields>Appointment__c</fields>
         <fields>Status__c</fields>
-        <fields>Donation_Type__c</fields>
         <fields>Donation_Volume__c</fields>
         <relatedList>Visit__c.Donor__c</relatedList>
     </relatedLists>
@@ -344,6 +348,11 @@
         <relatedList>Transaction__c.Donor__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <fields>ACCOUNT.NAME</fields>
+        <fields>ACCCONRELATION.ROLES</fields>
+        <relatedList>RelatedContactAccountRelationList</relatedList>
+    </relatedLists>
+    <relatedLists>
         <relatedList>RelatedFileList</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
@@ -352,7 +361,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h6s000001eO90</masterLabel>
+        <masterLabel>00h8N000001A9u0</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

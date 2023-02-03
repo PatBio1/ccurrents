@@ -1,60 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
-        <fullName>Cancel</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Cancel</shortDescription>
-        <value>Cancel</value>
-    </labels>
-    <labels>
-        <fullName>Choose_Another_Clinic</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Choose Another Clinic</shortDescription>
-        <value>Choose another clinic</value>
-    </labels>
-    <labels>
-        <fullName>Choose_Date</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Choose Date</shortDescription>
-        <value>Choose Date</value>
-    </labels>
-    <labels>
-        <fullName>Per_Pt</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Per Pt</shortDescription>
-        <value>per pt</value>
-    </labels>
-    <labels>
-        <fullName>Schedule</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Schedule</shortDescription>
-        <value>Schedule</value>
-    </labels>
-    <labels>
-        <fullName>Schedule_Your_1st_Appointment</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Schedule Your 1st Appointment</shortDescription>
-        <value>Schedule Your 1st Appointment</value>
-    </labels>
-    <labels>
-        <fullName>Select_Time_Slot</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Select Time Slot</shortDescription>
-        <value>Select Time Slot</value>
-    </labels>
-    <labels>
         <fullName>About_Donation_Experience</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>About Donation Experience</shortDescription>
         <value>About the Donation Experience</value>
+    </labels>
+    <labels>
+        <fullName>Address</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Address</shortDescription>
+        <value>Address</value>
     </labels>
     <labels>
         <fullName>Already_Have_An_Account</fullName>
@@ -85,6 +43,13 @@
         <value>Basic Profile</value>
     </labels>
     <labels>
+        <fullName>Cancel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Cancel</shortDescription>
+        <value>Cancel</value>
+    </labels>
+    <labels>
         <fullName>Centers</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -106,11 +71,46 @@
         <value>Choose another center</value>
     </labels>
     <labels>
+        <fullName>Choose_Date</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Choose Date</shortDescription>
+        <value>Choose Date</value>
+    </labels>
+    <labels>
+        <fullName>City</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>City</shortDescription>
+        <value>City</value>
+    </labels>
+    <labels>
+        <fullName>Confirm_Password</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Confirm Password</shortDescription>
+        <value>Confirm Password</value>
+    </labels>
+    <labels>
+        <fullName>Email</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Email</shortDescription>
+        <value>Email</value>
+    </labels>
+    <labels>
         <fullName>English</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>English</shortDescription>
         <value>English</value>
+    </labels>
+    <labels>
+        <fullName>Enter_Password</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Enter Password</shortDescription>
+        <value>Enter Password</value>
     </labels>
     <labels>
         <fullName>First_Name</fullName>
@@ -141,6 +141,13 @@
         <value>Middle Name</value>
     </labels>
     <labels>
+        <fullName>Mobile_Phone</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Mobile Phone</shortDescription>
+        <value>Mobile Phone</value>
+    </labels>
+    <labels>
         <fullName>My_Appointments</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -169,11 +176,25 @@
         <value>Past</value>
     </labels>
     <labels>
+        <fullName>Per_Pt</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Per Pt</shortDescription>
+        <value>per pt</value>
+    </labels>
+    <labels>
         <fullName>Plasma_Donation_Saves_Lives</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Plasma Donation Saves Lives</shortDescription>
         <value>Plasma donation saves lives and helps you achieve your financial goals faster.</value>
+    </labels>
+    <labels>
+        <fullName>Previous</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Previous</shortDescription>
+        <value>Previous</value>
     </labels>
     <labels>
         <fullName>Recommended_To_You</fullName>
@@ -183,6 +204,20 @@
         <value>Recommended to you</value>
     </labels>
     <labels>
+        <fullName>Schedule</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Schedule</shortDescription>
+        <value>Schedule</value>
+    </labels>
+    <labels>
+        <fullName>Schedule_Your_1st_Appointment</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Schedule Your 1st Appointment</shortDescription>
+        <value>Schedule Your 1st Appointment</value>
+    </labels>
+    <labels>
         <fullName>Scheduled</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -190,11 +225,53 @@
         <value>Scheduled</value>
     </labels>
     <labels>
+        <fullName>Select_Time_Slot</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Select Time Slot</shortDescription>
+        <value>Select Time Slot</value>
+    </labels>
+    <labels>
+        <fullName>Set_Your_Password</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Set Your Password</shortDescription>
+        <value>Set Your Password</value>
+    </labels>
+    <labels>
         <fullName>Spanish</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Spanish</shortDescription>
         <value>Spanish</value>
+    </labels>
+    <labels>
+        <fullName>State</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>State</shortDescription>
+        <value>State</value>
+    </labels>
+    <labels>
+        <fullName>Street_Address_1</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Street Address 1</shortDescription>
+        <value>Street Address 1</value>
+    </labels>
+    <labels>
+        <fullName>Street_Address_2</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Street Address 2</shortDescription>
+        <value>Street Address 2</value>
+    </labels>
+    <labels>
+        <fullName>Suffix</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Suffix</shortDescription>
+        <value>Suffix</value>
     </labels>
     <labels>
         <fullName>Tell_Us_About_You</fullName>
@@ -209,5 +286,75 @@
         <protected>true</protected>
         <shortDescription>Welcome To Proesis</shortDescription>
         <value>Welcome to Proesis</value>
+    </labels>
+    <labels>
+        <fullName>Zip_Code</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Zip Code</shortDescription>
+        <value>Zip Code</value>
+    </labels>
+    <labels>
+        <fullName>How_Will_You_Get_To_Center</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>How Will You Get To Center</shortDescription>
+        <value>How will you get to the center?</value>
+    </labels>
+    <labels>
+        <fullName>Nickname</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Nickname</shortDescription>
+        <value>Nickname</value>
+    </labels>
+    <labels>
+        <fullName>Bus</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Bus</shortDescription>
+        <value>Bus</value>
+    </labels>
+    <labels>
+        <fullName>Car</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Car</shortDescription>
+        <value>Car</value>
+    </labels>
+    <labels>
+        <fullName>Taxi</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Taxi</shortDescription>
+        <value>Taxi</value>
+    </labels>
+    <labels>
+        <fullName>Walk</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Walk</shortDescription>
+        <value>Walk</value>
+    </labels>
+    <labels>
+        <fullName>Personal_Information</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Personal Information</shortDescription>
+        <value>Personal Information</value>
+    </labels>
+    <labels>
+        <fullName>Social_Picture</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Social Picture</shortDescription>
+        <value>Social Picture</value>
+    </labels>
+    <labels>
+        <fullName>Congratulations</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Congratulations</shortDescription>
+        <value>Congratulations</value>
     </labels>
 </CustomLabels>

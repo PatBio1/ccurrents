@@ -8,12 +8,6 @@ insert new PermissionSetAssignment(
 
 User adminUser = [SELECT Id FROM User WHERE Name = 'User User'];
 UserRole ceoUserRole = [SELECT Id FROM UserRole WHERE Name = 'CEO'];
-PermissionSet adminPermissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.ADMIN_PERMISSION_SET_NAME];
 
 adminUser.UserRoleId = ceoUserRole.Id;
 update adminUser;
-
-insert new PermissionSetAssignment(
-    PermissionSetId = adminPermissionSet.Id,
-    AssigneeId = adminUser.Id
-);

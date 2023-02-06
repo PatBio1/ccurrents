@@ -12,8 +12,3 @@ PermissionSet adminPermissionSet = [SELECT Id FROM PermissionSet WHERE Label = :
 
 adminUser.UserRoleId = ceoUserRole.Id;
 update adminUser;
-
-insert new PermissionSetAssignment(
-    PermissionSetId = adminPermissionSet.Id,
-    AssigneeId = adminUser.Id
-);

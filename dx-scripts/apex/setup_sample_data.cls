@@ -95,7 +95,7 @@ for (Default_Business_Hours__mdt defaultTime : [SELECT Label, Close__c, Index__c
 
     Business_Hours__c newBH = new Business_Hours__c();
     newBH.Name = defaultTime.Label;
-    newBH.Center__c = proesisMirimar;
+    newBH.Center__c = proesisMirimarId;
     newBH.Close__c = Time.newInstance(closingTime.hour(), closingTime.minute(), closingTime.second(), closingTime.millisecond());
     newBH.Index__c = defaultTime.Index__c;
     newBH.isClosed__c = defaultTime.IsClosed__c;

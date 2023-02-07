@@ -134,7 +134,7 @@
           
           <div class="slds-col slds-size_12-of-12 chart-header">
             
-            <span class="header-date"><lightning-formatted-date-time value={selectedDate} time-zone="UTC"></lightning-formatted-date-time></span>
+            <span class="header-date"><lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={selectedDate} time-zone="UTC"></lightning-formatted-date-time></span>
           </div>
 
           <!-- subheaders -->
@@ -159,22 +159,23 @@
 
           <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
             <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data" style="text-align: left;" >
-              {appointment.time}
+              <lightning-formatted-time value={appointment.timeString} ></lightning-formatted-time>
             </div>
   
             <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data">
-              {appointment.available}
+              <button class="slds-button" onclick={minusAvailable}>-</button> &nbsp;
+              {appointment.availability} &nbsp;
+              <button class="slds-button" onclick={plusAvailable} data-id={appointment.id}>+</button> &nbsp;            
             </div>
   
             <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data">
-              {appointment.filled}
+              {appointment.booked}
             </div>
   
             <div key={appointment.key} class="slds-col slds-size_9-of-12 chart-data" style="text-align: left;position: relative;">
               <span  style="position: relative;">
-                &nbsp;
-                <template for:each={appointment.donors} for:item="donor" for:index="donorIndex">
-                  <c-donor-dot key={key} initials={donor.initials} icon={donor.icon}></c-donor-dot>
+                <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
+                  <c-donor-dot key={donorId}  icon={donor.icon} donor={donor}></c-donor-dot>
                 </template>
               </span>
             </div>

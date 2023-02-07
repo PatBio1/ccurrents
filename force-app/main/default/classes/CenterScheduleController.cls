@@ -28,14 +28,19 @@ public with sharing class CenterScheduleController {
             for(Appointment__c app: [
                 SELECT  Id,
                         Name,
-                        Datetime__c
+                        Datetime__c,
+                        Availability__c,
+                        Booked__c,
+                        Capacity__c
+
                 FROM Appointment__c
                 WHERE Schedule__r.Center__c =: centerId
                 AND Datetime__c >: appointmentDay
                 AND Datetime__c <: appointmentDay + 1
 
             ]){
-                appMap.put(app.id,new AppointmentSlot(app));
+                AppointmentSlot appt = new AppointmentSlot(app);
+                appMap.put(app.id,appt);
             }
 
             for(Visit__c visit : [
@@ -50,7 +55,10 @@ public with sharing class CenterScheduleController {
                 FROM Visit__c
                 WHERE Appointment__c in: appMap.keyset()
             ]){
-                appMap.get(visit.Appointment__c).visits.add(new Visit(visit));
+                AppointmentSlot appt = appMap.get(visit.Appointment__c);
+                appt.visits.add(new Visit(visit));
+
+                appt.booked = appt.visits.size();
             }
             
             system.debug(appMap);
@@ -79,15 +87,36 @@ public with sharing class CenterScheduleController {
         public Id Id {get; set;}
 
         @AuraEnabled
-        public Datetime appointmentTime {get; set;}
+        public Datetime appointmentDatetime {get; set;}
+
+        @AuraEnabled
+        public Time appointmentTime {get; set;}
+
+        @AuraEnabled
+        public String timeString {get; set;}
 
         @AuraEnabled
         public Visit[] visits {get;set;}
 
+        @AuraEnabled
+        public Decimal availability {get;set;}
+        
+        @AuraEnabled
+        public Decimal booked {get;set;}
+        
+        @AuraEnabled
+        public Decimal capacity {get;set;}
+
         public AppointmentSlot(Appointment__c app){
             this.Id = app.Id;
-            this.appointmentTime = app.Datetime__c;
+            this.appointmentDatetime = app.Datetime__c;
+            TimeZone tz =  UserInfo.getTimeZone();
+            this.timeString =  this.appointmentDatetime.format('h:mm a',tz.toString());
             this.visits = new Visit[]{};
+            this.availability = app.Availability__c;
+            this.booked = app.Booked__c;
+            this.capacity = app.Capacity__c;
+
         }
 
     }
@@ -114,6 +143,11 @@ public with sharing class CenterScheduleController {
         @AuraEnabled
         public String visitType {get;set;}
 
+        @AuraEnabled
+        public String icon {get;set;}
+
+        
+
         public Visit(Visit__c visit){
             this.visitId = visit.Id;
             this.donorId = visit.Donor__c;
@@ -121,6 +155,7 @@ public with sharing class CenterScheduleController {
             this.firstName = visit.Donor__r.firstName;
             this.lastName = visit.Donor__r.lastName;
             this.initials = visit.Donor__r.firstName.subString(0,1) + visit.Donor__r.lastName.subString(0,1);
+            this.icon = 'standard:account';
         }
     }
 }

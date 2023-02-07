@@ -7,10 +7,22 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     @api initials;
     @api icon = 'standard:account';
     @api donor;
+    @api appointment;
     donorLink;
+    appointmentLink;
 
     connectedCallback() {
-        // Generate a URL to a User record page
+        
+        this[NavigationMixin.GenerateUrl]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: this.appointment.Id,
+                actionName: 'view',
+            },
+        }).then((url) => {
+            this.appointmentLink = url;
+        });
+
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
@@ -32,6 +44,10 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
 
     donorClick(){
         window.open(this.donorLink);
+    }
+
+    appointmentClick(){
+        window.open(this.appointmentLink);
     }
  
 }

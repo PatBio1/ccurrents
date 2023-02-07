@@ -175,7 +175,7 @@
             <div key={appointment.key} class="slds-col slds-size_9-of-12 chart-data" style="text-align: left;position: relative;">
               <span  style="position: relative;">
                 <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
-                  <c-donor-dot key={donorId}  icon={donor.icon} donor={donor}></c-donor-dot>
+                  <c-donor-dot key={donorId}  icon={donor.icon} donor={donor} appointment={appointment}></c-donor-dot>
                 </template>
               </span>
             </div>

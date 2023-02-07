@@ -31,7 +31,7 @@ public with sharing class CenterSchedulerControllerTests {
         //Create Donation Centers
         Account[] centers = new Account[]{
             new Account(
-                Name = 'Center 1',
+                Name = 'Proesis Miramar',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '111 1st St',
                 ExternalID__c = 'center-111'
@@ -72,6 +72,18 @@ public with sharing class CenterSchedulerControllerTests {
         };
 
         insert schedules;
+
+        Date startDate =  Date.newInstance(2023, 1, 10).addDays(-10);
+        Date endDate =  Date.newInstance(2023, 1, 10).addDays(30);
+        Id loyaltyTier = null;
+        Integer intervalsPerHour = 6; //10 minutes apart
+        Integer slotsPerInterval = 1;
+
+        Account center1 = [SELECT Id FROM Account WHERE Name = 'Proesis Miramar'];
+
+        Appointment__c[] appointments = ScheduleUtils.scheduleRange(center1.id,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
+
+        insert appointments;
     }
 
     @IsTest
@@ -116,13 +128,13 @@ public with sharing class CenterSchedulerControllerTests {
         insert psa;
 
         CenterScheduleController.AppointmentSlot[] slots = new CenterScheduleController.AppointmentSlot[]{};
-        Id centerId = [SELECT Id FROM Account WHERE NAME = 'Center 1'].Id;
+        Id centerId = [SELECT Id FROM Account WHERE NAME = 'Proesis Miramar'].Id;
         Test.startTest();
         System.runAs(contextuser){
-            slots = CenterScheduleController.getAppointments(centerId,Date.today());
+            slots = CenterScheduleController.getAppointments(centerId,Date.newInstance(2023, 1, 10));
         }
         Test.stopTest();
-        system.assertEquals(0, slots.size());
+        system.assertEquals(89, slots.size());
     }
 
 

@@ -6,7 +6,7 @@
            <lightning-combobox
               name="progress"
               label="Choose Center"
-              value={value}
+              value={selectedCenter}
               placeholder="Select Center"
               options={centers}
               onchange={changeCenter} ></lightning-combobox>
@@ -18,7 +18,9 @@
                 name="input8" 
                 label="Choose Date" 
                 value="2023-09-07" 
-                min="2023-01-01" ></lightning-input>
+                min="2023-01-01" 
+                disabled={dateDisabled}
+                ></lightning-input>
            
           </div>
           <div class="slds-col slds-size_4-of-12"></div>
@@ -151,24 +153,38 @@
             Donors
           </div>
 
-          <!-- content rows -->
+          <!-- donor  rows -->
 
-          <div class="slds-col slds-size_1-of-12 chart-data" style="text-align: left;" >
-            8:00 AM
-          </div>
+          <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
+            <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data" style="text-align: left;" >
+              {appointment.time}
+            </div>
+  
+            <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data">
+              {appointment.available}
+            </div>
+  
+            <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data">
+              {appointment.filled}
+            </div>
+  
+            <div key={appointment.key} class="slds-col slds-size_9-of-12 chart-data" style="text-align: left;position: relative;">
+              <span  style="position: relative;">
+                &nbsp;
+                <template for:each={appointment.donors} for:item="donor" for:index="donorIndex">
+                  <c-donor-dot key={key} initials={donor.initials} icon={donor.icon}></c-donor-dot>
+                </template>
+              </span>
+            </div>
+          </template>
+          <!-- donor row -->
 
-          <div class="slds-col slds-size_1-of-12 chart-data">
-            5
-          </div>
+          
 
-          <div class="slds-col slds-size_1-of-12 chart-data">
-            5
-          </div>
 
-          <div class="slds-col slds-size_9-of-12 chart-data" style="text-align: left;">
-            &nbsp;
-          </div>
 
+
+          <!-- end grid container -->
         </div>
 
 

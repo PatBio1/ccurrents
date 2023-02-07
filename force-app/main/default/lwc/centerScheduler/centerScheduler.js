@@ -7,6 +7,59 @@ export default class CenterScheduler extends LightningElement {
     centers = [];
 
     @track showFilters=false;
+    @track show = false;
+    @track dateDisabled = true;
+
+    get appointments(){
+        return [
+            {
+                key:1,
+                time: "8:00 AM",
+                available: 3,
+                filled: 2,
+                donors:[
+                    {key:1,initials:'KK', icon: 'custom:custom92'},
+                    {key:2,initials:'JK', icon: 'custom:custom71'},
+                ]
+            },
+            {
+                key:2,
+                time: "8:10 AM",
+                available: 5,
+                filled: 0,
+                donors:[
+
+                ]
+            },
+            {
+                key:3,
+                time: "8:20 AM",
+                available: 0,
+                filled: 5,
+                donors:[
+                    {key:1,initials:'WD', icon: 'custom:custom92'},
+                    {key:2,initials:'ZX', icon: 'custom:custom92'},
+                    {key:3,initials:'WD', icon: 'custom:custom88'},
+                    {key:4,initials:'ZX', icon: 'custom:custom79'},
+                    {key:5,initials:'ZX', icon: 'custom:custom63'},
+                ]
+            },
+            {
+                key:4,
+                time: "8:30 AM",
+                available: 2,
+                filled: 2,
+                donors:[
+                    {key:1,initials:'RR', icon: 'custom:custom90'},
+                    {key:2,initials:'GG', icon: 'custom:custom91'},
+                ]
+            },
+        ];
+    }
+
+    showPopover() {
+        this.show = !this.show;
+    }
 
     connectedCallback() {
         this.loadCenters();
@@ -68,7 +121,8 @@ export default class CenterScheduler extends LightningElement {
 
     changeCenter(event){
         this.selectedCenterId = event.detail.value;
-        alert('changed to ' + this.selectedCenterId);
+        // alert('changed to ' + this.selectedCenterId);
+        this.dateDisabled = false;
     }
 
 }

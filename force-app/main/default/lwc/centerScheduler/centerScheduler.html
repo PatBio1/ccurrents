@@ -17,9 +17,10 @@
                 type="date" 
                 name="input8" 
                 label="Choose Date" 
-                value="2023-09-07" 
+                value={selectedDate}
                 min="2023-01-01" 
                 disabled={dateDisabled}
+                onchange={changeDate}
                 ></lightning-input>
            
           </div>
@@ -132,7 +133,7 @@
           <!-- header row -->
           
           <div class="slds-col slds-size_12-of-12 chart-header">
-            <span class="header-date">Monday, 1 November</span>
+            <span class="header-date">{selectedDate}</span>
           </div>
 
           <!-- subheaders -->

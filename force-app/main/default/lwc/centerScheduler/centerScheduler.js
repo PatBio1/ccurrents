@@ -3,7 +3,8 @@ import getCenters from '@salesforce/apex/CenterScheduleController.getCenters';
 
 export default class CenterScheduler extends LightningElement {
 
-    selectedCenterId;
+    @track selectedCenterId;
+    @track selectedDate
     centers = [];
 
     @track showFilters=false;
@@ -123,6 +124,12 @@ export default class CenterScheduler extends LightningElement {
         this.selectedCenterId = event.detail.value;
         // alert('changed to ' + this.selectedCenterId);
         this.dateDisabled = false;
+    }
+
+    changeDate(event){
+        this.selectedDate = event.detail.value;
+        alert('changed to ' + this.selectedDate);
+
     }
 
 }

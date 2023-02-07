@@ -99,6 +99,31 @@ public with sharing class CenterSchedulerControllerTests {
         system.assertEquals(3, centers.size());
     }
 
+    @IsTest
+    public static void testGetAppointments(){
+        Profile p = [SELECT Id FROM Profile WHERE Name='Standard User']; 
+        User contextuser = new User(Alias = 'standt', Email='phantomTestUser@testorg.com', 
+            EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US', 
+            LocaleSidKey='en_US', ProfileId = p.Id, 
+            TimeZoneSidKey='America/Los_Angeles', UserName='phantomTestUser@testorg.com');
+        Insert contextuser;
+        PermissionSet ps = [Select ID from PermissionSet WHERE Name = 'ProesisAdministratorSalesforceLicense'];
+        PermissionSetAssignment psa = 
+            new PermissionSetAssignment(
+                PermissionSetId = ps.id, 
+                AssigneeId = contextuser.id
+            );
+        insert psa;
+
+        CenterScheduleController.AppointmentSlot[] slots = new CenterScheduleController.AppointmentSlot[]{};
+        Id centerId = [SELECT Id FROM Account WHERE NAME = 'Center 1'].Id;
+        Test.startTest();
+        System.runAs(contextuser){
+            slots = CenterScheduleController.getAppointments(centerId,Date.today());
+        }
+        Test.stopTest();
+        system.assertEquals(0, slots.size());
+    }
 
 
 }

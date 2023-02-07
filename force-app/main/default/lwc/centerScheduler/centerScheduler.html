@@ -179,6 +179,8 @@
                 <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
                   <c-donor-dot key={donorId}  icon={donor.icon} donor={donor} appointment={appointment}></c-donor-dot>
                 </template>
+                <button class="slds-button" onclick={plusAvailable} data-id={appointment.id}>+</button>
+                <lightning-button-icon size="large" variant="bare" icon-name="utility:plus"  alternative-text="Settings" title="Settings"></lightning-button-icon>
               </span>
             </div>
           </template>

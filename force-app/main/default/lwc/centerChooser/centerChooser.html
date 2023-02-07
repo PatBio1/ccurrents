@@ -1,6 +1,8 @@
 <template>
 
     <div if:false={showCenter} class="slds-var-p-around_medium">
+        <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
+
         <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
 
         <div class="title-medium slds-text-align_center slds-m-vertical_large">

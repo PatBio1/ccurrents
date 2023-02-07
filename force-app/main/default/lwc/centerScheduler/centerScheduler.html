@@ -133,7 +133,8 @@
           <!-- header row -->
           
           <div class="slds-col slds-size_12-of-12 chart-header">
-            <span class="header-date">{selectedDate}</span>
+            
+            <span class="header-date"><lightning-formatted-date-time value={selectedDate} time-zone="UTC"></lightning-formatted-date-time></span>
           </div>
 
           <!-- subheaders -->

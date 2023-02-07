@@ -119,7 +119,7 @@ geo;
             this[NavigationMixin.Navigate]({
                 type: 'comm__namedPage',
                 attributes: {
-                    name: 'appointments__c'
+                    name: 'Appointments__c'
                 }
             });
         }).catch((error) => {

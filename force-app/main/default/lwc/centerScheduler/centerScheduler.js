@@ -21,6 +21,10 @@ export default class CenterScheduler extends LightningElement {
         this.loadCenters();
     }
 
+    refresh(){
+        this.fetchAppointments();
+    }
+
     get statuses(){
         return [
             {label:'bleeding', value:'bleeding'},
@@ -51,6 +55,7 @@ export default class CenterScheduler extends LightningElement {
     }
 
     loadCenters() {
+        
         getCenters().then(centers => {
             this.centers = centers;
         }).catch((error) => {
@@ -59,23 +64,11 @@ export default class CenterScheduler extends LightningElement {
             this.loading = false;
         });
 
-        const request = {
-        };
-
-        console.log('request', JSON.stringify(request));
-
-        getCenters(request).then(response => {
-            console.log('response', response);
-            this.center = response;
-
-            this.loadAppointments();
-        }).catch((error) => {
-            console.log(error);
-            this.loading = false;
-        });
+        
     }
 
     fetchAppointments(){
+        this.appointments = [];
         getAppointments({
             centerId: this.selectedCenterId,
             appointmentDay: this.selectedDate
@@ -84,7 +77,9 @@ export default class CenterScheduler extends LightningElement {
             this.appointments = appointments;
         }).catch(err =>{
             console.error(err);
-        })
+        }).finally(()=>{
+            this.loading = false;
+        });
     }
 
     changeCenter(event){

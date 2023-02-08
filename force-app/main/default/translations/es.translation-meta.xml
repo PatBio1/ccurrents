@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Translations xmlns="http://soap.sforce.com/2006/04/metadata">
     <customLabels>
+        <label>Acerca de</label>
+        <name>About</name>
+    </customLabels>
+    <customLabels>
         <label>Acerca de la experiencia de donación</label>
         <name>About_Donation_Experience</name>
     </customLabels>
@@ -15,6 +19,10 @@
     <customLabels>
         <label>Atrás</label>
         <name>Back</name>
+    </customLabels>
+    <customLabels>
+        <label>Volver a Centros</label>
+        <name>Back_To_Centers</name>
     </customLabels>
     <customLabels>
         <label>Volver a la página de inicio</label>
@@ -41,6 +49,10 @@
         <name>Centers</name>
     </customLabels>
     <customLabels>
+        <label>Centro de vídeo</label>
+        <name>Center_Video</name>
+    </customLabels>
+    <customLabels>
         <label>Elige un Centro</label>
         <name>Choose_A_Center</name>
     </customLabels>
@@ -55,6 +67,10 @@
     <customLabels>
         <label>Ciudad</label>
         <name>City</name>
+    </customLabels>
+    <customLabels>
+        <label>Cerrado</label>
+        <name>Closed</name>
     </customLabels>
     <customLabels>
         <label>Confirmar contraseña</label>
@@ -81,6 +97,10 @@
         <name>First_Name</name>
     </customLabels>
     <customLabels>
+        <label>Viernes</label>
+        <name>Friday</name>
+    </customLabels>
+    <customLabels>
         <label>¿Cómo vas a llegar al centro?</label>
         <name>How_Will_You_Get_To_Center</name>
     </customLabels>
@@ -97,8 +117,12 @@
         <name>Middle_Name</name>
     </customLabels>
     <customLabels>
-        <label>Mobile Phone</label>
+        <label>Teléfono móvil</label>
         <name>Mobile_Phone</name>
+    </customLabels>
+    <customLabels>
+        <label>Lunes</label>
+        <name>Monday</name>
     </customLabels>
     <customLabels>
         <label>Mis citas</label>
@@ -117,6 +141,10 @@
         <name>Nickname</name>
     </customLabels>
     <customLabels>
+        <label>Notificaciones</label>
+        <name>Notifications</name>
+    </customLabels>
+    <customLabels>
         <label>Pasado</label>
         <name>Past</name>
     </customLabels>
@@ -133,12 +161,20 @@
         <name>Plasma_Donation_Saves_Lives</name>
     </customLabels>
     <customLabels>
+        <label>Horarios populares</label>
+        <name>Popular_Times</name>
+    </customLabels>
+    <customLabels>
         <label>Previo</label>
         <name>Previous</name>
     </customLabels>
     <customLabels>
         <label>Recomendado para ti</label>
         <name>Recommended_To_You</name>
+    </customLabels>
+    <customLabels>
+        <label>Sábado</label>
+        <name>Saturday</name>
     </customLabels>
     <customLabels>
         <label>Programar</label>
@@ -185,6 +221,10 @@
         <name>Suffix</name>
     </customLabels>
     <customLabels>
+        <label>Domingo</label>
+        <name>Sunday</name>
+    </customLabels>
+    <customLabels>
         <label>Taxi</label>
         <name>Taxi</name>
     </customLabels>
@@ -193,12 +233,32 @@
         <name>Tell_Us_About_You</name>
     </customLabels>
     <customLabels>
+        <label>Jueves</label>
+        <name>Thursday</name>
+    </customLabels>
+    <customLabels>
+        <label>Martes</label>
+        <name>Tuesday</name>
+    </customLabels>
+    <customLabels>
+        <label>Actualizaciones y citas</label>
+        <name>Updates_And_Appointments</name>
+    </customLabels>
+    <customLabels>
         <label>Caminar</label>
         <name>Walk</name>
     </customLabels>
     <customLabels>
         <label>Bienvenidos a Proesis</label>
         <name>Welcome_To_Proesis</name>
+    </customLabels>
+    <customLabels>
+        <label>Miércoles</label>
+        <name>Wednesday</name>
+    </customLabels>
+    <customLabels>
+        <label>Horas Laborales</label>
+        <name>Working_Hours</name>
     </customLabels>
     <customLabels>
         <label>Código postal</label>

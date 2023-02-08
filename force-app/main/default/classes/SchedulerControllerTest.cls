@@ -29,9 +29,7 @@ public with sharing class SchedulerControllerTest {
     @isTest
     static void testCreateUser() {
         System.runAs(TestUtil.createExperienceGuestUser()) {
-            Account account = new Account();
-            account.Name = 'Center';
-            account.RecordTypeID = Constants.CENTER_RECORD_TYPE_ID;
+            Account account = TestUtil.createMiramarCenter();
             insert account;
 
             Lead lead = new Lead();
@@ -83,66 +81,11 @@ public with sharing class SchedulerControllerTest {
     }
 
     @isTest
-    static void testGetCenters() {
-        System.runAs(TestUtil.createAdminUser()) {
-            Account center1 = new Account(
-                Name = 'Proesis Miramar',
-                RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
-                BillingStreet = '7901 Riviera Blvd',
-                BillingCity = 'Miramar',
-                BillingState = 'FL',
-                BillingPostalCode = '33023',
-                BillingCountry = 'US',
-                Geolocation__Latitude__s = 25.973030,
-                Geolocation__Longitude__s = -80.242049,
-                ExternalID__c = 'center-222',
-                Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-                Site = 'P-01'
-            );
-            Account center2 = new Account(
-                Name = 'Proesis Dallas',
-                RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
-                BillingStreet = '1080 N Westmoreland Rd',
-                BillingCity = 'Dallas',
-                BillingState = 'TX',
-                BillingPostalCode = '75311',
-                BillingCountry = 'US',
-                Geolocation__Latitude__s = 32.78411048612642,
-                Geolocation__Longitude__s = -96.87149106359581,
-                ExternalID__c = 'center-333',
-                Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-                Site = 'P-02'
-            );
-
-            insert new List<Account>{center1, center2};
-        }
-
-        System.runAs(TestUtil.createExperienceUser()) {
-            List<SchedulerController.Center> centers = SchedulerController.getCenters(Double.valueOf(33.7488), Double.valueOf(84.3877));
-
-            System.assertEquals(2, centers.size());
-        }
-    }
-
-    @isTest
     static void testGetCenter() {
         User experienceUser = TestUtil.createExperienceUser();
 
         System.runAs(TestUtil.createAdminUser()) {
-            Account center = new Account(
-                Name = 'Proesis Miramar',
-                RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
-                BillingStreet = '7901 Riviera Blvd',
-                BillingCity = 'Miramar',
-                BillingState = 'FL',
-                BillingPostalCode = '33023',
-                BillingCountry = 'US',
-                Geolocation__Latitude__s = 25.973030,
-                Geolocation__Longitude__s = -80.242049,
-                ExternalID__c = 'center-222',
-                Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-                Site = 'P-01'
-            );
+            Account center = TestUtil.createMiramarCenter();
             insert center;
 
             AccountContactRelation accountContactRelation = new AccountContactRelation();
@@ -153,7 +96,7 @@ public with sharing class SchedulerControllerTest {
         }
 
         System.runAs(experienceUser) {
-            SchedulerController.Center center = SchedulerController.getCenter();
+            CenterController.Center center = SchedulerController.getCenter();
 
             System.assertEquals('Proesis Miramar', center.name);
         }
@@ -164,20 +107,7 @@ public with sharing class SchedulerControllerTest {
         Account center;
 
         System.runAs(TestUtil.createAdminUser()) {
-            center = new Account(
-                Name = 'Proesis Miramar',
-                RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
-                BillingStreet = '7901 Riviera Blvd',
-                BillingCity = 'Miramar',
-                BillingState = 'FL',
-                BillingPostalCode = '33023',
-                BillingCountry = 'US',
-                Geolocation__Latitude__s = 25.973030,
-                Geolocation__Longitude__s = -80.242049,
-                ExternalID__c = 'center-222',
-                Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-                Site = 'P-01'
-            );
+            center = TestUtil.createMiramarCenter();
             insert center;
 
             Schedule__c schedule = new Schedule__c(
@@ -209,20 +139,7 @@ public with sharing class SchedulerControllerTest {
         User experienceUser = TestUtil.createExperienceUser();
 
         System.runAs(TestUtil.createAdminUser()) {
-            Account center = new Account(
-                Name = 'Proesis Miramar',
-                RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
-                BillingStreet = '7901 Riviera Blvd',
-                BillingCity = 'Miramar',
-                BillingState = 'FL',
-                BillingPostalCode = '33023',
-                BillingCountry = 'US',
-                Geolocation__Latitude__s = 25.973030,
-                Geolocation__Longitude__s = -80.242049,
-                ExternalID__c = 'center-222',
-                Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-                Site = 'P-01'
-            );
+            Account center = TestUtil.createMiramarCenter();
             insert center;
 
             Schedule__c schedule = new Schedule__c(
@@ -270,20 +187,7 @@ public with sharing class SchedulerControllerTest {
         Appointment__c appointment;
 
         System.runAs(TestUtil.createAdminUser()) {
-            Account center = new Account(
-                Name = 'Proesis Miramar',
-                RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
-                BillingStreet = '7901 Riviera Blvd',
-                BillingCity = 'Miramar',
-                BillingState = 'FL',
-                BillingPostalCode = '33023',
-                BillingCountry = 'US',
-                Geolocation__Latitude__s = 25.973030,
-                Geolocation__Longitude__s = -80.242049,
-                ExternalID__c = 'center-222',
-                Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-                Site = 'P-01'
-            );
+            Account center = TestUtil.createMiramarCenter();
             insert center;
 
             Schedule__c schedule = new Schedule__c(

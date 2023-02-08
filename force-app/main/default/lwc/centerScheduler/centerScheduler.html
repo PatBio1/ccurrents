@@ -50,7 +50,7 @@
             </lightning-button>
             
             &nbsp;
-            
+
           <lightning-button
             variant="brand"
             label="New Schedule"
@@ -216,14 +216,17 @@
           </div>
 
           <div class="slds-col slds-size_9-of-12 chart-header-sub" style="text-align: left;">
-            Donors
+            Donors 
           </div>
 
           <!-- donor  rows -->
 
           <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
             <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data" style="text-align: left;" >
-              <lightning-formatted-time value={appointment.timeString} ></lightning-formatted-time>
+                <a href={appointment.link} target="_blank">
+                  <lightning-formatted-time value={appointment.timeString} ></lightning-formatted-time>
+                </a>
+              
             </div>
   
             <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data">

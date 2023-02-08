@@ -9,7 +9,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     @api donor;
     @api appointment;
     donorLink;
-    appointmentLink;
+    visitLink;
     dotclasses = [
         'slds-m-right_small',
         'donor-icon',
@@ -25,11 +25,11 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
-                recordId: this.appointment.Id,
+                recordId: this.donor.visitId,
                 actionName: 'view',
             },
         }).then((url) => {
-            this.appointmentLink = url;
+            this.visitLink = url;
         });
 
         this[NavigationMixin.GenerateUrl]({
@@ -55,8 +55,8 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         window.open(this.donorLink);
     }
 
-    appointmentClick(){
-        window.open(this.appointmentLink);
+    visitClick(){
+        window.open(this.visitLink);
     }
  
 }

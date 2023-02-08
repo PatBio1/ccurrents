@@ -1,6 +1,6 @@
 import { track, LightningElement } from 'lwc';
 import labels from 'c/labelService';
-import getCenters from '@salesforce/apex/SchedulerController.getCenters';
+import getCenters from '@salesforce/apex/CenterController.getCenters';
 
 // Center of the United States.
 const DEFAULT_LATITUDE = 39.123944;
@@ -16,6 +16,7 @@ export default class CenterChooser extends LightningElement {
         latitude: DEFAULT_LATITUDE,
         longitude: DEFAULT_LONGITUDE
     };
+    @track centerToView = {};
 
     get centerSelected() {
         return this.centers.some((center) => {
@@ -66,7 +67,10 @@ export default class CenterChooser extends LightningElement {
         this.dispatchEvent(new CustomEvent('back'));
     }
 
-    onViewCenterClick() {
+    onViewCenterClick(event) {
+        let index = event.target.dataset.index;
+        this.centerToView = this.centers[index];
+
         this.showCenter = true;
     }
 

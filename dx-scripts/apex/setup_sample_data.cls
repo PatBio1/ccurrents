@@ -36,37 +36,16 @@ Account[] centers = new Account[]{
         ExternalID__c = 'center-111',
         Services__c = 'Medical: Consultation'
     ),
-    new Account(
-        Name = 'Proesis Miramar',
-        RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
-        BillingStreet = '7901 Riviera Blvd',
-        BillingCity = 'Miramar',
-        BillingState = 'FL',
-        BillingPostalCode = '33023',
-        BillingCountry = 'US',
-        Geolocation__Latitude__s = 25.973030,
-        Geolocation__Longitude__s = -80.242049,
-        ExternalID__c = 'center-222',
-        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-        Site = 'P-01'
-    ),
-    new Account(
-        Name = 'Proesis Dallas',
-        RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
-        BillingStreet = '1080 N Westmoreland Rd',
-        BillingCity = 'Dallas',
-        BillingState = 'TX',
-        BillingPostalCode = '75311',
-        BillingCountry = 'US',
-        Geolocation__Latitude__s = 32.78411048612642,
-        Geolocation__Longitude__s = -96.87149106359581,
-        ExternalID__c = 'center-333',
-        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-        Site = 'P-02'
-    )
+    TestUtil.createMiramarCenter(),
+    TestUtil.createDallasCenter()
 };
 
 upsert centers ExternalID__c;
+
+List<Business_Hours__c> businessHours = new List<Business_Hours__c>();
+businessHours.addAll(TestUtil.createBusinessHours(centers[1].Id));
+businessHours.addAll(TestUtil.createBusinessHours(centers[2].Id));
+insert businessHours;
 
 Donation_Type__c donationType = new Donation_Type__c();
 insert donationType;

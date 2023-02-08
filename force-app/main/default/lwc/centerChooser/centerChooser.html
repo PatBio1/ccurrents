@@ -83,7 +83,7 @@
                         </div>
                     </div>
                     <div class="slds-col slds-size_1-of-3 slds-text-align_right">
-                        <span style="color: #000;"><strong>$20 {labels.perPt}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></span><lightning-icon icon-name="utility:chevronright" size="x-small" class="view-center-icon" onclick={onViewCenterClick}></lightning-icon><br/>
+                        <span style="color: #000;"><strong>$20 {labels.perPt}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></span><lightning-icon icon-name="utility:chevronright" size="x-small" class="view-center-icon" data-index={centerIndex} onclick={onViewCenterClick}></lightning-icon><br/>
                         <p style="color: #8979a9;">{center.distance}</p>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
     </div>
 
     <div if:true={showCenter}>
-        <c-center onback={onCenterBackButtonClick}></c-center>
+        <c-center center-id={centerToView.id} back-label={labels.backToCenters} onback={onCenterBackButtonClick}></c-center>
     </div>
 
 </template>

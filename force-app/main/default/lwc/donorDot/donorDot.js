@@ -20,6 +20,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         return this.dotclasses.join(' ');
     }
 
+
     connectedCallback() {
         
         this[NavigationMixin.GenerateUrl]({

@@ -70,8 +70,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     }
 
     fetchAppointments(){
-        this.appointments = [];
-        
+        this.appointments = [];    
         getAppointments({
             centerId: this.selectedCenterId,
             appointmentDay: this.selectedDate
@@ -109,5 +108,6 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         this.selectedDate = event.detail.value;
         this.fetchAppointments();
     }    
+
 
 }

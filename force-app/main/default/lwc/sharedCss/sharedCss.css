@@ -59,3 +59,36 @@
     font-weight: 600;
     color: #000;
 }
+
+/* custom donor dot colors */
+:host .scheduled {
+    --sds-c-icon-color-background : #A5D6A7;
+}
+
+:host .checked-in {
+    --sds-c-icon-color-background : #66BB69;;
+}
+
+:host .donation-complete {
+    --sds-c-icon-color-background : #43A046;
+}
+
+:host .paid-visit-complete {
+    --sds-c-icon-color-background : #1B5E1F;
+}
+
+:host .late {
+    --sds-c-icon-color-background : #B0ADAB;
+}
+
+:host .cancelled {
+    --sds-c-icon-color-background : #EF9A9A;
+}
+
+:host .deferred-left-center {
+    --sds-c-icon-color-background : #E53835;
+}
+
+:host .missed {
+    --sds-c-icon-color-background :#B71A1C;
+}

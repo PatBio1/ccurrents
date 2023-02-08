@@ -10,6 +10,15 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     @api appointment;
     donorLink;
     appointmentLink;
+    dotclasses = [
+        'slds-m-right_small',
+        'donor-icon',
+        'scheduled'
+    ];
+
+    get classes(){
+        return this.dotclasses.join(' ');
+    }
 
     connectedCallback() {
         

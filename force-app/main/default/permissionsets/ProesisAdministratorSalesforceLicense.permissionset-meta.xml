@@ -432,6 +432,11 @@
         <field>Visit__c.Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Visit__c.Visit_Date_Time__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Proesis Administrator (Salesforce License)</label>
     <license>Salesforce</license>

@@ -4,6 +4,7 @@
     <excludeButtons>CreateAccountChannel</excludeButtons>
     <excludeButtons>CreateCallList</excludeButtons>
     <excludeButtons>CreateSurveyInvitation</excludeButtons>
+    <excludeButtons>DataDotComClean</excludeButtons>
     <excludeButtons>DisablePartnerPortalAccount</excludeButtons>
     <excludeButtons>IncludeOffline</excludeButtons>
     <excludeButtons>LoginToPortalAsPersonUser</excludeButtons>
@@ -29,39 +30,7 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>PersonBirthdate</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Type</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Required</behavior>
-                <field>Status__pc</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Eligibility_Datetime__pc</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Preferred_Language__pc</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>DonorId__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Last_Used_Center__pc</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Total_Donations_32d__pc</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Total_Donations_365d__pc</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -84,10 +53,6 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>PersonEmail</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>PersonLeadSource</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
@@ -115,6 +80,49 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>National_Id__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Preferred_Language__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>PersonBirthdate</field>
+            </layoutItems>
+        </layoutColumns>
+        <style>TwoColumnsLeftToRight</style>
+    </layoutSections>
+    <layoutSections>
+        <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Donor Metrics</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>DonorId__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Total_Donations_32d__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Eligibility_Datetime__pc</field>
+            </layoutItems>
+        </layoutColumns>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Required</behavior>
+                <field>Status__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Last_Used_Center__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Total_Donations_365d__pc</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
@@ -162,14 +170,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>OwnerId</field>
+                <field>PersonLeadSource</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Rating</field>
-            </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>CustomerPriority__c</field>
@@ -217,6 +221,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>OwnerId</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>RecordTypeId</field>
             </layoutItems>
         </layoutColumns>
@@ -260,11 +268,6 @@
     <platformActionList>
         <actionListContext>Record</actionListContext>
         <platformActionListItems>
-            <actionName>Edit</actionName>
-            <actionType>StandardButton</actionType>
-            <sortOrder>0</sortOrder>
-        </platformActionListItems>
-        <platformActionListItems>
             <actionName>FeedItem.TextPost</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>1</sortOrder>
@@ -283,6 +286,11 @@
             <actionName>RecordShareHierarchy</actionName>
             <actionType>StandardButton</actionType>
             <sortOrder>4</sortOrder>
+        </platformActionListItems>
+        <platformActionListItems>
+            <actionName>Edit</actionName>
+            <actionType>StandardButton</actionType>
+            <sortOrder>0</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
             <actionName>Delete</actionName>
@@ -351,6 +359,32 @@
         <fields>ACCOUNT.NAME</fields>
         <fields>ACCCONRELATION.ROLES</fields>
         <relatedList>RelatedContactAccountRelationList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>et4ae5__EmailName__c</fields>
+        <fields>et4ae5__fBusiness_Unit__c</fields>
+        <fields>et4ae5__Created_Date_Time__c</fields>
+        <fields>et4ae5__Send_Status_View__c</fields>
+        <fields>et4ae5__Status_Date_Time__c</fields>
+        <fields>et4ae5__FromName__c</fields>
+        <fields>et4ae5__FromEmail__c</fields>
+        <fields>et4ae5__Campaigns__c</fields>
+        <fields>et4ae5__Reports__c</fields>
+        <relatedList>et4ae5__SendDefinition__c.et4ae5__Contact__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>et4ae5__smsName__c</fields>
+        <fields>et4ae5__shortCode__c</fields>
+        <fields>et4ae5__Keyword__c</fields>
+        <fields>et4ae5__fBusiness_Unit__c</fields>
+        <fields>et4ae5__Created_Date_Time__c</fields>
+        <fields>et4ae5__Send_Status_View__c</fields>
+        <fields>et4ae5__Status_Date_Time__c</fields>
+        <fields>et4ae5__Campaigns__c</fields>
+        <fields>et4ae5__Reports__c</fields>
+        <relatedList>et4ae5__SMSDefinition__c.et4ae5__Contact__c</relatedList>
     </relatedLists>
     <relatedLists>
         <relatedList>RelatedFileList</relatedList>

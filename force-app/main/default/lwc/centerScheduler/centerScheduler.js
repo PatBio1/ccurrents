@@ -1,15 +1,28 @@
 import { LightningElement, track } from 'lwc';
 import getCenters from '@salesforce/apex/CenterScheduleController.getCenters';
+import getAppointments from '@salesforce/apex/CenterScheduleController.getAppointments';
 
 export default class CenterScheduler extends LightningElement {
 
-    selectedCenterId;
+    @track selectedCenterId;
+    @track selectedDate
+    @track appointments;
     centers = [];
 
     @track showFilters=false;
+    @track show = false;
+    @track dateDisabled = true;
+
+    showPopover() {
+        this.show = !this.show;
+    }
 
     connectedCallback() {
         this.loadCenters();
+    }
+
+    refresh(){
+        this.fetchAppointments();
     }
 
     get statuses(){
@@ -42,6 +55,7 @@ export default class CenterScheduler extends LightningElement {
     }
 
     loadCenters() {
+        
         getCenters().then(centers => {
             this.centers = centers;
         }).catch((error) => {
@@ -50,25 +64,34 @@ export default class CenterScheduler extends LightningElement {
             this.loading = false;
         });
 
-        const request = {
-        };
+        
+    }
 
-        console.log('request', JSON.stringify(request));
-
-        getCenters(request).then(response => {
-            console.log('response', response);
-            this.center = response;
-
-            this.loadAppointments();
-        }).catch((error) => {
-            console.log(error);
+    fetchAppointments(){
+        this.appointments = [];
+        getAppointments({
+            centerId: this.selectedCenterId,
+            appointmentDay: this.selectedDate
+        }).then(appointments =>{
+            console.log(appointments);
+            this.appointments = appointments;
+        }).catch(err =>{
+            console.error(err);
+        }).finally(()=>{
             this.loading = false;
         });
     }
 
     changeCenter(event){
         this.selectedCenterId = event.detail.value;
-        alert('changed to ' + this.selectedCenterId);
+        this.dateDisabled = false;
     }
+
+    changeDate(event){
+        this.selectedDate = event.detail.value;
+        this.fetchAppointments();
+    }
+
+    
 
 }

@@ -1,11 +1,12 @@
 <template>
   <article class="slds-card">
+
       <div class="slds-card__header slds-grid slds-gutters">
           <div class="slds-col slds-size_2-of-12">
            <lightning-combobox
               name="progress"
               label="Choose Center"
-              value={value}
+              value={selectedCenter}
               placeholder="Select Center"
               options={centers}
               onchange={changeCenter} ></lightning-combobox>
@@ -16,8 +17,11 @@
                 type="date" 
                 name="input8" 
                 label="Choose Date" 
-                value="2023-09-07" 
-                min="2023-01-01" ></lightning-input>
+                value={selectedDate}
+                min="2023-01-01" 
+                disabled={dateDisabled}
+                onchange={changeDate}
+                ></lightning-input>
            
           </div>
           <div class="slds-col slds-size_4-of-12"></div>
@@ -39,6 +43,8 @@
                 variant="neutral"
                 label="Refresh"
                 title="Refresh"
+                onclick={refresh}
+                disabled={dateDisabled}
                 icon-name="utility:refresh"
                 class="slds-p-around_xxx-small">
             </lightning-button>
@@ -122,8 +128,74 @@
           </div>
         </template>
       </div>
-      <footer class="slds-card__footer">
+      <footer class="slds-card__footer ">
         
+        <div class="slds-grid slds-wrap chart">
+
+          <!-- header row -->
+          
+          <div class="slds-col slds-size_12-of-12 chart-header">
+            
+            <span class="header-date"><lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={selectedDate} time-zone="UTC"></lightning-formatted-date-time></span>
+          </div>
+
+          <!-- subheaders -->
+          
+          <div class="slds-col slds-size_1-of-12 chart-header-sub" style="text-align: left;">
+            Time
+          </div>
+
+          <div class="slds-col slds-size_1-of-12 chart-header-sub">
+            Available
+          </div>
+
+          <div class="slds-col slds-size_1-of-12 chart-header-sub">
+            Filled
+          </div>
+
+          <div class="slds-col slds-size_9-of-12 chart-header-sub" style="text-align: left;">
+            Donors
+          </div>
+
+          <!-- donor  rows -->
+
+          <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
+            <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data" style="text-align: left;" >
+              <lightning-formatted-time value={appointment.timeString} ></lightning-formatted-time>
+            </div>
+  
+            <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data">
+              <button class="slds-button" onclick={minusAvailable}>-</button> &nbsp;
+              {appointment.availability} &nbsp;
+              <button class="slds-button" onclick={plusAvailable} data-id={appointment.id}>+</button> &nbsp;            
+            </div>
+  
+            <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data">
+              {appointment.booked}
+            </div>
+  
+            <div key={appointment.key} class="slds-col slds-size_9-of-12 chart-data" style="text-align: left;position: relative;">
+              <span  style="position: relative;">
+                <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
+                  <c-donor-dot key={donorId}  icon={donor.icon} donor={donor} appointment={appointment}></c-donor-dot>
+                </template>
+                <button class="slds-button" onclick={plusAvailable} data-id={appointment.id}>+</button>
+                <lightning-button-icon size="large" variant="bare" icon-name="utility:plus"  alternative-text="Settings" title="Settings"></lightning-button-icon>
+              </span>
+            </div>
+          </template>
+          <!-- donor row -->
+
+          
+
+
+
+
+          <!-- end grid container -->
+        </div>
+
+
+
       </footer>
     </article>
 </template>

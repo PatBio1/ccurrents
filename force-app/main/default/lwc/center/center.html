@@ -1,98 +1,57 @@
 <template>
 
     <div class="slds-var-p-around_medium">
-        <lightning-button variant="base" label={labels.back} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+        <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
 
-            <!--div class="slds-m-bottom_medium">
-                <lightning-icon icon-name="utility:chevronleft" size="x-small" class="back-icon" onclick={onBackClick}></lightning-icon>
-                &nbsp;&nbsp;
-                <a href="#" style="color: #5c3e99;" onclick={onBackClick}>Back</a>
-            </div-->
+        <lightning-button variant="base" label={backLabel} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
 
-            <div class="slds-grid slds-gutters">
-                <div class="slds-col slds-size_1-of-2">
+        <template if:true={loaded}>
+            <div class="slds-grid slds-gutters slds-m-vertical_large">
+                <div class="slds-col slds-size_3-of-4">
                     <div class="slds-page-header" style="background-color: #f5f0ff; padding: 0;">
                         <div class="slds-page-header__row">
                             <div class="slds-page-header__col-title">
                                 <div class="slds-media">
                                     <div class="slds-media__figure">
                                         <lightning-icon icon-name="utility:company" size="small" class="center-icon"></lightning-icon>
-                                        <!--span class="slds-icon_container slds-icon-standard-opportunity" title="opportunity">
-                                            <svg class="slds-icon slds-page-header__icon" aria-hidden="true">
-                                                <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#opportunity"></use>
-                                            </svg>
-                                        </span-->
                                     </div>
                                     <div class="slds-media__body">
                                         <div class="slds-page-header__name">
                                             <div class="slds-page-header__name-title">
                                                 <h1>
-                                                    <span class="slds-page-header__title slds-truncate" style="color: #000;">Miramar Center</span>
+                                                    <span class="slds-page-header__title slds-truncate" style="color: #000;">{center.name}</span>
                                                 </h1>
                                             </div>
                                         </div>
-                                        <p class="slds-page-header__name-meta" style="color: #8979a9;">123 Main Street</p>
+                                        <p class="slds-page-header__name-meta" style="color: #8979a9;">{center.address}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="slds-col slds-size_1-of-2 slds-text-align_right">
-                    <span style="color: #99429c;"><strong>$20 per pt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></span>
+                <div class="slds-col slds-size_1-of-4 slds-text-align_right">
+                    <span style="color: #99429c;"><strong>$20 {labels.perPt}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></span>
                 </div>
             </div>
 
             <lightning-tabset class="main-tabs">
-                <lightning-tab label="About">
-                    <div style="font-size: 1.1em; font-weight: 700; color:#000;">Working Hours</div>
+                <lightning-tab label={labels.about}>
+                    <div class="title-small">{labels.workingHours}</div>
 
                     <div class="slds-grid slds-gutters slds-wrap slds-m-top_medium">
-                        <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium" style="color: #000;">
-                            Sunday
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-text-align_right" style="color: #000;">
-                            10:00AM - 2:00PM
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium" style="color: #000;">
-                            Monday
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-text-align_right" style="color: #000;">
-                            8:00AM - 8:00PM
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium" style="color: #000;">
-                            Tuesday
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-text-align_right" style="color: #000;">
-                            8:00AM - 8:00PM
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium" style="color: #000;">
-                            Wednesday
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-text-align_right" style="color: #000;">
-                            8:00AM - 8:00PM
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium" style="color: #000;">
-                            Thursday
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-text-align_right" style="color: #000;">
-                            8:00AM - 8:00PM
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium" style="color: #000;">
-                            Friday
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-text-align_right" style="color: #000;">
-                            8:00AM - 8:00PM
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-m-bottom_medium" style="color: #000;">
-                            Saturday
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-text-align_right" style="color: #000;">
-                            10:00AM - 2:00PM
-                        </div>
+                        <template for:each={center.businessHoursList} for:item="businessHours" for:index="businessHoursIndex">
+                                <div key={businessHours.day} class="slds-col slds-size_1-of-2 slds-m-bottom_medium" style="color: #000;">
+                                    {businessHours.day}
+                                </div>
+                                <div key={businessHours.day} class="slds-col slds-size_1-of-2 slds-text-align_right" style="color: #000;">
+                                    <template if:false={businessHours.isClosed}>{businessHours.open} - {businessHours.close}</template>
+                                    <template if:true={businessHours.isClosed}>{labels.closed}</template>
+                                </div>
+                        </template>
                     </div>
 
-                    <div class="slds-m-top_medium" style="font-size: 1.1em; font-weight: 700; color:#000;">Popular Times</div>
+                    <div class="title-small slds-m-top_medium">{labels.popularTimes}</div>
 
                     <lightning-tabset>
                         <lightning-tab label="Sun">
@@ -110,19 +69,23 @@
                         <lightning-tab label="Sat">
                         </lightning-tab>
                     </lightning-tabset>
-                </lightning-tab>
-                <lightning-tab label="Updates &amp; Appointments">
-                    <div style="font-size: 1.1em; font-weight: 700; color:#000;">Notifications</div>
 
-                    <article class="slds-card slds-card_boundary slds-m-top_medium">
+                    <div class="title-small slds-m-vertical_medium">{labels.centerVideo}</div>
+
+                    <iframe width="100%" src="https://www.youtube.com/embed/aAUXJ8GlHus?controls=0" frameborder="0" allowfullscreen></iframe>
+                </lightning-tab>
+                <lightning-tab label={labels.updatesAndAppointments}>
+                    <div class="title-small">{labels.notifications}</div>
+
+                    <!--article class="slds-card slds-card_boundary slds-m-top_medium">
                         <div class="slds-card__body slds-card__body_inner">
                             Your visit was confirmed:<br/><br/>
                             <strong>3 Jan, Tuesday, 2023 at 9am</strong>
                         </div>
-                    </article>
+                    </article-->
                 </lightning-tab>
             </lightning-tabset>
-        </div>
-    <!--/article-->
+        </template>
+    </div>
 
 </template>

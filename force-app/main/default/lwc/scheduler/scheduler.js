@@ -52,7 +52,7 @@ geo;
         this.currentPage = 'Center';
     }
 
-    onBackButtonClick() {
+    onCenterBackButtonClick() {
         this.currentPage = 'Scheduler';
     }
 

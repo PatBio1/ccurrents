@@ -90,6 +90,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
                 });
                 // console.log(appointments[i]);
             }
+
             console.log(appointments);
             this.appointments = appointments;
         }).catch(err =>{

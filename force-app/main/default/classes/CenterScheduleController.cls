@@ -39,6 +39,7 @@ public with sharing class CenterScheduleController {
                 AND Datetime__c <: appointmentDay + 1
                 ORDER BY Datetime__c ASC
 
+
             ]){
                 AppointmentSlot appt = new AppointmentSlot(app);
                 appMap.put(app.id,appt);

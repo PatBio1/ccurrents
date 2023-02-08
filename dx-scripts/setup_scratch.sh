@@ -28,7 +28,7 @@ sfdx force:config:set defaultusername=$1
 
 #install the marketing cloud connect package (source has dependencies on this package)
 # commenting for now - will add back later when dependencies introduced into source
-# sfdx force:package:install --package MarketingCloud -w 10
+sfdx force:package:install --package MarketingCloud -w 10
 
 ## push local code artifacts to scratch org
 sfdx force:source:push

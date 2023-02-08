@@ -1,8 +1,14 @@
 {
     "orgName": "proesis-dx",
     "edition": "Developer",
-    "features": ["PersonAccounts",  "ServiceCloud", "EnableSetPasswordInApi","Sites","Communities",
-    "ContactsToMultipleAccounts"],
+    "features": [
+        "PersonAccounts",
+        "ServiceCloud",
+        "EnableSetPasswordInApi",
+        "Sites",
+        "Communities",
+        "ContactsToMultipleAccounts"
+    ],
     "hasSampleData": true,
     "settings": {
         "accountSettings": {
@@ -32,7 +38,11 @@
             "enableNameSuffix": true
         },
         "siteSettings": {
-            "enableEnhancedSitesAndContentPlatform" : true
+            "enableEnhancedSitesAndContentPlatform": true
+        },
+        "notificationsSettings": {
+            "enableNotifications": true,
+            "enableMobileAppPushNotifications": true
         }
     }
 }

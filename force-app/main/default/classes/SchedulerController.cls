@@ -21,11 +21,7 @@ public without sharing class SchedulerController {
 
             return lead.Id;
         } catch (Exception e) {
-            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-
-            AuraHandledException ahe = new AuraHandledException(message);
-            ahe.setMessage(message);
-            throw ahe;
+            throw Util.createAuraHandledException(e);
         }
     }
 
@@ -83,11 +79,7 @@ System.debug('### user='+user);
 
             return userId;
         } catch (Exception e) {
-            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-
-            AuraHandledException ahe = new AuraHandledException(message);
-            ahe.setMessage(message);
-            throw ahe;
+            throw Util.createAuraHandledException(e);
         }
     }
 
@@ -101,55 +93,12 @@ System.debug('### user='+user);
             psa.AssigneeId = userId;
             insert psa;
         } catch (Exception e) {
-            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-
-            AuraHandledException ahe = new AuraHandledException(message);
-            ahe.setMessage(message);
-            throw ahe;
+            throw Util.createAuraHandledException(e);
         }
     }
 
     @AuraEnabled
-    public static List<Center> getCenters(Double latitude, Double longitude) {
-        try {
-            List<Account> accounts = [
-                SELECT
-                    Name, BillingStreet, Geolocation__c
-                FROM
-                    Account
-                WHERE
-                    RecordTypeId = :Constants.CENTER_RECORD_TYPE_ID
-                AND
-                    Site != null
-                ORDER BY
-                    DISTANCE(Geolocation__c, GEOLOCATION(:latitude, :longitude), 'mi')
-                LIMIT
-                    5
-            ];
-
-            List<Center> centers = new List<Center>();
-
-            for (Account account : accounts) {
-                Center center = new Center();
-                center.id = account.Id;
-                center.name = account.Name;
-                center.address = account.BillingStreet;
-                center.distance = Decimal.valueOf(Location.getDistance(account.Geolocation__c, Location.newInstance(latitude, longitude), 'mi')).setScale(1) + ' mi';
-                centers.add(center);
-            }
-
-            return centers;
-        } catch (Exception e) {
-            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-
-            AuraHandledException ahe = new AuraHandledException(message);
-            ahe.setMessage(message);
-            throw ahe;
-        }
-    }
-
-    @AuraEnabled
-    public static Center getCenter() {
+    public static CenterController.Center getCenter() {
         try {
             User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
 
@@ -166,17 +115,13 @@ System.debug('### user='+user);
 
             Account account = relations[0].Account;
 
-            Center center = new Center();
+            CenterController.Center center = new CenterController.Center();
             center.id = account.Id;
             center.name = account.Name;
             center.address = account.BillingStreet;
             return center;
         } catch (Exception e) {
-            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-
-            AuraHandledException ahe = new AuraHandledException(message);
-            ahe.setMessage(message);
-            throw ahe;
+            throw Util.createAuraHandledException(e);
         }
     }
 
@@ -223,11 +168,7 @@ System.debug('### user='+user);
             //return appointments;
             return appointmentGroups;
         } catch (Exception e) {
-            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-
-            AuraHandledException ahe = new AuraHandledException(message);
-            ahe.setMessage(message);
-            throw ahe;
+            throw Util.createAuraHandledException(e);
         }
     }
 
@@ -262,11 +203,7 @@ System.debug('### user='+user);
 
             return visits;
         } catch (Exception e) {
-            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-
-            AuraHandledException ahe = new AuraHandledException(message);
-            ahe.setMessage(message);
-            throw ahe;
+            throw Util.createAuraHandledException(e);
         }
     }
 
@@ -290,28 +227,8 @@ System.debug('### user='+user);
 
             return visit.Id;
         } catch (Exception e) {
-            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
-
-            AuraHandledException ahe = new AuraHandledException(message);
-            ahe.setMessage(message);
-            throw ahe;
+            throw Util.createAuraHandledException(e);
         }
-    }
-
-    public class Center {
-
-        @AuraEnabled
-        public Id id {get; set;}
-
-        @AuraEnabled
-        public String name {get; set;}
-
-        @AuraEnabled
-        public String address {get; set;}
-
-        @AuraEnabled
-        public String distance {get; set;}
-
     }
 
     public class AppointmentGroups {

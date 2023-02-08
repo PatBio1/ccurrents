@@ -1,17 +1,21 @@
+import about from '@salesforce/label/c.About';
 import aboutDonationExperience from '@salesforce/label/c.About_Donation_Experience';
 import address from '@salesforce/label/c.Address';
 import alreadyHaveAnAccount from '@salesforce/label/c.Already_Have_An_Account';
 import back from '@salesforce/label/c.Back';
+import backToCenters from '@salesforce/label/c.Back_To_Centers';
 import backToHomepage from '@salesforce/label/c.Back_To_Homepage';
 import basicProfile from '@salesforce/label/c.Basic_Profile';
 import bus from '@salesforce/label/c.Bus';
 import cancel from '@salesforce/label/c.Cancel';
 import car from '@salesforce/label/c.Car';
 import centers from '@salesforce/label/c.Centers';
+import centerVideo from '@salesforce/label/c.Center_Video';
 import chooseACenter from '@salesforce/label/c.Choose_A_Center';
 import chooseAnotherCenter from '@salesforce/label/c.Choose_Another_Center';
 import chooseDate from '@salesforce/label/c.Choose_Date';
 import city from '@salesforce/label/c.City';
+import closed from '@salesforce/label/c.Closed';
 import confirmPassword from '@salesforce/label/c.Confirm_Password';
 import congratulations from '@salesforce/label/c.Congratulations';
 import email from '@salesforce/label/c.Email';
@@ -27,10 +31,12 @@ import myAppointments from '@salesforce/label/c.My_Appointments';
 import myRewards from '@salesforce/label/c.My_Rewards';
 import next from '@salesforce/label/c.Next';
 import nickname from '@salesforce/label/c.Nickname';
+import notifications from '@salesforce/label/c.Notifications';
 import past from '@salesforce/label/c.Past';
 import perPt from '@salesforce/label/c.Per_Pt';
 import personalInformation from '@salesforce/label/c.Personal_Information';
 import plasmaDonationSavesLives from '@salesforce/label/c.Plasma_Donation_Saves_Lives';
+import popularTimes from '@salesforce/label/c.Popular_Times';
 import previous from '@salesforce/label/c.Previous';
 import recommendedToYou from '@salesforce/label/c.Recommended_To_You';
 import schedule from '@salesforce/label/c.Schedule';
@@ -46,8 +52,10 @@ import streetAddress2 from '@salesforce/label/c.Street_Address_2';
 import suffix from '@salesforce/label/c.Suffix';
 import taxi from '@salesforce/label/c.Taxi';
 import tellUsAboutYou from '@salesforce/label/c.Tell_Us_About_You';
+import updatesAndAppointments from '@salesforce/label/c.Updates_And_Appointments';
 import walk from '@salesforce/label/c.Walk';
 import welcomeToProesis from '@salesforce/label/c.Welcome_To_Proesis';
+import workingHours from '@salesforce/label/c.Working_Hours';
 import zipCode from '@salesforce/label/c.Zip_Code';
 
 const labels = {
@@ -58,20 +66,24 @@ const labels = {
     },
 
     // Alphabetical Order
+    about,
     aboutDonationExperience,
     address,
     alreadyHaveAnAccount,
     back,
+    backToCenters,
     backToHomepage,
     basicProfile,
     bus,
     cancel,
     car,
     centers,
+    centerVideo,
     chooseACenter,
     chooseAnotherCenter,
     chooseDate,
     city,
+    closed,
     confirmPassword,
     congratulations,
     email,
@@ -87,10 +99,12 @@ const labels = {
     myRewards,
     next,
     nickname,
+    notifications,
     past,
     perPt,
     personalInformation,
     plasmaDonationSavesLives,
+    popularTimes,
     previous,
     recommendedToYou,
     schedule,
@@ -106,8 +120,10 @@ const labels = {
     suffix,
     taxi,
     tellUsAboutYou,
+    updatesAndAppointments,
     walk,
     welcomeToProesis,
+    workingHours,
     zipCode
 };
 

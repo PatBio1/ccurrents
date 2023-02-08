@@ -7,6 +7,59 @@
     background: #F5F5F5;
     border-radius: 4px;
 }
+.chart{
+
+
+    /* bg darker */
+/* 
+    background: #E5DDF4; */
+    /* box-shadow: 0px 1px 0px #DDDBDA; */
+
+    background-color: #FAF8FF;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    /* line-height: 24px; */
+    color: #000000;
+
+    
+    
+}
+
+.header-date{
+
+    display: flex;
+    align-items: center;
+
+}
+
+.chart .chart-header {
+    background-color: #FAF8FF;
+    padding: 2px;
+}
+
+.chart-header-sub{
+
+    background: #F5F0FF;
+    /* box-shadow: 0px 1px 0px #E5DDF4; */
+    text-align: center;
+    padding: 2px;
+}
+
+.chart-data {
+    /* height: 32px; */
+    vertical-align:bottom;
+/* bg lightest */
+
+    background: #FAF8FF;
+    /* box-shadow: 0px 1px 0px #E5DDF4; */
+    padding: 2px;
+}
+
+.chart-data:hover{
+    background-color: yellow;
+}
 
 :host .apply-button {
     --sds-c-button-neutral-color-background: #f5f0ff;
@@ -15,4 +68,27 @@
     --sds-c-button-neutral-color-border-hover: #d1c7e4;
     --sds-c-button-text-color: #1f1e1f;
     --sds-c-button-text-color-hover: #1f1e1f;
+}
+
+:host  {
+    --slds-c-avatar-initials-text-color: white;
+    --slds-c-avatar-initials-text-color-hover : orange;
+    --slds-c-avatar-radius-border: 1rem;
+}
+
+
+.overlay{
+
+    position: absolute; /*newly added*/
+    right: 50px; /*newly added*/
+    top: 5px;/*newly added*/
+    z-index: 1000;
+}
+
+.donor-icon{
+
+}
+
+.slds-m-right_small, .slds-m-right--small {
+    margin-right: var(--lwc-spacingSmall,0.5rem);
 }

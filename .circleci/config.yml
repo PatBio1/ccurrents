@@ -53,6 +53,6 @@ jobs:
                 ./dx-scripts/deploy.sh PROD checkonly
               fi
           name: "Deploy To Permanent Branch/Orgs"
-      - store_artifacts: 
-          destination: ./artifacts
-          path: /tmp/artifacts
+      # - store_artifacts: 
+      #     destination: ./artifacts
+      #     path: /tmp/artifacts

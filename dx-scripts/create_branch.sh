@@ -17,4 +17,5 @@ git push -u origin $1
 
 
 # call setup script for org setup
+echo Setting up scratch org...patience please...
 ./dx-scripts/setup_scratch.sh $1;

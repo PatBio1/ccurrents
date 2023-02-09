@@ -37,6 +37,8 @@ public with sharing class CenterScheduleController {
                 WHERE Schedule__r.Center__c =: centerId
                 AND Datetime__c >: appointmentDay
                 AND Datetime__c <: appointmentDay + 1
+                ORDER BY Datetime__c ASC
+
 
             ]){
                 AppointmentSlot appt = new AppointmentSlot(app);
@@ -111,7 +113,7 @@ public with sharing class CenterScheduleController {
             this.Id = app.Id;
             this.appointmentDatetime = app.Datetime__c;
             TimeZone tz =  UserInfo.getTimeZone();
-            this.timeString =  this.appointmentDatetime.format('h:mm a',tz.toString());
+            this.timeString =  this.appointmentDatetime.format('h:mm a');
             this.visits = new Visit[]{};
             this.availability = app.Availability__c;
             this.booked = app.Booked__c;

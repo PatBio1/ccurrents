@@ -1,8 +1,9 @@
 import { LightningElement, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getCenters from '@salesforce/apex/CenterScheduleController.getCenters';
 import getAppointments from '@salesforce/apex/CenterScheduleController.getAppointments';
 
-export default class CenterScheduler extends LightningElement {
+export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
     @track selectedCenterId;
     @track selectedDate
@@ -57,6 +58,7 @@ export default class CenterScheduler extends LightningElement {
     loadCenters() {
         
         getCenters().then(centers => {
+
             this.centers = centers;
         }).catch((error) => {
             console.log(error);
@@ -68,11 +70,27 @@ export default class CenterScheduler extends LightningElement {
     }
 
     fetchAppointments(){
-        this.appointments = [];
+        this.appointments = [];    
         getAppointments({
             centerId: this.selectedCenterId,
             appointmentDay: this.selectedDate
-        }).then(appointments =>{
+        }).then(async appointments =>{
+            for(let i=0;i<appointments.length;i++){
+                //generate appointment links
+                appointments[i].link = await this[NavigationMixin.GenerateUrl]({
+                    type: 'standard__recordPage',
+                    attributes: {
+                        recordId: appointments[i].Id,
+                        actionName: 'view',
+                    }
+                }).then((url) => {
+                    return url;
+                }).catch(err => {
+                    console.error(err);
+                });
+                // console.log(appointments[i]);
+            }
+
             console.log(appointments);
             this.appointments = appointments;
         }).catch(err =>{
@@ -90,8 +108,7 @@ export default class CenterScheduler extends LightningElement {
     changeDate(event){
         this.selectedDate = event.detail.value;
         this.fetchAppointments();
-    }
+    }    
 
-    
 
 }

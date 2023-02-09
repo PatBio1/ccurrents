@@ -28,7 +28,7 @@
           <div class="slds-col slds-size_4-of-12 slds-align_absolute-center" >
 
             
-              <lightning-button
+            <lightning-button
                 variant="neutral"
                 label={filterLabel}
                 title="Toggle Filters"
@@ -39,7 +39,7 @@
             
             &nbsp;
             
-              <lightning-button
+            <lightning-button
                 variant="neutral"
                 label="Refresh"
                 title="Refresh"
@@ -49,7 +49,14 @@
                 class="slds-p-around_xxx-small">
             </lightning-button>
             
-              
+            &nbsp;
+
+          <lightning-button
+            variant="brand"
+            label="New Schedule"
+            title="New Schedule"
+            class="primary-button">
+          </lightning-button>
              
           </div>
 
@@ -121,15 +128,71 @@
                 class="slds-p-around_xxx-small">
             </lightning-button>
             
-              
-             
           </div>
 
           </div>
         </template>
+        
       </div>
       <footer class="slds-card__footer ">
-        
+<!-- begin legend -->
+        <div class="slds-grid slds-gutters legend">
+          <div class="slds-col slds-size_1-of-12">
+            <lightning-avatar size="x-small"  aria-haspopup="false" variant="circle" initials=" " fallback-icon-name="standard:business_hours" alternative-text="Salesforce" class="slds-m-right_small donor-icon scheduled"  style="margin-right:2px;"></lightning-avatar>              
+            Scheduled
+          </div>
+
+          <div class="slds-col slds-size_1-of-12">
+           
+            <lightning-avatar size="x-small"  aria-haspopup="false" variant="circle" initials=" " fallback-icon-name="standard:approval" alternative-text="Salesforce" class="slds-m-right_small donor-icon checked-in"  style="margin-right:2px;"></lightning-avatar>              
+            Checked-In
+   
+          </div>
+
+          <div class="slds-col slds-size_1-of-12">
+            <lightning-avatar size="x-small"  aria-haspopup="false" variant="circle" initials=" " fallback-icon-name="standard:buyer_group" alternative-text="Salesforce" class="slds-m-right_small donor-icon donation-complete"  style="margin-right:2px;"></lightning-avatar>              
+            Donation Complete
+
+          </div>
+
+          <div class="slds-col slds-size_1-of-12">
+            <lightning-avatar size="x-small"  aria-haspopup="false" variant="circle" initials=" " fallback-icon-name="standard:payment_gateway" alternative-text="Salesforce" class="slds-m-right_small donor-icon paid-visit-complete"  style="margin-right:2px;"></lightning-avatar>              
+            Paid/Visit Complete
+          </div>
+
+          <div class="slds-col slds-size_1-of-12">
+           
+            <lightning-avatar size="x-small"  aria-haspopup="false" variant="circle" initials=" " fallback-icon-name="custom:custom25" alternative-text="Salesforce" class="slds-m-right_small donor-icon late"  style="margin-right:2px;"></lightning-avatar>              
+            Late
+   
+          </div>
+
+          <div class="slds-col slds-size_1-of-12">
+            <lightning-avatar size="x-small"  aria-haspopup="false" variant="circle" initials=" " fallback-icon-name="custom:custom76" alternative-text="Salesforce" class="slds-m-right_small donor-icon cancelled"  style="margin-right:2px;"></lightning-avatar>              
+            Cancelled
+
+          </div>
+
+          <div class="slds-col slds-size_1-of-12">
+           
+            <lightning-avatar size="x-small"  aria-haspopup="false" variant="circle" initials=" " fallback-icon-name="custom:custom60" alternative-text="Salesforce" class="slds-m-right_small donor-icon deferred-left-center"  style="margin-right:2px;"></lightning-avatar>              
+            Deferred/Left Center
+   
+          </div>
+
+          <div class="slds-col slds-size_1-of-12">
+            <lightning-avatar size="x-small"  aria-haspopup="false" variant="circle" initials=" " fallback-icon-name="custom:custom77" alternative-text="Salesforce" class="slds-m-right_small donor-icon missed"  style="margin-right:2px;"></lightning-avatar>              
+            Missed
+
+          </div>
+
+          <div class="slds-col slds-size_4-of-12">
+            &nbsp;
+          </div>
+
+        </div>
+
+
         <div class="slds-grid slds-wrap chart">
 
           <!-- header row -->
@@ -154,14 +217,19 @@
           </div>
 
           <div class="slds-col slds-size_9-of-12 chart-header-sub" style="text-align: left;">
-            Donors
+            Donors 
+
           </div>
 
           <!-- donor  rows -->
 
           <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
             <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data" style="text-align: left;" >
-              <lightning-formatted-time value={appointment.timeString} ></lightning-formatted-time>
+
+                <a href={appointment.link} target="_blank">
+                  <lightning-formatted-time value={appointment.timeString} ></lightning-formatted-time>
+                </a>
+              
             </div>
   
             <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data">

@@ -1,12 +1,12 @@
 <template>
-    <lightning-avatar size="medium" onclick={togglePopover}  aria-haspopup="false" variant="circle" initials={donor.initials} fallback-icon-name={donor.icon} alternative-text="Salesforce" class="slds-m-right_small donor-icon"  style="margin-right:2px;"></lightning-avatar>              
+    <lightning-avatar size="medium" onclick={togglePopover}  aria-haspopup="false" variant="circle" initials={donor.initials} fallback-icon-name={donor.icon} alternative-text={donor.donorName} class={classes}  style="margin-right:2px;"></lightning-avatar>              
     <template if:true={show}>
         <section aria-label="Dialog title" aria-describedby="popover-body-id" class="slds-popover slds-nubbin_left-top" role="dialog" style="position:absolute">
             <lightning-button-icon icon-name="utility:close"  alternative-text="close" title="Close" onclick={hidePopover} class="slds-float_right slds-popover__close"></lightning-button-icon>
        
         <div id="popover-body-id" class="slds-popover__body">
         <p><a onclick={donorClick} >{donor.donorName}</a></p>
-        <p><a onclick={appointmentClick} >Appointment</a></p>
+        <p><a onclick={visitClick} >Visit</a></p>
         </div>
         </section>
     </template>

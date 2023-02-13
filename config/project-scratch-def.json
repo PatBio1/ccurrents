@@ -1,6 +1,6 @@
 {
     "orgName": "proesis-dx",
-    "edition": "Developer",
+    "edition": "Enterprise",
     "features": [
         "PersonAccounts",
         "ServiceCloud",
@@ -9,7 +9,7 @@
         "Communities",
         "ContactsToMultipleAccounts"
     ],
-    "hasSampleData": true,
+    "hasSampleData": false,
     "settings": {
         "accountSettings": {
             "enableRelateContactToMultipleAccounts": true

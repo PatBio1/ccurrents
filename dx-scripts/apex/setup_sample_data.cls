@@ -1,14 +1,14 @@
 
 // Cleanup krufty Entitlements, Cases, Opportunities, Contacts and Accounts
-delete [SELECT Id FROM Entitlement];
+// delete [SELECT Id FROM Entitlement];
 
-delete [SELECT Id FROM Case];
+// delete [SELECT Id FROM Case];
 
-delete [SELECT Id FROM Opportunity];
+// delete [SELECT Id FROM Opportunity];
 
-delete [SELECT Id FROM Contact WHERE IsPersonAccount = false];
+// delete [SELECT Id FROM Contact WHERE IsPersonAccount = false];
 
-delete [SELECT Id FROM Account];
+// delete [SELECT Id FROM Account];
 
 // Create Donors
 Account[] donors = new Account[]{

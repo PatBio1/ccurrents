@@ -23,6 +23,18 @@
     --sds-c-button-brand-color-border-hover: #99429C;
 }
 
+:host .modal-header {
+    --sds-c-modal-header-color-background: #F5F0FF;
+}
+
+:host .modal-footer {
+    --sds-c-modal-footer-color-background: #F5F0FF;
+}
+
+:host .modal-body {
+    --sds-c-modal-body-color-background: #F5F0FF;
+}
+
 .primary-button[disabled], .primary-button:disabled {
     background-color: #d1c7e4; /* TODO: get from style guide */
     border-color: #d1c7e4; /* TODO: get from style guide */
@@ -40,6 +52,16 @@
 :host .tertiary-button {
     --sds-c-button-text-color: #5c3e99;
     --sds-c-button-text-color-hover: #99429C;
+}
+
+:host .modal-button-primary  {
+
+    --sds-c-button-neutral-color-background: #5C3E99;
+    --sds-c-button-neutral-color-border: #5C3E99;
+    --sds-c-button-neutral-color-background-hover: #99429C;
+    --sds-c-button-neutral-color-border-hover: #99429C;
+    --sds-c-button-text-color: #ffffff;
+    --sds-c-button-text-color-hover: #ffffff;
 }
 
 .title-large {

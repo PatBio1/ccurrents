@@ -2,6 +2,7 @@ import { LightningElement, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getCenters from '@salesforce/apex/CenterScheduleController.getCenters';
 import getAppointments from '@salesforce/apex/CenterScheduleController.getAppointments';
+import CreateScheduleModal from "c/createScheduleModal";
 
 export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
@@ -24,6 +25,23 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
     refresh(){
         this.fetchAppointments();
+    }
+
+    openNewScheduleModal(){
+        CreateScheduleModal.open({
+            // pass data for the @api properties declared in the Modal component
+            // mascots: this.mascots,
+            // Bind the events dispatched from the Modal component
+            onselect: (e) => {
+                e.stopPropagation();
+                // Call function to handle the selection event
+                this.handleSelectEvent(e.detail);
+            }
+        }).then((result) => {
+            // Promise handler for the Modal opening
+            // Result has values passed via the close event from the Modal component
+            console.log(result);
+        });
     }
 
     get statuses(){

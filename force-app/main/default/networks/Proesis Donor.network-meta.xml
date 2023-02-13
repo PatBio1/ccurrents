@@ -42,7 +42,7 @@
         <selfRegProfilePageOverrideSetting>Designer</selfRegProfilePageOverrideSetting>
     </networkPageOverrides>
     <picassoSite>Proesis_Donor1</picassoSite>
-    <selfRegProfile>customer community login user</selfRegProfile>
+    <selfRegProfile>ProesisCustomerLoginMinimumAccess</selfRegProfile>
     <selfRegistration>true</selfRegistration>
     <sendWelcomeEmail>true</sendWelcomeEmail>
     <site>Proesis_Donor</site>

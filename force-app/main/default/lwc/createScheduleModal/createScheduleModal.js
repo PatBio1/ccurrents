@@ -1,14 +1,14 @@
-import { api } from "lwc";
+import { api, track } from "lwc";
 import LightningModal from "lightning/modal";
 
 export default class CreateScheduleModal extends LightningModal {
-    @api mascots;
-    startDate;
-    endDate;
-    appointmentTier;
-    loyaltyTier;
-    intervalsPerHour = 0;
-    slotsPerInterval = 0;
+    @api centerId;
+    @track startDate;
+    @track endDate;
+    @track appointmentTier;
+    @track loyaltyTier;
+    @track intervalsPerHour = 0;
+    @track slotsPerInterval = 0;
 
     
     // handle the event from the visual picker component
@@ -19,6 +19,7 @@ export default class CreateScheduleModal extends LightningModal {
     handleConfirm() {
         // alert('hey now');
         // Close the Modal
+        console.log(this.centerId);
         this.close();
     }
 

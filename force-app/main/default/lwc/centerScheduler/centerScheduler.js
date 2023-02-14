@@ -30,7 +30,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     openNewScheduleModal(){
         CreateScheduleModal.open({
             // pass data for the @api properties declared in the Modal component
-            // mascots: this.mascots,
+            centerId: this.selectedCenterId,
             // Bind the events dispatched from the Modal component
             onselect: (e) => {
                 e.stopPropagation();

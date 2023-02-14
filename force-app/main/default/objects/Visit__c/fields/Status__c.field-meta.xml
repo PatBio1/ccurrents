@@ -23,6 +23,11 @@
                 <label>Scheduled</label>
             </value>
             <value>
+                <fullName>Rescheduled</fullName>
+                <default>false</default>
+                <label>Rescheduled</label>
+            </value>
+            <value>
                 <fullName>Canceled</fullName>
                 <default>false</default>
                 <label>Canceled</label>

@@ -176,6 +176,13 @@
         <value>Friday</value>
     </labels>
     <labels>
+        <fullName>Friday_Abbreviation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Friday Abbreviation</shortDescription>
+        <value>Fri</value>
+    </labels>
+    <labels>
         <fullName>How_Will_You_Get_To_Center</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -216,6 +223,13 @@
         <protected>true</protected>
         <shortDescription>Monday</shortDescription>
         <value>Monday</value>
+    </labels>
+    <labels>
+        <fullName>Monday_Abbreviation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Monday Abbreviation</shortDescription>
+        <value>Mon</value>
     </labels>
     <labels>
         <fullName>My_Appointments</fullName>
@@ -372,6 +386,13 @@
         <value>Saturday</value>
     </labels>
     <labels>
+        <fullName>Saturday_Abbreviation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Saturday Abbreviation</shortDescription>
+        <value>Sat</value>
+    </labels>
+    <labels>
         <fullName>Social_Picture</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -391,6 +412,13 @@
         <protected>true</protected>
         <shortDescription>Sunday</shortDescription>
         <value>Sunday</value>
+    </labels>
+    <labels>
+        <fullName>Sunday_Abbreviation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sunday Abbreviation</shortDescription>
+        <value>Sun</value>
     </labels>
     <labels>
         <fullName>Taxi</fullName>
@@ -414,11 +442,25 @@
         <value>Thursday</value>
     </labels>
     <labels>
+        <fullName>Thursday_Abbreviation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Thursday Abbreviation</shortDescription>
+        <value>Thu</value>
+    </labels>
+    <labels>
         <fullName>Tuesday</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Tuesday</shortDescription>
         <value>Tuesday</value>
+    </labels>
+    <labels>
+        <fullName>Tuesday_Abbreviation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Tuesday Abbreviation</shortDescription>
+        <value>Tue</value>
     </labels>
     <labels>
         <fullName>Updates_And_Appointments</fullName>
@@ -440,6 +482,13 @@
         <protected>true</protected>
         <shortDescription>Wednesday</shortDescription>
         <value>Wednesday</value>
+    </labels>
+    <labels>
+        <fullName>Wednesday_Abbreviation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Wednesday Abbreviation</shortDescription>
+        <value>Wed</value>
     </labels>
     <labels>
         <fullName>Welcome_To_Proesis</fullName>

@@ -23,6 +23,10 @@
                 <behavior>Required</behavior>
                 <field>Center_Donation_Type__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Rescheduled_Visit__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -101,6 +105,10 @@
         <fields>Type__c</fields>
         <fields>Account.ACC_NAME</fields>
         <relatedList>Transaction__c.Visit__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <relatedList>Visit__c.Rescheduled_Visit__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>

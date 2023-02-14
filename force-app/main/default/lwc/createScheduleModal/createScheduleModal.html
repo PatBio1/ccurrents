@@ -1,0 +1,84 @@
+<template>
+    <lightning-modal-header
+        label="New Schedule"
+        class="modal-header"
+    ></lightning-modal-header>
+    <lightning-modal-body class="create-schedule-modal-body">
+        <div class="slds-grid slds-gutters">
+            
+            <div class="slds-col slds-size_6-of-12">
+                
+                <lightning-input 
+                type="date" 
+                name="input8" 
+                label="Start Date" 
+                value={startDate}
+                min="2023-01-01" 
+                ></lightning-input>
+            </div>
+
+            <div class="slds-col slds-size_6-of-12">
+                <lightning-input 
+                type="date" 
+                name="input8" 
+                label="End Date" 
+                value={endDate}
+                min="2023-01-01" 
+                
+                ></lightning-input>
+            </div>
+
+        </div>
+
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_6-of-12">
+                <lightning-combobox
+              name="progress"
+              label="Choose Appointment Tier"
+              value={appointmentTier}
+              options={centers}
+               ></lightning-combobox>
+            </div>
+            <div class="slds-col slds-size_6-of-12">
+                <lightning-combobox
+                name="progress"
+                label="Choose Loyalty Tier"
+                value={loyaltyTier}
+                options={centers}
+                 ></lightning-combobox>
+            </div>
+
+        </div>
+
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_6-of-12">
+                
+                <lightning-input 
+                type="number" 
+                name="input8" 
+                label="Number Intervals Per Hour" 
+                value={intervalsPerHour}
+
+                ></lightning-input>
+            </div>
+            <div class="slds-col slds-size_6-of-12">
+                <lightning-input 
+                type="number" 
+                name="input8" 
+                label="Number Slots Per Interval" 
+                value={slotsPerInterval}
+
+                ></lightning-input>
+            </div>
+
+
+        </div>
+
+    </lightning-modal-body>
+    <lightning-modal-footer class="modal-footer">
+        <div class="slds-button-group" role="group">
+            <lightning-button label="Clear" onclick={clearInput} ></lightning-button> &nbsp;
+            <lightning-button label="Create" onclick={handleConfirm} class="modal-button-primary"></lightning-button>
+        </div>
+    </lightning-modal-footer>
+</template>

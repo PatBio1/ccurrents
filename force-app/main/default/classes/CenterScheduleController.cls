@@ -9,6 +9,7 @@ public with sharing class CenterScheduleController {
                 Select Id, Name 
                 FROM Account 
                 WHERE RecordType.DeveloperName = 'Center'
+                WITH SECURITY_ENFORCED
             ]){
                 centers.add(new Center(a));
             }
@@ -37,7 +38,9 @@ public with sharing class CenterScheduleController {
                 WHERE Schedule__r.Center__c =: centerId
                 AND Datetime__c >: appointmentDay
                 AND Datetime__c <: appointmentDay + 1
+                WITH SECURITY_ENFORCED
                 ORDER BY Datetime__c ASC
+                
 
 
             ]){
@@ -53,9 +56,11 @@ public with sharing class CenterScheduleController {
                         Donor__r.Name,
                         Donor__r.FirstName,
                         Donor__r.LastName,
-                        Donor__r.Email
+                        Donor__r.Email,
+                        Status__c
                 FROM Visit__c
                 WHERE Appointment__c in: appMap.keyset()
+                WITH SECURITY_ENFORCED
             ]){
                 AppointmentSlot appt = appMap.get(visit.Appointment__c);
                 appt.visits.add(new Visit(visit));

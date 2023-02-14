@@ -34,6 +34,7 @@
                 title="Toggle Filters"
                 icon-name="utility:filterList"
                 onclick={toggleFilters}
+                disabled={dateDisabled}
                 class="slds-p-around_xxx-small">
             </lightning-button>
             
@@ -55,7 +56,9 @@
             variant="brand"
             label="New Schedule"
             title="New Schedule"
-            class="primary-button">
+            class="primary-button"
+            disabled={dateDisabled}
+            onclick={openNewScheduleModal}>
           </lightning-button>
              
           </div>

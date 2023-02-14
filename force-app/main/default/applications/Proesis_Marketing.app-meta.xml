@@ -222,5 +222,4 @@
     <tabs>standard-Dashboard</tabs>
     <tabs>standard-Feed</tabs>
     <uiType>Lightning</uiType>
-    <utilityBar>Proesis_Marketing_UtilityBar</utilityBar>
 </CustomApplication>

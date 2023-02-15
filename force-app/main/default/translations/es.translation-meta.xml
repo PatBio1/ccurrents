@@ -41,7 +41,7 @@
         <name>Cancel</name>
     </customLabels>
     <customLabels>
-        <label>Auto</label>
+        <label>Automóvil</label>
         <name>Car</name>
     </customLabels>
     <customLabels>
@@ -189,7 +189,7 @@
         <name>Popular_Times</name>
     </customLabels>
     <customLabels>
-        <label>Previo</label>
+        <label>Anterior</label>
         <name>Previous</name>
     </customLabels>
     <customLabels>
@@ -289,7 +289,7 @@
         <name>Updates_And_Appointments</name>
     </customLabels>
     <customLabels>
-        <label>Caminar</label>
+        <label>Caminando</label>
         <name>Walk</name>
     </customLabels>
     <customLabels>

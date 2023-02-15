@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Donation__c</fullName>
+    <description>Last &apos;completed&apos; donation datetime</description>
+    <externalId>false</externalId>
+    <label>Last Donation</label>
+    <summarizedField>Visit__c.Donation_Complete__c</summarizedField>
+    <summaryFilterItems>
+        <field>Visit__c.Status__c</field>
+        <operation>equals</operation>
+        <value>Complete</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Visit__c.Donor__c</summaryForeignKey>
+    <summaryOperation>max</summaryOperation>
+    <type>Summary</type>
+</CustomField>

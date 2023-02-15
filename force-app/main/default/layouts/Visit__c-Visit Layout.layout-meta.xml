@@ -27,6 +27,10 @@
                 <behavior>Edit</behavior>
                 <field>Rescheduled_Visit__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Appointment_Datetime__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

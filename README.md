@@ -11,10 +11,10 @@ For all work items, tracking, please refer to our [Proesis Build Project](https:
 
 ### A decent overview of the workflow for our devops:
   1. Pull a new project directory via git clone, done often until you feel more confident about your git skillz.
-  2. Be sure you switch to the branch you want to base your new work from in vscode, usually _main_.
-  3. Be sure you have a default Dev Hub set (done by `./set_default_dev_hub.sh`).
-  4. You should create a new local _working branch_ before pulling the changed code back to local (done by `./create_branch.sh <working-branch-name>`).
-  5. Spin up a fresh scratch org paying attention to the `scratch-org-def` project file settings, and (included with above `./create_branch.sh`).
+  2. Be sure you switch to the branch you want to base your new work from in vscode, usually _intqa_.
+  3. Be sure you have a default Dev Hub set in your local sfdx config (done by `./set_default_dev_hub.sh`).
+  4. You should create a new local _working branch_ before pulling the changed code back to local (use `./create_branch.sh _<working-branch-name>_`).
+  5. Spin up a fresh scratch org paying attention to the `scratch-org-def` project file settings, and (also done by `./create_branch.sh`).
   6. `sfdx force:source:push` to the specific scratch org (included with above `./create_branch.sh`).
   7. Set up sample data in new scratch org (included with above with `setup_scratch.sh` via `create_branch.sh`).
   8. The fresh scratch org will automatically open (thanks again `create_branch.sh`!).

@@ -11,6 +11,8 @@ import cancel from '@salesforce/label/c.Cancel';
 import car from '@salesforce/label/c.Car';
 import centers from '@salesforce/label/c.Centers';
 import centerVideo from '@salesforce/label/c.Center_Video';
+import change from '@salesforce/label/c.Change';
+import changeLocation from '@salesforce/label/c.Change_Location';
 import chooseACenter from '@salesforce/label/c.Choose_A_Center';
 import chooseAnotherCenter from '@salesforce/label/c.Choose_Another_Center';
 import chooseDate from '@salesforce/label/c.Choose_Date';
@@ -24,12 +26,14 @@ import enterPassword from '@salesforce/label/c.Enter_Password';
 import firstName from '@salesforce/label/c.First_Name';
 import fridayAbbreviation from '@salesforce/label/c.Friday_Abbreviation';
 import howWillYouGetToCenter from '@salesforce/label/c.How_Will_You_Get_To_Center';
+import invalidZipCode from '@salesforce/label/c.Invalid_Zip_Code';
 import joinUs from '@salesforce/label/c.Join_Us';
 import lastName from '@salesforce/label/c.Last_Name';
 import middleName from '@salesforce/label/c.Middle_Name';
 import mobilePhone from '@salesforce/label/c.Mobile_Phone';
 import mondayAbbreviation from '@salesforce/label/c.Monday_Abbreviation';
 import myAppointments from '@salesforce/label/c.My_Appointments';
+import myLocation from '@salesforce/label/c.My_Location';
 import myRewards from '@salesforce/label/c.My_Rewards';
 import next from '@salesforce/label/c.Next';
 import nickname from '@salesforce/label/c.Nickname';
@@ -41,6 +45,7 @@ import plasmaDonationSavesLives from '@salesforce/label/c.Plasma_Donation_Saves_
 import popularTimes from '@salesforce/label/c.Popular_Times';
 import previous from '@salesforce/label/c.Previous';
 import recommendedToYou from '@salesforce/label/c.Recommended_To_You';
+import resultsFor from '@salesforce/label/c.Results_For';
 import saturdayAbbreviation from '@salesforce/label/c.Saturday_Abbreviation';
 import schedule from '@salesforce/label/c.Schedule';
 import scheduled from '@salesforce/label/c.Scheduled';
@@ -86,6 +91,8 @@ const labels = {
     car,
     centers,
     centerVideo,
+    change,
+    changeLocation,
     chooseACenter,
     chooseAnotherCenter,
     chooseDate,
@@ -99,12 +106,14 @@ const labels = {
     firstName,
     fridayAbbreviation,
     howWillYouGetToCenter,
+    invalidZipCode,
     joinUs,
     lastName,
     middleName,
     mobilePhone,
     mondayAbbreviation,
     myAppointments,
+    myLocation,
     myRewards,
     next,
     nickname,
@@ -116,6 +125,7 @@ const labels = {
     popularTimes,
     previous,
     recommendedToYou,
+    resultsFor,
     saturdayAbbreviation,
     schedule,
     scheduled,

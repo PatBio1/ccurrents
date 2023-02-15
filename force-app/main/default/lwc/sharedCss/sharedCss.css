@@ -1,19 +1,30 @@
 :host {
+    /* Proesis */
     --pro-background-color: #f5f0ff; /* TODO: get from style guide */
+    --pro-border-color: #d1c7e4; /* TODO: get from style guide */
+    --pro-text-color: #000;
 
+    /* Input */
     --sds-c-input-color-background: var(--pro-background-color);
-    --sds-c-input-color-border: #d1c7e4; /* TODO: get from style guide */
-    --sds-c-input-text-color: #000;
+    --sds-c-input-color-border: var(--pro-border-color);
+    --sds-c-input-text-color: var(--pro-text-color);
 
+    /* Tabs */
     --sds-c-tabs-item-color-border-active: #99429c;
     --sds-c-tabs-item-color-border-hover: #99429c;
-    --sds-c-tabs-item-text-color-active: #000;
+    --sds-c-tabs-item-text-color-active: var(--pro-text-color);
 
+    /* Checkbox */
     --sds-c-checkbox-color-border: #5c3e99;
     --sds-c-checkbox-color-background: var(--pro-background-color);
     --sds-c-checkbox-color-background-checked: #5c3e99;
     --sds-c-checkbox-color-border-checked: #5c3e99;
     --sds-c-checkbox-mark-color-foreground: var(--pro-background-color);
+
+    /* Modal */
+    --sds-c-modal-header-color-background: var(--pro-background-color);
+    --sds-c-modal-content-color-background: var(--pro-background-color);
+    --sds-c-modal-footer-color-background: var(--pro-background-color);
 }
 
 :host .primary-button {
@@ -23,21 +34,9 @@
     --sds-c-button-brand-color-border-hover: #99429C;
 }
 
-:host .modal-header {
-    --sds-c-modal-header-color-background: #F5F0FF;
-}
-
-:host .modal-footer {
-    --sds-c-modal-footer-color-background: #F5F0FF;
-}
-
-:host .modal-body {
-    --sds-c-modal-body-color-background: #F5F0FF;
-}
-
 .primary-button[disabled], .primary-button:disabled {
-    background-color: #d1c7e4; /* TODO: get from style guide */
-    border-color: #d1c7e4; /* TODO: get from style guide */
+    background-color: var(--pro-border-color);
+    border-color: var(--pro-border-color);
 }
 
 :host .secondary-button {
@@ -54,32 +53,36 @@
     --sds-c-button-text-color-hover: #99429C;
 }
 
-:host .modal-button-primary  {
+.title-large {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--pro-text-color);
+}
 
+.title-medium {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--pro-text-color);
+}
+
+.title-small {
+    font-size: 1.0rem;
+    font-weight: 600;
+    color: var(--pro-text-color);
+}
+
+
+/* ################################################ */
+/* INTERNAL */
+/* ################################################ */
+
+:host .modal-button-primary  {
     --sds-c-button-neutral-color-background: #5C3E99;
     --sds-c-button-neutral-color-border: #5C3E99;
     --sds-c-button-neutral-color-background-hover: #99429C;
     --sds-c-button-neutral-color-border-hover: #99429C;
     --sds-c-button-text-color: #ffffff;
     --sds-c-button-text-color-hover: #ffffff;
-}
-
-.title-large {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #000;
-}
-
-.title-medium {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #000;
-}
-
-.title-small {
-    font-size: 1.0rem;
-    font-weight: 600;
-    color: #000;
 }
 
 /* custom donor dot colors */

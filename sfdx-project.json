@@ -11,5 +11,5 @@
     "MarketingCloud" : "04t6S000001Ujut"
   },
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "56.0"
+  "sourceApiVersion": "57.0"
 }

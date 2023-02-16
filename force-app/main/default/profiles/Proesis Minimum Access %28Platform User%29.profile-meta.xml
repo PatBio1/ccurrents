@@ -71,4 +71,5 @@
         <recordType>PersonAccount.Donor</recordType>
         <visible>false</visible>
     </recordTypeVisibilities>
+    <userLicense>Salesforce Platform</userLicense>
 </Profile>

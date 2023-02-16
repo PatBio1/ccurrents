@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>type__c</fullName>
-    <description>The event type e.g. &apos;Check In&apos;, &apos;Donation end&apos; etc.</description>
+    <fullName>Timestamp__c</fullName>
     <externalId>false</externalId>
     <isFilteringDisabled>false</isFilteringDisabled>
     <isNameField>false</isNameField>
     <isSortingDisabled>false</isSortingDisabled>
-    <label>type</label>
-    <length>40</length>
-    <required>false</required>
-    <type>Text</type>
-    <unique>false</unique>
+    <label>Timestamp</label>
+    <required>true</required>
+    <type>DateTime</type>
 </CustomField>

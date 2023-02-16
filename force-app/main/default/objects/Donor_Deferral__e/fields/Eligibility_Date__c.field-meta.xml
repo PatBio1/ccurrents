@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Event_Type__c</fullName>
-    <description>The one time enrollment ID for a new donor</description>
+    <fullName>Eligibility_Date__c</fullName>
+    <description>The future date the donor becomes eligible to donate again.</description>
     <externalId>false</externalId>
     <isFilteringDisabled>false</isFilteringDisabled>
     <isNameField>false</isNameField>
     <isSortingDisabled>false</isSortingDisabled>
-    <label>Event Type</label>
-    <length>255</length>
+    <label>Eligibility Date</label>
     <required>true</required>
-    <type>Text</type>
-    <unique>false</unique>
+    <type>DateTime</type>
 </CustomField>

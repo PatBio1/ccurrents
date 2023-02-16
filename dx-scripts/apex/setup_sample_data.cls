@@ -46,7 +46,7 @@ upsert centers DonorId__c;
 
 List<Business_Hours__c> businessHours = new List<Business_Hours__c>();
 
-for (Id centerId : new List<Id>{centers[1].Id), centers[2].Id)}) {
+for (Id centerId : new List<Id>{centers[1].Id, centers[2].Id}) {
     for (Default_Business_Hours__mdt defaultTime : [SELECT Label, Close__c, Index__c, IsClosed__c, Open__c FROM Default_Business_Hours__mdt]) {
         String todayString = String.valueOf(Datetime.now().date());
         Datetime closingTime = Datetime.valueOf(String.valueOf(todayString + ' ' + defaultTime.Close__c) + ':00');

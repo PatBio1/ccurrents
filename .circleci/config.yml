@@ -62,6 +62,10 @@ jobs:
                 ./dx-scripts/deploy.sh PROD checkonly
               fi
           name: "Deploy To Permanent Branch/Orgs"
+        - run: 
+          name: "Delete Scratch Org"
+          command: "./dx-utils/delete_scratch_org.sh circle_build_$CIRCLE_BUILD_NUM -p\n"
+          when: always
       # - store_artifacts: 
       #     destination: ./artifacts
       #     path: /tmp/artifacts

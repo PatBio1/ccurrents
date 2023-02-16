@@ -29,9 +29,6 @@ sfdx force:config:set defaultusername=$1
 # commenting for now - will add back later when dependencies introduced into source
 sfdx force:package:install --package MarketingCloud -w 10 --noprompt 
 
-## fix RecordType names prior to pushing
-sfdx force:apex:execute -f dx-scripts/apex/account_record_type_fix.apex
-
 ## push local code artifacts to scratch org
 sfdx force:source:push
 

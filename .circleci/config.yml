@@ -49,6 +49,8 @@ jobs:
                 ./dx-scripts/deploy.sh UATSTAGING
               elif [[ $CIRCLE_BRANCH == "integration" ]];
               then
+                echo $SFDXURL_HUB > /tmp/sfdx.url
+                sfdx auth:sfdxurl:store -f /tmp/sfdx.url -a dev-hub --setdefaultdevhubusername
                 #spin up and push a scratch org
                 ./dx-scripts/setup_scratch.sh circle_build_$CIRCLE_BUILD_NUM do_not_open_browser
                 #deploy UATSTAGING branch to UATSTAGING org

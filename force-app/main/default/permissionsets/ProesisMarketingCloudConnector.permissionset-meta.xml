@@ -27,13 +27,13 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
-        <field>Account.E2E_Max__c</field>
+        <editable>true</editable>
+        <field>Account.DonorId__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Account.ExternalId__c</field>
+        <field>Account.E2E_Max__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

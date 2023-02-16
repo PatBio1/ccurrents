@@ -16,17 +16,17 @@ public with sharing class CenterSchedulerControllerTests {
                 FirstName = 'Danny',
                 LastName = 'Donor',
                 RecordTypeID = personAccountRecordTypeId,
-                ExternalID__c = 'donor-12345'
+                DonorId__c = 'donor-12345'
             ),
             new Account(
                 FirstName = 'Betty',
                 LastName = 'Bleeder',
                 RecordTypeID = personAccountRecordTypeId,
-                ExternalID__c = 'donor-67890'
+                DonorId__c = 'donor-67890'
             )
         };
 
-        upsert donors ExternalID__c;
+        upsert donors DonorId__c;
 
         //Create Donation Centers
         Account[] centers = new Account[]{
@@ -36,11 +36,11 @@ public with sharing class CenterSchedulerControllerTests {
                 Name = 'Center 3',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '333 3rd St',
-                ExternalID__c = 'center-3'
+                DonorId__c = 'center-3'
             )
         };
 
-        upsert centers ExternalID__c; 
+        upsert centers DonorId__c;
 
 
         Schedule__c[] schedules = new Schedule__c[]{

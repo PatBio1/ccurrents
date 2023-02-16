@@ -52,16 +52,14 @@ public with sharing class TestUtil {
         User experienceUser;
 
         System.runAs(userWithRole) {
-            account = new Account(
-                Name = 'Test'
+            Account = new Account(
+                FirstName = 'Test',
+                    LastName = 'Last',
+                    RecordTypeId = Constants.DONOR_RECORD_TYPE_ID;
             );
             insert account;
 
-            contact = new Contact(
-                AccountId = account.Id,
-                LastName = 'Last'
-            );
-            insert contact;
+            Id personContactId = [SELECT PersonContactId FROM Account WHERE Id = :account.Id][0].PersonContactId;
 
             String experienceUserEmail = 'experience@' + UserInfo.getOrganizationId() + '.test.com';
 
@@ -77,7 +75,7 @@ public with sharing class TestUtil {
                 LocaleSidKey = 'en_US',
                 EmailEncodingKey = 'ISO-8859-1',
                 LanguageLocaleKey = 'en_US',
-                contactId = contact.Id
+                contactId = personContactId
             );
             insert experienceUser;
         }

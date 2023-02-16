@@ -38,7 +38,6 @@ public with sharing class CenterScheduleController {
                 WHERE Schedule__r.Center__c =: centerId
                 AND Datetime__c >: appointmentDay
                 AND Datetime__c <: appointmentDay + 1
-                WITH SECURITY_ENFORCED
                 ORDER BY Datetime__c ASC
                 
 
@@ -60,7 +59,6 @@ public with sharing class CenterScheduleController {
                         Status__c
                 FROM Visit__c
                 WHERE Appointment__c in: appMap.keyset()
-                WITH SECURITY_ENFORCED
             ]){
                 AppointmentSlot appt = appMap.get(visit.Appointment__c);
                 appt.visits.add(new Visit(visit));
@@ -69,10 +67,28 @@ public with sharing class CenterScheduleController {
             }
             
             system.debug(appMap);
+        } catch(System.QueryException qe){
+            throw new AuraHandledException(qe.getMessage() + qe.getStackTraceString());
+        } catch (Exception e) {
+            
+            throw new AuraHandledException(e.getMessage() + e.getStackTraceString());
+        }
+        return  appMap.values();
+    }
+
+    @AuraEnabled
+    public static void changeVisitAppointment(Id visitId, Id appointmentId){
+        try {
+            if(appointmentId != null){
+                Visit__c visit = new Visit__c(
+                    Appointment__c = appointmentId
+                );
+                visit.Id = visitId;
+                update visit;
+            }
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
-        return  appMap.values();
     }
 
     public class Center {

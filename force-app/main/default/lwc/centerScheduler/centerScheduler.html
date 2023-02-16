@@ -1,6 +1,7 @@
 <template>
+  
   <article class="slds-card">
-
+    <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
       <div class="slds-card__header slds-grid slds-gutters">
           <div class="slds-col slds-size_2-of-12">
            <lightning-combobox
@@ -227,7 +228,7 @@
           <!-- donor  rows -->
 
           <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
-            <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data" style="text-align: left;" >
+            <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data" style="text-align: left; background-color:#d1c7e4" >
 
                 <a href={appointment.link} target="_blank">
                   <lightning-formatted-time value={appointment.timeString} ></lightning-formatted-time>
@@ -245,14 +246,15 @@
               {appointment.booked}
             </div>
   
-            <div key={appointment.key} class="slds-col slds-size_9-of-12 chart-data" style="text-align: left;position: relative;">
-              <span  style="position: relative;">
+            <div data-appointment={appointment.Id} key={appointment.key} class="slds-col slds-size_9-of-12 chart-data droppable" title={appointment.key} style="text-align: left;position: relative;" ondrop={drop} ondragenter={dragenter} ondragleave={dragleave} ondragover={allowDrop} >
                 <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
-                  <c-donor-dot key={donorId}  icon={donor.icon} donor={donor} appointment={appointment}></c-donor-dot>
+                  
+                    <c-donor-dot key={donorId}  icon={donor.icon} donor={donor} appointment={appointment} ></c-donor-dot>
+                 
                 </template>
                 <button class="slds-button" onclick={plusAvailable} data-id={appointment.id}>+</button>
                 <lightning-button-icon size="large" variant="bare" icon-name="utility:plus"  alternative-text="Settings" title="Settings"></lightning-button-icon>
-              </span>
+              
             </div>
           </template>
           <!-- donor row -->

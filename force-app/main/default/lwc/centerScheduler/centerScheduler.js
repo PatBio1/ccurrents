@@ -2,7 +2,9 @@ import { LightningElement, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getCenters from '@salesforce/apex/CenterScheduleController.getCenters';
 import getAppointments from '@salesforce/apex/CenterScheduleController.getAppointments';
+import ChangeVisitAppointment from '@salesforce/apex/CenterScheduleController.changeVisitAppointment';
 import CreateScheduleModal from "c/createScheduleModal";
+import DonorDot from "c/donorDot";
 
 export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
@@ -14,6 +16,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     @track showFilters=false;
     @track show = false;
     @track dateDisabled = true;
+    @track loading;
 
     showPopover() {
         this.show = !this.show;
@@ -43,9 +46,49 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             console.log(result);
         });
     }
+    
+    drop(event){
+        console.log('dropped');
+        event.preventDefault();
+        var donorId = event.dataTransfer.getData("donorId");
+        var appointmentId = event.dataTransfer.getData("appointmentId");
+        var visitId = event.dataTransfer.getData("visitId");
+        var newOppointmentId = event.target.dataset.appointment;
+        console.log('donor ID: '  + donorId );
+        console.log('original appointment ID'  + appointmentId );
+        console.log('original visit ID'  + visitId) ;
+        console.log('new appointment ID'  + newOppointmentId );
+ 
+        console.log('new appointment id: ' + event.target.dataset.appointment);
+        this.loading = true;
+        ChangeVisitAppointment({
+            visitId, 
+            appointmentId : event.target.dataset.appointment
+        }).then(()=>{
+            //modal thingy?
+        }).catch(err => {
+            console.debug(err);
+        }).finally(() =>{
+            this.refresh();
+        });
+
+    }
+
+    allowDrop(event){
+        event.preventDefault();
+    }
+
+    dragenter(event){
+        // console.log('drag enter')
+        event.target.classList.add('drop-ok');
+    }
+    dragleave(event){
+        // console.log('drag leave')
+        event.target.classList.remove('drop-ok');
+    }    
 
     get statuses(){
-        return [
+        return [    
             {label:'bleeding', value:'bleeding'},
             {label:'bled', value:'bled'},
             {label:'dry', value:'dry'}
@@ -83,12 +126,12 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         }).finally(() => {
             this.loading = false;
         });
-
-        
+  
     }
 
     fetchAppointments(){
         this.appointments = [];    
+        this.loading = true;
         getAppointments({
             centerId: this.selectedCenterId,
             appointmentDay: this.selectedDate

@@ -35,7 +35,7 @@
 }
 
 .chart .chart-header {
-    background-color: #FAF8FF;
+    background-color: rgb(209, 199, 228);
     padding: 2px;
 }
 
@@ -58,7 +58,20 @@
 }
 
 .chart-data:hover{
-    background-color: yellow;
+    /* background-color: yellow; */
+}
+
+.droppable:hover{
+    background-color: #d1c7e4;
+    min-width: 200px;
+}
+.droppable{
+   
+}
+
+.drop-ok{
+    background-color:    #d1c7e4;
+
 }
 
 :host .apply-button {
@@ -72,7 +85,7 @@
 
 :host  {
     --slds-c-avatar-initials-text-color: white;
-    --slds-c-avatar-initials-text-color-hover : orange;
+    --slds-c-avatar-initials-text-color-hover : #d1c7e4;
     --slds-c-avatar-radius-border: 1rem;
 
 }

@@ -47,6 +47,9 @@ sfdx force:apex:execute -f dx-scripts/apex/create_appointment_slots.cls
 # add Postal Code records
 sfdx force:data:bulk:upsert -s Postal_Code__c -f ./data/postalCodes.csv -i Id
 
+# publish scratch org community
+sfdx force:community:publish --name 'Proesis Donor'
+
 if [ $# -eq 1 ]
 then
     # open new scratch org in browser to default page

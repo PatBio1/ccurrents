@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>timestamp__c</fullName>
-    <description>ISO datetime of the event, which may be different from the run time, of course!</description>
+    <fullName>Timestamp__c</fullName>
+    <description>The datetime of this event</description>
     <externalId>false</externalId>
     <isFilteringDisabled>false</isFilteringDisabled>
     <isNameField>false</isNameField>
     <isSortingDisabled>false</isSortingDisabled>
-    <label>timestamp</label>
+    <label>Timestamp</label>
     <required>true</required>
     <type>DateTime</type>
 </CustomField>

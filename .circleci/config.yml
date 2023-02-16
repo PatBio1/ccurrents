@@ -53,7 +53,7 @@ jobs:
                 ./dx-scripts/setup_scratch.sh circle_build_$CIRCLE_BUILD_NUM do_not_open_browser
                 #deploy UATSTAGING branch to UATSTAGING org
                 echo "deploy $CIRCLE_BRANCH to UATSTAGING org ENABLED"
-                ./dx-scripts/deploy.sh UATSTAGING
+                ./dx-scripts/deploy.sh PROD checkonly
               else
                 #deploy CHECKONLY to other branches
                 echo "Not on Main Branch CHECKONLY - Deploy $CIRCLE_BRANCH to PROD org ENABLED"

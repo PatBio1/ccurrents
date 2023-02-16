@@ -72,4 +72,5 @@
         <personAccountDefault>true</personAccountDefault>
         <visible>true</visible>
     </recordTypeVisibilities>
+    <userLicense>Salesforce</userLicense>
 </Profile>

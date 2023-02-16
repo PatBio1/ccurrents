@@ -14,10 +14,11 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     dotclasses = [
         'slds-m-right_small',
         'donor-icon',
-        'scheduled'
+
     ];
 
     get classes(){
+        this.dotclasses.push(this.statusToClass(this.donor.status));
         return this.dotclasses.join(' ');
     }
 
@@ -75,6 +76,19 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         console.log('dragend...'+ this.donor.donorId );
     }
 
-    
+    statusToClass(status){
+        let statusMap = {
+            'Scheduled' : 'scheduled',
+            'Canceled' : 'cancelled',
+            'Checked-In' : 'checked-in',
+            'Donation Complete' : 'donation-complete',
+            'Paid/Visit Complete' : 'paid-visit-complete',
+            'Late' : 'late',
+            'Deferred/Left Center' : 'deferred-left-center',
+            'Canceled' : 'cancelled',
+            'Missed' : 'missed'
+        }
+        return statusMap[status];
+    }
  
 }

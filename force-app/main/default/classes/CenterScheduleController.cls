@@ -41,8 +41,6 @@ public with sharing class CenterScheduleController {
                 WITH SECURITY_ENFORCED
                 ORDER BY Datetime__c ASC
                 
-
-
             ]){
                 AppointmentSlot appt = new AppointmentSlot(app);
                 appMap.put(app.id,appt);
@@ -60,7 +58,7 @@ public with sharing class CenterScheduleController {
                         Status__c
                 FROM Visit__c
                 WHERE Appointment__c in: appMap.keyset()
-                WITH SECURITY_ENFORCED
+                ORDER BY lastmodifieddate
             ]){
                 AppointmentSlot appt = appMap.get(visit.Appointment__c);
                 appt.visits.add(new Visit(visit));
@@ -171,6 +169,9 @@ public with sharing class CenterScheduleController {
         @AuraEnabled
         public String icon {get;set;}
 
+        @AuraEnabled
+        public String status {get;set;}
+
         
 
         public Visit(Visit__c visit){
@@ -180,7 +181,9 @@ public with sharing class CenterScheduleController {
             this.firstName = visit.Donor__r.firstName;
             this.lastName = visit.Donor__r.lastName;
             this.initials = visit.Donor__r.firstName.subString(0,1) + visit.Donor__r.lastName.subString(0,1);
+            this.status = visit.Status__c;
             this.icon = 'standard:account';
         }
     }
+
 }

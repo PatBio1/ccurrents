@@ -71,4 +71,48 @@ public with sharing class CenterControllerTest {
         }
     }
 
+    @isTest
+    static void testGetLatLong() {
+        System.runAs(TestUtil.createAdminUser()) {
+            Postal_Code__c postalCode = new Postal_Code__c();
+            postalCode.Name = '11111';
+            postalCode.Location__latitude__s = 39.123944;
+            postalCode.Location__longitude__s = -94.757340;
+            insert postalCode;
+        }
+
+        System.runAs(TestUtil.createExperienceUser()) {
+            CenterController.LatLong latLong = CenterController.getLatLong('11111');
+
+            System.assertEquals(39.123944, latLong.latitude);
+            System.assertEquals(-94.757340, latLong.longitude);
+        }
+    }
+
+    @isTest
+    static void testGetLatLongNotFound() {
+        System.runAs(TestUtil.createExperienceUser()) {
+            CenterController.LatLong latLong = CenterController.getLatLong('11111');
+
+            System.assertEquals(null, latLong);
+        }
+    }
+
+    @isTest
+    static void testGetLatLongException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                CenterController.getLatLong('11111');
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
 }

@@ -30,23 +30,13 @@ public with sharing class CenterSchedulerControllerTests {
 
         //Create Donation Centers
         Account[] centers = new Account[]{
-            new Account(
-                Name = 'Proesis Miramar',
-                RecordTypeID = centerRecordTypeID,
-                ShippingStreet = '111 1st St',
-                ExternalID__c = 'center-111'
-            ),
-            new Account(
-                Name = 'Center 2',
-                RecordTypeID = centerRecordTypeID,
-                ShippingStreet = '222 @nd St',
-                ExternalID__c = 'center-222'
-            ),
+            TestUtil.createMiramarCenter(),
+            TestUtil.createDallasCenter(),
             new Account(
                 Name = 'Center 3',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '333 3rd St',
-                ExternalID__c = 'center-333'
+                ExternalID__c = 'center-3'
             )
         };
 
@@ -88,23 +78,10 @@ public with sharing class CenterSchedulerControllerTests {
 
     @IsTest
     public static void testGetCenters(){
-        Profile p = [SELECT Id FROM Profile WHERE Name='Standard User']; 
-        User contextuser = new User(Alias = 'standt', Email='phantomTestUser@testorg.com', 
-            EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US', 
-            LocaleSidKey='en_US', ProfileId = p.Id, 
-            TimeZoneSidKey='America/Los_Angeles', UserName='phantomTestUser@testorg.com');
-        Insert contextuser;
-        PermissionSet ps = [Select ID from PermissionSet WHERE Name = 'ProesisAdministratorSalesforceLicense'];
-        PermissionSetAssignment psa = 
-            new PermissionSetAssignment(
-                PermissionSetId = ps.id, 
-                AssigneeId = contextuser.id
-            );
-        insert psa;
 
         CenterScheduleController.Center[] centers = new CenterScheduleController.Center[]{};
         Test.startTest();
-        System.runAs(contextuser){
+        System.runAs(TestUtil.createAdminUser()){
             centers = CenterScheduleController.getCenters();
         }
         Test.stopTest();
@@ -113,28 +90,117 @@ public with sharing class CenterSchedulerControllerTests {
 
     @IsTest
     public static void testGetAppointments(){
-        Profile p = [SELECT Id FROM Profile WHERE Name='Standard User']; 
-        User contextuser = new User(Alias = 'standt', Email='phantomTestUser@testorg.com', 
-            EmailEncodingKey='UTF-8', LastName='Testing', LanguageLocaleKey='en_US', 
-            LocaleSidKey='en_US', ProfileId = p.Id, 
-            TimeZoneSidKey='America/Los_Angeles', UserName='phantomTestUser@testorg.com');
-        Insert contextuser;
-        PermissionSet ps = [Select ID from PermissionSet WHERE Name = 'ProesisAdministratorSalesforceLicense'];
-        PermissionSetAssignment psa = 
-            new PermissionSetAssignment(
-                PermissionSetId = ps.id, 
-                AssigneeId = contextuser.id
-            );
-        insert psa;
+        Account center = [Select ID FROM Account WHERE Name ='Proesis Miramar' ];
 
-        CenterScheduleController.AppointmentSlot[] slots = new CenterScheduleController.AppointmentSlot[]{};
-        Id centerId = [SELECT Id FROM Account WHERE NAME = 'Proesis Miramar'].Id;
-        Test.startTest();
+            Schedule__c schedule = new Schedule__c(
+                Center__c = center.Id,
+                Begin_Date__c = Date.newInstance(2023, 1, 10).addDays(-10),
+                End_Date__c = Date.newInstance(2023, 1, 10).addDays(30)
+            );
+            insert schedule;
+            Appointment__c[] appointments = new Appointment__c[]{
+                new Appointment__c(
+                        Schedule__c = schedule.Id,
+                    Datetime__c = DateTime.newInstance(2023, 1, 10, 10, 0, 0),
+                    Duration__c = 10,
+                    Capacity__c = 5
+                ),
+                new Appointment__c(
+                        Schedule__c = schedule.Id,
+                    Datetime__c = DateTime.newInstance(2023, 1, 10, 11, 0, 0),
+                    Duration__c = 10,
+                    Capacity__c = 5
+                )
+            };
+            
+            insert appointments;
+
+
+            Center_Donation_Type__c cdt = new Center_Donation_Type__c(Center__c = center.id);
+            insert cdt;
+
+            Contact donor = new Contact(FirstName='Danny', LastName ='Donor');
+            insert donor;
+
+            Visit__c visit = new Visit__c(
+                Appointment__c = appointments[0].id,
+                Center_Donation_Type__c = cdt.Id,
+                Donor__c = donor.id
+            );
+
+            insert visit;
+        User contextuser = TestUtil.createAdminUser();
         System.runAs(contextuser){
-            slots = CenterScheduleController.getAppointments(centerId,Date.newInstance(2023, 1, 10));
+            CenterScheduleController.AppointmentSlot[] slots = new CenterScheduleController.AppointmentSlot[]{};
+            Id centerId = [SELECT Id FROM Account WHERE NAME = 'Proesis Miramar'].Id;
+            Test.startTest();
+            
+                slots = CenterScheduleController.getAppointments(centerId,Date.newInstance(2023, 1, 10));
+            
+            Test.stopTest();
+            system.assertEquals(91, slots.size());
         }
-        Test.stopTest();
-        system.assertEquals(89, slots.size());
+    }
+
+    @IsTest
+    public static void testChangeVisitAppointment(){
+        user adminUser = TestUtil.createAdminUser();
+        System.runAs(adminUser) {
+            Account center = [Select ID FROM Account WHERE Name ='Proesis Miramar' ];
+
+            Schedule__c schedule = new Schedule__c(
+                Center__c = center.Id,
+                Begin_Date__c = Date.newInstance(2023, 1, 10).addDays(-10),
+                End_Date__c = Date.newInstance(2023, 1, 10).addDays(30)
+            );
+            insert schedule;
+            Appointment__c[] appointments = new Appointment__c[]{
+                new Appointment__c(
+                        Schedule__c = schedule.Id,
+                    Datetime__c = DateTime.newInstance(2023, 1, 10, 10, 0, 0),
+                    Duration__c = 10,
+                    Capacity__c = 5
+                ),
+                new Appointment__c(
+                        Schedule__c = schedule.Id,
+                    Datetime__c = DateTime.newInstance(2023, 1, 10, 11, 0, 0),
+                    Duration__c = 10,
+                    Capacity__c = 5
+                )
+            };
+            
+            insert appointments;
+
+
+            Center_Donation_Type__c cdt = new Center_Donation_Type__c(Center__c = center.id);
+            insert cdt;
+
+            Contact donor = new Contact(FirstName='Danny', LastName ='Donor');
+            insert donor;
+
+            Visit__c visit = new Visit__c(
+                Appointment__c = appointments[0].id,
+                Center_Donation_Type__c = cdt.Id,
+                Donor__c = donor.id
+            );
+
+            insert visit;
+
+            Test.startTest();
+
+                CenterScheduleController.changeVisitAppointment(visit.id, appointments[1].id);
+            
+            Test.stopTest();
+
+            visit = [SELECT Id, Appointment__c FROM Visit__c limit 1];
+
+            system.assertEquals(appointments[1].id, visit.Appointment__c);
+        }
+
+
+
+
+        
     }
 
 

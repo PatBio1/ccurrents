@@ -1,18 +1,23 @@
 import { track, LightningElement } from 'lwc';
+import ChangeLocationModal from 'c/changeLocationModal';
 import labels from 'c/labelService';
 import getCenters from '@salesforce/apex/CenterController.getCenters';
 
 // Center of the United States.
 const DEFAULT_LATITUDE = 39.123944;
 const DEFAULT_LONGITUDE = -94.757340;
+const DEFAULT_POSTAL_CODE = '66112';
 
 export default class CenterChooser extends LightningElement {
 
     labels = labels;
     loading = true;
+    centersLoaded = false;
     @track centers = [];
     showCenter = false;
     location = {
+        isCurrent: false,
+        postalCode: DEFAULT_POSTAL_CODE,
         latitude: DEFAULT_LATITUDE,
         longitude: DEFAULT_LONGITUDE
     };
@@ -24,9 +29,18 @@ export default class CenterChooser extends LightningElement {
         });
     }
 
+    get resultsFor() {
+        if (this.location.isCurrent) {
+            return labels.myLocation;
+        } else {
+            return this.location.postalCode;
+        }
+    }
+
     connectedCallback() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position) => {
+                this.location.isCurrent = true;
                 this.location.latitude = position.coords.latitude;
                 this.location.longitude = position.coords.longitude;
 
@@ -55,6 +69,8 @@ export default class CenterChooser extends LightningElement {
         getCenters(request).then(response => {
             console.log('response', response);
             this.centers = response;
+
+            this.centersLoaded = true;
         }).catch((error) => {
             // TODO - add error handling
             console.log(error);
@@ -65,6 +81,25 @@ export default class CenterChooser extends LightningElement {
 
     onBackButtonClick() {
         this.dispatchEvent(new CustomEvent('back'));
+    }
+
+    onChangeButtonClick() {
+        ChangeLocationModal.open({
+            size: 'small',
+            postalCode: this.location.postalCode
+        }).then((location) => {
+            console.log('modal',location);
+
+            // Reload centers if a new location was selected.
+            if (location !== undefined && (this.location.isCurrent || this.location.postalCode != location.postalCode)) {
+                this.location.isCurrent = false;
+                this.location.postalCode = location.postalCode;
+                this.location.latitude = location.latitude;
+                this.location.longitude = location.longitude;
+
+                this.loadCenters();
+            }
+        });
     }
 
     onViewCenterClick(event) {

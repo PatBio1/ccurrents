@@ -14,7 +14,6 @@ jest.config.js
 package.json
 proesis.iml
 *.log
-*.csv
 
 # Illuminated Cloud IDE Cruft
 .idea

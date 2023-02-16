@@ -24,3 +24,28 @@ export function isBlank(value) {
 export function isNotBlank(value) {
     return !isBlank(value);
 }
+
+export function validateZipCode(event) {
+    const pasteShortcut =
+        (event.ctrlKey || event.metaKey) && // Windows or Mac
+        (event.which === 86 || event.keyCode === 86);
+
+    // If it was not a paste.
+    if (event?.key?.length === 1 && !pasteShortcut) {
+        const validDigit = /\d/.test(event.key);
+
+        if (!validDigit) {
+            // This will allow users to highlight the current value and replace it
+            // assuming that what is highlighted is what is currently in the field.
+            let currentSelection = window.getSelection()?.toString();
+
+            if (currentSelection) {
+                if (!event.target.value.includes(currentSelection)) {
+                    event.preventDefault();
+                }
+            } else {
+                event.preventDefault();
+            }
+        }
+    }
+}

@@ -41,7 +41,7 @@
         <name>Cancel</name>
     </customLabels>
     <customLabels>
-        <label>Auto</label>
+        <label>Automóvil</label>
         <name>Car</name>
     </customLabels>
     <customLabels>
@@ -51,6 +51,14 @@
     <customLabels>
         <label>Video del Centro</label>
         <name>Center_Video</name>
+    </customLabels>
+    <customLabels>
+        <label>Cambiar</label>
+        <name>Change</name>
+    </customLabels>
+    <customLabels>
+        <label>Cambiar locación</label>
+        <name>Change_Location</name>
     </customLabels>
     <customLabels>
         <label>Elige un Centro</label>
@@ -109,6 +117,10 @@
         <name>How_Will_You_Get_To_Center</name>
     </customLabels>
     <customLabels>
+        <label>Código postal no válido.</label>
+        <name>Invalid_Zip_Code</name>
+    </customLabels>
+    <customLabels>
         <label>Únete a nosotros</label>
         <name>Join_Us</name>
     </customLabels>
@@ -135,6 +147,10 @@
     <customLabels>
         <label>Mis citas</label>
         <name>My_Appointments</name>
+    </customLabels>
+    <customLabels>
+        <label>Mi ubicacion</label>
+        <name>My_Location</name>
     </customLabels>
     <customLabels>
         <label>Mi recompensa</label>
@@ -173,12 +189,16 @@
         <name>Popular_Times</name>
     </customLabels>
     <customLabels>
-        <label>Previo</label>
+        <label>Anterior</label>
         <name>Previous</name>
     </customLabels>
     <customLabels>
         <label>Recomendado para ti</label>
         <name>Recommended_To_You</name>
+    </customLabels>
+    <customLabels>
+        <label>Resultados para:</label>
+        <name>Results_For</name>
     </customLabels>
     <customLabels>
         <label>Sábado</label>
@@ -269,7 +289,7 @@
         <name>Updates_And_Appointments</name>
     </customLabels>
     <customLabels>
-        <label>Caminar</label>
+        <label>Caminando</label>
         <name>Walk</name>
     </customLabels>
     <customLabels>

@@ -1,7 +1,7 @@
 {
   "cmsSettings" : { },
   "currentThemeId" : "f9f5a322-6dd4-44dc-87a9-5ad9a0178b2b",
-  "headMarkup" : "<style>\n    html {\n        background-color: #f5f0ff !important;\n    }\n\n    .cCenterPanel {\n        padding: 0px;\n        margin: 0px;\n    }\n\n    .contentRegion {\n        padding: 0 !important;\n    }\n\n    .slds-form-element__label {\n        color: #000 !important;\n    }\n</style>",
+  "headMarkup" : "<style>\n    html {\n        background-color: #f5f0ff !important;\n    }\n\n    .cCenterPanel {\n        padding: 0px;\n        margin: 0px;\n    }\n\n    .contentRegion {\n        padding: 0 !important;\n    }\n\n    .slds-form-element__label {\n        color: #000 !important;\n    }\n\n    .slds-backdrop {\n        background-color: #5c3e99 !important;\n    }\n\n    .modal-spinner .slds-spinner_container{\n        background-color: #f5f0ff !important;\n    }\n</style>",
   "id" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
   "isLockerServiceEnabled" : true,
   "isRelaxedCSPLevel" : false,

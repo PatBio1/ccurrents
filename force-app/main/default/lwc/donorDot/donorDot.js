@@ -8,6 +8,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     @api icon = 'standard:account';
     @api donor;
     @api appointment;
+
     donorLink;
     visitLink;
     dotclasses = [
@@ -59,5 +60,21 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     visitClick(){
         window.open(this.visitLink);
     }
+
+    dragstart(event){
+        //save some "draggable" data
+        event.dataTransfer.setData("donorId", this.donor.donorId);
+        event.dataTransfer.setData("appointmentId", this.appointment.Id);
+        event.dataTransfer.setData("visitId", this.donor.visitId );
+        console.log('dragging... donor visit '  + this.donor.donorId + 'from visit ' + this.donor.visitId +  ' from appointment ' + this.appointment.Id)
+    }
+
+
+
+    dragend(event){
+        console.log('dragend...'+ this.donor.donorId );
+    }
+
+    
  
 }

@@ -69,10 +69,28 @@ public with sharing class CenterScheduleController {
             }
             
             system.debug(appMap);
+        } catch(System.QueryException qe){
+            throw new AuraHandledException(qe.getMessage() + qe.getStackTraceString());
+        } catch (Exception e) {
+            
+            throw new AuraHandledException(e.getMessage() + e.getStackTraceString());
+        }
+        return  appMap.values();
+    }
+
+    @AuraEnabled
+    public static void changeVisitAppointment(Id visitId, Id appointmentId){
+        try {
+            if(appointmentId != null){
+                Visit__c visit = new Visit__c(
+                    Appointment__c = appointmentId
+                );
+                visit.Id = visitId;
+                update visit;
+            }
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
-        return  appMap.values();
     }
 
     public class Center {

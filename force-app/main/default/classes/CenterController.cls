@@ -37,7 +37,8 @@ public without sharing class CenterController {
                 center.id = account.Id;
                 center.name = account.Name;
                 center.address = account.BillingStreet;
-                center.distance = Decimal.valueOf(Location.getDistance(account.Geolocation__c, Location.newInstance(latitude, longitude), 'mi')).setScale(1) + ' mi';
+                center.distance = Decimal.valueOf(Location.getDistance(account.Geolocation__c, Location.newInstance(latitude, longitude), 'mi')).setScale(1);
+                center.distanceUnit = 'mi';
                 centers.add(center);
             }
 
@@ -86,6 +87,38 @@ public without sharing class CenterController {
         }
     }
 
+    @AuraEnabled
+    public static LatLong getLatLong(String postalCode) {
+        try {
+            Util.testExceptionHandling();
+
+            List<Postal_Code__c> postalCodeRecords = [
+                SELECT
+                    Location__c
+                FROM
+                    Postal_Code__c
+                WHERE
+                    Name = :postalCode
+                LIMIT
+                    1
+            ];
+
+            if (postalCodeRecords.size() > 0) {
+                Location location = postalCodeRecords[0].Location__c;
+
+                LatLong latLong = new LatLong();
+                latLong.latitude = location.latitude;
+                latLong.longitude = location.longitude;
+
+                return latLong;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
     public class Center {
 
         @AuraEnabled
@@ -98,7 +131,10 @@ public without sharing class CenterController {
         public String address {get; set;}
 
         @AuraEnabled
-        public String distance {get; set;}
+        public Decimal distance {get; set;}
+
+        @AuraEnabled
+        public String distanceUnit {get; set;}
 
         @AuraEnabled
         public List<BusinessHours> businessHoursList {get; set;}
@@ -122,6 +158,16 @@ public without sharing class CenterController {
 
         @AuraEnabled
         public Boolean isClosed {get; set;}
+    }
+
+    public class LatLong {
+
+        @AuraEnabled
+        public Double latitude {get; set;}
+
+        @AuraEnabled
+        public Double longitude {get; set;}
+
     }
 
 }

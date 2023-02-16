@@ -112,10 +112,6 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>DonorId__c</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
                 <field>Total_Donations_32d__pc</field>
             </layoutItems>
             <layoutItems>

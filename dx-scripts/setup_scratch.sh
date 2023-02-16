@@ -22,13 +22,15 @@ fi
 #create a scratch org for this branch
 sfdx force:org:create --durationdays 30 -s -f config/project-scratch-def.json -a $1 --wait 15;
 
-
 #set the default scratch org name
 sfdx force:config:set defaultusername=$1
 
 #install the marketing cloud connect package (source has dependencies on this package)
 # commenting for now - will add back later when dependencies introduced into source
 sfdx force:package:install --package MarketingCloud -w 10 --noprompt 
+
+## fix RecordType names prior to pushing
+sfdx force:apex:execute -f dx-scripts/apex/account_record_type_fix.apex
 
 ## push local code artifacts to scratch org
 sfdx force:source:push

@@ -38,6 +38,7 @@ public with sharing class CenterScheduleController {
                 WHERE Schedule__r.Center__c =: centerId
                 AND Datetime__c >: appointmentDay
                 AND Datetime__c <: appointmentDay + 1
+                WITH SECURITY_ENFORCED
                 ORDER BY Datetime__c ASC
                 
 
@@ -59,6 +60,7 @@ public with sharing class CenterScheduleController {
                         Status__c
                 FROM Visit__c
                 WHERE Appointment__c in: appMap.keyset()
+                WITH SECURITY_ENFORCED
             ]){
                 AppointmentSlot appt = appMap.get(visit.Appointment__c);
                 appt.visits.add(new Visit(visit));

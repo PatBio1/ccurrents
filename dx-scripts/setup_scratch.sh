@@ -22,7 +22,6 @@ fi
 #create a scratch org for this branch
 sfdx force:org:create --durationdays 30 -s -f config/project-scratch-def.json -a $1 --wait 15;
 
-
 #set the default scratch org name
 sfdx force:config:set defaultusername=$1
 

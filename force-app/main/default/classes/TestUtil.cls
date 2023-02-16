@@ -55,7 +55,7 @@ public with sharing class TestUtil {
             Account = new Account(
                 FirstName = 'Test',
                     LastName = 'Last',
-                    RecordTypeId = Constants.DONOR_RECORD_TYPE_ID;
+                    RecordTypeId = Constants.DONOR_RECORD_TYPE_ID
             );
             insert account;
 

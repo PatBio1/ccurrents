@@ -53,6 +53,8 @@ jobs:
                 sfdx auth:sfdxurl:store -f /tmp/sfdx.url -a dev-hub --setdefaultdevhubusername
                 #spin up and push a scratch org
                 ./dx-scripts/setup_scratch.sh circle_build_$CIRCLE_BUILD_NUM do_not_open_browser
+                #run tests in scratch org
+                ./dx-scripts/run_tests.sh
                 #deploy UATSTAGING branch to UATSTAGING org
                 echo "deploy $CIRCLE_BRANCH to UATSTAGING org ENABLED"
                 ./dx-scripts/deploy.sh PROD checkonly
@@ -64,7 +66,7 @@ jobs:
           name: "Deploy To Permanent Branch/Orgs"
       - run: 
          name: "Delete Scratch Org"
-         command: "./dx-utils/delete_scratch_org.sh circle_build_$CIRCLE_BUILD_NUM -p\n"
+         command: "./dx-scripts/delete_scratch_org.sh circle_build_$CIRCLE_BUILD_NUM -p\n"
          when: always
       # - store_artifacts: 
       #     destination: ./artifacts

@@ -90,7 +90,9 @@ public with sharing class CenterSchedulerControllerTests {
 
     @IsTest
     public static void testGetAppointments(){
-        Account center = [Select ID FROM Account WHERE Name ='Proesis Miramar' ];
+        User contextuser = TestUtil.createAdminUser();
+        System.runAs(contextuser){
+            Account center = [Select ID FROM Account WHERE Name ='Proesis Miramar' ];
 
             Schedule__c schedule = new Schedule__c(
                 Center__c = center.Id,
@@ -129,8 +131,8 @@ public with sharing class CenterSchedulerControllerTests {
             );
 
             insert visit;
-        User contextuser = TestUtil.createAdminUser();
-        System.runAs(contextuser){
+        
+        
             CenterScheduleController.AppointmentSlot[] slots = new CenterScheduleController.AppointmentSlot[]{};
             Id centerId = [SELECT Id FROM Account WHERE NAME = 'Proesis Miramar'].Id;
             Test.startTest();

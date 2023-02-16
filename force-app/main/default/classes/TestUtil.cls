@@ -20,6 +20,13 @@ public with sharing class TestUtil {
         );
         insert user;
 
+        PermissionSet adminPermissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.ADMIN_PERMISSION_SET_NAME];
+
+        insert new PermissionSetAssignment(
+                PermissionSetId = adminPermissionSet.Id,
+                AssigneeId = user.Id
+        );
+
         return user;
     }
 

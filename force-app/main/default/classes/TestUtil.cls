@@ -105,7 +105,7 @@ public with sharing class TestUtil {
                 BillingCountry = 'US',
                 Geolocation__Latitude__s = 25.973030,
                 Geolocation__Longitude__s = -80.242049,
-                ExternalID__c = 'center-222',
+                DonorId__c = 'center-222',
                 Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
                 Site = 'P-01'
         );
@@ -122,7 +122,7 @@ public with sharing class TestUtil {
                 BillingCountry = 'US',
                 Geolocation__Latitude__s = 32.78411048612642,
                 Geolocation__Longitude__s = -96.87149106359581,
-                ExternalID__c = 'center-333',
+                DonorId__c = 'center-333',
                 Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
                 Site = 'P-02'
         );

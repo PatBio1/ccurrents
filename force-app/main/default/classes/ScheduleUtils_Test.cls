@@ -16,17 +16,17 @@ public with sharing class ScheduleUtils_Test {
                 FirstName = 'Danny',
                 LastName = 'Donor',
                 RecordTypeID = personAccountRecordTypeId,
-                ExternalID__c = 'donor-12345'
+                DonorId__c = 'donor-12345'
             ),
             new Account(
                 FirstName = 'Betty',
                 LastName = 'Bleeder',
                 RecordTypeID = personAccountRecordTypeId,
-                ExternalID__c = 'donor-67890'
+                DonorId__c = 'donor-67890'
             )
         };
 
-        upsert donors ExternalID__c;
+        upsert donors DonorId__c;
 
         //Create Donation Centers
         Account[] centers = new Account[]{
@@ -34,23 +34,23 @@ public with sharing class ScheduleUtils_Test {
                 Name = 'Center 1',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '111 1st St',
-                ExternalID__c = 'center-111'
+                DonorId__c = 'center-111'
             ),
             new Account(
                 Name = 'Center 2',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '222 @nd St',
-                ExternalID__c = 'center-222'
+                DonorId__c = 'center-222'
             ),
             new Account(
                 Name = 'Center 3',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '333 3rd St',
-                ExternalID__c = 'center-333'
+                DonorId__c = 'center-333'
             )
         };
 
-        upsert centers ExternalID__c; 
+        upsert centers DonorId__c;
 
         Schedule__c[] schedules = new Schedule__c[]{
             new Schedule__c(

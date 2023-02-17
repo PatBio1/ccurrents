@@ -4,7 +4,6 @@
   <label>Donor API</label>
   <oauthConfig>
     <callbackUrl>https://business-data-2654.scratch.my.salesforce.com/oauth2/callback</callbackUrl>
-    <consumerKey/>
     <isAdminApproved>false</isAdminApproved>
     <isClientCredentialEnabled>false</isClientCredentialEnabled>
     <isCodeCredentialEnabled>false</isCodeCredentialEnabled>

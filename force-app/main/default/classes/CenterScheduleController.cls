@@ -58,7 +58,7 @@ public with sharing class CenterScheduleController {
                         Status__c
                 FROM Visit__c
                 WHERE Appointment__c in: appMap.keyset()
-                ORDER BY lastmodifieddate
+                ORDER BY createdDate
             ]){
                 AppointmentSlot appt = appMap.get(visit.Appointment__c);
                 appt.visits.add(new Visit(visit));

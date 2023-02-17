@@ -65,7 +65,9 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     dragstart(event){
         //save some "draggable" data
         event.dataTransfer.setData("donorId", this.donor.donorId);
+        event.dataTransfer.setData("donorName", this.donor.donorName);
         event.dataTransfer.setData("appointmentId", this.appointment.Id);
+        event.dataTransfer.setData("appointmentTime", this.appointment.timeString);
         event.dataTransfer.setData("visitId", this.donor.visitId );
         console.log('dragging... donor visit '  + this.donor.donorId + 'from visit ' + this.donor.visitId +  ' from appointment ' + this.appointment.Id)
     }

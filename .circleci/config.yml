@@ -57,7 +57,7 @@ jobs:
                 ./dx-scripts/run_tests.sh
                 ./dx-scripts/delete_scratch_org.sh circle_build_$CIRCLE_BUILD_NUM -p
                 #deploy UATSTAGING branch to UATSTAGING org
-                echo "deploy $CIRCLE_BRANCH to UATSTAGING org ENABLED"
+                echo "deploy $CIRCLE_BRANCH to PROD  org ENABLED"
                 ./dx-scripts/deploy.sh PROD checkonly
               else
                 #deploy CHECKONLY to other branches

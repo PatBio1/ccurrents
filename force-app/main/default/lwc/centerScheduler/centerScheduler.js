@@ -1,5 +1,6 @@
 import { LightningElement, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getCenters from '@salesforce/apex/CenterScheduleController.getCenters';
 import getAppointments from '@salesforce/apex/CenterScheduleController.getAppointments';
 import ChangeVisitAppointment from '@salesforce/apex/CenterScheduleController.changeVisitAppointment';
@@ -52,21 +53,30 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         event.preventDefault();
         var donorId = event.dataTransfer.getData("donorId");
         var appointmentId = event.dataTransfer.getData("appointmentId");
+        var appointmentTime = event.dataTransfer.getData("appointmentTime");
         var visitId = event.dataTransfer.getData("visitId");
-        var newOppointmentId = event.target.dataset.appointment;
+        var initials = event.dataTransfer.getData("initials");
+        var donorName = event.dataTransfer.getData("donorName");
+        var newAppointmentId = event.target.dataset.appointment;
+        var newOppointmentTime = event.target.dataset.appointmenttime;
         console.log('donor ID: '  + donorId );
         console.log('original appointment ID'  + appointmentId );
         console.log('original visit ID'  + visitId) ;
-        console.log('new appointment ID'  + newOppointmentId );
+        console.log('new appointment ID'  + newAppointmentId );
+        if(!newAppointmentId){
+            this.showToast('Appointment was not rescheduled, please drop it again','Woops!','warning');
+            return;
+        }
  
-        console.log('new appointment id: ' + event.target.dataset.appointment);
+        console.log('new appointment time: ' + newOppointmentTime);
         this.loading = true;
         ChangeVisitAppointment({
             visitId, 
-            appointmentId : event.target.dataset.appointment
+            appointmentId : newAppointmentId
         }).then(()=>{
-            //modal thingy?
+            this.showToast(`for ${donorName} from ${appointmentTime} to ${newOppointmentTime}`, 'Changed Appointment', 'success');
         }).catch(err => {
+            this.showToast(err.message,'There was a problem','error');
             console.debug(err);
         }).finally(() =>{
             this.refresh();
@@ -170,6 +180,19 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         this.selectedDate = event.detail.value;
         this.fetchAppointments();
     }    
+
+    showToast(message, title, variant){
+        title = (title ? title : '');
+        variant = (variant ? variant : 'info');
+        message = (message ? message : 'no message');
+        this.dispatchEvent(
+            new ShowToastEvent({
+                message,
+                variant,
+                title
+            })
+        );
+    }
 
 
 }

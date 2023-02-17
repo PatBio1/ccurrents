@@ -246,14 +246,14 @@
               {appointment.booked}
             </div>
   
-            <div data-appointment={appointment.Id} key={appointment.key} class="slds-col slds-size_9-of-12 chart-data droppable" title={appointment.key} style="text-align: left;position: relative;" ondrop={drop} ondragenter={dragenter} ondragleave={dragleave} ondragover={allowDrop} >
+            <div data-appointment={appointment.Id}  data-appointmenttime={appointment.timeString} key={appointment.key} class="slds-col slds-size_9-of-12 chart-data droppable" title={appointment.key} style="text-align: left;position: relative;" ondrop={drop} ondragenter={dragenter} ondragleave={dragleave} ondragover={allowDrop} >
                 <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
                   
-                    <c-donor-dot key={donorId}  icon={donor.icon} donor={donor} appointment={appointment} ></c-donor-dot>
+                    <c-donor-dot key={donorId}  icon={donor.icon} donor={donor} appointment={appointment} data-appointment={appointment.Id}  data-appointmenttime={appointment.timeString}></c-donor-dot>
                  
                 </template>
-                <button class="slds-button" onclick={plusAvailable} data-id={appointment.id}>+</button>
-                <lightning-button-icon size="large" variant="bare" icon-name="utility:plus"  alternative-text="Settings" title="Settings"></lightning-button-icon>
+                <button class="slds-button" onclick={plusAvailable} data-id={appointment.id} data-appointment={appointment.Id}  data-appointmenttime={appointment.timeString}>+</button>
+                <lightning-button-icon size="large" variant="bare" icon-name="utility:plus"  alternative-text="Settings" title="Settings" data-appointment={appointment.Id}  data-appointmenttime={appointment.timeString}></lightning-button-icon>
               
             </div>
           </template>

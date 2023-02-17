@@ -15,6 +15,13 @@
         <value>About the Donation Experience</value>
     </labels>
     <labels>
+        <fullName>Account_Verified_Success</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Account Verified Success</shortDescription>
+        <value>The account verified successfully!</value>
+    </labels>
+    <labels>
         <fullName>Address</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -295,6 +302,27 @@
         <value>Notifications</value>
     </labels>
     <labels>
+        <fullName>Password_Requirements</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Password Requirements</shortDescription>
+        <value>Password should consist of at least 8 characters: at least 1 lowercase, at least 1 uppercase, at least 1 number and at least 1 special character.</value>
+    </labels>
+    <labels>
+        <fullName>Password_Too_Short</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Password Too Short</shortDescription>
+        <value>Password is too short.</value>
+    </labels>
+    <labels>
+        <fullName>Passwords_Dont_Match</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Passwords Don't Match</shortDescription>
+        <value>Passwords don't match.</value>
+    </labels>
+    <labels>
         <fullName>Past</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -356,6 +384,13 @@
         <protected>true</protected>
         <shortDescription>Schedule</shortDescription>
         <value>Schedule</value>
+    </labels>
+    <labels>
+        <fullName>Schedule_Appointment</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Schedule Appointment</shortDescription>
+        <value>Schedule Appointment</value>
     </labels>
     <labels>
         <fullName>Schedule_Your_1st_Appointment</fullName>

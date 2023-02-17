@@ -1,5 +1,6 @@
 import about from '@salesforce/label/c.About';
 import aboutDonationExperience from '@salesforce/label/c.About_Donation_Experience';
+import accountVerifiedSuccess from '@salesforce/label/c.Account_Verified_Success';
 import address from '@salesforce/label/c.Address';
 import alreadyHaveAnAccount from '@salesforce/label/c.Already_Have_An_Account';
 import back from '@salesforce/label/c.Back';
@@ -38,6 +39,9 @@ import myRewards from '@salesforce/label/c.My_Rewards';
 import next from '@salesforce/label/c.Next';
 import nickname from '@salesforce/label/c.Nickname';
 import notifications from '@salesforce/label/c.Notifications';
+import passwordRequirements from '@salesforce/label/c.Password_Requirements';
+import passwordsDontMatch from '@salesforce/label/c.Passwords_Dont_Match';
+import passwordTooShort from '@salesforce/label/c.Password_Too_Short';
 import past from '@salesforce/label/c.Past';
 import perPt from '@salesforce/label/c.Per_Pt';
 import personalInformation from '@salesforce/label/c.Personal_Information';
@@ -48,6 +52,7 @@ import recommendedToYou from '@salesforce/label/c.Recommended_To_You';
 import resultsFor from '@salesforce/label/c.Results_For';
 import saturdayAbbreviation from '@salesforce/label/c.Saturday_Abbreviation';
 import schedule from '@salesforce/label/c.Schedule';
+import scheduleAppointment from '@salesforce/label/c.Schedule_Appointment';
 import scheduled from '@salesforce/label/c.Scheduled';
 import scheduleYour1stAppointment from '@salesforce/label/c.Schedule_Your_1st_Appointment';
 import selectTimeSlot from '@salesforce/label/c.Select_Time_Slot';
@@ -80,6 +85,7 @@ const labels = {
     // Alphabetical Order
     about,
     aboutDonationExperience,
+    accountVerifiedSuccess,
     address,
     alreadyHaveAnAccount,
     back,
@@ -118,6 +124,9 @@ const labels = {
     next,
     nickname,
     notifications,
+    passwordRequirements,
+    passwordsDontMatch,
+    passwordTooShort,
     past,
     perPt,
     personalInformation,
@@ -128,6 +137,7 @@ const labels = {
     resultsFor,
     saturdayAbbreviation,
     schedule,
+    scheduleAppointment,
     scheduled,
     scheduleYour1stAppointment,
     selectTimeSlot,

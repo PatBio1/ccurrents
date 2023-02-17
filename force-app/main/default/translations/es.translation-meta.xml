@@ -9,6 +9,10 @@
         <name>About_Donation_Experience</name>
     </customLabels>
     <customLabels>
+        <label>¡La cuenta se verificó con éxito!</label>
+        <name>Account_Verified_Success</name>
+    </customLabels>
+    <customLabels>
         <label>Dirección</label>
         <name>Address</name>
     </customLabels>
@@ -169,6 +173,18 @@
         <name>Notifications</name>
     </customLabels>
     <customLabels>
+        <label>La contraseña debe constar de al menos 8 caracteres: al menos 1 minúscula, al menos 1 mayúscula, al menos 1 número y al menos 1 carácter especial.</label>
+        <name>Password_Requirements</name>
+    </customLabels>
+    <customLabels>
+        <label>La contraseña es demasiado corta.</label>
+        <name>Password_Too_Short</name>
+    </customLabels>
+    <customLabels>
+        <label>Las contraseñas no coinciden.</label>
+        <name>Passwords_Dont_Match</name>
+    </customLabels>
+    <customLabels>
         <label>Pasado</label>
         <name>Past</name>
     </customLabels>
@@ -211,6 +227,10 @@
     <customLabels>
         <label>Programar</label>
         <name>Schedule</name>
+    </customLabels>
+    <customLabels>
+        <label>Programar una cita</label>
+        <name>Schedule_Appointment</name>
     </customLabels>
     <customLabels>
         <label>Programe su primera cita</label>

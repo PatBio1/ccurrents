@@ -1,5 +1,7 @@
 <template>
 
+    <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
+
     <div if:true={showBasicProfile} class="slds-var-p-around_medium">
         <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
 
@@ -296,9 +298,7 @@
         </div>
 
         <div class="slds-text-align_center slds-m-vertical_large">
-            Password should consist of min 8 characters:
-            numbers, at least 1 uppercase and 1 special 
-            character.
+            {labels.passwordRequirements}
         </div>
 
         <div class="slds-progress">
@@ -352,10 +352,10 @@
 
         <div class="slds-m-vertical_large">
             <div class="slds-m-bottom_small">
-                <lightning-input type="password" label={labels.enterPassword} data-field="password" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="password" label={labels.enterPassword} data-field="password" min-length={minPasswordCharacters} max-length={maxPasswordCharacters} message-when-too-short={labels.passwordTooShort} onchange={onPasswordChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">
-                <lightning-input type="password" label={labels.confirmPassword} data-field="passwordConfirm" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="password" label={labels.confirmPassword} data-field="passwordConfirm" max-length={maxPasswordCharacters} onchange={onPasswordConfirmChange}></lightning-input>
             </div>
         </div>
 
@@ -376,10 +376,10 @@
         </div>
 
         <div class="slds-text-align_center slds-m-vertical_large">
-            The account verified successfully!
+            {labels.accountVerifiedSuccess}
         </div>
 
-        <button class="slds-button slds-button_brand slds-button_stretch primary-button slds-m-bottom_medium" onclick={onScheduleButtonClick}>Schedule Appointment</button>
+        <button class="slds-button slds-button_brand slds-button_stretch primary-button slds-m-bottom_medium" onclick={onScheduleButtonClick}>{labels.scheduleAppointment}</button>
     </div>
 
 </template>

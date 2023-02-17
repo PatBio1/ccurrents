@@ -55,6 +55,7 @@ jobs:
                 ./dx-scripts/setup_scratch.sh circle_build_$CIRCLE_BUILD_NUM do_not_open_browser
                 #run tests in scratch org
                 ./dx-scripts/run_tests.sh
+                ./dx-scripts/delete_scratch_org.sh circle_build_$CIRCLE_BUILD_NUM -p
                 #deploy UATSTAGING branch to UATSTAGING org
                 echo "deploy $CIRCLE_BRANCH to UATSTAGING org ENABLED"
                 ./dx-scripts/deploy.sh PROD checkonly
@@ -64,10 +65,6 @@ jobs:
                 ./dx-scripts/deploy.sh PROD checkonly
               fi
           name: "Deploy To Permanent Branch/Orgs"
-      - run: 
-         name: "Delete Scratch Org"
-         command: "./dx-scripts/delete_scratch_org.sh circle_build_$CIRCLE_BUILD_NUM -p\n"
-         when: always
       # - store_artifacts: 
       #     destination: ./artifacts
       #     path: /tmp/artifacts

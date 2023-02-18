@@ -34,15 +34,16 @@ Account[] centers = new Account[]{
         Name = 'Proesis HQ',
         RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
         // We removed ExternalId__c, but this works.
-        DonorId__c = 'center-111',
+        CenterId__c = 'center-111',
         Services__c = 'Medical: Consultation'
     ),
     TestUtil.createMiramarCenter(),
     TestUtil.createDallasCenter()
 };
 
-// We removed ExternalId__c, but this works.
-upsert centers DonorId__c;
+// We removed ExternalId__c, but this works. 
+// We needed discrete external IDs for the centers which was the original data model
+upsert centers CenterId__c;
 
 List<Business_Hours__c> businessHours = new List<Business_Hours__c>();
 

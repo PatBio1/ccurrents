@@ -36,11 +36,11 @@ public with sharing class CenterSchedulerControllerTests {
                 Name = 'Center 3',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '333 3rd St',
-                DonorId__c = 'center-3'
+                CenterId__c = 'center-3'
             )
         };
 
-        upsert centers DonorId__c;
+        upsert centers CenterId__c;
 
 
         Schedule__c[] schedules = new Schedule__c[]{

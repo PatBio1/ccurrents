@@ -1,9 +1,9 @@
 // create a set of appointment slots
-Date startDate = Date.today();
+Date startDate = Date.today().addDays(-2);
 Date endDate = Date.today().addDays(30);
 Id loyaltyTier = null;
-Integer intervalsPerHour = 6; //10 minutes apart
-Integer slotsPerInterval = 1;
+Integer intervalsPerHour = 4; //10 minutes apart
+Integer slotsPerInterval = 4;
 
 Account center1 = [SELECT Id FROM Account WHERE Name = 'Proesis Miramar'];
 

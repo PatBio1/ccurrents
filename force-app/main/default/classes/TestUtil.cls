@@ -92,6 +92,18 @@ public with sharing class TestUtil {
         return new User(Id = UserInfo.getUserId());
     }
 
+    public static Account createHQCenter() {
+        return new Account(
+            Name = 'Proesis HQ',
+            RecordTypeId = Constants.CENTER_RECORD_TYPE_ID,
+            BillingPostalCode = '33023',
+            BillingCountry = 'US',
+            CenterId__c = 'center-111',
+            Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
+            Site = 'P-00'
+        );
+    }
+    
     public static Account createMiramarCenter() {
         return new Account(
             Name = 'Proesis Miramar',
@@ -103,7 +115,7 @@ public with sharing class TestUtil {
             BillingCountry = 'US',
             Geolocation__Latitude__s = 25.973030,
             Geolocation__Longitude__s = -80.242049,
-            DonorId__c = 'center-222',
+            CenterId__c = 'center-222',
             Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
             Site = 'P-01'
         );
@@ -120,7 +132,7 @@ public with sharing class TestUtil {
             BillingCountry = 'US',
             Geolocation__Latitude__s = 32.78411048612642,
             Geolocation__Longitude__s = -96.87149106359581,
-            DonorId__c = 'center-333',
+            CenterId__c = 'center-333',
             Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
             Site = 'P-02'
         );

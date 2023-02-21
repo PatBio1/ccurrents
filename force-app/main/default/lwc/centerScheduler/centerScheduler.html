@@ -74,8 +74,10 @@
                 type="time" 
                 name="start" 
                 label="Start Time" 
-                min="08:00:00.000"
-                max="15:00:00.000"
+                value={filters.start}
+                timezone={tz}
+                onchange={changeFilterStart}
+                increment="10"
                 ></lightning-input>
 
             </div>
@@ -86,6 +88,9 @@
                 type="time" 
                 name="end" 
                 label="End Time" 
+                value={filters.end}
+                timezone={tz}
+                onchange={changeFilterEnd}
                 ></lightning-input>
      
             </div>
@@ -119,7 +124,8 @@
                 variant="neutral"
                 label="Apply"
                 title="Apply Filters"
-                class="apply-button">
+                class="apply-button"
+                onclick={applyFilters}>
             </lightning-button>
             
             &nbsp;
@@ -129,7 +135,8 @@
                 label="Clear Filters"
                 title="Clear Filters"
                 icon-name="utility:clear"
-                class="slds-p-around_xxx-small">
+                class="slds-p-around_xxx-small"
+                onclick={clearFilters}>
             </lightning-button>
             
           </div>
@@ -228,25 +235,27 @@
           <!-- donor  rows -->
 
           <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
-            <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data" style="text-align: left; background-color:#d1c7e4" >
+            <!-- <div key={appointment.key} if:false={appointment.filtered} class="slds-col slds-size_12-of-12 chart-data"></div> -->
+
+            <div key={appointment.key} if:false={appointment.filtered} class="slds-col slds-size_1-of-12 chart-data" style="text-align: left; background-color:#d1c7e4" >
 
                 <a href={appointment.link} target="_blank">
-                  <lightning-formatted-time value={appointment.timeString} ></lightning-formatted-time>
+                  <lightning-formatted-time value={appointment.timeString} timezone={tz}></lightning-formatted-time>
                 </a>
               
             </div>
   
-            <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data">
+            <div key={appointment.key} if:false={appointment.filtered} class="slds-col slds-size_1-of-12 chart-data">
               <button class="slds-button" onclick={minusAvailable}>-</button> &nbsp;
               {appointment.availability} &nbsp;
               <button class="slds-button" onclick={plusAvailable} data-id={appointment.id}>+</button> &nbsp;            
             </div>
   
-            <div key={appointment.key} class="slds-col slds-size_1-of-12 chart-data">
+            <div key={appointment.key} if:false={appointment.filtered} class="slds-col slds-size_1-of-12 chart-data">
               {appointment.booked}
             </div>
   
-            <div data-appointment={appointment.Id}  data-appointmenttime={appointment.timeString} key={appointment.key} class="slds-col slds-size_9-of-12 chart-data droppable" title={appointment.key} style="text-align: left;position: relative;" ondrop={drop} ondragenter={dragenter} ondragleave={dragleave} ondragover={allowDrop} >
+            <div data-appointment={appointment.Id}  if:false={appointment.filtered} data-appointmenttime={appointment.timeString} key={appointment.key} class="slds-col slds-size_9-of-12 chart-data droppable" title={appointment.key} style="text-align: left;position: relative;" ondrop={drop} ondragenter={dragenter} ondragleave={dragleave} ondragover={allowDrop} >
                 <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
                   
                     <c-donor-dot key={donorId}  icon={donor.icon} donor={donor} appointment={appointment} data-appointment={appointment.Id}  data-appointmenttime={appointment.timeString}></c-donor-dot>

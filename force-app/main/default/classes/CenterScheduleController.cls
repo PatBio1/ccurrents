@@ -21,10 +21,40 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
+    public static Visit[] getVisits(Id appointmentId){
+        Visit[] visits = new Visit[]{};
+        try {
+            for(Visit__c visit : [
+                SELECT Id,
+                        Name,
+                        Appointment__c,
+                        Donor__c,
+                        Donor__r.Name,
+                        Donor__r.FirstName,
+                        Donor__r.LastName,
+                        Donor__r.Email,
+                        Status__c
+                FROM Visit__c
+                WHERE Appointment__c =: appointmentId
+                ORDER BY createdDate
+            ]){
+                visits.add(new Visit(visit));
+            }
+            
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+
+        return visits;
+    }
+
+    @AuraEnabled
     public static AppointmentSlot[] getAppointments(Id centerId, Date appointmentDay){
         Appointment__c[] appointments = new Appointment__c[]{};
         Set<Id> appointmentIds = new Set<Id>{};
         Map<Id, AppointmentSlot> appMap = new Map<Id, AppointmentSlot>{};
+        Datetime beginDay = Datetime.newInstance(appointmentDay.year(), appointmentDay.month(),appointmentDay.day(), 0,0,0);
+        Datetime endDay = Datetime.newInstance(appointmentDay.year(), appointmentDay.month(),appointmentDay.day(), 23,59,59);
         try {
             for(Appointment__c app: [
                 SELECT  Id,
@@ -36,8 +66,8 @@ public with sharing class CenterScheduleController {
 
                 FROM Appointment__c
                 WHERE Schedule__r.Center__c =: centerId
-                AND Datetime__c >: appointmentDay
-                AND Datetime__c <: appointmentDay + 1
+                AND Datetime__c >=: beginDay
+                AND Datetime__c <=: endDay 
                 WITH SECURITY_ENFORCED
                 ORDER BY Datetime__c ASC
                 
@@ -130,6 +160,8 @@ public with sharing class CenterScheduleController {
         @AuraEnabled
         public Decimal capacity {get;set;}
 
+        public Boolean filtered {get;set;}
+
         public AppointmentSlot(Appointment__c app){
             this.Id = app.Id;
             this.appointmentDatetime = app.Datetime__c;
@@ -139,7 +171,7 @@ public with sharing class CenterScheduleController {
             this.availability = app.Availability__c;
             this.booked = app.Booked__c;
             this.capacity = app.Capacity__c;
-
+            this.filtered = false;
         }
 
     }

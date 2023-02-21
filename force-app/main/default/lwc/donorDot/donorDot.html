@@ -2,7 +2,7 @@
     
         <span draggable="true" ondragstart={dragstart} ondragend={dragend} data-text="foo">
             <lightning-avatar size="medium" onclick={togglePopover}  aria-haspopup="false" variant="circle" initials={donor.initials} fallback-icon-name={donor.icon} alternative-text={donor.donorName} class={classes}  style="margin-right:2px;"></lightning-avatar>              
-            <template if:true={show}>
+            <template if:true={showpopover}>
                 <section aria-label="Dialog title" aria-describedby="popover-body-id" class="slds-popover slds-nubbin_left-top" role="dialog" style="position:absolute">
                     <lightning-button-icon icon-name="utility:close"  alternative-text="close" title="Close" onclick={hidePopover} class="slds-float_right slds-popover__close"></lightning-button-icon>
             

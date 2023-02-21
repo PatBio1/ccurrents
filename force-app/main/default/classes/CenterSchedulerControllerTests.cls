@@ -140,7 +140,7 @@ public with sharing class CenterSchedulerControllerTests {
                 slots = CenterScheduleController.getAppointments(centerId,Date.newInstance(2023, 1, 10));
             
             Test.stopTest();
-            system.assertEquals(91, slots.size());
+            system.assertEquals(92, slots.size());
         }
     }
 

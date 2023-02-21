@@ -3,7 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 
 export default class DonorDot extends NavigationMixin(LightningElement)  {
 
-    @track show = false;
+    @track showpopover = false;
     @api initials;
     @api icon = 'standard:account';
     @api donor;
@@ -47,11 +47,11 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     togglePopover() {
-        this.show = !this.show;
+        this.showpopover = !this.showpopover;
     }
 
     hidePopover() {
-        this.show = false;
+        this.showpopover = false;
     }
 
     donorClick(){
@@ -64,6 +64,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
 
     dragstart(event){
         //save some "draggable" data
+        this.showpopover = false;
         event.dataTransfer.setData("donorId", this.donor.donorId);
         event.dataTransfer.setData("donorName", this.donor.donorName);
         event.dataTransfer.setData("appointmentId", this.appointment.Id);

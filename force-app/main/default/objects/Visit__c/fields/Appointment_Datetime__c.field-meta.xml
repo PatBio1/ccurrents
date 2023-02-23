@@ -3,6 +3,7 @@
     <fullName>Appointment_Datetime__c</fullName>
     <description>The datetime of the Appointment slot where this Visit is scheduled. This is a field that must be updated via trigger/flow to support the Donor.Next Visit field which is the minimum rollup of Scheduled Visits.</description>
     <externalId>false</externalId>
+    <inlineHelpText>The datetime of the Appointment slot where this Visit is scheduled. This is a field that must be updated via trigger/flow to support the Donor.Next Visit field which is the minimum rollup of Scheduled Visits.</inlineHelpText>
     <label>Appointment Datetime</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>

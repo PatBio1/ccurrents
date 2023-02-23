@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Next_Visit__c</fullName>
-    <description>The Next Visit for a Donor which uses a flattened Appointment slot datetime for this rollup for Scheduled Visits for a Donor. This is called &apos;Next Visit&apos; as opposed to &apos;Next Donation&apos; because we do not know if that Visit will result in a successfull Donation or not.</description>
+    <fullName>First_Visit__c</fullName>
+    <description>The first Visit for this donor no matter whether it was a successful Donation or not.</description>
     <externalId>false</externalId>
-    <label>Next Scheduled Visit</label>
+    <inlineHelpText>The first Visit for this donor no matter whether it was a successful Donation or not.</inlineHelpText>
+    <label>First Visit</label>
     <summarizedField>Visit__c.Appointment_Datetime__c</summarizedField>
     <summaryFilterItems>
         <field>Visit__c.Status__c</field>
         <operation>equals</operation>
-        <value>Scheduled</value>
+        <value>Complete</value>
     </summaryFilterItems>
     <summaryForeignKey>Visit__c.Donor__c</summaryForeignKey>
     <summaryOperation>min</summaryOperation>

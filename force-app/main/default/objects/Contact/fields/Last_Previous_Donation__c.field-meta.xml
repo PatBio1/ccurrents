@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Previous_Donation__c</fullName>
+    <deleteConstraint>Restrict</deleteConstraint>
+    <description>The donation prior the Last Donation</description>
+    <externalId>false</externalId>
+    <inlineHelpText>The donation prior to the Last Donation</inlineHelpText>
+    <label>Last Previous Donation</label>
+    <lookupFilter>
+        <active>true</active>
+        <filterItems>
+            <field>Visit__c.Status__c</field>
+            <operation>equals</operation>
+            <value>Complete</value>
+        </filterItems>
+        <filterItems>
+            <field>Visit__c.Donation_Volume__c</field>
+            <operation>greaterThan</operation>
+            <value>0</value>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
+    <referenceTo>Visit__c</referenceTo>
+    <relationshipLabel>Contacts</relationshipLabel>
+    <relationshipName>Contacts</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Lookup</type>
+</CustomField>

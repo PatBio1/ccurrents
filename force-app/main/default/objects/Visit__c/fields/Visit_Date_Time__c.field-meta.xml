@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Visit_Date_Time__c</fullName>
-    <description>Indicates the Date-Time of this Visit, via it&apos;s related Appointment &amp; Schedule.</description>
+    <description>The &apos;ideal&apos; datetime for a Visit which is simply it&apos;s related Appointment slot start time.</description>
     <externalId>false</externalId>
     <formula>Appointment__r.Datetime__c</formula>
-    <inlineHelpText>Indicates the Date-Time of this Visit, via it&apos;s related Appointment &amp; Schedule.</inlineHelpText>
+    <inlineHelpText>The &apos;ideal&apos; datetime for a Visit which is simply it&apos;s related Appointment slot start time.</inlineHelpText>
     <label>Visit Date Time</label>
     <required>false</required>
     <trackHistory>false</trackHistory>

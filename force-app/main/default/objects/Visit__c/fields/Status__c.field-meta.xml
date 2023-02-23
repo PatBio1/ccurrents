@@ -43,36 +43,20 @@
                 <label>Checked-In</label>
             </value>
             <value>
-                <fullName>Donation Complete</fullName>
-                <default>false</default>
-                <label>Donation Complete</label>
-            </value>
-
-            <value>
-                <fullName>Paid/Visit Complete</fullName>
-                <default>false</default>
-                <label>Paid/Visit Complete</label>
-            </value>
-
-            <value>
                 <fullName>Late</fullName>
                 <default>false</default>
                 <label>Late</label>
             </value>
-
             <value>
                 <fullName>Deferred/Left Center</fullName>
                 <default>false</default>
                 <label>Deferred/Left Center</label>
             </value>
-
             <value>
                 <fullName>Missed</fullName>
                 <default>false</default>
                 <label>Missed</label>
             </value>
-
-
         </valueSetDefinition>
     </valueSet>
 </CustomField>

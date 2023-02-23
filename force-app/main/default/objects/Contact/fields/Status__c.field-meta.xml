@@ -3,13 +3,21 @@
     <fullName>Status__c</fullName>
     <businessStatus>Active</businessStatus>
     <complianceGroup>PII;HIPAA</complianceGroup>
-    <description>Donor&lt;Registered&gt; Are in the system as a potential donor
-Donor&lt;Verified&gt; Has filled out basic profile information and have passed initial criteria
-Donor&lt;Applicant&gt; Has an appointment to assess their fitness for donation
-Donor&lt;Eligible&gt; Has met all criteria for donation and Eligiblity datetime is today or in the past
-Donor&lt;Ineligible&gt; Has met all critieria for donation and Eligibility datetime is in the future
-Donor&lt;Excluded&gt; Can never give plasma for various reasons that are PHI</description>
+    <description>New: Transient state when record is first created
+Registered: Are in the system as a potential donor
+Verified: Has filled out basic profile information and have passed initial criteria
+Applicant: Has an appointment to assess their fitness for donation
+Eligible: Has met all criteria for donation and Eligiblity datetime is today or in the past
+Deferred: Has met all critieria for donation and Eligibility datetime is in the future
+Excluded: Can never* give plasma for various reasons that are PHI</description>
     <externalId>false</externalId>
+    <inlineHelpText>New: Transient state when record is first created
+Registered: Are in the system as a potential donor
+Verified: Has filled out basic profile information and have passed initial criteria
+Applicant: Has an appointment to assess their fitness for donation
+Eligible: Has met all criteria for donation and Eligiblity datetime is today or in the past
+Deferred: Has met all critieria for donation and Eligibility datetime is in the future
+Excluded: Can never* give plasma for various reasons that are PHI</inlineHelpText>
     <label>Status</label>
     <required>false</required>
     <securityClassification>Confidential</securityClassification>

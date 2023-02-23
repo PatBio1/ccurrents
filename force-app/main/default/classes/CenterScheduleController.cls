@@ -21,9 +21,24 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
-    public static Visit[] getVisits(Id appointmentId){
-        Visit[] visits = new Visit[]{};
+    public static AppointmentSlot getAppointmentSlot(Id appointmentId){
+        AppointmentSlot appt;
         try {
+            
+            for (Appointment__c appointment: [
+                SELECT  Id,
+                        Name,
+                        Datetime__c,
+                        Availability__c,
+                        Booked__c,
+                        Capacity__c
+
+                FROM Appointment__c
+                WHERE Id =: appointmentId
+                WITH SECURITY_ENFORCED
+            ]){
+                appt = new AppointmentSlot(appointment);
+            }
             for(Visit__c visit : [
                 SELECT Id,
                         Name,
@@ -38,14 +53,16 @@ public with sharing class CenterScheduleController {
                 WHERE Appointment__c =: appointmentId
                 ORDER BY createdDate
             ]){
-                visits.add(new Visit(visit));
+                appt.visits.add(new Visit(visit));
+
+                appt.booked = appt.visits.size();
             }
             
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
 
-        return visits;
+        return appt;
     }
 
     @AuraEnabled
@@ -160,6 +177,7 @@ public with sharing class CenterScheduleController {
         @AuraEnabled
         public Decimal capacity {get;set;}
 
+        @AuraEnabled
         public Boolean filtered {get;set;}
 
         public AppointmentSlot(Appointment__c app){
@@ -204,6 +222,8 @@ public with sharing class CenterScheduleController {
         @AuraEnabled
         public String status {get;set;}
 
+        @AuraEnabled
+        public Boolean filtered {get;set;}
         
 
         public Visit(Visit__c visit){
@@ -215,6 +235,7 @@ public with sharing class CenterScheduleController {
             this.initials = visit.Donor__r.firstName.subString(0,1) + visit.Donor__r.lastName.subString(0,1);
             this.status = visit.Status__c;
             this.icon = 'standard:account';
+            this.filtered = false;
         }
     }
 

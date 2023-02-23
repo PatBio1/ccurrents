@@ -75,6 +75,8 @@
                 name="start" 
                 label="Start Time" 
                 value={filters.start}
+                min="06:00:00.000"
+                max="22:00:00.000"
                 timezone={tz}
                 onchange={changeFilterStart}
                 increment="10"
@@ -89,13 +91,15 @@
                 name="end" 
                 label="End Time" 
                 value={filters.end}
+                min="06:00:00.000"
+                max="22:00:00.000"
                 timezone={tz}
                 onchange={changeFilterEnd}
                 ></lightning-input>
      
             </div>
 
-            <div class="slds-col slds-size_2-of-12">
+            <!-- <div class="slds-col slds-size_2-of-12">
               <lightning-combobox
                 name="progress"
                 label="Appointment Types"
@@ -104,16 +108,16 @@
                 options={appointmentTypes}
                 onchange={filterChange} ></lightning-combobox>
 
-            </div>
+            </div> -->
 
-            <div class="slds-col slds-size_2-of-12">
+            <div class="slds-col slds-size_4-of-12">
               <lightning-combobox
                 name="progress"
                 label="Statuses"
-                value={value}
+                value={filters.status}
                 placeholder="Select Status"
-                options={statuses}
-                onchange={filterChange} ></lightning-combobox>
+                options={statusOptions}
+                onchange={changeStatusFilter} ></lightning-combobox>
 
             </div>
 

@@ -1,1 +1,9 @@
 @import 'c/sharedCss';
+
+.filtered {
+    display: none;
+}
+
+.unfiltered {
+    display: inline-flex;
+}

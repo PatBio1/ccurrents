@@ -1,15 +1,32 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import TIME_ZONE from '@salesforce/i18n/timeZone';
+import { getObjectInfo } from 'lightning/uiObjectInfoApi';
+import { getPicklistValues } from 'lightning/uiObjectInfoApi';
+import STATUS_FIELD from '@salesforce/schema/Visit__c.Status__c';
+
+import VISIT_OBJECT from '@salesforce/schema/Visit__c';
+
+
 import getCenters from '@salesforce/apex/CenterScheduleController.getCenters';
 import getAppointments from '@salesforce/apex/CenterScheduleController.getAppointments';
-import getVisits from '@salesforce/apex/CenterScheduleController.getVisits';
+import getAppointmentSlot from '@salesforce/apex/CenterScheduleController.getAppointmentSlot';
 import ChangeVisitAppointment from '@salesforce/apex/CenterScheduleController.changeVisitAppointment';
 import CreateScheduleModal from "c/createScheduleModal";
 import DonorDot from "c/donorDot";
 
 export default class CenterScheduler extends NavigationMixin(LightningElement) {
+    statusOptions;
+    //hardcoded to null recordTypeId, since we don't use RTs on Visit__c
+    @wire(getPicklistValues, { fieldApiName: STATUS_FIELD, recordTypeId: '012000000000000AAA' })
+    wiredFields({ error, data }){
+        if(data){
+            this.statusOptions = data.values;
+        }else if(error){    
+            console.log(error);
+        }
+    }
 
     
     @track selectedCenterId;
@@ -18,14 +35,15 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     centers = [];
     tz=TIME_ZONE;
 
-    @track showFilters=false;
-    @track show = false;
-    @track dateDisabled = true;
-    @track loading;
+    showFilters=false;
+    show = false;
+    dateDisabled = true;
+    loading = true;
 
     @track filters = {
         start: '',
-        end: ''
+        end: '',
+        status: ''
     }
 
     showPopover() {
@@ -34,7 +52,6 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
     connectedCallback() {
         this.loadCenters();
-        // alert(TIME_ZONE);
     }
 
     refresh(){
@@ -59,7 +76,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     }
     
     drop(event){
-        console.log('dropped');
+        
         event.preventDefault();
         var donorId = event.dataTransfer.getData("donorId");
         var appointmentId = event.dataTransfer.getData("appointmentId");
@@ -70,21 +87,25 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         var newAppointmentId = event.target.dataset.appointment;
         var newOppointmentTime = event.target.dataset.appointmenttime;
         event.target.classList.remove('drop-ok');
-        // console.log('donor ID: '  + donorId );
-        // console.log('original appointment ID'  + appointmentId );
-        // console.log('original visit ID'  + visitId) ;
-        // console.log('new appointment ID'  + newAppointmentId );
+        
+        // bad drop on wrong target
         if(!newAppointmentId){
             this.showToast('Appointment was not rescheduled, please drop it again','Woops!','warning');
             return;
         }
- 
-        // console.log('new appointment time: ' + newOppointmentTime);
+
+        // dropped in same row no change
         if(appointmentId == newAppointmentId){
             return;
         }
-        
+
+        //last chance to back out
+        if(!confirm(`Really change appointment time for ${donorName} from ${appointmentTime} to ${newOppointmentTime}?`)){
+            return;
+        }
+ 
         this.loading = true;
+
         ChangeVisitAppointment({
             visitId, 
             appointmentId : newAppointmentId
@@ -96,15 +117,19 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
                 //old row
                 if(appRow.Id == appointmentId){
                     appRow.visits = [];
-                    await getVisits({appointmentId }).then(visits => {
-                        appRow.visits = visits;
+                    await getAppointmentSlot({appointmentId }).then(appointment => {
+                        appRow.visits = appointment.visits;
+                        appRow.booked = appointment.booked;
+                        appRow.availability = appointment.availability;
                     })
                 }
                 //new row
                 if(appRow.Id == newAppointmentId){
                     appRow.visits = [];
-                    await getVisits({appointmentId : newAppointmentId}).then(visits => {
-                        appRow.visits = visits;
+                    await getAppointmentSlot({appointmentId : newAppointmentId}).then(appointment => {
+                        appRow.visits = appointment.visits;
+                        appRow.booked = appointment.booked;
+                        appRow.availability = appointment.availability;
                     })
                 }
                 
@@ -133,13 +158,6 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         event.target.classList.remove('drop-ok');
     }    
 
-    get statuses(){
-        return [    
-            {label:'bleeding', value:'bleeding'},
-            {label:'bled', value:'bled'},
-            {label:'dry', value:'dry'}
-        ]
-    }
 
     get filterLabel(){
         if(this.showFilters){
@@ -162,14 +180,29 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         this.showFilters = !this.showFilters;
     }
 
+    filterChange(event){
+        console.log(event);
+    }
+
     applyFilters(){
-        //alert(this.filters.start);
-        let startTime = this.timeToDate(this.filters.start);
-        console.log('startTime',startTime);
+        let startTime;
+        if(this.filters.start){
+            startTime = this.timeToDate(this.filters.start);
+        }else{
+            startTime = this.timeToDate('0:00 AM');
+        }
+        console.log('filter startTime ',startTime);
          
-        let endTime = this.timeToDate(this.filters.end);
-        console.log('endTime -> ', endTime);   
+        let endTime 
+        if(this.filters.end){
+            endTime = this.timeToDate(this.filters.end);
+        }else{
+            endTime = this.timeToDate('11:59 PM');
+        }
+        
+        console.log('filter endTime -> ', endTime);   
         //filter for appointments by time slot
+
         for(let i=0;i < this.appointments.length;i++){
             let app = this.appointments[i];
             let appDate = this.timeToDate(app.timeString);
@@ -182,6 +215,25 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
                     app.filtered = true;
                 }
             }
+        }
+        //for each visit in each app row
+        for(let i=0;i < this.appointments.length;i++){
+            let app = this.appointments[i];
+            app = this.appointments[i];
+            if(app.visits.length > 0 && app.filtered == false ){
+                for(let j=0; j<app.visits.length;j++){
+                    let visit = app.visits[j];
+                    if(this.filters.status !== ''){
+                        console.log('filter status',this.filters.status );
+                        if(visit.status == this.filters.status){
+                            // console.log(JSON.stringify(visit));
+                            visit.filtered = false;
+                        }else{
+                            visit.filtered = true;
+                        }
+                    }
+                }
+            }
 
         }
     }
@@ -190,18 +242,25 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         console.log(this.filters);
         this.filters.start = '';
         this.filters.end = '';
+        this.filters.status = '';
         for(let i=0;i < this.appointments.length;i++){
             let app = this.appointments[i];
             app.filtered = false;
+            //for each visit in this app row
+            if(app.visits.length){
+                for(let j=0; j<app.visits.length;j++){
+                    let visit = app.visits[j];
+                    visit.filtered = false;
+                }
+            }
         }
+        
     }
     changeFilterStart(event){
         this.filters.start =  event.target.value;
-        // alert(event.target.value);
     }
     changeFilterEnd(event){
         this.filters.end =  event.target.value;
-        // alert(event.target.value);
     }
 
     loadCenters() {
@@ -257,7 +316,11 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     changeDate(event){
         this.selectedDate = event.detail.value;
         this.fetchAppointments();
-    }    
+    }   
+    
+    changeStatusFilter(event){
+        this.filters.status = event.detail.value;
+    }
 
     showToast(message, title, variant){
         title = (title ? title : '');
@@ -272,9 +335,11 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         );
     }
 
+    // this works for the timepicker time format 00:00:00:00:00
+    // and also for the timestring in our Appointment labels 9:00 AM
     timeToDate(timestring){
         // take provided time
-        // alert(timestring)
+
         let stringparts = timestring.split(' ')
         let timeparts = stringparts[0].split(':');
         let hours = parseInt(timeparts[0]);
@@ -282,16 +347,16 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             hours = hours + 12;
         }
         let minutes = timeparts[1];
-        // console.log(JSON.stringify(timeparts));
+
         // apply to current schedule date
        let dateparts  = this.selectedDate.split('-');
-    //    console.log(JSON.stringify(dateparts));
+
        let year = dateparts[0];
-       let month = parseInt(dateparts[1]) -1; //month in js offset
+       let month = parseInt(dateparts[1]) -1; //month in js offset!
        let day = dateparts[2]
-    //    alert(month)
+
         const newDate = new Date(parseInt(year), parseInt(month), parseInt(day), parseInt(hours), parseInt(minutes) );
-        // alert(newDate);
+
         return newDate;
     }
 

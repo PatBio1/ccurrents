@@ -8,7 +8,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     @api icon = 'standard:account';
     @api donor;
     @api appointment;
-
+    filteredClass = '';
     donorLink;
     visitLink;
     dotclasses = [
@@ -17,6 +17,16 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
 
     ];
 
+
+    get filteredClasses(){
+        if(this.donor.filtered){
+            this.filteredClass = 'filtered';
+        }else{
+            this.filteredClass = 'unfiltered';
+        }
+        return this.filteredClass;
+    }
+
     get classes(){
         this.dotclasses.push(this.statusToClass(this.donor.status));
         return this.dotclasses.join(' ');
@@ -24,7 +34,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
 
 
     connectedCallback() {
-        
+  
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
@@ -55,7 +65,9 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     donorClick(){
+
         window.open(this.donorLink);
+        
     }
 
     visitClick(){

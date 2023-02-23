@@ -14,6 +14,21 @@ public with sharing class ScheduleUtils {
         
         System.debug('daysInRange : ' + daysInRange);
 
+        Schedule__c schedule; 
+        for (Schedule__c sched :[
+            SELECT id 
+            FROM Schedule__c
+            WHERE Center__c =: centerId
+            AND Begin_Date__c <=: startDate
+            AND End_Date__c >=: startDate.addDays(daysInRange)
+        ]){
+            schedule = sched;
+        }
+
+        if(schedule == null){
+            throw new ScheduleException('No Schedule record exists for center during specified date');
+        }
+
         for(Integer i=0; i<daysInRange; i++){
             Date appDate = startDate.addDays(i);
             Datetime dt = DateTime.newInstance(appDate, Time.newInstance(0, 0, 0, 0));
@@ -37,13 +52,14 @@ public with sharing class ScheduleUtils {
         DateTime startDT = DateTime.newInstance(day, startTime);
         DateTime endDT = DateTime.newInstance(day, endTime);
 
-        Schedule__c schedule = [
+        Schedule__c schedule =[
             SELECT id 
             FROM Schedule__c
             WHERE Center__c =: centerId
             AND Begin_Date__c <=: day
             AND End_Date__c >=: day
         ];
+
         // system.debug('schedule' + schedule);
         
         Long startMS = startDT.getTime();
@@ -86,4 +102,5 @@ public with sharing class ScheduleUtils {
         return appointments;
     }
     
+    public class ScheduleException extends Exception{}
 }

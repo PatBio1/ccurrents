@@ -3,8 +3,15 @@
     <fullName>Soonest_Next_Visit__c</fullName>
     <description>The earliest another Visit can be scheduled after the last Donation.</description>
     <externalId>false</externalId>
-    <formula>Last_Donation__c + 2</formula>
+    <formula>FROMUNIXTIME( 
+MAX ( 
+    UNIXTIMESTAMP(  Eligibility_Date__c   ),
+    UNIXTIMESTAMP(  BLANKVALUE( Next_Visit_Option_48hr__c, Eligibility_Date__c ) ),
+    UNIXTIMESTAMP(  BLANKVALUE( Next_Visit_Option_7d__c, Eligibility_Date__c ) )
+  )
+)</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>The earliest another Visit can be scheduled after the last Donation. The greater of Eligibility Date, 48h and 7d rules.</inlineHelpText>
     <label>Soonest Next Visit</label>
     <required>false</required>
     <type>DateTime</type>

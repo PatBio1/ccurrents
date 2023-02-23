@@ -34,23 +34,23 @@ public with sharing class ScheduleUtils_Test {
                 Name = 'Center 1',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '111 1st St',
-                DonorId__c = 'center-111'
+                CenterId__c = 'center-111'
             ),
             new Account(
                 Name = 'Center 2',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '222 @nd St',
-                DonorId__c = 'center-222'
+                CenterId__c = 'center-222'
             ),
             new Account(
                 Name = 'Center 3',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '333 3rd St',
-                DonorId__c = 'center-333'
+                CenterId__c = 'center-333'
             )
         };
 
-        upsert centers DonorId__c;
+        upsert centers CenterId__c;
 
         Schedule__c[] schedules = new Schedule__c[]{
             new Schedule__c(

@@ -3,12 +3,12 @@ import { NavigationMixin } from 'lightning/navigation';
 
 export default class DonorDot extends NavigationMixin(LightningElement)  {
 
-    @track show = false;
+    @track showpopover = false;
     @api initials;
     @api icon = 'standard:account';
     @api donor;
     @api appointment;
-
+    filteredClass = '';
     donorLink;
     visitLink;
     dotclasses = [
@@ -17,6 +17,16 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
 
     ];
 
+
+    get filteredClasses(){
+        if(this.donor.filtered){
+            this.filteredClass = 'filtered';
+        }else{
+            this.filteredClass = 'unfiltered';
+        }
+        return this.filteredClass;
+    }
+
     get classes(){
         this.dotclasses.push(this.statusToClass(this.donor.status));
         return this.dotclasses.join(' ');
@@ -24,7 +34,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
 
 
     connectedCallback() {
-        
+  
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
@@ -47,15 +57,17 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     togglePopover() {
-        this.show = !this.show;
+        this.showpopover = !this.showpopover;
     }
 
     hidePopover() {
-        this.show = false;
+        this.showpopover = false;
     }
 
     donorClick(){
+
         window.open(this.donorLink);
+        
     }
 
     visitClick(){
@@ -64,8 +76,11 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
 
     dragstart(event){
         //save some "draggable" data
+        this.showpopover = false;
         event.dataTransfer.setData("donorId", this.donor.donorId);
+        event.dataTransfer.setData("donorName", this.donor.donorName);
         event.dataTransfer.setData("appointmentId", this.appointment.Id);
+        event.dataTransfer.setData("appointmentTime", this.appointment.timeString);
         event.dataTransfer.setData("visitId", this.donor.visitId );
         console.log('dragging... donor visit '  + this.donor.donorId + 'from visit ' + this.donor.visitId +  ' from appointment ' + this.appointment.Id)
     }

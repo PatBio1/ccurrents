@@ -1,13 +1,20 @@
 import { api, track, LightningElement } from 'lwc';
 import labels from 'c/labelService';
 import util from 'c/util';
-import upsertLead from '@salesforce/apex/SchedulerController.upsertLead';
-import createUser from '@salesforce/apex/SchedulerController.createUser';
-import assignPermissionSet from '@salesforce/apex/SchedulerController.assignPermissionSet';
+import upsertLead from '@salesforce/apex/ProfileController.upsertLead';
+import createUser from '@salesforce/apex/ProfileController.createUser';
+import assignPermissionSet from '@salesforce/apex/ProfileController.assignPermissionSet';
 
 export default class ClinicChooser extends LightningElement {
 
+    minPasswordCharacters = 8;
+    maxPasswordCharacters = 16;
+
+    // At least 1 lowercase, 1 uppercase, 1 number and 1 special character.
+    passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])");
+
     labels = labels;
+    loading = false;
     currentPage = 'Basic Profile';
     @track profile = {
         howGetToCenter: ''
@@ -141,8 +148,9 @@ export default class ClinicChooser extends LightningElement {
     get passwordValid() {
         return (
             util.isNotBlank(this.profile.password) &&
-            util.isNotBlank(this.profile.passwordConfirm) &&
-            this.profile.password === this.profile.passwordConfirm
+            this.profile.password.length >= this.minPasswordCharacters &&
+            this.passwordRegex.test(this.profile.password) &&
+            this.profile.password.trim() === this.profile.passwordConfirm?.trim()
         );
     }
 
@@ -150,6 +158,34 @@ export default class ClinicChooser extends LightningElement {
         let field = event.target?.dataset?.field;
 
         this.profile[field] = event.detail?.value;
+    }
+
+    onPasswordChange(event) {
+        this.onPasswordConfirmChange(event);
+
+        let passwordInput = this.template.querySelector('lightning-input[data-field="password"]');
+
+        if (!this.passwordRegex.test(this.profile.password)) {
+            passwordInput.setCustomValidity(labels.passwordRequirements);
+        } else {
+            passwordInput.setCustomValidity('');
+        }
+
+        passwordInput.reportValidity();
+    }
+
+    onPasswordConfirmChange(event) {
+        this.onFieldChange(event);
+
+        let passwordConfirmInput = this.template.querySelector('lightning-input[data-field="passwordConfirm"]');
+
+        if (this.profile?.password?.trim() !== this.profile.passwordConfirm?.trim()) {
+            passwordConfirmInput.setCustomValidity(labels.passwordsDontMatch);
+        } else {
+            passwordConfirmInput.setCustomValidity('');
+        }
+
+        passwordConfirmInput.reportValidity();
     }
 
     onHowGetToCenterChange(event) {
@@ -168,6 +204,8 @@ export default class ClinicChooser extends LightningElement {
     }
 
     onBasicProfileNextButtonClick() {
+        this.loading = true;
+
         const request = {
             profile: this.profile
         };
@@ -181,10 +219,14 @@ export default class ClinicChooser extends LightningElement {
             this.currentPage = 'Address';
         }).catch((error) => {
             console.log(error);
+        }).finally(() => {
+            this.loading = false;
         });
     }
 
     onAddressPreviousButtonClick() {
+        this.loading = true;
+
         const request = {
             profile: this.profile
         };
@@ -197,10 +239,14 @@ export default class ClinicChooser extends LightningElement {
             this.currentPage = 'Basic Profile';
         }).catch((error) => {
             console.log(error);
+        }).finally(() => {
+            this.loading = false;
         });
     }
 
     onAddressNextButtonClick() {
+        this.loading = true;
+
         const request = {
             profile: this.profile
         };
@@ -213,6 +259,8 @@ export default class ClinicChooser extends LightningElement {
             this.currentPage = 'Picture';
         }).catch((error) => {
             console.log(error);
+        }).finally(() => {
+            this.loading = false;
         });
     }
 
@@ -229,6 +277,8 @@ export default class ClinicChooser extends LightningElement {
     }
 
     onPasswordNextButtonClick() {
+        this.loading = true;
+
         this.profile.centerId = this.center.id;
 
         const request = {
@@ -243,6 +293,8 @@ export default class ClinicChooser extends LightningElement {
             this.assignPermissions(response);
         }).catch((error) => {
             console.log(error);
+
+            this.loading = false;
         });
     }
 
@@ -261,6 +313,8 @@ export default class ClinicChooser extends LightningElement {
             this.currentPage = 'Congratulations';
         }).catch((error) => {
             console.log(error);
+        }).finally(() => {
+            this.loading = false;
         });
     }
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>isLastDonationGT6mo__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF( ADDMONTHS( DATEVALUE(Last_Donation__c) , 6) &lt; TODAY(), true, false )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Last Donation &gt; 6mo?</label>
+    <type>Checkbox</type>
+</CustomField>

@@ -36,11 +36,11 @@ public with sharing class CenterSchedulerControllerTests {
                 Name = 'Center 3',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '333 3rd St',
-                DonorId__c = 'center-3'
+                CenterId__c = 'center-3'
             )
         };
 
-        upsert centers DonorId__c;
+        upsert centers CenterId__c;
 
 
         Schedule__c[] schedules = new Schedule__c[]{
@@ -90,7 +90,9 @@ public with sharing class CenterSchedulerControllerTests {
 
     @IsTest
     public static void testGetAppointments(){
-        Account center = [Select ID FROM Account WHERE Name ='Proesis Miramar' ];
+        User contextuser = TestUtil.createAdminUser();
+        System.runAs(contextuser){
+            Account center = [Select ID FROM Account WHERE Name ='Proesis Miramar' ];
 
             Schedule__c schedule = new Schedule__c(
                 Center__c = center.Id,
@@ -129,8 +131,8 @@ public with sharing class CenterSchedulerControllerTests {
             );
 
             insert visit;
-        User contextuser = TestUtil.createAdminUser();
-        System.runAs(contextuser){
+        
+        
             CenterScheduleController.AppointmentSlot[] slots = new CenterScheduleController.AppointmentSlot[]{};
             Id centerId = [SELECT Id FROM Account WHERE NAME = 'Proesis Miramar'].Id;
             Test.startTest();
@@ -138,7 +140,7 @@ public with sharing class CenterSchedulerControllerTests {
                 slots = CenterScheduleController.getAppointments(centerId,Date.newInstance(2023, 1, 10));
             
             Test.stopTest();
-            system.assertEquals(91, slots.size());
+            system.assertEquals(92, slots.size());
         }
     }
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Next_Visit_Option_7d__c</fullName>
+    <description>The next visit 7d past Previous to Last Visit</description>
+    <externalId>false</externalId>
+    <formula>Last_Previous_Donation__r.Donation_Complete__c + 7</formula>
+    <label>Next Visit Option 7d</label>
+    <required>false</required>
+    <type>DateTime</type>
+</CustomField>

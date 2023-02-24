@@ -30,6 +30,8 @@ import howWillYouGetToCenter from '@salesforce/label/c.How_Will_You_Get_To_Cente
 import invalidZipCode from '@salesforce/label/c.Invalid_Zip_Code';
 import joinUs from '@salesforce/label/c.Join_Us';
 import lastName from '@salesforce/label/c.Last_Name';
+import logout from '@salesforce/label/c.Logout';
+import logoutConfirmation from '@salesforce/label/c.Logout_Confirmation';
 import middleName from '@salesforce/label/c.Middle_Name';
 import mobilePhone from '@salesforce/label/c.Mobile_Phone';
 import mondayAbbreviation from '@salesforce/label/c.Monday_Abbreviation';
@@ -117,6 +119,8 @@ const labels = {
     invalidZipCode,
     joinUs,
     lastName,
+    logout,
+    logoutConfirmation,
     middleName,
     mobilePhone,
     mondayAbbreviation,

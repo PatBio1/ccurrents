@@ -133,6 +133,14 @@
         <name>Last_Name</name>
     </customLabels>
     <customLabels>
+        <label>Cerrar sesión</label>
+        <name>Logout</name>
+    </customLabels>
+    <customLabels>
+        <label>¿Estás seguro de que quieres cerrar sesión?</label>
+        <name>Logout_Confirmation</name>
+    </customLabels>
+    <customLabels>
         <label>Segundo nombre</label>
         <name>Middle_Name</name>
     </customLabels>

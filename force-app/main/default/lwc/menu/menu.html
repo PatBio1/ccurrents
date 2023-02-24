@@ -1,0 +1,18 @@
+<template>
+
+    <div class="slds-var-p-horizontal_medium" style="padding-top: 10px;">
+        <div class="slds-grid slds-gutters slds-grid_vertical-align-center">
+            <div class="slds-col slds-size_1-of-3">
+                <lightning-icon if:false={isGuest} icon-name="utility:rows" size="small" variant="inverse" onclick={onHamburgerClick}></lightning-icon>
+            </div>
+            <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                <div class="logoContainer"></div>
+            </div>
+            <div class="slds-col slds-size_1-of-3 slds-text-align_right">
+                <lightning-icon if:false={isGuest} icon-name="utility:notification" size="x-small" class="slds-p-right_medium" variant="inverse" onclick={onNotificationsClick}></lightning-icon>
+                <lightning-avatar if:false={isGuest} variant="circle" src={photoUrl} fallback-icon-name="standard:person_account"></lightning-avatar>
+            </div>
+        </div>
+    </div>
+
+</template>

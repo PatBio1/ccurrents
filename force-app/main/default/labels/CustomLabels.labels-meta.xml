@@ -232,6 +232,20 @@
         <value>Last Name</value>
     </labels>
     <labels>
+        <fullName>Logout</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Logout</shortDescription>
+        <value>Log out</value>
+    </labels>
+    <labels>
+        <fullName>Logout_Confirmation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Logout Confirmation</shortDescription>
+        <value>Are you sure that you want to log out?</value>
+    </labels>
+    <labels>
         <fullName>Middle_Name</fullName>
         <language>en_US</language>
         <protected>true</protected>

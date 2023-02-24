@@ -11,7 +11,7 @@ export default class CreateScheduleModal extends LightningModal {
     @track loyaltyTier;
     @track intervalsPerHour = 1;
     @track slotsPerInterval = 1;
-
+    loading = false;
     
     // handle the event from the visual picker component
     handleSelect(event) {
@@ -64,6 +64,7 @@ export default class CreateScheduleModal extends LightningModal {
         console.log(`create slots for ${this.centerId} `);
         console.log(`from ${this.startDate} `);
         console.log(`until ${this.endDate} `);
+        this.loading = true;
         CreateAppointmentSlots({
             centerId : this.centerId,
             startDate: this.startDate,
@@ -73,12 +74,12 @@ export default class CreateScheduleModal extends LightningModal {
             loyaltyTier : null
         }).then(() => {
             this.showToast('success','success','success');
-            this.close();
+            this.close(this.startDate);
         }).catch((err) =>{
             console.log(JSON.parse(JSON.stringify(err) ));
             this.showToast(err.body.message,'error','error');
         }).finally(()=>{
-            // 
+            this.loading = false;
         });
     }
 

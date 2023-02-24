@@ -113,17 +113,3 @@ Center_Donation_Type__c[] centerDonationTypes = new Center_Donation_Type__c[]{
 };
 insert centerDonationTypes;
 
-Schedule__c[] schedules = new Schedule__c[]{
-    new Schedule__c(
-        Center__c = centers[1].Id,
-        Begin_Date__c = Date.today().addDays(-10),
-        End_Date__c = Date.today().addDays(30)
-    ),
-    new Schedule__c(
-        Center__c = centers[2].Id,
-        Begin_Date__c = Date.today().addDays(-10),
-        End_Date__c = Date.today().addDays(30)
-    )
-};
-
-insert schedules;

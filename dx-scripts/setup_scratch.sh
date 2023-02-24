@@ -40,9 +40,6 @@ sfdx force:apex:execute -f dx-scripts/apex/setup_users.cls
 
 sfdx force:apex:execute -f dx-scripts/apex/setup_sample_data.cls
 
-# add appointment slots for today in center 1
-sfdx force:apex:execute -f dx-scripts/apex/create_appointment_slots.cls
-
 # add Postal Code records
 sfdx force:data:bulk:upsert -s Postal_Code__c -f ./data/postalCodes.csv -i Id
 

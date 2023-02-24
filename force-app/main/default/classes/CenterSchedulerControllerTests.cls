@@ -61,7 +61,28 @@ public with sharing class CenterSchedulerControllerTests {
             )
         };
 
-        insert schedules;
+        List<Business_Hours__c> businessHours = new List<Business_Hours__c>();
+        for (Id centerId : new List<Id>{centers[0].Id, centers[1].Id}) {
+            for (Default_Business_Hours__mdt defaultTime : [SELECT Label, Close__c, Index__c, IsClosed__c, Open__c FROM Default_Business_Hours__mdt]) {
+                String todayString = String.valueOf(Datetime.now().date());
+                Datetime closingTime = Datetime.valueOf(String.valueOf(todayString + ' ' + defaultTime.Close__c) + ':00');
+                Datetime openTime = Datetime.valueOf(String.valueOf(todayString + ' ' + defaultTime.Open__c + ':00'));
+        
+                Business_Hours__c newBH = new Business_Hours__c();
+                newBH.Name = defaultTime.Label;
+                newBH.Center__c = centerId;
+                newBH.Close__c = Time.newInstance(closingTime.hour(), closingTime.minute(), closingTime.second(), closingTime.millisecond());
+                newBH.Index__c = defaultTime.Index__c;
+                newBH.isClosed__c = defaultTime.IsClosed__c;
+                newBH.Open__c = Time.newInstance(openTime.hour(), openTime.minute(), openTime.second(), openTime.millisecond());
+        
+                businessHours.add(newBH);
+            }
+        }
+        
+        insert businessHours;
+
+        // insert schedules;
 
         Date startDate =  Date.newInstance(2023, 1, 10).addDays(-10);
         Date endDate =  Date.newInstance(2023, 1, 10).addDays(30);
@@ -69,9 +90,13 @@ public with sharing class CenterSchedulerControllerTests {
         Integer intervalsPerHour = 6; //10 minutes apart
         Integer slotsPerInterval = 1;
 
+        //create the schedule record
+        Schedule__c schedule = ScheduleUtils.createScheduleRecord(centers[0].Id, startDate, endDate);
+        insert schedule;
+
         Account center1 = [SELECT Id FROM Account WHERE Name = 'Proesis Miramar'];
 
-        Appointment__c[] appointments = ScheduleUtils.scheduleRange(center1.id,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
+        Appointment__c[] appointments = ScheduleUtils.scheduleRange(centers[0].Id,schedule.Id,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
 
         insert appointments;
     }
@@ -140,7 +165,7 @@ public with sharing class CenterSchedulerControllerTests {
                 slots = CenterScheduleController.getAppointments(centerId,Date.newInstance(2023, 1, 10));
             
             Test.stopTest();
-            system.assertEquals(92, slots.size());
+            system.assertEquals(62, slots.size());
         }
     }
 

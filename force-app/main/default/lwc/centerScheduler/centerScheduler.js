@@ -72,6 +72,8 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             // Promise handler for the Modal opening
             // Result has values passed via the close event from the Modal component
             console.log(result);
+            this.selectedDate = result;
+            this.refresh();
         });
     }
     

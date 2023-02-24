@@ -142,7 +142,13 @@ public with sharing class CenterScheduleController {
     public static Appointment__c[]  createAppointmentSlots(Id centerId, Date startDate, Date endDate, Integer intervalsPerHour, Integer slotsPerInterval, Id loyaltyTier){
         try {
             system.debug('' + centerId + startDate + endDate + loyaltyTier + intervalsPerHour + slotsPerInterval);
-            Appointment__c[] appointments = ScheduleUtils.scheduleRange(centerId,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
+
+            //create the schedule record
+            Schedule__c schedule = ScheduleUtils.createScheduleRecord(centerId, startDate, endDate);
+            insert schedule;
+
+            //attach appointments to the new schedule
+            Appointment__c[] appointments = ScheduleUtils.scheduleRange(centerId,schedule.Id,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
             insert appointments;
             return appointments;
 

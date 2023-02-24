@@ -52,25 +52,26 @@ public with sharing class ScheduleUtils_Test {
 
         upsert centers CenterId__c;
 
-        Schedule__c[] schedules = new Schedule__c[]{
-            new Schedule__c(
-                Center__c = centers[0].Id, 
-                Begin_Date__c =  Date.newInstance(2023, 1, 10).addDays(-10),
-                End_Date__c =  Date.newInstance(2023, 1, 10).addDays(30)
-            ),
-            new Schedule__c(
-                Center__c = centers[1].Id,
-                Begin_Date__c =  Date.newInstance(2023, 1, 10).addDays(-10),
-                End_Date__c =  Date.newInstance(2023, 1, 10).addDays(30)
-            ),
-            new Schedule__c(
-                Center__c = centers[2].Id,
-                Begin_Date__c =  Date.newInstance(2023, 1, 10).addDays(-10),
-                End_Date__c =  Date.newInstance(2023, 1, 10).addDays(30)
-            )
-        };
-
-        insert schedules;
+        List<Business_Hours__c> businessHours = new List<Business_Hours__c>();
+        for (Id centerId : new List<Id>{centers[0].Id, centers[1].Id}) {
+            for (Default_Business_Hours__mdt defaultTime : [SELECT Label, Close__c, Index__c, IsClosed__c, Open__c FROM Default_Business_Hours__mdt]) {
+                String todayString = String.valueOf(Datetime.now().date());
+                Datetime closingTime = Datetime.valueOf(String.valueOf(todayString + ' ' + defaultTime.Close__c) + ':00');
+                Datetime openTime = Datetime.valueOf(String.valueOf(todayString + ' ' + defaultTime.Open__c + ':00'));
+        
+                Business_Hours__c newBH = new Business_Hours__c();
+                newBH.Name = defaultTime.Label;
+                newBH.Center__c = centerId;
+                newBH.Close__c = Time.newInstance(closingTime.hour(), closingTime.minute(), closingTime.second(), closingTime.millisecond());
+                newBH.Index__c = defaultTime.Index__c;
+                newBH.isClosed__c = defaultTime.IsClosed__c;
+                newBH.Open__c = Time.newInstance(openTime.hour(), openTime.minute(), openTime.second(), openTime.millisecond());
+        
+                businessHours.add(newBH);
+            }
+        }
+        
+        insert businessHours;
     }
 
     @isTest
@@ -87,8 +88,10 @@ public with sharing class ScheduleUtils_Test {
 
         Account center1 = [SELECT Id FROM Account WHERE Name = 'Center 1'];
 
+        Schedule__c schedule = ScheduleUtils.createScheduleRecord(center1.Id, startDate, endDate);
+            insert schedule;
         //scheduleRange(Id centerId, Date startDate, Date endDate, Id loyaltyTier, Integer intervalsPerHour, Integer slotsPerInterval)
-        appointments = ScheduleUtils.scheduleRange(center1.id,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
+        appointments = ScheduleUtils.scheduleRange(center1.id,schedule.id,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
 
         insert appointments;
 
@@ -96,18 +99,18 @@ public with sharing class ScheduleUtils_Test {
         //2 days *
          
         // 2 days * 15 hours * 1
-        system.assertEquals(180,appointments.size());
+        system.assertEquals(120,appointments.size());
         system.assertEquals(slotsPerInterval, appointments[0].Capacity__c);
         
         
         //first appointment should be 9:00AM on first day
-        DateTime firstTime = DateTime.newInstance(startDate, Time.newInstance(6, 0, 0, 0));
+        DateTime firstTime = DateTime.newInstance(startDate, Time.newInstance(8, 0, 0, 0));
         system.assertEquals(firstTime, appointments[0].Datetime__c);
 
         //last appointment should be 8:50PM on last day
-        DateTime lastTime = DateTime.newInstance(endDate, Time.newInstance(20, 50, 0, 0));
-        system.assertEquals(lastTime, appointments[179].Datetime__c);
+        DateTime lastTime = DateTime.newInstance(endDate, Time.newInstance(17, 50, 0, 0));
+        system.assertEquals(lastTime, appointments[119].Datetime__c);
         
-        system.assertEquals(slotsPerInterval, appointments[179].Capacity__c);
+        system.assertEquals(slotsPerInterval, appointments[119].Capacity__c);
     }
 }

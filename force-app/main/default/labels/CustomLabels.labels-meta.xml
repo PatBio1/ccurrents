@@ -372,6 +372,13 @@
         <value>Recommended to you</value>
     </labels>
     <labels>
+        <fullName>Remove_Photo</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Remove Photo</shortDescription>
+        <value>Remove photo</value>
+    </labels>
+    <labels>
         <fullName>Results_For</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -463,11 +470,11 @@
         <value>Sat</value>
     </labels>
     <labels>
-        <fullName>Social_Picture</fullName>
+        <fullName>Social_Photo</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Social Picture</shortDescription>
-        <value>Social Picture</value>
+        <shortDescription>Social Photo</shortDescription>
+        <value>Social Photo</value>
     </labels>
     <labels>
         <fullName>Suffix</fullName>
@@ -538,6 +545,13 @@
         <protected>true</protected>
         <shortDescription>Updates &amp; Appointments</shortDescription>
         <value>Updates &amp; Appointments</value>
+    </labels>
+    <labels>
+        <fullName>Upload_Another_Photo</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Upload Another Photo</shortDescription>
+        <value>Upload another photo</value>
     </labels>
     <labels>
         <fullName>Walk</fullName>

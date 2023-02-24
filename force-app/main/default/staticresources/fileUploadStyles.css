@@ -1,0 +1,27 @@
+.slds-file-selector__dropzone slot {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+}
+
+.slds-file-selector__dropzone, .slds-file-selector_files {
+    width: 100%;
+    text-align: center;
+}
+
+.slds-file-selector__button {
+    color: #5c3e99;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.slds-file-selector__button:hover {
+    color: #99429C;
+}
+
+.slds-file-selector__text {
+    display: none;
+}
+
+/*
+https://stackoverflow.com/questions/7896402/how-can-i-replace-text-with-css
+*/

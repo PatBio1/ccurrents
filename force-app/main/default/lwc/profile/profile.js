@@ -1,9 +1,13 @@
 import { api, track, LightningElement } from 'lwc';
+import { loadStyle } from 'lightning/platformResourceLoader';
 import labels from 'c/labelService';
 import util from 'c/util';
 import upsertLead from '@salesforce/apex/ProfileController.upsertLead';
 import createUser from '@salesforce/apex/ProfileController.createUser';
-import assignPermissionSet from '@salesforce/apex/ProfileController.assignPermissionSet';
+import setupUser from '@salesforce/apex/ProfileController.setupUser';
+import setupPhoto from '@salesforce/apex/ProfileController.setupPhoto';
+import removePhoto from '@salesforce/apex/ProfileController.removePhoto';
+import fileUploadStyles from '@salesforce/resourceUrl/fileUploadStyles';
 
 export default class ClinicChooser extends LightningElement {
 
@@ -56,6 +60,10 @@ export default class ClinicChooser extends LightningElement {
 
     get taxiSelected() {
         return this.profile.howGetToCenter.split(';').includes('Taxi');
+    }
+
+    get hasPhoto() {
+        return util.isNotBlank(this.profile.photoUrl);
     }
 
     get suffixOptions() {
@@ -142,7 +150,10 @@ export default class ClinicChooser extends LightningElement {
     }
 
     get pictureValid() {
-        return true;
+        return (
+            util.isNotBlank(this.profile.nickname) &&
+            util.isNotBlank(this.profile.photoUrl)
+        );
     }
 
     get passwordValid() {
@@ -153,6 +164,12 @@ export default class ClinicChooser extends LightningElement {
             this.profile.password.trim() === this.profile.passwordConfirm?.trim()
         );
     }
+
+    connectedCallback() {
+        Promise.all([
+            loadStyle(this, fileUploadStyles)
+        ]);
+      }
 
     onFieldChange(event) {
         let field = event.target?.dataset?.field;
@@ -264,6 +281,46 @@ export default class ClinicChooser extends LightningElement {
         });
     }
 
+    onPhotoUploaded(event) {
+        this.loading = true;
+
+        this.profile.photoContentVersionId = event.detail.files[0].contentVersionId;
+
+        const request = {
+            profile: this.profile
+        };
+
+        console.log('setupPhoto request', JSON.stringify(request));
+
+        setupPhoto(request).then(response => {
+            console.log('setupPhoto response', response);
+            this.profile.photoUrl = response.replaceAll('"', '');
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
+            this.loading = false;
+        });
+    }
+
+    onRemovePhotoButtonClick() {
+        this.loading = true;
+
+        const request = {
+            contentVersionId: this.profile.photoContentVersionId
+        };
+
+        console.log('removePhoto request', JSON.stringify(request));
+
+        removePhoto(request).then(() => {
+            this.profile.photoContentVersionId = undefined;
+            this.profile.photoUrl = undefined;
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
+            this.loading = false;
+        });
+    }
+
     onPicturePreviousButtonClick() {
         this.currentPage = 'Address';
     }
@@ -290,7 +347,9 @@ export default class ClinicChooser extends LightningElement {
         createUser(request).then(response => {
             console.log('createUser response', response);
 
-            this.assignPermissions(response);
+            this.profile.userId = response;
+
+            this.assignPermissions();
         }).catch((error) => {
             console.log(error);
 
@@ -302,14 +361,14 @@ export default class ClinicChooser extends LightningElement {
         location.href = '/ProesisDonor/s/schedule';
     }
 
-    assignPermissions(userId) {
+    assignPermissions() {
         const request = {
-            userId: userId
+            profile: this.profile
         };
 
-        console.log('assignPermissionSet request', JSON.stringify(request));
+        console.log('setupUser request', JSON.stringify(request));
 
-        assignPermissionSet(request).then(response => {
+        setupUser(request).then(response => {
             this.currentPage = 'Congratulations';
         }).catch((error) => {
             console.log(error);

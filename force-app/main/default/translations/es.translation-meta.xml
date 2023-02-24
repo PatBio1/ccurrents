@@ -213,6 +213,10 @@
         <name>Recommended_To_You</name>
     </customLabels>
     <customLabels>
+        <label>Quitar foto</label>
+        <name>Remove_Photo</name>
+    </customLabels>
+    <customLabels>
         <label>Resultados para:</label>
         <name>Results_For</name>
     </customLabels>
@@ -249,8 +253,8 @@
         <name>Set_Your_Password</name>
     </customLabels>
     <customLabels>
-        <label>imagen social</label>
-        <name>Social_Picture</name>
+        <label>Foto social</label>
+        <name>Social_Photo</name>
     </customLabels>
     <customLabels>
         <label>Español</label>
@@ -307,6 +311,10 @@
     <customLabels>
         <label>Actualizaciones y citas</label>
         <name>Updates_And_Appointments</name>
+    </customLabels>
+    <customLabels>
+        <label>Sube otra foto</label>
+        <name>Upload_Another_Photo</name>
     </customLabels>
     <customLabels>
         <label>Caminando</label>

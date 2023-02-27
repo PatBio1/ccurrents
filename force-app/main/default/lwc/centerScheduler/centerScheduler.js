@@ -72,6 +72,8 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             // Promise handler for the Modal opening
             // Result has values passed via the close event from the Modal component
             console.log(result);
+            this.selectedDate = result;
+            this.refresh();
         });
     }
     
@@ -220,7 +222,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         for(let i=0;i < this.appointments.length;i++){
             let app = this.appointments[i];
             app = this.appointments[i];
-            if(app.visits.length > 0 && app.filtered == false ){
+            if(app.visits.length > 0 ){
                 for(let j=0; j<app.visits.length;j++){
                     let visit = app.visits[j];
                     if(this.filters.status !== ''){
@@ -236,6 +238,9 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             }
 
         }
+
+        
+       
     }
 
     clearFilters(){
@@ -294,7 +299,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
                 }).then((url) => {
                     return url;
                 }).catch(err => {
-                    console.error(err);
+                    console.error(err.body.message);
                 });
                 // console.log(appointments[i]);
             }
@@ -302,7 +307,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             console.log(appointments);
             this.appointments = appointments;
         }).catch(err =>{
-            console.error(err);
+            console.error(err.body.message);
         }).finally(()=>{
             this.loading = false;
         });

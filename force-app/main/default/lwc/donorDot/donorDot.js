@@ -32,6 +32,9 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         return this.dotclasses.join(' ');
     }
 
+    renderedCallback(){
+        console.log('rendered cb')
+    }
 
     connectedCallback() {
   

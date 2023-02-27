@@ -1,7 +1,7 @@
 @import 'c/sharedCss';
 
 .create-schedule-modal-body{
-    --sds-c-modal-content-color-background: LightBlue;
+    /* --sds-c-modal-content-color-background: LightBlue; */
     height: max-content;
 }
 

@@ -4,6 +4,7 @@
         class="modal-header"
     ></lightning-modal-header>
     <lightning-modal-body class="create-schedule-modal-body">
+        <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
         <div class="slds-grid slds-gutters">
             
             <div class="slds-col slds-size_6-of-12">
@@ -13,6 +14,7 @@
                 name="input8" 
                 label="Start Date" 
                 value={startDate}
+                onchange={changeStart}
                 min="2023-01-01" 
                 ></lightning-input>
             </div>
@@ -23,6 +25,7 @@
                 name="input8" 
                 label="End Date" 
                 value={endDate}
+                onchange={changeEnd}
                 min="2023-01-01" 
                 
                 ></lightning-input>
@@ -30,7 +33,7 @@
 
         </div>
 
-        <div class="slds-grid slds-gutters">
+        <!-- <div class="slds-grid slds-gutters">
             <div class="slds-col slds-size_6-of-12">
                 <lightning-combobox
               name="progress"
@@ -48,7 +51,7 @@
                  ></lightning-combobox>
             </div>
 
-        </div>
+        </div> -->
 
         <div class="slds-grid slds-gutters">
             <div class="slds-col slds-size_6-of-12">
@@ -57,7 +60,10 @@
                 type="number" 
                 name="input8" 
                 label="Number Intervals Per Hour" 
+                min="1"
+                max="10"
                 value={intervalsPerHour}
+                onchange={changeIntervalsPerHour}
 
                 ></lightning-input>
             </div>
@@ -67,6 +73,9 @@
                 name="input8" 
                 label="Number Slots Per Interval" 
                 value={slotsPerInterval}
+                min="1"
+                max="20"
+                onchange={changeSlotsPerInterval}
 
                 ></lightning-input>
             </div>

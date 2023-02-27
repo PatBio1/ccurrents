@@ -1,5 +1,5 @@
 import { track, LightningElement } from 'lwc';
-import ChangeLocationModal from 'c/changeLocationModal';
+import changeLocationModal from 'c/changeLocationModal';
 import labels from 'c/labelService';
 import getCenters from '@salesforce/apex/CenterController.getCenters';
 
@@ -84,7 +84,7 @@ export default class CenterChooser extends LightningElement {
     }
 
     onChangeButtonClick() {
-        ChangeLocationModal.open({
+        changeLocationModal.open({
             size: 'small',
             postalCode: this.location.postalCode
         }).then((location) => {

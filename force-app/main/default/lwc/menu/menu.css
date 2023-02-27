@@ -1,0 +1,9 @@
+@import 'c/sharedCss';
+
+.logoContainer {
+    background-image: var(--lwc-brandLogoImage);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 50px;
+}

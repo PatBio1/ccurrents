@@ -28,6 +28,75 @@ public without sharing class ProfileController {
     }
 
     @AuraEnabled
+    public static String setupPhoto(Profile profile) {
+        try {
+            Util.testExceptionHandling();
+
+            // Create a Content Delivery for the uploaded file to get
+            // a public URL to be able to view it as guest user.
+            MobileGuestService.GetDownloadUrlRequest getDownloadUrlRequest = new MobileGuestService.GetDownloadUrlRequest();
+            getDownloadUrlRequest.contentVersionId = profile.photoContentVersionId;
+
+            String endpoint = MobileGuestService.ENDPOINT + MobileGuestService.GET_DOWNLOAD_URL_PATH;
+
+            HttpRequest httpRequest = new HttpRequest();
+            httpRequest.setMethod('POST');
+            httpRequest.setEndpoint(endpoint);
+            httpRequest.setHeader('Content-Type', 'application/json;charset=UTF-8');
+            httpRequest.setBody(JSON.serialize(getDownloadUrlRequest));
+
+            HttpResponse httpResponse = new Http().send(httpRequest);
+
+            ContentVersion contentVersion = [
+                SELECT
+                    ContentDocumentId
+                FROM
+                    ContentVersion
+                WHERE
+                    Id = :profile.photoContentVersionId
+            ];
+
+            // Update title on the uploaded file.
+            ContentDocument contentDocument = new ContentDocument();
+            contentDocument.Id = contentVersion.ContentDocumentId;
+            contentDocument.Title = 'Profile Photo';
+            update contentDocument;
+
+            // Link the uploaded file to the Lead record.
+            ContentDocumentLink contentDocumentLink = new ContentDocumentLink();
+            contentDocumentLink.LinkedEntityId = profile.id;
+            contentDocumentLink.ContentDocumentId = contentVersion.ContentDocumentId;
+            insert contentDocumentLink;
+
+            // Return public url for uploaded file.
+            MobileGuestService.GetDownloadUrlResponse getDownloadUrlResponse = (MobileGuestService.GetDownloadUrlResponse) JSON.deserialize(httpResponse.getBody(), MobileGuestService.GetDownloadUrlResponse.class);
+            return getDownloadUrlResponse.downloadUrl;
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
+    public static void removePhoto(Id contentVersionId) {
+        try {
+            Util.testExceptionHandling();
+
+            ContentVersion contentVersion = [
+                SELECT
+                    ContentDocumentId
+                FROM
+                    ContentVersion
+                WHERE
+                    Id = :contentVersionId
+            ];
+
+            Database.delete(contentVersion.ContentDocumentId);
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
     public static Id createUser(Profile profile) {
         try {
             Util.testExceptionHandling();
@@ -40,8 +109,6 @@ public without sharing class ProfileController {
             leadConvert.setDoNotCreateOpportunity(true);
 
             Database.LeadConvertResult lcr = Database.convertLead(leadConvert);
-
-            System.debug(lcr);
 
             Id accountId = lcr.getAccountId();
 
@@ -60,16 +127,15 @@ public without sharing class ProfileController {
             accountContactRelation.Roles = 'Donor';
             insert accountContactRelation;
 
-            String nickname = account.FirstName.substring(0, 1) + account.LastName;
             String username = account.PersonEmail + Constants.USERNAME_SUFFIX;
 
             User user = new user();
             user.FirstName = account.FirstName;
             user.LastName = account.LastName;
             user.Email = account.PersonEmail;
-            user.Alias = nickname.abbreviate(8);
+            user.Alias = profile.nickname.abbreviate(8);
             user.Username = username;
-            user.CommunityNickname = nickname.abbreviate(40);
+            user.CommunityNickname = profile.nickname;
             user.LocaleSidKey = 'en_US';
             user.TimeZoneSidKey = 'America/New_York';
             user.ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id;
@@ -77,7 +143,6 @@ public without sharing class ProfileController {
             user.EmailEncodingKey = 'UTF-8';
             user.ContactId = account.PersonContactId;
             user.IsActive = true;
-System.debug('### user='+user);
 
             Id userId = Site.createExternalUser(user, account.Id, profile.password, false);
 
@@ -88,15 +153,30 @@ System.debug('### user='+user);
     }
 
     @AuraEnabled
-    public static void assignPermissionSet(Id userId) {
+    public static void setupUser(Profile profile) {
         try {
             Util.testExceptionHandling();
+
+            // Set profile photo on User record.
+            MobileGuestService.SetUserPhotoRequest setUserPhotoRequest = new MobileGuestService.SetUserPhotoRequest();
+            setUserPhotoRequest.userId = profile.userId;
+            setUserPhotoRequest.contentVersionId = profile.photoContentVersionId;
+
+            String endpoint = MobileGuestService.ENDPOINT + MobileGuestService.SET_USER_PHOTO_PATH;
+
+            HttpRequest httpRequest = new HttpRequest();
+            httpRequest.setMethod('POST');
+            httpRequest.setEndpoint(endpoint);
+            httpRequest.setHeader('Content-Type', 'application/json;charset=UTF-8');
+            httpRequest.setBody(JSON.serialize(setUserPhotoRequest));
+
+            HttpResponse httpResponse = new Http().send(httpRequest);
 
             PermissionSet permissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.EXPERIENCE_PERMISSION_SET_NAME];
 
             PermissionSetAssignment psa = new PermissionSetAssignment();
             psa.PermissionSetId = permissionSet.Id;
-            psa.AssigneeId = userId;
+            psa.AssigneeId = profile.userId;
             insert psa;
         } catch (Exception e) {
             throw Util.createAuraHandledException(e);
@@ -109,7 +189,13 @@ System.debug('### user='+user);
         public Id id {get; set;}
 
         @AuraEnabled
+        public Id userId {get; set;}
+
+        @AuraEnabled
         public Id centerId {get; set;}
+
+        @AuraEnabled
+        public Id photoContentVersionId {get; set;}
 
         @AuraEnabled
         public String firstName {get; set;}
@@ -146,6 +232,9 @@ System.debug('### user='+user);
 
         @AuraEnabled
         public String howGetToCenter {get; set;}
+
+        @AuraEnabled
+        public String nickname {get; set;}
 
         @AuraEnabled
         public String password {get; set;}

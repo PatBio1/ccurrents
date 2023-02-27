@@ -1,0 +1,46 @@
+{
+  "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
+  "componentName" : "siteforce:sldsOneColLayout",
+  "dataProviders" : [ ],
+  "id" : "84a6c6e2-6179-4e72-b433-7176b73229fb",
+  "label" : "Notifications",
+  "regions" : [ {
+    "id" : "cc96513a-f05a-4b67-97ec-394d14e91c64",
+    "regionName" : "header",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : { },
+      "componentName" : "c:NotificationsWrapper",
+      "id" : "281de49c-3b26-4b67-b9dc-b0ffa55b3a0f",
+      "renderPriority" : "NEUTRAL",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "2e4f96dc-9e99-4606-a62f-33d01decec69",
+    "regionName" : "content",
+    "type" : "region"
+  }, {
+    "id" : "16d4fe74-99db-4b98-a245-b79bafbc447f",
+    "regionName" : "footer",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : {
+        "customHeadTags" : "",
+        "description" : "",
+        "title" : "Notifications"
+      },
+      "componentName" : "forceCommunity:seoAssistant",
+      "id" : "9eadfd95-19d1-477c-86cb-033e0e3dfaba",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "48c7359d-1208-40aa-baf9-90c017e271dd",
+    "regionName" : "sfdcHiddenRegion",
+    "type" : "region"
+  } ],
+  "themeLayoutType" : "KEg3kA3MunIOnpvEUYA8EXxeKjluzc",
+  "type" : "view",
+  "viewType" : "custom-notifications"
+}

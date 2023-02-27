@@ -251,31 +251,24 @@
             </div>
 
             <div class="slds-m-bottom_small">
-                <lightning-input type="text" label={labels.nickname} value={profile.nickname} data-field="nickname" onchange={onFieldChange}></lightning-input>
+                <lightning-input type="text" label={labels.nickname} value={profile.nickname} max-length="40" data-field="nickname" onchange={onFieldChange}></lightning-input>
             </div>
             <div class="slds-m-bottom_small">
-                <div class="slds-form-element">
-                    <span class="slds-form-element__label">{labels.socialPicture}</span>
-                    <div class="slds-form-element__control">
-                        <div class="slds-file-selector slds-file-selector_images">
-                            <div class="slds-file-selector__dropzone" style="height: 200px;">
-                                <input type="file" class="slds-file-selector__input slds-assistive-text" accept="image/png" id="file-upload-input-59"/>
-                                <label class="slds-file-selector__body" for="file-upload-input-59" id="file-selector-secondary-label58">
-                                    <lightning-icon icon-name="utility:photo" size="x-small" class="photo-icon"></lightning-icon><br/><br/>
+                <lightning-file-upload if:false={hasPhoto} label={labels.socialPhoto} multiple="false" onuploadfinished={onPhotoUploaded}></lightning-file-upload>
 
-                                    <lightning-button icon-name="utility:upload" label="Upload a photo" class="slds-file-selector__button secondary-button"></lightning-button>
+                <template if:true={hasPhoto}>
+                    <label class="slds-form-element__label slds-no-flex">{labels.socialPhoto}</label>
+                    <img src={profile.photoUrl} style="border-radius: .25rem;"/>
 
-                                    <!--
-                                    <span class="slds-file-selector__button slds-button slds-button_neutral">
-                                        <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
-                                            <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#upload"></use>
-                                        </svg>
-                                    </span>Upload a photo -->
-                                </label>
-                            </div>
+                    <div class="slds-grid slds-gutters slds-m-top_x-small">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-button variant="base" label={labels.removePhoto} icon-name="utility:delete" icon-position="left" class="tertiary-button" onclick={onRemovePhotoButtonClick}></lightning-button>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-text-align_right">
+                            <lightning-button variant="base" label={labels.uploadAnotherPhoto} icon-name="utility:upload" icon-position="left" class="tertiary-button" onclick={onRemovePhotoButtonClick}></lightning-button>
                         </div>
                     </div>
-                </div>
+                </template>
             </div>
         </div>
 

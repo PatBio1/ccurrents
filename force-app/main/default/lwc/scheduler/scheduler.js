@@ -78,28 +78,7 @@ geo;
     }
 
     onCancelButtonClick() {
-        this[NavigationMixin.Navigate]({
-            type: 'comm__loginPage',
-            attributes: {
-                actionName: 'logout'
-            }
-        });
-/*
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                // Get the Latitude and Longitude from Geolocation API
-                var latitude = position.coords.latitude;
-                var longitude = position.coords.longitude;
-
-                console.log('latitude', latitude);
-                console.log('longitude', longitude);
-                this.geo = latitude;
-            });
-        } else {
-            console.log('no geolocation!!');
-            this.geo = 'no geolocation!!';
-        }
-*/
+        // TODO - what should happen here?
     }
 
     onScheduleButtonClick() {

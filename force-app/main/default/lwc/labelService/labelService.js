@@ -30,6 +30,8 @@ import howWillYouGetToCenter from '@salesforce/label/c.How_Will_You_Get_To_Cente
 import invalidZipCode from '@salesforce/label/c.Invalid_Zip_Code';
 import joinUs from '@salesforce/label/c.Join_Us';
 import lastName from '@salesforce/label/c.Last_Name';
+import logout from '@salesforce/label/c.Logout';
+import logoutConfirmation from '@salesforce/label/c.Logout_Confirmation';
 import middleName from '@salesforce/label/c.Middle_Name';
 import mobilePhone from '@salesforce/label/c.Mobile_Phone';
 import mondayAbbreviation from '@salesforce/label/c.Monday_Abbreviation';
@@ -49,6 +51,7 @@ import plasmaDonationSavesLives from '@salesforce/label/c.Plasma_Donation_Saves_
 import popularTimes from '@salesforce/label/c.Popular_Times';
 import previous from '@salesforce/label/c.Previous';
 import recommendedToYou from '@salesforce/label/c.Recommended_To_You';
+import removePhoto from '@salesforce/label/c.Remove_Photo';
 import resultsFor from '@salesforce/label/c.Results_For';
 import saturdayAbbreviation from '@salesforce/label/c.Saturday_Abbreviation';
 import schedule from '@salesforce/label/c.Schedule';
@@ -57,7 +60,7 @@ import scheduled from '@salesforce/label/c.Scheduled';
 import scheduleYour1stAppointment from '@salesforce/label/c.Schedule_Your_1st_Appointment';
 import selectTimeSlot from '@salesforce/label/c.Select_Time_Slot';
 import setYourPassword from '@salesforce/label/c.Set_Your_Password';
-import socialPicture from '@salesforce/label/c.Social_Picture';
+import socialPhoto from '@salesforce/label/c.Social_Photo';
 import spanish from '@salesforce/label/c.Spanish';
 import state from '@salesforce/label/c.State';
 import streetAddress1 from '@salesforce/label/c.Street_Address_1';
@@ -69,6 +72,7 @@ import tellUsAboutYou from '@salesforce/label/c.Tell_Us_About_You';
 import thursdayAbbreviation from '@salesforce/label/c.Thursday_Abbreviation';
 import tuesdayAbbreviation from '@salesforce/label/c.Tuesday_Abbreviation';
 import updatesAndAppointments from '@salesforce/label/c.Updates_And_Appointments';
+import uploadAnotherPhoto from '@salesforce/label/c.Upload_Another_Photo';
 import walk from '@salesforce/label/c.Walk';
 import wednesdayAbbreviation from '@salesforce/label/c.Wednesday_Abbreviation';
 import welcomeToProesis from '@salesforce/label/c.Welcome_To_Proesis';
@@ -115,6 +119,8 @@ const labels = {
     invalidZipCode,
     joinUs,
     lastName,
+    logout,
+    logoutConfirmation,
     middleName,
     mobilePhone,
     mondayAbbreviation,
@@ -134,6 +140,7 @@ const labels = {
     popularTimes,
     previous,
     recommendedToYou,
+    removePhoto,
     resultsFor,
     saturdayAbbreviation,
     schedule,
@@ -142,7 +149,7 @@ const labels = {
     scheduleYour1stAppointment,
     selectTimeSlot,
     setYourPassword,
-    socialPicture,
+    socialPhoto,
     spanish,
     state,
     streetAddress1,
@@ -154,6 +161,7 @@ const labels = {
     thursdayAbbreviation,
     tuesdayAbbreviation,
     updatesAndAppointments,
+    uploadAnotherPhoto,
     walk,
     wednesdayAbbreviation,
     welcomeToProesis,

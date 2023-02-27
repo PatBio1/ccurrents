@@ -184,6 +184,14 @@ public with sharing class TestUtil {
         };
     }
 
+    public static ContentVersion createContentVersion() {
+        return new ContentVersion(
+            Title = 'Test',
+            PathOnClient = 'test.txt',
+            VersionData = Blob.valueOf('data')
+        );
+    }
+
     public class TestException extends Exception {}
 
 }

@@ -1,15 +1,64 @@
 public with sharing class ScheduleUtils {
 
+    public static Schedule__c createScheduleRecord(Id centerId, Date startDate, Date endDate){
+        
+        Schedule__c[] existingSchedules = new Schedule__c[]{};
+        //check for any existing schedules overlapping range
+        Boolean scheduleExists  = false;
+        for(Schedule__c sched: [
+            SELECT  Id
+            FROM    Schedule__c
+            WHERE Center__c =: centerId
+            AND ( 
+                    (Begin_Date__c >=: startDate AND Begin_Date__c <=: endDate)
+                    OR 
+                    ( End_Date__c >=: startDate AND End_Date__c  <=: endDate) 
+                )
+            LIMIT 1
+        ]){
+            scheduleExists = true;
+        }
 
-    public static Appointment__c[] scheduleRange(Id centerId, Date startDate, Date endDate, Id loyaltyTier, Integer intervalsPerHour, Integer slotsPerInterval){
+        if (scheduleExists == true){
+            throw new ScheduleException('A Schedule exists for this center in this date range');
+        }
+
+        Schedule__c schedule = new Schedule__c(
+            Center__c = centerId,
+            Begin_Date__c = startDate,
+            End_Date__c = endDate
+        );
+        return schedule;
+    }
+
+
+    public static Appointment__c[] scheduleRange(Id centerId, Id scheduleId, Date startDate, Date endDate, Id loyaltyTier, Integer intervalsPerHour, Integer slotsPerInterval){
         Integer incrementInMinutes = 60/intervalsPerHour;
         Appointment__c[] appointmentRecords = new Appointment__c[]{};
+        Set<String> daysClosed  = new Set<String>{};
+        Map<String,Business_Hours__c> dayToHours = new Map<String,Business_Hours__c>{};
+        for (Business_Hours__c day : [
+            SELECT  Id,
+                    Name,
+                    Center__c,
+                    Close__c,
+                    Index__c,
+                    IsClosed__c,
+                    Open__c
+            FROM Business_Hours__c
+            WHERE Center__c =: centerId
+        ]){
+            dayToHours.put(day.Name,day);
+            if(day.IsClosed__c == true){
+                daysClosed.add(day.Name);
+            }
+        } 
     
         //figure out clinic hours from CustomMetadata, for now assume 6AM to 9PM
-        Time startTime = Time.newInstance(6, 0, 0, 0); //6AM
-        Time endTime = Time.newInstance(21, 0, 0, 0); //9PM
+        // Time startTime = Time.newInstance(6, 0, 0, 0); //6AM
+        // Time endTime = Time.newInstance(21, 0, 0, 0); //9PM
         //figure out business days in range (M-F for now)
-        Set<String> daysClosed  = new Set<String>{'Saturday','Sunday'};
+        
         Integer daysInRange = startDate.daysBetween(endDate) + 1; //add 1 to account for first day
         
         System.debug('daysInRange : ' + daysInRange);
@@ -19,11 +68,13 @@ public with sharing class ScheduleUtils {
             Datetime dt = DateTime.newInstance(appDate, Time.newInstance(0, 0, 0, 0));
             String dayOfWeek=dt.format('EEEE');
             //make sure day is a weekday/workday
-            if(! daysClosed.contains(dayOfWeek)){
+            if((! daysClosed.contains(dayOfWeek)) && (dayToHours.containsKey(dayOfWeek) ) ){
                 // System.debug('Day : ' + dayOfWeek);
                 // System.debug('incrementInMinutes : ' + incrementInMinutes + '  slotsPerInterval: ' + slotsPerInterval);
+                Time startTime = dayToHours.get(dayOfWeek).Open__c;
+                Time endTime = dayToHours.get(dayOfWeek).Close__c;
                 appointmentRecords.addAll(
-                    createDailySlots(centerId, appDate, startTime, endTime, incrementInMinutes, slotsPerInterval)
+                    createDailySlots(centerId, scheduleId, appDate, startTime, endTime, incrementInMinutes, slotsPerInterval)
                 );
             }
         }
@@ -33,18 +84,9 @@ public with sharing class ScheduleUtils {
     }
   
 
-    public static Appointment__c[] createDailySlots(Id centerId, Date day, Time startTime, Time endTime, Integer incrementInMinutes, Integer slotsPerIncrement){
+    public static Appointment__c[] createDailySlots(Id centerId, Id scheduleId, Date day, Time startTime, Time endTime, Integer incrementInMinutes, Integer slotsPerIncrement){
         DateTime startDT = DateTime.newInstance(day, startTime);
         DateTime endDT = DateTime.newInstance(day, endTime);
-
-        Schedule__c schedule = [
-            SELECT id 
-            FROM Schedule__c
-            WHERE Center__c =: centerId
-            AND Begin_Date__c <=: day
-            AND End_Date__c >=: day
-        ];
-        // system.debug('schedule' + schedule);
         
         Long startMS = startDT.getTime();
         Long endMS = endDT.getTime();
@@ -59,7 +101,7 @@ public with sharing class ScheduleUtils {
         Appointment__c[] appointments = new Appointment__c[]{
             new Appointment__c(
                 Datetime__c = startDT,
-                Schedule__c = schedule.Id,
+                Schedule__c = scheduleId,
                 Duration__c = incrementInMinutes,
                 Capacity__c = slotsPerIncrement
             )
@@ -68,7 +110,7 @@ public with sharing class ScheduleUtils {
             DateTime incrementDT = appointments[i-1].Datetime__c.addMinutes(incrementInMinutes);
             appointments.add(new Appointment__c(
                     Datetime__c = incrementDT,
-                    Schedule__c = schedule.Id,
+                    Schedule__c = scheduleId,
                     Duration__c = incrementInMinutes,
                     Capacity__c = slotsPerIncrement
                 ));
@@ -86,4 +128,5 @@ public with sharing class ScheduleUtils {
         return appointments;
     }
     
+    public class ScheduleException extends Exception{}
 }

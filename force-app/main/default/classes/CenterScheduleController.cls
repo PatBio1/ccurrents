@@ -51,7 +51,7 @@ public with sharing class CenterScheduleController {
                         Status__c
                 FROM Visit__c
                 WHERE Appointment__c =: appointmentId
-                ORDER BY createdDate
+                ORDER BY lastmodifieddate
             ]){
                 appt.visits.add(new Visit(visit));
 
@@ -105,7 +105,7 @@ public with sharing class CenterScheduleController {
                         Status__c
                 FROM Visit__c
                 WHERE Appointment__c in: appMap.keyset()
-                ORDER BY createdDate
+                ORDER BY lastmodifieddate
             ]){
                 AppointmentSlot appt = appMap.get(visit.Appointment__c);
                 appt.visits.add(new Visit(visit));
@@ -134,6 +134,27 @@ public with sharing class CenterScheduleController {
                 update visit;
             }
         } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static Appointment__c[]  createAppointmentSlots(Id centerId, Date startDate, Date endDate, Integer intervalsPerHour, Integer slotsPerInterval, Id loyaltyTier){
+        try {
+            system.debug('' + centerId + startDate + endDate + loyaltyTier + intervalsPerHour + slotsPerInterval);
+
+            //create the schedule record
+            Schedule__c schedule = ScheduleUtils.createScheduleRecord(centerId, startDate, endDate);
+            insert schedule;
+
+            //attach appointments to the new schedule
+            Appointment__c[] appointments = ScheduleUtils.scheduleRange(centerId,schedule.Id,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
+            insert appointments;
+            return appointments;
+
+        } catch (ScheduleUtils.ScheduleException se) {
+            throw new AuraHandledException(se.getMessage());
+        }catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
@@ -199,6 +220,9 @@ public with sharing class CenterScheduleController {
         public Id visitId {get; set;}
 
         @AuraEnabled
+        public String visitName {get; set;}
+
+        @AuraEnabled
         public String donorName {get; set;}
 
         @AuraEnabled
@@ -227,7 +251,8 @@ public with sharing class CenterScheduleController {
         
 
         public Visit(Visit__c visit){
-            this.visitId = visit.Id;
+            this.visitId = visit.Id;  
+            this.visitName = visit.Name;
             this.donorId = visit.Donor__c;
             this.donorName = visit.Donor__r.name;
             this.firstName = visit.Donor__r.firstName;
@@ -239,4 +264,4 @@ public with sharing class CenterScheduleController {
         }
     }
 
-}
+}    

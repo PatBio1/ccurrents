@@ -32,7 +32,7 @@
     "type" : "view"
   }, {
     "componentAttributes" : { },
-    "componentName" : "c:proesisThemeLayout",
+    "componentName" : "c:proesisLayout",
     "id" : "1f63d3a0-c263-4e4f-8a9a-124f8d15e38b",
     "label" : "Default",
     "regions" : [ {

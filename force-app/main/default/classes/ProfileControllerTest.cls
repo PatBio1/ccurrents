@@ -44,6 +44,90 @@ public with sharing class ProfileControllerTest {
     }
 
     @isTest
+    static void testSetupPhoto() {
+        Lead lead;
+        ContentVersion contentVersion;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            insert lead;
+
+            contentVersion = TestUtil.createContentVersion();
+            insert contentVersion;
+        }
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+            profile.photoContentVersionId = contentVersion.Id;
+
+            MobileGuestService.GetDownloadUrlResponse getDownloadUrlResponse = new MobileGuestService.GetDownloadUrlResponse();
+            getDownloadUrlResponse.downloadUrl = 'https://test.com';
+
+            Test.startTest();
+            Test.setMock(HttpCalloutMock.class, new CalloutMock(JSON.serialize(getDownloadUrlResponse)));
+
+            String url = ProfileController.setupPhoto(profile);
+
+            Test.stopTest();
+
+            System.assertEquals('https://test.com', url);
+        }
+    }
+
+    @isTest
+    static void testSetupPhotoException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.setupPhoto(new ProfileController.Profile());
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
+    static void testRemovePhoto() {
+        ContentVersion contentVersion;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            contentVersion = TestUtil.createContentVersion();
+            insert contentVersion;
+        }
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            ProfileController.removePhoto(contentVersion.Id);
+
+            System.assertEquals(0, [SELECT COUNT() FROM ContentVersion WHERE Id = :contentVersion.Id]);
+        }
+    }
+
+    @isTest
+    static void testRemovePhotoException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.removePhoto(null);
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
     static void testCreateUser() {
         System.runAs(TestUtil.createExperienceGuestUser()) {
             Account account = TestUtil.createMiramarCenter();
@@ -57,8 +141,12 @@ public with sharing class ProfileControllerTest {
             ProfileController.Profile profile = new ProfileController.Profile();
             profile.id = lead.Id;
             profile.centerId = account.Id;
+            profile.nickname = 'testnick';
 
             Id userId = ProfileController.createUser(profile);
+
+            // Site.createExternalUser() doesn't work in unit tests so the user isn't
+            // actually created and the following assertions won't work.
 /*
             User user = [
                 SELECT
@@ -94,11 +182,19 @@ public with sharing class ProfileControllerTest {
     }
 
     @isTest
-    static void testAssignPermissionSet() {
+    static void testSetupUser() {
         User experienceUser = TestUtil.createExperienceUser();
 
         System.runAs(TestUtil.createExperienceGuestUser()) {
-            ProfileController.assignPermissionSet(experienceUser.Id);
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.userId = experienceUser.Id;
+
+            Test.startTest();
+            Test.setMock(HttpCalloutMock.class, new CalloutMock(''));
+
+            ProfileController.setupUser(profile);
+
+            Test.stopTest();
 
             List<PermissionSetAssignment> permissionSetAssignments = [
                 SELECT
@@ -116,16 +212,14 @@ public with sharing class ProfileControllerTest {
     }
 
     @isTest
-    static void testAssignPermissionSetException() {
+    static void testSetupUserException() {
         TestUtil.throwException = true;
-
-        User experienceUser = TestUtil.createExperienceUser();
 
         System.runAs(TestUtil.createExperienceGuestUser()) {
             Boolean exceptionThrown = false;
 
             try {
-                ProfileController.assignPermissionSet(experienceUser.Id);
+                ProfileController.setupUser(new ProfileController.Profile());
             } catch (Exception e) {
                 exceptionThrown = true;
             }

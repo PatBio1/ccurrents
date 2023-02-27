@@ -37,7 +37,7 @@ jobs:
                 #deploy master branch to main org
                 echo "CHECKONLY deploy $CIRCLE_BRANCH to main org ENABLED"
                 ./dx-scripts/deploy.sh PROD 
-              elif [[ $CIRCLE_BRANCH == "intqa" ]];
+              elif [[ $CIRCLE_BRANCH == "qa" ]];
               then
                 #deploy INTQA branch to INTQA org
                 echo "deploy $CIRCLE_BRANCH to INTQA org ENABLED"

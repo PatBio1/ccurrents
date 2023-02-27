@@ -113,3 +113,138 @@ Center_Donation_Type__c[] centerDonationTypes = new Center_Donation_Type__c[]{
 };
 insert centerDonationTypes;
 
+// Create Levels for payment calculations
+// Has self reverential field to link the next level so have to make this verbose
+// This is the default setup for each Center Donation Type so we can have different loyalty per service
+// and the following 5 levels can be used for new Center setup in production
+
+Level__c levelRoyal = new Level__c (
+    Name = 'Royal',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 200,
+    Donation_Threshold__c = 90,
+    Center_Donation_Type__c = centerDonationTypes[0].Id,
+    Schedule_Rights__c = '2',
+    Threshold_Payment__c = 200.00,
+    Threshold_Points__c = 0
+);
+upsert levelRoyal Name;
+
+Level__c levelVIP = new Level__c (
+    Name = 'VIP',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 160,
+    Donation_Threshold__c = 60,
+    Center_Donation_Type__c = centerDonationTypes[0].Id,
+    Schedule_Rights__c = '1',
+    Threshold_Payment__c = 100.00,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelRoyal.Id
+);
+upsert levelVIP Name;
+
+Level__c levelSignature = new Level__c (
+    Name = 'Signature',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 100,
+    Donation_Threshold__c = 30,
+    Center_Donation_Type__c = centerDonationTypes[0].Id,
+    Schedule_Rights__c = '1',
+    Threshold_Payment__c = 50.00,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelVIP.Id
+);
+upsert levelSignature Name;
+
+Level__c levelNormal15 = new Level__c (
+    Name = 'Normal Donor +15',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 0,
+    Donation_Threshold__c = 14,
+    Center_Donation_Type__c = centerDonationTypes[0].Id,
+    Schedule_Rights__c = '0',
+    Threshold_Payment__c = 15.00,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelSignature.Id
+);
+upsert levelNormal15 Name;
+
+Level__c levelNormal = new Level__c (
+    Name = 'Donor (Default)',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 0,
+    Donation_Threshold__c = 0,
+    Center_Donation_Type__c = centerDonationTypes[0].Id,
+    Schedule_Rights__c = '0',
+    Threshold_Payment__c = 0,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelNormal15.Id
+);
+upsert levelNormal Name;
+
+// below this line is extra sample data for the other Center
+// for a new Center default data script the above 5 lines are all that is needed
+
+Level__c levelRoyal2 = new Level__c (
+    Name = 'Royal2',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 200,
+    Donation_Threshold__c = 90,
+    Center_Donation_Type__c = centerDonationTypes[1].Id,
+    Schedule_Rights__c = '2',
+    Threshold_Payment__c = 200.00,
+    Threshold_Points__c = 0
+);
+upsert levelRoyal2 Name;
+
+Level__c levelVIP2 = new Level__c (
+    Name = 'VIP2',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 160,
+    Donation_Threshold__c = 60,
+    Center_Donation_Type__c = centerDonationTypes[1].Id,
+    Schedule_Rights__c = '1',
+    Threshold_Payment__c = 100.00,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelRoyal2.Id
+);
+upsert levelVIP2 Name;
+
+Level__c levelSignature2 = new Level__c (
+    Name = 'Signature2',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 100,
+    Donation_Threshold__c = 30,
+    Center_Donation_Type__c = centerDonationTypes[1].Id,
+    Schedule_Rights__c = '1',
+    Threshold_Payment__c = 50.00,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelVIP2.Id
+);
+upsert levelSignature2 Name;
+
+Level__c levelNormal152 = new Level__c (
+    Name = 'Normal Donor +15-2',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 0,
+    Donation_Threshold__c = 14,
+    Center_Donation_Type__c = centerDonationTypes[1].Id,
+    Schedule_Rights__c = '0',
+    Threshold_Payment__c = 15.00,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelSignature2.Id
+);
+upsert levelNormal152 Name;
+
+Level__c levelNormal2 = new Level__c (
+    Name = 'Donor (Default)2',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 0,
+    Donation_Threshold__c = 0,
+    Center_Donation_Type__c = centerDonationTypes[1].Id,
+    Schedule_Rights__c = '0',
+    Threshold_Payment__c = 0,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelNormal152.Id
+);
+upsert levelNormal2 Name;

@@ -42,7 +42,7 @@ jobs:
                 #deploy INTQA branch to INTQA org
                 echo "deploy $CIRCLE_BRANCH to INTQA org ENABLED"
                 ./dx-scripts/deploy.sh INTQA
-              elif [[ $CIRCLE_BRANCH == "uatstaging" ]];
+              elif [[ $CIRCLE_BRANCH == "uat" ]];
               then
                 #deploy UATSTAGING branch to UATSTAGING org
                 echo "deploy $CIRCLE_BRANCH to UATSTAGING org ENABLED"

@@ -113,3 +113,68 @@ Center_Donation_Type__c[] centerDonationTypes = new Center_Donation_Type__c[]{
 };
 insert centerDonationTypes;
 
+// Create Levels for payment calculations
+// Has self reverential field to link the next level so have to make this verbose
+Level__c levelRoyal = new Level__c (
+    Name = 'Royal',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 200,
+    Donation_Threshold__c = 90,
+    Donation_Type__c = donationType.Id,
+    Schedule_Rights__c = '2',
+    Threshold_Payment__c = 200.00,
+    Threshold_Points__c = 0
+);
+upsert levelRoyal Name;
+
+Level__c levelVIP = new Level__c (
+    Name = 'VIP',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 160,
+    Donation_Threshold__c = 60,
+    Donation_Type__c = donationType.Id,
+    Schedule_Rights__c = '1',
+    Threshold_Payment__c = 100.00,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelRoyal.Id
+);
+upsert levelVIP Name;
+
+Level__c levelSignature = new Level__c (
+    Name = 'Signature',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 100,
+    Donation_Threshold__c = 30,
+    Donation_Type__c = donationType.Id,
+    Schedule_Rights__c = '1',
+    Threshold_Payment__c = 50.00,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelVIP.Id
+);
+upsert levelSignature Name;
+
+Level__c levelNormal15 = new Level__c (
+    Name = 'Normal Donor +15',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 0,
+    Donation_Threshold__c = 14,
+    Donation_Type__c = donationType.Id,
+    Schedule_Rights__c = '0',
+    Threshold_Payment__c = 15.00,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelSignature.Id
+);
+upsert levelNormal15 Name;
+
+Level__c levelNormal = new Level__c (
+    Name = 'Donor (Default)',
+    Donation_Payment__c = 50.00,
+    Donation_Points__c = 0,
+    Donation_Threshold__c = 0,
+    Donation_Type__c = donationType.Id,
+    Schedule_Rights__c = '0',
+    Threshold_Payment__c = 0,
+    Threshold_Points__c = 0,
+    Next_Level__c = levelNormal15.Id
+);
+upsert levelNormal Name;

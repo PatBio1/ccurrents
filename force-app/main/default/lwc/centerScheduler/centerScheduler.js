@@ -187,37 +187,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     }
 
     applyFilters(){
-        let startTime;
-        if(this.filters.start){
-            startTime = this.timeToDate(this.filters.start);
-        }else{
-            startTime = this.timeToDate('0:00 AM');
-        }
-        console.log('filter startTime ',startTime);
-         
-        let endTime 
-        if(this.filters.end){
-            endTime = this.timeToDate(this.filters.end);
-        }else{
-            endTime = this.timeToDate('11:59 PM');
-        }
-        
-        console.log('filter endTime -> ', endTime);   
-        //filter for appointments by time slot
-
-        for(let i=0;i < this.appointments.length;i++){
-            let app = this.appointments[i];
-            let appDate = this.timeToDate(app.timeString);
-            //figure this out
-            if(startTime != 'Invalid Date' && endTime != 'Invalid Date'){
-                if(appDate >= startTime  && appDate <= endTime){
-                    // console.log('compare start :', startTime, ' end time: ', endTime,  ' to: slotdate: ',appDate);
-                    app.filtered = false;
-                }else{
-                    app.filtered = true;
-                }
-            }
-        }
+        //only visits are filtered in js, not appointments
         //for each visit in each app row
         for(let i=0;i < this.appointments.length;i++){
             let app = this.appointments[i];
@@ -284,9 +254,16 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     fetchAppointments(){
         this.appointments = [];    
         this.loading = true;
+        
+        let start = this.timeToDate(this.filters.start);
+        let end = this.timeToDate(this.filters.end);
+        console.log(this.filters.start);
+        console.log(this.filters.end);
         getAppointments({
             centerId: this.selectedCenterId,
-            appointmentDay: this.selectedDate
+            appointmentDay: this.selectedDate,
+            timeStart: this.filters.start,
+            timeStop: this.filters.end
         }).then(async appointments =>{
             for(let i=0;i<appointments.length;i++){
                 //generate appointment links
@@ -299,7 +276,9 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
                 }).then((url) => {
                     return url;
                 }).catch(err => {
-                    console.error(err.body.message);
+                    this.showToast(err.body.message, 'error','error')
+                    console.log(err.body.message);
+                    
                 });
                 // console.log(appointments[i]);
             }

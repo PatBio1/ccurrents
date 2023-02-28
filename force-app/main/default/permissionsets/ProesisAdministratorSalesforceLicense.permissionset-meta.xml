@@ -172,6 +172,10 @@
         <enabled>true</enabled>
         <name>Default_Business_Hours__mdt</name>
     </customMetadataTypeAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>Default_Loyalty_Levels__mdt</name>
+    </customMetadataTypeAccesses>
     <customSettingAccesses>
         <enabled>true</enabled>
         <name>TriggerFactorySettings__c</name>
@@ -264,7 +268,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Appointment__c.Availability_Loyalty__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Appointment__c.Availability__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Appointment__c.Booked_Loyalty__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Appointment__c.Capacity_Loyalty__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -814,6 +833,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Level__c.Donation_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Level__c.Next_Level__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1159,6 +1183,10 @@
     </tabSettings>
     <tabSettings>
         <tab>Appointment__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>Business_Hours__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>

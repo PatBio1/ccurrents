@@ -9,6 +9,7 @@
     <columns>Donation_Points__c</columns>
     <columns>Schedule_Rights__c</columns>
     <columns>Next_Level__c</columns>
+    <columns>Donation_Type__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

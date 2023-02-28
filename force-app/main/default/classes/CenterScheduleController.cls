@@ -66,12 +66,20 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
-    public static AppointmentSlot[] getAppointments(Id centerId, Date appointmentDay){
+    public static AppointmentSlot[] getAppointments(Id centerId, Date appointmentDay, String timeStart, String timeStop){
         Appointment__c[] appointments = new Appointment__c[]{};
         Set<Id> appointmentIds = new Set<Id>{};
         Map<Id, AppointmentSlot> appMap = new Map<Id, AppointmentSlot>{};
-        Datetime beginDay = Datetime.newInstance(appointmentDay.year(), appointmentDay.month(),appointmentDay.day(), 0,0,0);
-        Datetime endDay = Datetime.newInstance(appointmentDay.year(), appointmentDay.month(),appointmentDay.day(), 23,59,59);
+        String[] startParts = new String[]{'0','0'};
+        if(!String.isBlank(timeStart)){
+            startParts  = timeStart.split(':');
+        }
+        String[] endParts = new String[]{'23','59'};
+        if(!String.isBlank(timeStop)){
+            endParts  = timeStop.split(':');
+        }
+        Datetime beginDay = Datetime.newInstance(appointmentDay.year(), appointmentDay.month(),appointmentDay.day(), Integer.valueOf(startParts[0]),Integer.valueOf(startParts[1]),0);
+        Datetime endDay = Datetime.newInstance(appointmentDay.year(), appointmentDay.month(),appointmentDay.day(), Integer.valueOf(endParts[0]),Integer.valueOf(endParts[1]),59);
         try {
             for(Appointment__c app: [
                 SELECT  Id,

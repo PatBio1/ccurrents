@@ -18,3 +18,5 @@ proesis.iml
 # Illuminated Cloud IDE Cruft
 .idea
 IlluminatedCloud
+
+force-app/main/default/navigationMenus/SFDC_Default_Navigation_Proesis Donor.navigationMenu-meta.xml

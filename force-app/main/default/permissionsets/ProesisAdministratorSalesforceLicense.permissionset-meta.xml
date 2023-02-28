@@ -1119,6 +1119,10 @@
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
+        <tab>Business_Hours__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
         <tab>Center_Donation_Type__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>

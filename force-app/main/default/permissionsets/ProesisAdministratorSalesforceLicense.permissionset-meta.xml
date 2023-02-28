@@ -172,6 +172,10 @@
         <enabled>true</enabled>
         <name>Default_Business_Hours__mdt</name>
     </customMetadataTypeAccesses>
+    <customMetadataTypeAccesses>
+        <enabled>true</enabled>
+        <name>Default_Loyalty_Levels__mdt</name>
+    </customMetadataTypeAccesses>
     <description>Full administrative access (including view &amp; modify all) to all Proesis applications, objects, components, etc, for Salesforce licensed users, to see tabs.</description>
     <fieldPermissions>
         <editable>true</editable>
@@ -260,7 +264,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Appointment__c.Availability_Loyalty__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Appointment__c.Availability__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Appointment__c.Booked_Loyalty__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Appointment__c.Capacity_Loyalty__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -761,6 +780,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Level__c.Donation_Threshold__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Level__c.Donation_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

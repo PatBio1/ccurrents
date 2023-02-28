@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Enable_Mobile_Push__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>Indicates donor enabled mobile push communications as a preferred channel. Defaults to true, as this is the default communication method for donors.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Indicates donor enabled mobile push communications as a preferred channel. Defaults to true, as this is the default communication method for donors.</inlineHelpText>
+    <label>Enable Mobile Push</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

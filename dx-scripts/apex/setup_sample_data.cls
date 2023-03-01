@@ -22,7 +22,7 @@ Account[] donors = new Account[]{
         FirstName = 'Betty',
         LastName = 'Bond',
         RecordTypeID = Constants.DONOR_RECORD_TYPE_ID,
-        DonorId__c = 'donor-67890'
+        DonorId__c = 'donor-67890'    
     )
 };
 
@@ -178,3 +178,13 @@ Level__c levelNormal = new Level__c (
     Next_Level__c = levelNormal15.Id
 );
 upsert levelNormal Name;
+
+// Update Donors Loyalty Level
+Level__c[] loyaltylevels = [select Id from Level__c where Donation_Type__c = :donationType.Id];
+System.debug('loyaltylevels: ' + loyaltylevels.size());
+
+for ( Account d : donors ) {
+    Integer rando = Math.round(Math.random()*(loyaltylevels.size()));
+    d.Loyalty_Level__pc = loyaltylevels[rando - 1].Id;
+    update d;
+}

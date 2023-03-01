@@ -1,0 +1,201 @@
+{
+	"info": {
+		"_postman_id": "d0a9665a-471f-43be-80d0-9d9489d48ad7",
+		"name": "Salesforce NexLynk Integration 5.2",
+		"description": "This api includes two types of calls, _synchronous_ and _asynchronous_, for needs that require larger payloads and a full response, compared with those with small payloads and only requiring success/fail responses, respectively.\n\nThe asynchronous event type calls, being designed for very high volumes, have a 1mb limit for the entire message. The Enterprise Edition of SFDC instances includes capacity of 100k of these events per hour.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11546117"
+	},
+	"item": [
+		{
+			"name": "Donor Enroll",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"donor_number\" : \"123456\",\r\n    \"enroll_code\": \"B5Z-R9L\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/services/apexrest/v1/Donor",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"services",
+						"apexrest",
+						"v1",
+						"Donor"
+					]
+				},
+				"description": "This synchronous PATCH call is a means to connect the \"CRM donor\" with the BECS donor upon their first visit to the donation center. This call is needed prior to subsequent calls to avoid storing any information about the CRM donor in the BECS.\n\nBoth elements are required."
+			},
+			"response": []
+		},
+		{
+			"name": "Donor Update",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"donor_number\" : \"123456\",\r\n    \"birthdate\" : \"2000-10-20\",\r\n    \"last_name\" : \"Davis\",\r\n    \"first_name\" : \"David\",\r\n    \"middle_name\" : \"D\",\r\n    \"address_line1\" : \"123 Ordinary Dr\",\r\n    \"address_line2\" : \"Apt B\",\r\n    \"primary_phone\" : \"4235804176\",\r\n    \"secondary_phone\" : \"\",\r\n    \"city\" : \"Chattanooga\",\r\n    \"state\" : \"TN\",\r\n    \"zipcode\" : \"37350\",\r\n    \"height\" : \"72\",\r\n    \"weight\" : \"185\",\r\n    \"ethnicity\" : \"R5\",\r\n    \"language\" : \"en\",\r\n    \"timestamp\": \"2022-11-29T08:40:00.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/services/apexrest/v1/Donor",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"services",
+						"apexrest",
+						"v1",
+						"Donor"
+					]
+				},
+				"description": "This synchronous PATCH call is a means to update any data element related to the Donor on the CRM. This call features an option to enroll during update as it includes the optional, one time use enroll ID; this needs discussion as we do not know what data will be available upon enrollment at the center for the BECS.\n\nThis call is to be used for the 'nightly batch' updates.\n\nThe data elements are optional, with Donor Number being the required field for successful update of the payload field values."
+			},
+			"response": []
+		},
+		{
+			"name": "Donor Check-In Event",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{base_url}}/services/data/v{{version}}/sobjects/Donor_CheckIn__e",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"v{{version}}",
+						"sobjects",
+						"Donor_CheckIn__e"
+					]
+				},
+				"description": "This asynchronous event is fired when the donor screen on the BECS is complete and it appears the donation attempt can be made. This call must occur after the successful call to Donor Enroll."
+			},
+			"response": []
+		},
+		{
+			"name": "Donation Comp Event",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Donor_Number__c\": \"abc123\",\r\n    \"hasException__c\": 0|1,\r\n    \"Collection_Number__c\": \"c1234567890\",\r\n    \"Collection_Volume__c\": 1000,\r\n    \"Timestamp__c\": \"2022-11-29T08:00:00.000Z\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/services/data/v{{version}}/sobjects/Donor_Comp__e",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"services",
+						"data",
+						"v{{version}}",
+						"sobjects",
+						"Donor_Comp__e"
+					]
+				},
+				"description": "This is an event representing the BECS end state of donation aka 'donor disconnect.' It will signal the completion of a donation for a donor and includes a volume of the donation and collection identifier. It will result in an immediate payment to the donor."
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"const baseurl = pm.environment.get('base_url');",
+					"const endpoint = baseurl+'/services/oauth2/token';",
+					"const grant_type = pm.environment.get('grant_type');",
+					"const clientId = pm.environment.get(\"client_id\");",
+					"const clientSecret = pm.environment.get(\"client_secret\");",
+					"const uname = pm.environment.get(\"username\");",
+					"const pword = pm.environment.get(\"password\");",
+					"",
+					"const postRequest = {",
+					"  url: endpoint,",
+					"  method: 'POST',",
+					"  timeout: 10,",
+					"  header: {",
+					"    \"Content-Type\": \"application/x-www-form-urlencoded\"",
+					"  },",
+					"  body: {",
+					"    mode: 'urlencoded',",
+					"    urlencoded: [",
+					"          { key: 'grant_type', value: grant_type },",
+					"          { key: 'username', value: uname },",
+					"          { key: 'password', value: pword },       ",
+					"          { key: 'client_id', value: clientId },",
+					"          { key: 'client_secret', value: clientSecret }",
+					"      ]",
+					"  }",
+					"};",
+					"",
+					"",
+					"pm.sendRequest(postRequest, (err, response) => {",
+					"  const responseJSON = response.json();",
+					"",
+					"try {",
+					"  const jsonobj = JSON.parse(response.json());",
+					"    } catch (error) {",
+					"  if (error instanceof SyntaxError) {",
+					"    console.error('Invalid JSON:', error.message);",
+					"  } else {",
+					"    throw error;",
+					"  }",
+					"}",
+					"",
+					"  console.log('RESPONSE: ' + responseJSON);",
+					"  pm.variables.set('access_token', responseJSON['access_token']);",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

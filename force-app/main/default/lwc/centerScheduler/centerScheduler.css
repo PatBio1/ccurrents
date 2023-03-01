@@ -1,79 +1,5 @@
 @import 'c/sharedCss';
 
-.filters{
-    padding: 5px;
-    margin-right: 10px;
-    margin-left: 10px;
-    background: #F5F5F5;
-    border-radius: 4px;
-}
-.chart{
-
-
-    /* bg darker */
-/* 
-    background: #E5DDF4; */
-    /* box-shadow: 0px 1px 0px #DDDBDA; */
-
-    background-color: #FAF8FF;
-    font-family: 'Roboto';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 18px;
-    /* line-height: 24px; */
-    color: #000000;
-
-    
-    
-}
-
-.header-date{
-
-    display: flex;
-    align-items: center;
-
-}
-
-.chart .chart-header {
-    background-color: rgb(209, 199, 228);
-    padding: 2px;
-}
-
-.chart-header-sub{
-
-    background: #F5F0FF;
-    /* box-shadow: 0px 1px 0px #E5DDF4; */
-    text-align: center;
-    padding: 2px;
-}
-
-.chart-data {
-    /* height: 32px; */
-    vertical-align:bottom;
-/* bg lightest */
-
-    background: #FAF8FF;
-    /* box-shadow: 0px 1px 0px #E5DDF4; */
-    padding: 2px;
-}
-
-.chart-data:hover{
-    /* background-color: yellow; */
-}
-
-.droppable:hover{
-    background-color: #d1c7e4;
-    min-width: 200px;
-}
-.droppable{
-   
-}
-
-.drop-ok{
-    background-color:    #d1c7e4;
-
-}
-
 :host .apply-button {
     --sds-c-button-neutral-color-background: #f5f0ff;
     --sds-c-button-neutral-color-background-hover: #d1c7e4;
@@ -83,26 +9,113 @@
     --sds-c-button-text-color-hover: #1f1e1f;
 }
 
-:host  {
+:host {
     --slds-c-avatar-initials-text-color: white;
     --slds-c-avatar-initials-text-color-hover : #d1c7e4;
     --slds-c-avatar-radius-border: 1rem;
-
 }
 
-
-.overlay{
-
-    position: absolute; /*newly added*/
-    right: 50px; /*newly added*/
-    top: 5px;/*newly added*/
-    z-index: 1000;
+.scheduler-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.donor-icon{
-
+.center-date-selector,
+.scheduler-header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex: 0.33;
 }
 
-.slds-m-right_small, .slds-m-right--small {
-    margin-right: var(--lwc-spacingSmall,0.5rem);
+.filter-container {
+    background: #F5F5F5;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding: 8px;
+    border-radius: 4px
+}
+
+.legend-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+}
+
+.legend-entry {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-icon {
+    border-radius: 50%;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+.appointment-list-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.appointment-date-header {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #E5DDF4;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 18px;
+    outline: 0.5px solid #E5DDF4;
+}
+
+.appointment-column-header-cell {
+    background: #F5F0FF;
+    padding: 6px;
+    font-weight: bold;
+    outline: 0.5px solid #E5DDF4;
+}
+
+.appointment-data-cell {
+    vertical-align: bottom;
+    background: #FFFFFF;
+    padding: 2px;
+    outline: 0.5px solid #E5DDF4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 400;
+    font-size: 16px;
+}
+
+.appointments {
+    display: grid;
+    grid-template-columns: 7fr 7fr 7fr 78fr;
+}
+
+.no-appointments-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    gap: 8px;
+}
+
+.no-appointments-message-header {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.no-appointments-message {
+    font-size: 16px;
 }

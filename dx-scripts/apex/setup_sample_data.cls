@@ -31,12 +31,13 @@ upsert donors DonorId__c;
 // Create Donation Centers
 Account[] centers = new Account[]{
     new Account(
-        Name = 'Proesis HQ',
+        Name = 'Proesis New Center',
         RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
         // We removed ExternalId__c, but this works.
-        CenterId__c = 'center-111',
+        CenterId__c = 'center-333',
         Services__c = 'Medical: Consultation',
-        Site = 'P-00'
+        Site = 'P-03',
+        isActive__c = false
     ),
     new Account(
         Name = 'Proesis Miramar',
@@ -48,9 +49,10 @@ Account[] centers = new Account[]{
         BillingCountry = 'US',
         Geolocation__Latitude__s = 25.973030,
         Geolocation__Longitude__s = -80.242049,
-        CenterId__c = 'center-222',
+        CenterId__c = 'center-111',
         Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-        Site = 'P-01'
+        Site = 'P-01',
+        isActive__c = true
     ),
     new Account(
         Name = 'Proesis Dallas',
@@ -62,9 +64,10 @@ Account[] centers = new Account[]{
         BillingCountry = 'US',
         Geolocation__Latitude__s = 32.78411048612642,
         Geolocation__Longitude__s = -96.87149106359581,
-        CenterId__c = 'center-333',
+        CenterId__c = 'center-222',
         Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-        Site = 'P-02'
+        Site = 'P-02',
+        isActive__c = true
     )
 };
 

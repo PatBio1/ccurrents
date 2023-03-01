@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>UserKillList__c</fullName>
+    <description>Enter carriage-return-delimited list of UserIds to Kill all Triggers that run off the Trigger Factory for that user.</description>
+    <externalId>false</externalId>
+    <label>User KillList</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>TextArea</type>
+</CustomField>

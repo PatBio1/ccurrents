@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Source__c</fullName>
+    <description>Indicates the general source where this Consent Transaction originated.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Indicates the general source where this Consent Transaction originated.</inlineHelpText>
+    <label>Source</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Agent</fullName>
+                <default>false</default>
+                <label>Agent</label>
+            </value>
+            <value>
+                <fullName>Web Form</fullName>
+                <default>false</default>
+                <label>Web Form</label>
+            </value>
+            <value>
+                <fullName>Subscriber</fullName>
+                <default>false</default>
+                <label>Subscriber</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

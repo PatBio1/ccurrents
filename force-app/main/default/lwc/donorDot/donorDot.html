@@ -9,9 +9,12 @@
                 <div id="popover-body-id" class="slds-popover__body">
                     <p><a onclick={donorClick} >{donor.donorName}</a></p>
                     <p><a onclick={visitClick} >Visit {donor.visitName}</a></p>
-                    <p><a onclick={visitClick} >Status {donor.status}</a></p>
+                    <p>Status {donor.status}</p>
+                    <lightning-button variant="destructive-text" label="Cancel Visit" title="Cancel Visit" onclick={cancelVisit} class="slds-m-left_x-small"></lightning-button>
+                    
                 </div>
                 </section>
+                
             </template>
         </span>
 

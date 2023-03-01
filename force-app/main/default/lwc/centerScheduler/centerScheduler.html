@@ -248,7 +248,7 @@
             ondragover={allowDrop}
           >
               <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
-                  <c-donor-dot key={donorId} icon={donor.icon} donor={donor} appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString}>
+                  <c-donor-dot oncancelvisit={handleCancelVisit} key={donorId} icon={donor.icon} donor={donor} appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString}>
                   </c-donor-dot>
               </template>
 

@@ -146,6 +146,22 @@ public with sharing class CenterScheduleController {
         }
     }
 
+    @AuraEnabled 
+    public static void cancelVisit(Id visitId){
+        try {
+
+            Visit__c visit = new Visit__c(
+                Status__c = 'Complete',
+                Outcome__c = 'Canceled'
+            );
+            visit.Id = visitId;
+            update visit;
+            
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
     @AuraEnabled
     public static Appointment__c[]  createAppointmentSlots(Id centerId, Date startDate, Date endDate, Integer intervalsPerHour, Integer slotsPerInterval, Id loyaltyTier){
         try {

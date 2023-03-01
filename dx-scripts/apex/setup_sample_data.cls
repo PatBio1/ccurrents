@@ -37,7 +37,10 @@ Account[] centers = new Account[]{
         CenterId__c = 'center-333',
         Services__c = 'Medical: Consultation',
         Site = 'P-03',
-        isActive__c = false
+        isActive__c = false,
+        Geolocation__Latitude__s = 32.758610,
+        Geolocation__Longitude__s = -96.873890,
+
     ),
     new Account(
         Name = 'Proesis Miramar',

@@ -3,8 +3,7 @@
     <excludeButtons>CreateAccountChannel</excludeButtons>
     <excludeButtons>CreateCallList</excludeButtons>
     <excludeButtons>CreateSurveyInvitation</excludeButtons>
-    <excludeButtons>DataDotComClean</excludeButtons>
-    <excludeButtons>DataDotComCompanyHierarchy</excludeButtons>
+    <excludeButtons>DataDotComAccountInsights</excludeButtons>
     <excludeButtons>DisablePartnerPortalAccount</excludeButtons>
     <excludeButtons>IncludeOffline</excludeButtons>
     <excludeButtons>LoginToPortalAsPersonUser</excludeButtons>
@@ -65,6 +64,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>PersonEmail</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Loyalty_Level__pc</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
@@ -442,7 +445,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h52000003XhUp</masterLabel>
+        <masterLabel>00h03000000QDsA</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

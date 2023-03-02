@@ -41,6 +41,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     dateDisabled = true;
     loading = true;
 
+    get hasAppointmentsToDisplay() {
+        return (this.appointments && this.appointments.length);
+    }
+
     @track filters = {
         start: '',
         end: '',
@@ -75,6 +79,11 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             console.log(result);
             this.selectedDate = result;
             this.refresh();
+        }).catch(err =>{
+            console.log(err.message);
+        })
+        .finally(()=>{
+            this.loading = false;
         });
     }
     

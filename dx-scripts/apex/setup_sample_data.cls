@@ -39,7 +39,6 @@ Account[] centers = new Account[]{
         isActive__c = false,
         Geolocation__Latitude__s = 32.758610,
         Geolocation__Longitude__s = -96.873890
-
     ),
     new Account(
         Name = 'Proesis Miramar',

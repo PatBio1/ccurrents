@@ -1,18 +1,47 @@
-<template  >
-    
-        <span draggable="true" ondragstart={dragstart} ondragend={dragend} data-text="foo" class={filteredClasses}>
-            <lightning-avatar size="medium" onclick={togglePopover}  aria-haspopup="false" variant="circle" initials={donor.initials} fallback-icon-name={donor.icon} alternative-text={donor.donorName} class={classes}  style="margin-right:2px;"></lightning-avatar>              
-            <template if:true={showpopover}>
-                <section aria-label="Dialog title" aria-describedby="popover-body-id" class="slds-popover slds-nubbin_left-top" role="dialog" style="position:absolute">
-                    <lightning-button-icon icon-name="utility:close"  alternative-text="close" title="Close" onclick={hidePopover} class="slds-float_right slds-popover__close"></lightning-button-icon>
-            
-                <div id="popover-body-id" class="slds-popover__body">
-                    <p><a onclick={donorClick} >{donor.donorName}</a></p>
-                    <p><a onclick={visitClick} >Visit {donor.visitName}</a></p>
-                    <p><a onclick={visitClick} >Status {donor.status}</a></p>
-                </div>
-                </section>
-            </template>
-        </span>
+<template>
+    <span draggable="true" ondragstart={dragstart} ondragend={dragend} data-text="foo" class={filteredClasses}>
+        <lightning-avatar
+            size="medium"
+            onclick={togglePopover}
+            aria-haspopup="false"
+            variant="circle"
+            initials={donor.initials}
+            fallback-icon-name={donor.icon}
+            alternative-text={donor.donorName}
+            class={classes}
+            style="margin-right:2px;">
+        </lightning-avatar>
 
+        <template if:true={showpopover}>
+            <section aria-label="Dialog title" aria-describedby="popover-body-id" class="slds-popover slds-nubbin_top" role="dialog" style="position: absolute; width: 300px; left: -130px; top: 50px;">
+                <lightning-button-icon icon-name="utility:close"  alternative-text="close" title="Close" onclick={hidePopover} class="slds-float_right slds-popover__close"></lightning-button-icon>
+        
+                <div id="popover-body-id" class="slds-popover__body">
+                    <div class="slds-popover__meta">
+                        <span class="slds-badge">{donor.status}</span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <lightning-avatar
+                            size="medium"
+                            variant="circle"
+                            initials={donor.initials}
+                            fallback-icon-name={donor.icon}
+                            alternative-text={donor.donorName}>
+                        </lightning-avatar>
+
+                        <div style="display: flex; flex-direction: column; justify-content: center">
+                            <p><b><a onclick={donorClick} >{donor.donorName}</a></b></p>
+                            <p><a onclick={visitClick} >Visit Details</a></p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end">
+                        <lightning-button variant="destructive-text" label="Cancel Visit" title="Cancel Visit" onclick={cancelVisit} style="margin-top: 8px" icon-name="utility:delete">
+                        </lightning-button>
+                    </div>
+                </div>
+            </section>
+        </template>
+    </span>
 </template>

@@ -13,6 +13,7 @@ import getCenters from '@salesforce/apex/CenterScheduleController.getCenters';
 import getAppointments from '@salesforce/apex/CenterScheduleController.getAppointments';
 import getAppointmentSlot from '@salesforce/apex/CenterScheduleController.getAppointmentSlot';
 import ChangeVisitAppointment from '@salesforce/apex/CenterScheduleController.changeVisitAppointment';
+import cancelVisit from '@salesforce/apex/CenterScheduleController.cancelVisit';
 import CreateScheduleModal from "c/createScheduleModal";
 import DonorDot from "c/donorDot";
 
@@ -119,20 +120,13 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
                 //old row
                 if(appRow.Id == appointmentId){
                     appRow.visits = [];
-                    await getAppointmentSlot({appointmentId }).then(appointment => {
-                        appRow.visits = appointment.visits;
-                        appRow.booked = appointment.booked;
-                        appRow.availability = appointment.availability;
-                    })
+                    this.refreshAppointmentSlot(appointmentId, appRow);
+                    
                 }
                 //new row
                 if(appRow.Id == newAppointmentId){
                     appRow.visits = [];
-                    await getAppointmentSlot({appointmentId : newAppointmentId}).then(appointment => {
-                        appRow.visits = appointment.visits;
-                        appRow.booked = appointment.booked;
-                        appRow.availability = appointment.availability;
-                    })
+                    this.refreshAppointmentSlot(newAppointmentId, appRow);
                 }
                 
             }
@@ -344,6 +338,31 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         return newDate;
     }
 
+    handleCancelVisit(event) {
+        if(confirm(`Really cancel visit for ${event.detail.donorName}?`)){
+            cancelVisit({
+                visitId : event.detail.visitId
+            }).then(() => {
+                for(let i=0;i< this.appointments.length;i++){
+                    let appRow = this.appointments[i];
+                    if(appRow.Id == event.detail.appointmentId){
+                        appRow.visits = [];
+                        this.refreshAppointmentSlot(event.detail.appointmentId, appRow);
+                    }
+                }
+            });
+        }
+    }
+
+    async refreshAppointmentSlot(appointmentId, appRow){
+        await getAppointmentSlot({appointmentId }).then(appointment => {
+            appRow.visits = appointment.visits;
+            appRow.booked = appointment.booked;
+            appRow.availability = appointment.availability;
+        }).catch(err => {
+            console.log(err.message);
+        })
+    }
 
 
 }

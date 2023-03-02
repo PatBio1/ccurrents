@@ -1,6 +1,7 @@
 import { LightningElement, track, api } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 
+
 export default class DonorDot extends NavigationMixin(LightningElement)  {
 
     @track showpopover = false;
@@ -86,6 +87,18 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         event.dataTransfer.setData("appointmentTime", this.appointment.timeString);
         event.dataTransfer.setData("visitId", this.donor.visitId );
         console.log('dragging... donor visit '  + this.donor.donorId + 'from visit ' + this.donor.visitId +  ' from appointment ' + this.appointment.Id)
+    }
+
+    cancelVisit(event){
+        console.log(this.donor.visitId);
+        const cancelVisitEvent = new CustomEvent("cancelvisit", {
+            detail: {
+                visitId:this.donor.visitId,
+                appointmentId: this.appointment.Id,
+                donorName: this.donor.donorName
+            }
+        });
+        this.dispatchEvent(cancelVisitEvent);
     }
 
 

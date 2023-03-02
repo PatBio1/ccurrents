@@ -33,13 +33,12 @@ Account[] centers = new Account[]{
     new Account(
         Name = 'Proesis New Center',
         RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
-        // We removed ExternalId__c, but this works.
         CenterId__c = 'center-333',
         Services__c = 'Medical: Consultation',
         Site = 'P-03',
         isActive__c = false,
         Geolocation__Latitude__s = 32.758610,
-        Geolocation__Longitude__s = -96.873890,
+        Geolocation__Longitude__s = -96.873890
 
     ),
     new Account(

@@ -75,6 +75,11 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             console.log(result);
             this.selectedDate = result;
             this.refresh();
+        }).catch(err =>{
+            console.log(err.message);
+        })
+        .finally(()=>{
+            this.loading = false;
         });
     }
     

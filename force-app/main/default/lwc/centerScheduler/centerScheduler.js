@@ -41,6 +41,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     dateDisabled = true;
     loading = true;
 
+    get hasAppointmentsToDisplay() {
+        return (this.appointments && this.appointments.length);
+    }
+
     @track filters = {
         start: '',
         end: '',

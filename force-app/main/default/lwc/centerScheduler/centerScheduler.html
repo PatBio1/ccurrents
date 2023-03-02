@@ -146,7 +146,7 @@
   </article>
 
   <!-- Legend / Appointment Rows -->
-  <article if:true={appointments} class="slds-card">
+  <article if:true={hasAppointmentsToDisplay} class="slds-card">
     <div style="display: flex; justify-content: space-between;" class="slds-card__header">
       <div class="legend-header">
         <div class="legend-entry">
@@ -254,9 +254,6 @@
 
               <lightning-button style="margin-left: 8px;" icon-name="utility:add" label="Add Visit" variant="base" onclick={plusAvailable} data-id={appointment.id} data-appointment={appointment.Id}  data-appointmenttime={appointment.timeString}>
               </lightning-button>
-
-              <!-- <lightning-button-icon size="large" variant="bare" icon-name="utility:plus"  alternative-text="Settings" title="Settings" data-appointment={appointment.Id}  data-appointmenttime={appointment.timeString}>
-              </lightning-button-icon> -->
           </div>
         </template>
       </div>
@@ -264,7 +261,7 @@
   </article>
 
   <!-- Message Telling User to select Center/Date -->
-  <article if:false={appointments} class="slds-card">
+  <article if:false={hasAppointmentsToDisplay} class="slds-card">
     <div class="no-appointments-container">
       <p class="no-appointments-message-header">No Appointments Found</p>
       <p class="no-appointments-message">Please ensure a center and date have been selected.</p>  

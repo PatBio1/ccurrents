@@ -3,7 +3,7 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>The last donation step in the donation process typically indicating payment is owed.</description>
     <eventType>HighVolume</eventType>
-    <label>Donor LastCycle</label>
-    <pluralLabel>Donor LastCycles</pluralLabel>
+    <label>Donor Comp</label>
+    <pluralLabel>Donor Comps</pluralLabel>
     <publishBehavior>PublishAfterCommit</publishBehavior>
 </CustomObject>

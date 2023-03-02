@@ -2,10 +2,32 @@
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>57.0</apiVersion>
     <decisions>
+        <name>Check_72_Hours_Decision</name>
+        <label>Check 72 Hours Decision</label>
+        <locationX>176</locationX>
+        <locationY>494</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_72_Hours_or_Greater</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Flow.CurrentDateTime</leftValueReference>
+                <operator>LessThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>X72_Hours_Before_Visit_Date</elementReference>
+                </rightValue>
+            </conditions>
+            <label>Is 72 Hours or Greater</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Check_7_Days_Decision</name>
         <label>Check 7 Days Decision</label>
         <locationX>176</locationX>
-        <locationY>158</locationY>
+        <locationY>278</locationY>
+        <defaultConnector>
+            <targetReference>Check_72_Hours_Decision</targetReference>
+        </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Is_7_Days_or_Greater</name>
@@ -17,6 +39,9 @@
                     <elementReference>X7_Days_Before_Visit_Date</elementReference>
                 </rightValue>
             </conditions>
+            <connector>
+                <targetReference>Check_72_Hours_Decision</targetReference>
+            </connector>
             <label>Is 7 Days or Greater</label>
         </rules>
     </decisions>
@@ -59,14 +84,43 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Notification_Type_Id</name>
+        <label>Get Notification Type Id</label>
+        <locationX>176</locationX>
+        <locationY>158</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_7_Days_Decision</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Proesis_Donor_App_Mobile</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>CustomNotificationType</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Check_7_Days_Decision</targetReference>
+            <targetReference>Get_Notification_Type_Id</targetReference>
         </connector>
     </start>
     <status>Draft</status>
+    <variables>
+        <name>Donor_Person_Account_Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Account</objectType>
+    </variables>
     <variables>
         <description>The Visit record firing this notification.</description>
         <name>Visit_Input_Record</name>

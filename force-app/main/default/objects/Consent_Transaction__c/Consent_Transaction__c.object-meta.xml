@@ -168,7 +168,14 @@
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Consent Transactions</pluralLabel>
-    <searchLayouts></searchLayouts>
+    <searchLayouts>
+        <searchResultsAdditionalFields>Lead__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Contact__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Date_Time_of_Consent__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Type_of_Consent__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Scope__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Source__c</searchResultsAdditionalFields>
+    </searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>

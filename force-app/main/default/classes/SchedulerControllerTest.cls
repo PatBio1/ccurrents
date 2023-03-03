@@ -1,11 +1,15 @@
 @isTest
 public with sharing class SchedulerControllerTest {
+    @TestSetup
+    static void makeData(){
+        TestUtil.createAdminUser();
+    }
 
     @isTest
     static void testGetCenter() {
         User experienceUser = TestUtil.createExperienceUser();
-
-        System.runAs(TestUtil.createAdminUser()) {
+        User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
+        System.runAs(adminUser) {
             Account center = TestUtil.createMiramarCenter();
             insert center;
 
@@ -26,8 +30,9 @@ public with sharing class SchedulerControllerTest {
     @isTest
     static void testGetAppointments() {
         Account center;
-
-        System.runAs(TestUtil.createAdminUser()) {
+        User experienceUser = TestUtil.createExperienceUser();
+        User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
+        System.runAs(adminUser) {
             center = TestUtil.createMiramarCenter();
             insert center;
 
@@ -46,7 +51,7 @@ public with sharing class SchedulerControllerTest {
             insert appointment;
         }
 
-        System.runAs(TestUtil.createExperienceUser()) {
+        System.runAs(experienceUser) {
             SchedulerController.AppointmentGroups appointmentGroups = SchedulerController.getAppointments(center.Id, Date.newInstance(2023, 1, 10));
 
             System.assertEquals(1, appointmentGroups.morningAppointments.size());
@@ -58,8 +63,8 @@ public with sharing class SchedulerControllerTest {
     @isTest
     static void testGetVisits() {
         User experienceUser = TestUtil.createExperienceUser();
-
-        System.runAs(TestUtil.createAdminUser()) {
+        User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
+        System.runAs(adminUser) {
             Account center = TestUtil.createMiramarCenter();
             insert center;
 
@@ -106,8 +111,8 @@ public with sharing class SchedulerControllerTest {
         User experienceUser = TestUtil.createExperienceUser();
 
         Appointment__c appointment;
-
-        System.runAs(TestUtil.createAdminUser()) {
+        User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
+        System.runAs(adminUser) {
             Account center = TestUtil.createMiramarCenter();
             insert center;
 
@@ -137,8 +142,6 @@ public with sharing class SchedulerControllerTest {
 
         System.runAs(experienceUser) {
             Id visitId = SchedulerController.scheduleVisit(appointment.Id);
-
-            //System.assertEquals(1, visits.size());
         }
     }
 

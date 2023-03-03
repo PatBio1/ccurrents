@@ -1,6 +1,8 @@
 import { LightningElement, track, api } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 
+import { visitStatusToDisplayClass, visitOutcomeToDisplayClass } from "c/constants";
+
 export default class DonorDot extends NavigationMixin(LightningElement)  {
 
     @track showpopover = false;
@@ -28,7 +30,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     get classes(){
-        this.dotclasses.push(this.statusToClass(this.donor.status));
+        this.dotclasses.push(this.determineAvatarClass(this.donor.status));
         return this.dotclasses.join(' ');
     }
 
@@ -88,25 +90,32 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         console.log('dragging... donor visit '  + this.donor.donorId + 'from visit ' + this.donor.visitId +  ' from appointment ' + this.appointment.Id)
     }
 
+    cancelVisit(event){
+        console.log(this.donor.visitId);
+        const cancelVisitEvent = new CustomEvent("cancelvisit", {
+            detail: {
+                visitId:this.donor.visitId,
+                appointmentId: this.appointment.Id,
+                donorName: this.donor.donorName
+            }
+        });
+        this.dispatchEvent(cancelVisitEvent);
+    }
+
 
 
     dragend(event){
         console.log('dragend...'+ this.donor.donorId );
     }
 
-    statusToClass(status){
-        let statusMap = {
-            'Scheduled' : 'scheduled',
-            'Canceled' : 'cancelled',
-            'Checked-In' : 'checked-in',
-            'Donation Complete' : 'donation-complete',
-            'Paid/Visit Complete' : 'paid-visit-complete',
-            'Late' : 'late',
-            'Deferred/Left Center' : 'deferred-left-center',
-            'Canceled' : 'cancelled',
-            'Missed' : 'missed'
+    determineAvatarClass() {
+        let targetClasses = [visitStatusToDisplayClass.get(this.donor.status)];
+        
+        if (this.donor.outcome) {
+            targetClasses.push(visitOutcomeToDisplayClass.get(this.donor.outcome));
         }
-        return statusMap[status];
+
+        return targetClasses.join(" ");
     }
  
 }

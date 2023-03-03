@@ -12,60 +12,64 @@
 
 // Create Donors
 Account[] donors = new Account[]{
-        new Account(
-                FirstName = 'Danny',
-                LastName = 'Donor',
-                RecordTypeID = Constants.DONOR_RECORD_TYPE_ID,
-                DonorId__c = 'donor-12345'
-        ),
-        new Account(
-                FirstName = 'Betty',
-                LastName = 'Bond',
-                RecordTypeID = Constants.DONOR_RECORD_TYPE_ID,
-                DonorId__c = 'donor-67890'
-        )
+    new Account(
+        FirstName = 'Danny',
+        LastName = 'Donor',
+        RecordTypeID = Constants.DONOR_RECORD_TYPE_ID,
+        DonorId__c = 'donor-12345'
+    ),
+    new Account(
+        FirstName = 'Betty',
+        LastName = 'Bond',
+        RecordTypeID = Constants.DONOR_RECORD_TYPE_ID,
+        DonorId__c = 'donor-67890'    
+    )
 };
 
 upsert donors DonorId__c;
 
 // Create Donation Centers
 Account[] centers = new Account[]{
-        new Account(
-                Name = 'Proesis HQ',
-                RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
-                // We removed ExternalId__c, but this works.
-                CenterId__c = 'center-111',
-                Services__c = 'Medical: Consultation',
-                Site = 'P-00'
-        ),
-        new Account(
-                Name = 'Proesis Miramar',
-                RecordTypeId = Constants.CENTER_RECORD_TYPE_ID,
-                BillingStreet = '7901 Riviera Blvd',
-                BillingCity = 'Miramar',
-                BillingState = 'FL',
-                BillingPostalCode = '33023',
-                BillingCountry = 'US',
-                Geolocation__Latitude__s = 25.973030,
-                Geolocation__Longitude__s = -80.242049,
-                CenterId__c = 'center-222',
-                Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-                Site = 'P-01'
-        ),
-        new Account(
-                Name = 'Proesis Dallas',
-                RecordTypeId = Constants.CENTER_RECORD_TYPE_ID,
-                BillingStreet = '1080 N Westmoreland Rd',
-                BillingCity = 'Dallas',
-                BillingState = 'TX',
-                BillingPostalCode = '75311',
-                BillingCountry = 'US',
-                Geolocation__Latitude__s = 32.78411048612642,
-                Geolocation__Longitude__s = -96.87149106359581,
-                CenterId__c = 'center-333',
-                Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-                Site = 'P-02'
-        )
+    new Account(
+        Name = 'Proesis New Center',
+        RecordTypeID = Constants.CENTER_RECORD_TYPE_ID,
+        CenterId__c = 'center-333',
+        Services__c = 'Medical: Consultation',
+        Site = 'P-03',
+        isActive__c = false,
+        Geolocation__Latitude__s = 32.758610,
+        Geolocation__Longitude__s = -96.873890
+    ),
+    new Account(
+        Name = 'Proesis Miramar',
+        RecordTypeId = Constants.CENTER_RECORD_TYPE_ID,
+        BillingStreet = '7901 Riviera Blvd',
+        BillingCity = 'Miramar',
+        BillingState = 'FL',
+        BillingPostalCode = '33023',
+        BillingCountry = 'US',
+        Geolocation__Latitude__s = 25.973030,
+        Geolocation__Longitude__s = -80.242049,
+        CenterId__c = 'center-111',
+        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
+        Site = 'P-01',
+        isActive__c = true
+    ),
+    new Account(
+        Name = 'Proesis Dallas',
+        RecordTypeId = Constants.CENTER_RECORD_TYPE_ID,
+        BillingStreet = '1080 N Westmoreland Rd',
+        BillingCity = 'Dallas',
+        BillingState = 'TX',
+        BillingPostalCode = '75311',
+        BillingCountry = 'US',
+        Geolocation__Latitude__s = 32.78411048612642,
+        Geolocation__Longitude__s = -96.87149106359581,
+        CenterId__c = 'center-222',
+        Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
+        Site = 'P-02',
+        isActive__c = true
+    )
 };
 
 // We removed ExternalId__c, but this works. 
@@ -181,6 +185,16 @@ Level__c levelNormal = new Level__c (
 );
 upsert levelNormal Name;
 
+// Update Donors Loyalty Level
+Level__c[] loyaltylevels = [select Id from Level__c where Donation_Type__c = :donationType.Id];
+System.debug('loyaltylevels: ' + loyaltylevels.size());
+
+for ( Account d : donors ) {
+    Integer rando = Math.round(Math.random()*(loyaltylevels.size()));
+    d.Loyalty_Level__pc = loyaltylevels[rando - 1].Id;
+    update d;
+}
+
 List<Campaign> testCampaigns = new List<Campaign>{
         new Campaign(
                 Name = 'Miramar Center Updates',
@@ -214,3 +228,4 @@ for (CampaignMemberStatus cms : [SELECT Id, Label, HasResponded, IsDefault FROM 
 }
 
 update cmsUpdates;
+

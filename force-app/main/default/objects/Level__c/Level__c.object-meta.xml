@@ -161,7 +161,12 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>Levels</pluralLabel>
-    <searchLayouts></searchLayouts>
+    <searchLayouts>
+        <searchResultsAdditionalFields>Donation_Threshold__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Donation_Payment__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Donation_Points__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Donation_Type__c</searchResultsAdditionalFields>
+    </searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>

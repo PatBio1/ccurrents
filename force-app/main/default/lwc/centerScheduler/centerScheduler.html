@@ -7,18 +7,8 @@
     <div class="slds-card__body slds-card__body_inner">
       <div class="scheduler-header-container">
         <div class="center-date-selector">
-          <lightning-button
-              variant="neutral"
-              label={filterLabel}
-              title="Toggle Filters"
-              icon-name="utility:filterList"
-              onclick={toggleFilters}
-              disabled={dateDisabled}
-              class="slds-p-around_xxx-small">
-          </lightning-button>
-  
           <lightning-combobox
-            style="width: 33%;"
+            style="width: 33%; margin-right: 2rem"
             name="progress"
             label="Choose Center"
             value={selectedCenter}
@@ -39,39 +29,8 @@
             variant="label-hidden"
             >
           </lightning-input>
-        </div>
 
-        <div class="scheduler-header-actions" style="justify-content: flex-end;">
-          <lightning-button
-            variant="brand"
-            label="New Schedule"
-            title="New Schedule"
-            class="primary-button"
-            disabled={dateDisabled}
-            onclick={openNewScheduleModal}>
-          </lightning-button>
-          
-          <lightning-button
-            variant="neutral"
-            label="Refresh"
-            title="Refresh"
-            onclick={refresh}
-            disabled={dateDisabled}
-            icon-name="utility:refresh"
-            class="slds-p-around_xxx-small">
-          </lightning-button>
-
-          <!-- Not sure if this is needed, added cause it was in the mockup -->
-          <lightning-button-group style="display: none;">
-            <lightning-button label="View Mode"></lightning-button>
-            <lightning-button label="Edit Mode" variant="brand"></lightning-button>
-          </lightning-button-group>
-        </div>
-      </div>
-
-      <div if:true={showFilters} class="filter-container">
-        <div style="display: flex; gap: 16px">
-          <div style="display: flex; align-items: center; gap: 8px; margin-right: 16px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
             <lightning-input 
               type="time" 
               name="start" 
@@ -101,45 +60,33 @@
             >
             </lightning-input>
           </div>
-          
-          <lightning-combobox
-            name="progress"
-            value={value}
-            placeholder="Select Appointment Type"
-            options={appointmentTypes}
-            onchange={filterChange}
-            variant="label-hidden" 
-          >
-          </lightning-combobox>
-  
-          <lightning-combobox
-            name="progress"
-            value={filters.status}
-            placeholder="Select Appointment Status"
-            options={statusOptions}
-            onchange={changeStatusFilter}
-            variant="label-hidden"
-          >
-          </lightning-combobox>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="scheduler-header-actions" style="justify-content: flex-end;">
+          <lightning-button
+            variant="brand"
+            label="New Schedule"
+            title="New Schedule"
+            class="primary-button"
+            disabled={dateDisabled}
+            onclick={openNewScheduleModal}>
+          </lightning-button>
+          
           <lightning-button
             variant="neutral"
-            label="Apply Filters"
-            title="Apply Filters"
-            class="apply-button"
-            onclick={applyFilters}>
+            label="Refresh"
+            title="Refresh"
+            onclick={refresh}
+            disabled={dateDisabled}
+            icon-name="utility:refresh"
+            class="slds-p-around_xxx-small">
           </lightning-button>
-        
-          <lightning-button
-            variant="neutral"
-            label="Clear Filters"
-            title="Clear Filters"
-            icon-name="utility:clear"
-            class="slds-p-around_xxx-small"
-            onclick={clearFilters}>
-          </lightning-button>
+
+          <!-- Not sure if this is needed, added cause it was in the mockup -->
+          <lightning-button-group style="display: none;">
+            <lightning-button label="View Mode"></lightning-button>
+            <lightning-button label="Edit Mode" variant="brand"></lightning-button>
+          </lightning-button-group>
         </div>
       </div>
     </div>
@@ -147,60 +94,37 @@
 
   <!-- Legend / Appointment Rows -->
   <article if:true={hasAppointmentsToDisplay} class="slds-card">
-    <div style="display: flex; justify-content: space-between;" class="slds-card__header">
+    <div style="display: flex; align-items: center; gap: 5rem;" class="slds-card__header">
       <div class="legend-header">
-        <div class="legend-entry">
-          <div style="background: #A5D6A7;" class="legend-icon"></div>
-          <p>Scheduled</p>
+        <div class="slds-button slds-button_neutral slds-button_brand legend-entry" style="margin-right: 8px;" data-status-api-name="All" onclick={handleSelectStatus}>
+          <p>Show All Statuses</p>
         </div>
-
-        <div class="legend-entry">
-          <div style="background: #66BB69;" class="legend-icon"></div>
-          <p>Checked In</p>
-        </div>
-
-        <div class="legend-entry">
-          <div style="background: #43A046;" class="legend-icon"></div>
-          <p>Donation Complete</p>
-        </div>
-
-        <div class="legend-entry">
-          <div style="background: #1B5E1F;" class="legend-icon"></div>
-          <p>Paid/Visit Complete</p>
-        </div>
-
-        <div class="legend-entry">
-          <div style="background: #B0ADAB;" class="legend-icon"></div>
-          <p>Late</p>
-        </div>
-
-        <div class="legend-entry">
-          <div style="background: #EF9A9A;" class="legend-icon"></div>
-          <p>Cancelled</p>
-        </div>
-
-        <div class="legend-entry">
-          <div style="background: #E53835;" class="legend-icon"></div>
-          <p>Deferred/Left Center</p>
-        </div>
-
-        <div class="legend-entry">
-          <div style="background: #B71A1C;" class="legend-icon"></div>
-          <p>Missed</p>
-        </div>
+  
+        <template for:each={statusOptions} for:item="status">
+          <div key={status.value} class="slds-button slds-button_neutral legend-entry" data-status-api-name={status.value} onclick={handleSelectStatus}>
+            <div class={status.displayClass}></div>
+            <p>{status.label}</p>
+          </div>
+        </template>
       </div>
+  
+      <div class="legend-header">
+        <div class="slds-button slds-button_neutral slds-button_brand legend-entry" style="margin-right: 8px;" data-outcome-api-name="All" onclick={handleSelectOutcome}>
+          <p>Show All Outcomes</p>
+        </div>
+  
+        <template for:each={outcomeOptions} for:item="outcome">
+          <div key={outcome.value} class="slds-button slds-button_neutral legend-entry" data-outcome-api-name={outcome.value} onclick={handleSelectOutcome}>
+            <div class={outcome.displayClass}></div>
+            <p>{outcome.label}</p>
+          </div>
+        </template>
 
-      <div style="display: flex; flex-direction: row; align-items: center; gap: 8px; visibility: hidden;">
-        <lightning-combobox style="width: 200px;" variant="label-hidden" placeholder="Sort Data">
-        </lightning-combobox>
-
-        <lightning-button label="Cancel Changes" variant="neutral">
-        </lightning-button>
-
-        <lightning-button label="Save Changes" variant="brand">
-        </lightning-button>
+        <lightning-input type="checkbox" label="Apply filters to visits without outcomes?" value={filterOnNull} onchange={handleNullFilterChange}>
+        </lightning-input>
       </div>
     </div>
+    
 
     <div class="appointment-list-container slds-card__body slds-card__body_inner">
       <div class="appointment-date-header">
@@ -241,7 +165,7 @@
             key={appointment.key} 
             class="appointment-data-cell droppable" 
             title={appointment.key} 
-            style="justify-content: flex-start; text-align: left;position: relative; padding: 4px;" 
+            style="justify-content: flex-start; text-align: left;position: relative; padding: 6px;" 
             ondrop={drop} 
             ondragenter={dragenter} 
             ondragleave={dragleave} 

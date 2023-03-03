@@ -1,34 +1,59 @@
 import { LightningElement, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import TIME_ZONE from '@salesforce/i18n/timeZone';
-import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
+import TIME_ZONE from '@salesforce/i18n/timeZone';
 import STATUS_FIELD from '@salesforce/schema/Visit__c.Status__c';
-
-import VISIT_OBJECT from '@salesforce/schema/Visit__c';
-
+import OUTCOME_FIELD from '@salesforce/schema/Visit__c.Outcome__c';
 
 import getCenters from '@salesforce/apex/CenterScheduleController.getCenters';
 import getAppointments from '@salesforce/apex/CenterScheduleController.getAppointments';
 import getAppointmentSlot from '@salesforce/apex/CenterScheduleController.getAppointmentSlot';
 import ChangeVisitAppointment from '@salesforce/apex/CenterScheduleController.changeVisitAppointment';
 import cancelVisit from '@salesforce/apex/CenterScheduleController.cancelVisit';
+
+import { visitStatusToDisplayClass, visitOutcomeToDisplayClass } from "c/constants";
 import CreateScheduleModal from "c/createScheduleModal";
-import DonorDot from "c/donorDot";
 
 export default class CenterScheduler extends NavigationMixin(LightningElement) {
     statusOptions;
+    outcomeOptions;
+    filterOnNull = false;
+
     //hardcoded to null recordTypeId, since we don't use RTs on Visit__c
     @wire(getPicklistValues, { fieldApiName: STATUS_FIELD, recordTypeId: '012000000000000AAA' })
-    wiredFields({ error, data }){
-        if(data){
-            this.statusOptions = data.values;
-        }else if(error){    
-            console.log(error);
+    getStatusValues({ error, data }) {
+        if (data) {
+            if (data.values.length > visitStatusToDisplayClass.size) {
+                console.error("There aren't enough configured status colors for the queried statuses");
+            }
+
+            this.statusOptions = data.values.map((status) => {
+                return {...status, displayClass: `legend-icon ${visitStatusToDisplayClass.get(status.value)}`}
+            });
+
+            console.log("Found Statuses", this.statusOptions);
+        } else if(error) {    
+            console.log("Status Values Fetch", error);
         }
     }
 
+    @wire(getPicklistValues, { fieldApiName: OUTCOME_FIELD, recordTypeId: '012000000000000AAA' })
+    getOutcomeValues({ error, data }) {
+        if (data) {
+            if (data.values.length > visitOutcomeToDisplayClass.size) {
+                console.error("There aren't enough configured outcome colors for the queried outcomes");
+            }
+
+            this.outcomeOptions = data.values.map((outcome) => {
+                return {...outcome, displayClass: `legend-icon ${visitOutcomeToDisplayClass.get(outcome.value)}`}
+            });
+
+            console.log("Found Outcomes", this.outcomeOptions);
+        } else if(error) {    
+            console.log("Outcome Values Fetch", error);
+        }
+    }
     
     @track selectedCenterId;
     @track selectedDate
@@ -48,7 +73,31 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     @track filters = {
         start: '',
         end: '',
-        status: ''
+        status: [],
+        outcome: [],
+
+        hasStatusFilters: function() {
+            return (this.status !== null && this.status.length > 0);
+        },
+        hasOutcomeFilters: function() {
+            return (this.outcome !== null && this.outcome.length > 0);
+        },
+
+        hasActiveFilters: function() {
+            return (this.hasStatusFilters() || this.hasOutcomeFilters());
+        },
+
+        passesFilters: function(visit, filterOnNull) {
+            let passesFilters = true;
+
+            if (!!visit.status && this.hasStatusFilters() && !this.status.includes(visit.status)) {
+                passesFilters = false;
+            } else if ((filterOnNull || !!visit.outcome) && this.hasOutcomeFilters() && !this.outcome.includes(visit.outcome)) {
+                passesFilters = false;
+            }
+
+            return passesFilters;
+        }
     }
 
     showPopover() {
@@ -190,37 +239,36 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     }
 
     applyFilters(){
-        //only visits are filtered in js, not appointments
-        //for each visit in each app row
-        for(let i=0;i < this.appointments.length;i++){
+        // only visits are filtered in js, not appointments
+        // for each visit in each app row
+        for(let i= 0; i < this.appointments.length; i++){
             let app = this.appointments[i];
             app = this.appointments[i];
-            if(app.visits.length > 0 ){
-                for(let j=0; j<app.visits.length;j++){
-                    let visit = app.visits[j];
-                    if(this.filters.status !== ''){
-                        console.log('filter status',this.filters.status );
-                        if(visit.status == this.filters.status){
-                            // console.log(JSON.stringify(visit));
-                            visit.filtered = false;
-                        }else{
-                            visit.filtered = true;
-                        }
+
+            if (app.visits.length > 0) {
+                for(let visit of app.visits){
+                    let newFilterStatus = (
+                        this.filters.hasActiveFilters() &&
+                        !this.filters.passesFilters(visit, this.filterOnNull)
+                    );
+
+                    if (visit.filtered === newFilterStatus) {
+                        continue;
                     }
+
+                    visit.filtered = newFilterStatus;
                 }
             }
-
         }
-
-        
-       
     }
 
     clearFilters(){
         console.log(this.filters);
         this.filters.start = '';
         this.filters.end = '';
-        this.filters.status = '';
+        this.filters.status = [];
+        this.filters.outcome = [];
+
         for(let i=0;i < this.appointments.length;i++){
             let app = this.appointments[i];
             app.filtered = false;
@@ -373,5 +421,49 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         })
     }
 
+    handleSelectNewFilter(newFilterButton, newFilterApiName, filterDataKey, filterName) {
+        if (newFilterApiName !== "All") {
+            let allRelatedStatusButton = this.template.querySelector(`div[${filterDataKey}='All']`);
+            let existingFilterIndex = this.filters[filterName].findIndex((selectedFilter) => selectedFilter === newFilterApiName);
 
+            if (existingFilterIndex != -1) {
+                this.filters[filterName].splice(existingFilterIndex, 1);
+                if (!this.filters[filterName] || !this.filters[filterName].length) {
+                    allRelatedStatusButton.classList.add('slds-button_brand');
+                }
+            } else {
+                this.filters[filterName].push(newFilterApiName);
+                allRelatedStatusButton.classList.remove('slds-button_brand');
+            }
+
+            newFilterButton.classList.toggle("slds-button_brand");
+        } else {
+            this.filters[filterName] = [];
+
+            for(let relatedFilterButton of this.template.querySelectorAll(`div[${filterDataKey}]`)) {
+                relatedFilterButton.classList.remove("slds-button_brand");
+            }
+
+            newFilterButton.classList.toggle("slds-button_brand");
+        }
+    }
+
+    handleSelectStatus(event) {
+        let targetStatus = event.currentTarget.dataset.statusApiName;
+
+        this.handleSelectNewFilter(event.currentTarget, targetStatus, "data-status-api-name", "status");
+        this.applyFilters();
+    }
+
+    handleSelectOutcome(event) {
+        let targetOutcome = event.currentTarget.dataset.outcomeApiName;
+
+        this.handleSelectNewFilter(event.currentTarget, targetOutcome, "data-outcome-api-name", "outcome");
+        this.applyFilters();
+    }
+
+    handleNullFilterChange(event) {
+        this.filterOnNull = event.detail.checked;
+        this.applyFilters();
+    }
 }

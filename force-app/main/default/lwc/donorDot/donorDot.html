@@ -19,6 +19,7 @@
                 <div id="popover-body-id" class="slds-popover__body">
                     <div class="slds-popover__meta">
                         <span class="slds-badge">{donor.status}</span>
+                        <span if:true={donor.outcome} class="slds-badge">{donor.outcome}</span>
                     </div>
 
                     <div style="display: flex; align-items: center; gap: 16px;">

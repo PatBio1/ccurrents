@@ -48,7 +48,8 @@ public with sharing class CenterScheduleController {
                         Donor__r.FirstName,
                         Donor__r.LastName,
                         Donor__r.Email,
-                        Status__c
+                        Status__c,
+                        Outcome__c
                 FROM Visit__c
                 WHERE Appointment__c =: appointmentId
                 ORDER BY lastmodifieddate
@@ -110,7 +111,8 @@ public with sharing class CenterScheduleController {
                         Donor__r.FirstName,
                         Donor__r.LastName,
                         Donor__r.Email,
-                        Status__c
+                        Status__c,
+                        Outcome__c
                 FROM Visit__c
                 WHERE Appointment__c in: appMap.keyset()
                 ORDER BY lastmodifieddate
@@ -271,6 +273,9 @@ public with sharing class CenterScheduleController {
         public String status {get;set;}
 
         @AuraEnabled
+        public String outcome {get; set;}
+
+        @AuraEnabled
         public Boolean filtered {get;set;}
         
 
@@ -283,6 +288,7 @@ public with sharing class CenterScheduleController {
             this.lastName = visit.Donor__r.lastName;
             this.initials = visit.Donor__r.firstName.subString(0,1) + visit.Donor__r.lastName.subString(0,1);
             this.status = visit.Status__c;
+            this.outcome = visit.Outcome__c;
             this.icon = 'standard:account';
             this.filtered = false;
         }

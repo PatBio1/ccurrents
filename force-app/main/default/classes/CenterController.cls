@@ -23,7 +23,7 @@ public without sharing class CenterController {
                 WHERE
                     RecordTypeId = :Constants.CENTER_RECORD_TYPE_ID
                 AND
-                    Site != null
+                    IsActive__c = true
                 ORDER BY
                     DISTANCE(Geolocation__c, GEOLOCATION(:latitude, :longitude), 'mi')
                 LIMIT

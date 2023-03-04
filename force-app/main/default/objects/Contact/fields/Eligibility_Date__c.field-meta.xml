@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Eligibility_Date__c</fullName>
+    <defaultValue>$System.OriginDateTime</defaultValue>
     <description>The date of a Donor&apos;s eligibility from BECS/NL; when a value is sent this is most likely the driver of the donor&apos;s soonest next visit date.</description>
     <externalId>false</externalId>
     <inlineHelpText>The date of a Donor&apos;s eligibility from BECS/NL; when a value is sent this is most likely the driver of the donor&apos;s soonest next visit date.</inlineHelpText>

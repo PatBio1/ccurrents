@@ -19,7 +19,7 @@ Eligible: Has met all criteria for donation and Eligiblity datetime is today or 
 Deferred: Has met all critieria for donation and Eligibility datetime is in the future
 Excluded: Can never* give plasma for various reasons that are PHI</inlineHelpText>
     <label>Status</label>
-    <required>true</required>
+    <required>false</required>
     <securityClassification>Confidential</securityClassification>
     <trackFeedHistory>false</trackFeedHistory>
     <type>Picklist</type>

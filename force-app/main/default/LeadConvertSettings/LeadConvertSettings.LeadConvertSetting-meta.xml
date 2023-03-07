@@ -4,18 +4,6 @@
     <objectMapping>
         <inputObject>Lead</inputObject>
         <mappingFields>
-            <inputField>Enable_Appointment_Reminders__c</inputField>
-            <outputField>Enable_Appointment_Reminders__c</outputField>
-        </mappingFields>
-        <mappingFields>
-            <inputField>Enable_Email__c</inputField>
-            <outputField>Enable_Email__c</outputField>
-        </mappingFields>
-        <mappingFields>
-            <inputField>Enable_Mobile_Push__c</inputField>
-            <outputField>Enable_Mobile_Push__c</outputField>
-        </mappingFields>
-        <mappingFields>
             <inputField>Enable_Payment_Notifications__c</inputField>
             <outputField>Enable_Payment_Notifications__c</outputField>
         </mappingFields>
@@ -38,6 +26,26 @@
         <mappingFields>
             <inputField>et4ae5__HasOptedOutOfMobile__c</inputField>
             <outputField>et4ae5__HasOptedOutOfMobile__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>isSMSVerified__c</inputField>
+            <outputField>isSMSVerified__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>isEmailVerified__c</inputField>
+            <outputField>isEmailVerified__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>Enable_Appointment_Reminders__c</inputField>
+            <outputField>Enable_Appointment_Reminders__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>Enable_Email__c</inputField>
+            <outputField>Enable_Email__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>Enable_Mobile_Push__c</inputField>
+            <outputField>Enable_Mobile_Push__c</outputField>
         </mappingFields>
         <outputObject>Contact</outputObject>
     </objectMapping>

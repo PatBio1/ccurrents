@@ -13,7 +13,7 @@
     }
   },
   "nativeMobileNavConfig" : {
-    "showBackButton" : true,
+    "showBackButton" : false,
     "showHamburgerMenuWithBackButton" : false
   },
   "nativeTabMenu" : {
@@ -44,6 +44,6 @@
       "iconAsset" : "account8"
     } ]
   },
-  "showHamburgerMenu" : true,
+  "showHamburgerMenu" : false,
   "type" : "nativeConfig"
 }

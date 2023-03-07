@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Future_Visits__c</fullName>
+    <description>All FUTURE Visits where the Donor is scheduled.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>All FUTURE Visits where the Donor is scheduled.</inlineHelpText>
+    <label>Total Future Visits</label>
+    <summaryFilterItems>
+        <field>Visit__c.Status__c</field>
+        <operation>equals</operation>
+        <value>Scheduled</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Visit__c.Donor__c</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <type>Summary</type>
+</CustomField>

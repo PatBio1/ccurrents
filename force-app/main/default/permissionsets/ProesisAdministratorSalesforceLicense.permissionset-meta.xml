@@ -611,7 +611,7 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Contact.Description</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -768,6 +768,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Contact.Soonest_Next_Visit__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Contact.Total_Future_Visits__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

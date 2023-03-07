@@ -57,6 +57,13 @@
         <value>Back to Homepage</value>
     </labels>
     <labels>
+        <fullName>Back_To_Login</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Back To Login</shortDescription>
+        <value>Back to Login</value>
+    </labels>
+    <labels>
         <fullName>Basic_Profile</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -85,18 +92,18 @@
         <value>Car</value>
     </labels>
     <labels>
-        <fullName>Centers</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Centers</shortDescription>
-        <value>Centers</value>
-    </labels>
-    <labels>
         <fullName>Center_Video</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Center Video</shortDescription>
         <value>Center Video</value>
+    </labels>
+    <labels>
+        <fullName>Centers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Centers</shortDescription>
+        <value>Centers</value>
     </labels>
     <labels>
         <fullName>Change</fullName>
@@ -169,6 +176,13 @@
         <value>Email</value>
     </labels>
     <labels>
+        <fullName>Email_Or_Primary_Phone</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Email Or Primary Phone</shortDescription>
+        <value>Email Or Primary Phone</value>
+    </labels>
+    <labels>
         <fullName>English</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -188,6 +202,13 @@
         <protected>true</protected>
         <shortDescription>First Name</shortDescription>
         <value>First Name</value>
+    </labels>
+    <labels>
+        <fullName>Forgot_Password</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Forgot Password</shortDescription>
+        <value>Forgot Password?</value>
     </labels>
     <labels>
         <fullName>Friday</fullName>
@@ -230,6 +251,13 @@
         <protected>true</protected>
         <shortDescription>Last Name</shortDescription>
         <value>Last Name</value>
+    </labels>
+    <labels>
+        <fullName>Login</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Login</shortDescription>
+        <value>Login</value>
     </labels>
     <labels>
         <fullName>Logout</fullName>
@@ -316,6 +344,13 @@
         <value>Notifications</value>
     </labels>
     <labels>
+        <fullName>Password</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Password</shortDescription>
+        <value>Password</value>
+    </labels>
+    <labels>
         <fullName>Password_Requirements</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -333,8 +368,8 @@
         <fullName>Passwords_Dont_Match</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Passwords Don't Match</shortDescription>
-        <value>Passwords don't match.</value>
+        <shortDescription>Passwords Don&apos;t Match</shortDescription>
+        <value>Passwords don&apos;t match.</value>
     </labels>
     <labels>
         <fullName>Past</fullName>
@@ -386,6 +421,13 @@
         <value>Recommended to you</value>
     </labels>
     <labels>
+        <fullName>Remember_Me</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Remember Me</shortDescription>
+        <value>Remember me</value>
+    </labels>
+    <labels>
         <fullName>Remove_Photo</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -398,6 +440,20 @@
         <protected>true</protected>
         <shortDescription>Results For</shortDescription>
         <value>Results for:</value>
+    </labels>
+    <labels>
+        <fullName>Saturday</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Saturday</shortDescription>
+        <value>Saturday</value>
+    </labels>
+    <labels>
+        <fullName>Saturday_Abbreviation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Saturday Abbreviation</shortDescription>
+        <value>Sat</value>
     </labels>
     <labels>
         <fullName>Schedule</fullName>
@@ -442,6 +498,20 @@
         <value>Set Your Password</value>
     </labels>
     <labels>
+        <fullName>Sign_Up</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Sign_Up</shortDescription>
+        <value>Sign up</value>
+    </labels>
+    <labels>
+        <fullName>Social_Photo</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Social Photo</shortDescription>
+        <value>Social Photo</value>
+    </labels>
+    <labels>
         <fullName>Spanish</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -468,27 +538,6 @@
         <protected>true</protected>
         <shortDescription>Street Address 2</shortDescription>
         <value>Street Address 2</value>
-    </labels>
-    <labels>
-        <fullName>Saturday</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Saturday</shortDescription>
-        <value>Saturday</value>
-    </labels>
-    <labels>
-        <fullName>Saturday_Abbreviation</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Saturday Abbreviation</shortDescription>
-        <value>Sat</value>
-    </labels>
-    <labels>
-        <fullName>Social_Photo</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Social Photo</shortDescription>
-        <value>Social Photo</value>
     </labels>
     <labels>
         <fullName>Suffix</fullName>

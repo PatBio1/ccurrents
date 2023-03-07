@@ -6,8 +6,8 @@
   "regions" : [ {
     "components" : [ {
       "componentAttributes" : { },
-      "componentName" : "salesforceIdentity:communityLogo2",
-      "id" : "0b3bd3b6-dc98-403b-9d63-1f108f4b53e9",
+      "componentName" : "c:WelcomeWrapper",
+      "id" : "c198770f-e167-4a6b-a2e2-75539c891c4f",
       "renderPriority" : "NEUTRAL",
       "renditionMap" : { },
       "type" : "component"
@@ -23,27 +23,7 @@
         "usernameLabel" : "Username"
       },
       "componentName" : "salesforceIdentity:loginForm2",
-      "id" : "b6cb87b0-d6eb-43da-b039-2be645f1a1ba",
-      "renderPriority" : "NEUTRAL",
-      "renditionMap" : { },
-      "type" : "component"
-    }, {
-      "componentAttributes" : {
-        "headerText" : "",
-        "showHeader" : false,
-        "useCommunityDomainSso" : true
-      },
-      "componentName" : "salesforceIdentity:socialLogin2",
-      "id" : "c3e78582-eb73-45e8-8954-40e2883322d5",
-      "renderPriority" : "NEUTRAL",
-      "renditionMap" : { },
-      "type" : "component"
-    }, {
-      "componentAttributes" : {
-        "employeeLoginLinkLabel" : "Are you an employee? Login here"
-      },
-      "componentName" : "salesforceIdentity:employeeLoginLink2",
-      "id" : "ed52dfbf-2aa1-4ae0-bb4b-7bb3a4f48ec0",
+      "id" : "3f457d5a-472f-4355-ba47-8d90df5091e7",
       "renderPriority" : "NEUTRAL",
       "renditionMap" : { },
       "type" : "component"
@@ -67,7 +47,7 @@
     "regionName" : "sfdcHiddenRegion",
     "type" : "region"
   } ],
-  "themeLayoutType" : "Login",
+  "themeLayoutType" : "KEg3kA3MunIOnpvEUYA8EXxeKjluzc",
   "type" : "view",
   "viewType" : "login-home"
 }

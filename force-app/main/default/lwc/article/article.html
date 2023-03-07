@@ -1,0 +1,39 @@
+<template>
+
+    <div class="slds-var-p-around_medium">
+        <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-button variant="base" label={labels.back} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-text-align_right">
+                <lightning-icon if:true={bookmarked} icon-name="utility:bookmark" size="x-small" class="bookmarked-icon" data-category={articleCategoryIndex} data-article={articleIndex} onclick={onBookmarkClick}></lightning-icon>
+                <lightning-icon if:false={bookmarked} icon-name="utility:bookmark" size="x-small" class="bookmark-icon" data-category={articleCategoryIndex} data-article={articleIndex} onclick={onBookmarkClick}></lightning-icon>
+            </div>
+        </div>
+
+        <div class="title-medium slds-var-m-vertical_small">
+            "My Donation Experience" by Jennifer Doe
+        </div>
+
+        <iframe width="100%" src="https://www.youtube.com/embed/aAUXJ8GlHus?controls=0" frameborder="0" allowfullscreen></iframe>
+
+        <div>
+            <div class="slds-m-vertical_medium">
+                There are different requirements for the various types of blood donations. These requirements are put in place to guarantee your safety and health. In order to donate plasma, you must:
+            </div>
+    
+            <div class="slds-m-bottom_medium">
+                There are different requirements for the various types of blood donations. These requirements are put in place to guarantee your safety and health. In order to donate plasma, you must:
+            </div>
+    
+            <div class="slds-m-bottom_medium">
+                There are different requirements for the various types of blood donations. These requirements are put in place to guarantee your safety and health. In order to donate plasma, you must:
+            </div>
+    
+            <div>
+                There are different requirements for the various types of blood donations. These requirements are put in place to guarantee your safety and health. In order to donate plasma, you must:
+            </div>
+        </div>
+    </div>
+
+</template>

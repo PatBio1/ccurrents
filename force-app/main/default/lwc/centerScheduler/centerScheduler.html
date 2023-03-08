@@ -150,6 +150,11 @@
         </div>
 
         <div class="appointments">
+          <!-- <div class="appointment-column-header-cell" style="text-align: center;">Time</div>
+          <div class="appointment-column-header-cell" style="text-align: center;">Available</div>
+          <div class="appointment-column-header-cell" style="text-align: center;">Filled</div>
+          <div class="appointment-column-header-cell" style="text-align: left;">Donors</div> -->
+    
           <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
             <div key={appointment.key} if:false={appointment.filtered} style="background: #F5F0FF;" class="appointment-data-cell">
                 <a href={appointment.link} target="_blank">
@@ -178,14 +183,14 @@
               key={appointment.key} 
               class="appointment-data-cell droppable" 
               title={appointment.key} 
-              style="justify-content: flex-start; text-align: left;position: relative; padding: 6px; gap: 14px;" 
+              style="justify-content: flex-start; text-align: left;position: relative; padding: 6px; gap: 8px;" 
               ondrop={drop} 
               ondragenter={dragenter} 
               ondragleave={dragleave} 
               ondragover={allowDrop}
             >
                 <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
-                    <c-donor-dot style="position: relative;" if:false={donor.filtered} oncancelvisit={handleCancelVisit} key={donorId} icon={donor.icon} donor={donor} appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString}>
+                    <c-donor-dot if:false={donor.filtered} oncancelvisit={handleCancelVisit} key={donorId} icon={donor.icon} donor={donor} appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString}>
                     </c-donor-dot>
                 </template>
 
@@ -194,13 +199,7 @@
             </div>
           </template>
         </div>
-  
-        <template for:each={statusOptions} for:item="status">
-          <div key={status.value} class="slds-button slds-button_neutral legend-entry" data-status-api-name={status.value} onclick={handleSelectStatus}>
-            <div class={status.displayClass}></div>
-            <p>{status.label}</p>
-          </div>
-        </template>
+      </div>
     </article>
 
     <!-- Message Telling User to select Center/Date -->

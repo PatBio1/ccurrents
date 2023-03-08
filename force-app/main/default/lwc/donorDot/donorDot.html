@@ -1,19 +1,19 @@
 <template>
-    <div draggable="true" ondragstart={dragstart} ondragend={dragend} data-text="foo" class={filteredClasses} style="position: relative;">
+    <div draggable="true" ondragstart={dragstart} ondragend={dragend} data-text="foo" style="position: relative;">
         <lightning-avatar
-            size="medium"
+            size="large"
             onclick={togglePopover}
             aria-haspopup="false"
             variant="circle"
             initials={donor.initials}
             fallback-icon-name={donor.icon}
             alternative-text={donor.donorName}
-            class={classes}
+            class={avatarClasses}
             style="margin-right:2px;">
         </lightning-avatar>
 
         <template if:true={showpopover}>
-            <section aria-label="Dialog title" aria-describedby="popover-body-id" class="slds-popover slds-nubbin_top" role="dialog" style="position: absolute; width: 300px; left: -134px; top: 45px;">
+            <section class={popupContainerClasses} aria-label="Dialog title" aria-describedby="popover-body-id" role="dialog">
                 <lightning-button-icon icon-name="utility:close"  alternative-text="close" title="Close" onclick={hidePopover} class="slds-float_right slds-popover__close"></lightning-button-icon>
         
                 <div id="popover-body-id" class="slds-popover__body">
@@ -32,8 +32,8 @@
                         </lightning-avatar>
 
                         <div style="display: flex; flex-direction: column; justify-content: center">
-                            <p><b><a onclick={donorClick} >{donor.donorName}</a></b></p>
-                            <p><a onclick={visitClick} >Visit Details</a></p>
+                            <p><b><a href={donorLink} target="_blank" >{donor.donorName}</a></b></p>
+                            <p><a href={visitLink} target="_blank" >Visit Details</a></p>
                         </div>
                     </div>
 

@@ -7,3 +7,9 @@
 .unfiltered {
     display: inline-flex;
 }
+
+.visit-popup-container {
+    position: absolute;
+    width: 300px;
+    left: -125px;
+}

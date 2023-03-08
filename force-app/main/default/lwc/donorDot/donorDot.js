@@ -110,10 +110,10 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
 
         if (popOnTop) {
             this.popUpDirection = "Top";
-            popupContainer.style.top = "-160px";
+            popupContainer.style.top = "-218px";
         } else {
             this.popUpDirection = "Bottom";
-            popupContainer.style.top = "65px";
+            popupContainer.style.top = "66px";
         }
 
         this.isPopupConfigured = true;

@@ -7,9 +7,10 @@ import createUser from '@salesforce/apex/ProfileController.createUser';
 import setupUser from '@salesforce/apex/ProfileController.setupUser';
 import setupPhoto from '@salesforce/apex/ProfileController.setupPhoto';
 import removePhoto from '@salesforce/apex/ProfileController.removePhoto';
+import login from '@salesforce/apex/LoginController.login';
 import fileUploadStyles from '@salesforce/resourceUrl/fileUploadStyles';
 
-export default class ClinicChooser extends LightningElement {
+export default class Profile extends LightningElement {
 
     minPasswordCharacters = 8;
     maxPasswordCharacters = 16;
@@ -151,8 +152,7 @@ export default class ClinicChooser extends LightningElement {
 
     get pictureValid() {
         return (
-            util.isNotBlank(this.profile.nickname) &&
-            util.isNotBlank(this.profile.photoUrl)
+            util.isNotBlank(this.profile.nickname)
         );
     }
 
@@ -169,7 +169,7 @@ export default class ClinicChooser extends LightningElement {
         Promise.all([
             loadStyle(this, fileUploadStyles)
         ]);
-      }
+    }
 
     onFieldChange(event) {
         let field = event.target?.dataset?.field;
@@ -358,7 +358,23 @@ export default class ClinicChooser extends LightningElement {
     }
 
     onScheduleButtonClick() {
-        location.href = '/ProesisDonor/s/schedule';
+        this.loading = true;
+
+        const request = {
+            username: this.profile.email,
+            password: this.profile.password,
+            startUrl: '/s/schedule'
+        };
+
+        console.log('login request', JSON.stringify(request));
+
+        login(request).then(response => {
+            window.location.href = response;
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
+            this.loading = false;
+        });
     }
 
     assignPermissions() {

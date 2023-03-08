@@ -1,0 +1,27 @@
+@import 'c/sharedCss';
+
+.slds-progress {
+    max-width: unset;
+}
+
+.slds-progress__marker {
+    background-color: #8979A9;
+    border-color: var(--pro-background-color);
+}
+
+.slds-progress__item.slds-is-active .slds-progress__marker {
+    box-shadow: var(--pro-background-color) 0 0 0 4px;
+  }
+
+.slds-progress__item.slds-is-completed .slds-progress__marker, .slds-progress__item.slds-is-active .slds-progress__marker {
+    background: var(--pro-background-color);
+    border-color: #99429C;
+}
+
+.slds-progress__item.slds-is-completed .slds-progress__marker {
+    border-color: var(--pro-background-color);
+}
+
+.slds-progress-bar {
+    background-color: #D1C7E4;
+}

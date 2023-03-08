@@ -247,6 +247,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         for(let appointment of this.appointments) {
             if (appointment.visits && appointment.visits.length > 0) {
                 for(let visit of appointment.visits) {
+
                     let newFilterStatus = (
                         this.filters.hasActiveFilters() &&
                         !this.filters.passesFilters(visit, this.filterOnNull)
@@ -428,6 +429,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             }
 
             console.log(this.filters[filterName]);
+
             newFilterButton.classList.toggle("slds-button_brand");
         } else {
             this.filters[filterName] = [];

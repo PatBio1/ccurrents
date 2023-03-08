@@ -194,7 +194,13 @@
             </div>
           </template>
         </div>
-      </div>
+  
+        <template for:each={statusOptions} for:item="status">
+          <div key={status.value} class="slds-button slds-button_neutral legend-entry" data-status-api-name={status.value} onclick={handleSelectStatus}>
+            <div class={status.displayClass}></div>
+            <p>{status.label}</p>
+          </div>
+        </template>
     </article>
 
     <!-- Message Telling User to select Center/Date -->

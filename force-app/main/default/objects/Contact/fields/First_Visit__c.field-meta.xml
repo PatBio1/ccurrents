@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>First_Visit__c</fullName>
-    <description>The first Visit for this donor no matter whether it was a successful Donation or not.</description>
+    <description>The first PAST Visit for this donor no matter whether it was a successful Donation or not.</description>
     <externalId>false</externalId>
-    <inlineHelpText>The first Visit for this donor no matter whether it was a successful Donation or not.</inlineHelpText>
+    <inlineHelpText>The first PAST Visit for this donor no matter whether it was a successful Donation or not.</inlineHelpText>
     <label>First Visit</label>
     <summarizedField>Visit__c.Appointment_Datetime__c</summarizedField>
     <summaryFilterItems>

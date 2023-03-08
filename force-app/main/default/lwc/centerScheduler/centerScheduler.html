@@ -2,193 +2,212 @@
   <lightning-spinner if:true={loading} size="medium">
   </lightning-spinner>
 
-  <!-- Header / Filters -->
-  <article class="slds-card">
-    <div class="slds-card__body slds-card__body_inner">
-      <div class="scheduler-header-container">
-        <div class="center-date-selector">
-          <lightning-combobox
-            style="width: 33%; margin-right: 2rem"
-            name="progress"
-            label="Choose Center"
-            value={selectedCenter}
-            placeholder="Select Center"
-            options={centers}
-            onchange={changeCenter}
-            variant="label-hidden">
-          </lightning-combobox>
+  <div class="scheduler-container">
+    <!-- Header / Filters -->
+    <article class="slds-card">
+      <div class="slds-card__body slds-card__body_inner">
+        <div class="scheduler-header-container">
+          <div class="center-date-selector">
+            <lightning-combobox
+              style="flex: 1;"
+              name="progress"
+              label="Choose Center"
+              value={selectedCenter}
+              placeholder="Select Center"
+              options={centers}
+              onchange={changeCenter}
+              variant="label-hidden">
+            </lightning-combobox>
 
-          <lightning-input 
-            type="date" 
-            name="input8"  
-            value={selectedDate}
-            min="2023-01-01" 
-            disabled={dateDisabled}
-            onchange={changeDate}
-            placeholder="Choose Date"
-            variant="label-hidden"
-            >
-          </lightning-input>
-
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <lightning-input 
-              type="time" 
-              name="start" 
-              value={filters.start}
-              min="06:00:00.000"
-              max="22:00:00.000"
-              timezone={tz}
-              onchange={changeFilterStart}
-              increment="10"
-              placeholder="Start Time"
+            <lightning-input
+              style="flex: 1;" 
+              type="date" 
+              name="input8"  
+              value={selectedDate}
+              min="2023-01-01" 
+              disabled={dateDisabled}
+              onchange={changeDate}
+              placeholder="Choose Date"
               variant="label-hidden"
-            >
+              >
             </lightning-input>
-  
-            <p>-</p>
-  
-            <lightning-input 
-              type="time" 
-              name="end" 
-              value={filters.end}
-              min="06:00:00.000"
-              max="22:00:00.000"
-              timezone={tz}
-              onchange={changeFilterEnd}
-              placeholder="End Time"
-              variant="label-hidden"
-            >
-            </lightning-input>
-          </div>
-        </div>
 
-        <div class="scheduler-header-actions" style="justify-content: flex-end;">
-          <lightning-button
-            variant="brand"
-            label="New Schedule"
-            title="New Schedule"
-            class="primary-button"
-            disabled={dateDisabled}
-            onclick={openNewScheduleModal}>
-          </lightning-button>
-          
-          <lightning-button
-            variant="neutral"
-            label="Refresh"
-            title="Refresh"
-            onclick={refresh}
-            disabled={dateDisabled}
-            icon-name="utility:refresh"
-            class="slds-p-around_xxx-small">
-          </lightning-button>
-
-          <!-- Not sure if this is needed, added cause it was in the mockup -->
-          <lightning-button-group style="display: none;">
-            <lightning-button label="View Mode"></lightning-button>
-            <lightning-button label="Edit Mode" variant="brand"></lightning-button>
-          </lightning-button-group>
-        </div>
-      </div>
-    </div>
-  </article>
-
-  <!-- Legend / Appointment Rows -->
-  <article if:true={hasAppointmentsToDisplay} class="slds-card">
-    <div style="display: flex; align-items: center; gap: 5rem;" class="slds-card__header">
-      <div class="legend-header">
-        <div class="slds-button slds-button_neutral slds-button_brand legend-entry" style="margin-right: 8px;" data-status-api-name="All" onclick={handleSelectStatus}>
-          <p>Show All Statuses</p>
-        </div>
-  
-        <template for:each={statusOptions} for:item="status">
-          <div key={status.value} class="slds-button slds-button_neutral legend-entry" data-status-api-name={status.value} onclick={handleSelectStatus}>
-            <div class={status.displayClass}></div>
-            <p>{status.label}</p>
-          </div>
-        </template>
-      </div>
-  
-      <div class="legend-header">
-        <div class="slds-button slds-button_neutral slds-button_brand legend-entry" style="margin-right: 8px;" data-outcome-api-name="All" onclick={handleSelectOutcome}>
-          <p>Show All Outcomes</p>
-        </div>
-  
-        <template for:each={outcomeOptions} for:item="outcome">
-          <div key={outcome.value} class="slds-button slds-button_neutral legend-entry" data-outcome-api-name={outcome.value} onclick={handleSelectOutcome}>
-            <div class={outcome.displayClass}></div>
-            <p>{outcome.label}</p>
-          </div>
-        </template>
-
-        <lightning-input type="checkbox" label="Apply filters to visits without outcomes?" value={filterOnNull} onchange={handleNullFilterChange}>
-        </lightning-input>
-      </div>
-    </div>
+            <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+              <lightning-input 
+                style="flex: 1;"
+                type="time" 
+                name="start" 
+                value={filters.start}
+                min="06:00:00.000"
+                max="22:00:00.000"
+                timezone={tz}
+                onchange={changeFilterStart}
+                increment="10"
+                placeholder="Start Time"
+                variant="label-hidden"
+              >
+              </lightning-input>
     
-
-    <div class="appointment-list-container slds-card__body slds-card__body_inner">
-      <div class="appointment-date-header">
-        <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={selectedDate} time-zone="UTC"></lightning-formatted-date-time>
-      </div>
-
-      <div class="appointments">
-        <div class="appointment-column-header-cell" style="text-align: center;">Time</div>
-        <div class="appointment-column-header-cell" style="text-align: center;">Available</div>
-        <div class="appointment-column-header-cell" style="text-align: center;">Filled</div>
-        <div class="appointment-column-header-cell" style="text-align: left;">Donors</div>
-  
-        <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
-          <div key={appointment.key} if:false={appointment.filtered} style="background: #F5F0FF;" class="appointment-data-cell">
-              <a href={appointment.link} target="_blank">
-                <lightning-formatted-time value={appointment.timeString} timezone={tz}></lightning-formatted-time>
-              </a>
+              <p>-</p>
+    
+              <lightning-input 
+                style="flex: 1;"
+                type="time" 
+                name="end" 
+                value={filters.end}
+                min="06:00:00.000"
+                max="22:00:00.000"
+                timezone={tz}
+                onchange={changeFilterEnd}
+                placeholder="End Time"
+                variant="label-hidden"
+              >
+              </lightning-input>
+            </div>
           </div>
 
-          <div key={appointment.key} if:false={appointment.filtered} style="justify-content: space-evenly;" class="appointment-data-cell">
-            <lightning-button-icon icon-name="utility:dash" size="x-small" variant="brand" onclick={minusAvailable}>
-            </lightning-button-icon>
+          <div class="scheduler-header-actions" style="justify-content: flex-end;">
+            <lightning-button
+              variant="brand"
+              label="New Schedule"
+              title="New Schedule"
+              class="primary-button"
+              disabled={dateDisabled}
+              onclick={openNewScheduleModal}>
+            </lightning-button>
             
-            <p>{appointment.availability}</p>
+            <lightning-button
+              variant="neutral"
+              label="Refresh"
+              title="Refresh"
+              onclick={refresh}
+              disabled={dateDisabled}
+              icon-name="utility:refresh"
+              class="slds-p-around_xxx-small">
+            </lightning-button>
 
-            <lightning-button-icon icon-name="utility:add" size="x-small" variant="brand" onclick={plusAvailable}>
-            </lightning-button-icon>          
+            <!-- Not sure if this is needed, added cause it was in the mockup -->
+            <lightning-button-group style="display: none;">
+              <lightning-button label="View Mode"></lightning-button>
+              <lightning-button label="Edit Mode" variant="brand"></lightning-button>
+            </lightning-button-group>
           </div>
+        </div>
 
-          <div key={appointment.key} if:false={appointment.filtered} class="appointment-data-cell">
-            {appointment.booked}
-          </div>
-
-          <div 
-            data-appointment={appointment.Id}  
-            data-appointmenttime={appointment.timeString} 
-            if:false={appointment.filtered} 
-            key={appointment.key} 
-            class="appointment-data-cell droppable" 
-            title={appointment.key} 
-            style="justify-content: flex-start; text-align: left;position: relative; padding: 6px;" 
-            ondrop={drop} 
-            ondragenter={dragenter} 
-            ondragleave={dragleave} 
-            ondragover={allowDrop}
-          >
-              <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
-                  <c-donor-dot oncancelvisit={handleCancelVisit} key={donorId} icon={donor.icon} donor={donor} appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString}>
-                  </c-donor-dot>
+        <template if:true={hasAppointmentsToDisplay}>
+          <div class="filter-container">
+            <div class="legend-header">
+              <div class="slds-button slds-button_neutral slds-button_brand legend-entry" style="margin-right: 8px;" data-status-api-name="All" onclick={handleSelectStatus}>
+                <p>Show All Statuses</p>
+              </div>
+        
+              <template for:each={statusOptions} for:item="status">
+                <div key={status.value} class="slds-button slds-button_neutral legend-entry" data-status-api-name={status.value} onclick={handleSelectStatus}>
+                  <div class={status.displayClass}></div>
+                  <p>{status.label}</p>
+                </div>
               </template>
-
-              <lightning-button style="margin-left: 8px;" icon-name="utility:add" label="Add Visit" variant="base" onclick={plusAvailable} data-id={appointment.id} data-appointment={appointment.Id}  data-appointmenttime={appointment.timeString}>
-              </lightning-button>
+            </div>
+        
+            <div class="legend-header">
+              <div class="slds-button slds-button_neutral slds-button_brand legend-entry" style="margin-right: 8px;" data-outcome-api-name="All" onclick={handleSelectOutcome}>
+                <p>Show All Outcomes</p>
+              </div>
+    
+              <!-- Hiding for now in case we want this later, will remove at a later point -->
+              <!-- <div" class="slds-button slds-button_neutral legend-entry" onclick={handleNullFilterChange}>
+                <div class="legend-icon outcome-none"></div>
+                <p>No Outcome</p>
+              </div> -->
+        
+              <template for:each={outcomeOptions} for:item="outcome">
+                <div key={outcome.value} class="slds-button slds-button_neutral legend-entry" data-outcome-api-name={outcome.value} onclick={handleSelectOutcome}>
+                  <div class={outcome.displayClass}></div>
+                  <p>{outcome.label}</p>
+                </div>
+              </template>
+            </div>
           </div>
         </template>
       </div>
-    </div>
-  </article>
+    </article>
 
-  <!-- Message Telling User to select Center/Date -->
-  <article if:false={hasAppointmentsToDisplay} class="slds-card">
-    <div class="no-appointments-container">
-      <p class="no-appointments-message-header">No Appointments Found</p>
-      <p class="no-appointments-message">Please ensure a center and date have been selected.</p>  
-    </div>
-  </article>
+    <!-- Appointment Rows -->
+    <article if:true={hasAppointmentsToDisplay} class="appointments-container">
+      <div class="appointment-list-container">
+        <div style="display: flex; flex-direction: column; position: sticky; top: 0; z-index: 2;">
+          <div class="appointment-date-header">
+            <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={selectedDate} time-zone="UTC">
+            </lightning-formatted-date-time>
+          </div>
+
+          <div style="display: grid; grid-template-columns: var(--appointment-grid-column-template);">
+            <div class="appointment-column-header-cell" style="text-align: center;">Time</div>
+            <div class="appointment-column-header-cell" style="text-align: center;">Available</div>
+            <div class="appointment-column-header-cell" style="text-align: center;">Filled</div>
+            <div class="appointment-column-header-cell" style="text-align: left;">Donors</div>
+          </div>
+        </div>
+
+        <div class="appointments">
+          <!-- <div class="appointment-column-header-cell" style="text-align: center;">Time</div>
+          <div class="appointment-column-header-cell" style="text-align: center;">Available</div>
+          <div class="appointment-column-header-cell" style="text-align: center;">Filled</div>
+          <div class="appointment-column-header-cell" style="text-align: left;">Donors</div> -->
+    
+          <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
+            <div key={appointment.key} if:false={appointment.filtered} style="background: #F5F0FF;" class="appointment-data-cell">
+                <a href={appointment.link} target="_blank">
+                  <lightning-formatted-time value={appointment.timeString} timezone={tz}></lightning-formatted-time>
+                </a>
+            </div>
+
+            <div key={appointment.key} if:false={appointment.filtered} style="justify-content: space-evenly;" class="appointment-data-cell">
+              <lightning-button-icon icon-name="utility:dash" size="x-small" variant="brand" onclick={minusAvailable}>
+              </lightning-button-icon>
+              
+              <p>{appointment.availability}</p>
+
+              <lightning-button-icon icon-name="utility:add" size="x-small" variant="brand" onclick={plusAvailable}>
+              </lightning-button-icon>          
+            </div>
+
+            <div key={appointment.key} if:false={appointment.filtered} class="appointment-data-cell">
+              {appointment.booked}
+            </div>
+
+            <div 
+              data-appointment={appointment.Id}  
+              data-appointmenttime={appointment.timeString} 
+              if:false={appointment.filtered} 
+              key={appointment.key} 
+              class="appointment-data-cell droppable" 
+              title={appointment.key} 
+              style="justify-content: flex-start; text-align: left;position: relative; padding: 6px; gap: 8px;" 
+              ondrop={drop} 
+              ondragenter={dragenter} 
+              ondragleave={dragleave} 
+              ondragover={allowDrop}
+            >
+                <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
+                    <c-donor-dot if:false={donor.filtered} oncancelvisit={handleCancelVisit} key={donorId} icon={donor.icon} donor={donor} appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString}>
+                    </c-donor-dot>
+                </template>
+
+                <lightning-button style="margin-left: 8px;" icon-name="utility:add" label="Add Visit" variant="base" onclick={plusAvailable} data-id={appointment.id} data-appointment={appointment.Id}  data-appointmenttime={appointment.timeString}>
+                </lightning-button>
+            </div>
+          </template>
+        </div>
+      </div>
+    </article>
+
+    <!-- Message Telling User to select Center/Date -->
+    <article if:false={hasAppointmentsToDisplay} style="height: 100%; display: flex; flex-direction: column; justify-content: center;" class="slds-card">
+      <div class="no-appointments-container">
+        <p class="no-appointments-message-header">No Appointments Found</p>
+        <p class="no-appointments-message">Please ensure a center and date have been selected.</p>  
+      </div>
+    </article>
+  </div>
 </template>

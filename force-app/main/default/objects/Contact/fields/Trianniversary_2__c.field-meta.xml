@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Trianniversary_2__c</fullName>
+    <externalId>false</externalId>
+    <formula>ADDMONTHS( First_Visit_Anniversary__c , -4 )</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Trianniversary 2</label>
+    <required>false</required>
+    <type>Date</type>
+</CustomField>

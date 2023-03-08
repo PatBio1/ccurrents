@@ -4,42 +4,42 @@ import { NavigationMixin } from 'lightning/navigation';
 import { visitStatusToDisplayClass, visitOutcomeToDisplayClass } from "c/constants";
 
 export default class DonorDot extends NavigationMixin(LightningElement)  {
-
     @track showpopover = false;
     @api initials;
     @api icon = 'standard:account';
     @api donor;
     @api appointment;
-    filteredClass = '';
+
     donorLink;
     visitLink;
-    dotclasses = [
-        'slds-m-right_small',
-        'donor-icon',
+    isPopupConfigured = false;
+    popUpDirection;
 
-    ];
+    get popupContainerClasses() {
+        let baseClasses = ["slds-popover", "visit-popup-container"];
 
-
-    get filteredClasses(){
-        if(this.donor.filtered){
-            this.filteredClass = 'filtered';
-        }else{
-            this.filteredClass = 'unfiltered';
+        if (this.popUpDirection === "Top") {
+            baseClasses.push("slds-nubbin_bottom");
+        } else {
+            baseClasses.push("slds-nubbin_top");
         }
-        return this.filteredClass;
+
+        return baseClasses.join(" ");
     }
 
-    get classes(){
-        this.dotclasses.push(this.determineAvatarClass(this.donor.status));
-        return this.dotclasses.join(' ');
-    }
+    get avatarClasses() {
+        let targetClasses = ['slds-m-right_small', 'donor-icon', visitStatusToDisplayClass.get(this.donor.status)];
+        
+        if (this.donor.outcome) {
+            targetClasses.push(visitOutcomeToDisplayClass.get(this.donor.outcome));
+        } else {
+            targetClasses.push(visitOutcomeToDisplayClass.get("None"));
+        }
 
-    renderedCallback(){
-        console.log('rendered cb')
+        return targetClasses.join(" ");
     }
 
     connectedCallback() {
-  
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
@@ -61,37 +61,32 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         });
     }
 
+    renderedCallback() {
+        if (this.showpopover && !this.isPopupConfigured) {
+            this.calculatePopupPosition();
+        }
+    }
+
     togglePopover() {
         this.showpopover = !this.showpopover;
+        this.isPopupConfigured = false;
     }
 
     hidePopover() {
         this.showpopover = false;
     }
 
-    donorClick(){
-
-        window.open(this.donorLink);
-        
-    }
-
-    visitClick(){
-        window.open(this.visitLink);
-    }
-
     dragstart(event){
-        //save some "draggable" data
         this.showpopover = false;
+
         event.dataTransfer.setData("donorId", this.donor.donorId);
         event.dataTransfer.setData("donorName", this.donor.donorName);
         event.dataTransfer.setData("appointmentId", this.appointment.Id);
         event.dataTransfer.setData("appointmentTime", this.appointment.timeString);
         event.dataTransfer.setData("visitId", this.donor.visitId );
-        console.log('dragging... donor visit '  + this.donor.donorId + 'from visit ' + this.donor.visitId +  ' from appointment ' + this.appointment.Id)
     }
 
     cancelVisit(event){
-        console.log(this.donor.visitId);
         const cancelVisitEvent = new CustomEvent("cancelvisit", {
             detail: {
                 visitId:this.donor.visitId,
@@ -99,23 +94,28 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
                 donorName: this.donor.donorName
             }
         });
+
         this.dispatchEvent(cancelVisitEvent);
     }
 
-
-
-    dragend(event){
-        console.log('dragend...'+ this.donor.donorId );
-    }
-
-    determineAvatarClass() {
-        let targetClasses = [visitStatusToDisplayClass.get(this.donor.status)];
-        
-        if (this.donor.outcome) {
-            targetClasses.push(visitOutcomeToDisplayClass.get(this.donor.outcome));
+    calculatePopupPosition() {
+        let popupContainer = this.template.querySelector("section.visit-popup-container");
+        if (!popupContainer) {
+            console.error("Couldn't find popup container");
+            return;
         }
 
-        return targetClasses.join(" ");
+        let screenHalfwayPoint = window.innerHeight / 2;
+        let popOnTop = (this.template.host.getBoundingClientRect().y >= screenHalfwayPoint);
+
+        if (popOnTop) {
+            this.popUpDirection = "Top";
+            popupContainer.style.top = "-218px";
+        } else {
+            this.popUpDirection = "Bottom";
+            popupContainer.style.top = "66px";
+        }
+
+        this.isPopupConfigured = true;
     }
- 
 }

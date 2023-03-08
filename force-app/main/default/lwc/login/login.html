@@ -1,0 +1,58 @@
+<template>
+
+    <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
+
+    <div if:true={showLogin} class="slds-var-p-around_medium">
+        <div class="title-small slds-text-align_center">
+            {labels.login}
+        </div>
+
+        <div class="slds-m-bottom_small">
+            <lightning-input type="text" label={labels.emailOrPrimaryPhone} value={username} onchange={onUsernameChange}></lightning-input>
+        </div>
+        <div class="slds-m-bottom_small">
+            <lightning-input type="password" label={labels.password} value={password} onchange={onPasswordChange}></lightning-input>
+        </div>
+
+        <div class="slds-grid slds-gutters slds-m-bottom_small">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-input type="checkbox" label={labels.rememberMe} checked></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-text-align_right">
+                <lightning-button variant="base" label={labels.forgotPassword} class="tertiary-button" onclick={onForgotButtonClick}></lightning-button>
+            </div>
+        </div>
+
+        <div class="slds-m-bottom_xx-large">
+            <lightning-button if:true={loginValid} label={labels.login} variant="brand" stretch="true" class="primary-button" onclick={onLoginButtonClick}></lightning-button>
+            <button if:false={loginValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.login}</button>
+        </div>
+
+        <div class="slds-text-align_center slds-m-bottom_small">
+            Don't have an account yet?
+        </div>
+        <div class="slds-m-bottom_small">
+            <lightning-button label={labels.signUp} stretch="true" class="secondary-button" onclick={onSignUpButtonClick}></lightning-button>
+        </div>
+    </div>
+
+    <div if:true={showForgotPassword} class="slds-var-p-around_medium">
+        <lightning-button variant="base" label={labels.backToLogin} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+
+        <div class="title-small slds-text-align_center">
+            Forgot Password
+        </div>
+
+        <div class="slds-text-align_center slds-m-bottom_small">
+            Enter the email address you used when you joined and we'll send you instructions to reset your password.
+        </div>
+        <div class="slds-m-bottom_small">
+            <lightning-input type="email" label={labels.email} value={email} onchange={onEmailChange}></lightning-input>
+        </div>
+        <div class="slds-m-bottom_xx-large">
+            <lightning-button if:true={forgotValid} label="Send Instructions" variant="brand" stretch="true" class="primary-button" onclick={onSendButtonClick}></lightning-button>
+            <button if:false={forgotValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>Send Instructions</button>
+        </div>
+    </div>
+
+</template>

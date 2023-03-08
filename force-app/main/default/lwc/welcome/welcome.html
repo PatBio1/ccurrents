@@ -59,4 +59,8 @@
         <c-profile center={center} onback={onBackButtonClick}></c-profile>
     </div>
 
+    <div if:true={showLogin}>
+        <c-login onsignup={onSignUpButtonClick}></c-login>
+    </div>
+
 </template>

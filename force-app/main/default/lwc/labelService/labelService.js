@@ -6,6 +6,7 @@ import alreadyHaveAnAccount from '@salesforce/label/c.Already_Have_An_Account';
 import back from '@salesforce/label/c.Back';
 import backToCenters from '@salesforce/label/c.Back_To_Centers';
 import backToHomepage from '@salesforce/label/c.Back_To_Homepage';
+import backToLogin from '@salesforce/label/c.Back_To_Login';
 import basicProfile from '@salesforce/label/c.Basic_Profile';
 import bus from '@salesforce/label/c.Bus';
 import cancel from '@salesforce/label/c.Cancel';
@@ -22,14 +23,17 @@ import closed from '@salesforce/label/c.Closed';
 import confirmPassword from '@salesforce/label/c.Confirm_Password';
 import congratulations from '@salesforce/label/c.Congratulations';
 import email from '@salesforce/label/c.Email';
+import emailOrPrimaryPhone from '@salesforce/label/c.Email_Or_Primary_Phone';
 import english from '@salesforce/label/c.English';
 import enterPassword from '@salesforce/label/c.Enter_Password';
 import firstName from '@salesforce/label/c.First_Name';
+import forgotPassword from '@salesforce/label/c.Forgot_Password';
 import fridayAbbreviation from '@salesforce/label/c.Friday_Abbreviation';
 import howWillYouGetToCenter from '@salesforce/label/c.How_Will_You_Get_To_Center';
 import invalidZipCode from '@salesforce/label/c.Invalid_Zip_Code';
 import joinUs from '@salesforce/label/c.Join_Us';
 import lastName from '@salesforce/label/c.Last_Name';
+import login from '@salesforce/label/c.Login';
 import logout from '@salesforce/label/c.Logout';
 import logoutConfirmation from '@salesforce/label/c.Logout_Confirmation';
 import middleName from '@salesforce/label/c.Middle_Name';
@@ -41,6 +45,7 @@ import myRewards from '@salesforce/label/c.My_Rewards';
 import next from '@salesforce/label/c.Next';
 import nickname from '@salesforce/label/c.Nickname';
 import notifications from '@salesforce/label/c.Notifications';
+import password from '@salesforce/label/c.Password';
 import passwordRequirements from '@salesforce/label/c.Password_Requirements';
 import passwordsDontMatch from '@salesforce/label/c.Passwords_Dont_Match';
 import passwordTooShort from '@salesforce/label/c.Password_Too_Short';
@@ -51,6 +56,7 @@ import plasmaDonationSavesLives from '@salesforce/label/c.Plasma_Donation_Saves_
 import popularTimes from '@salesforce/label/c.Popular_Times';
 import previous from '@salesforce/label/c.Previous';
 import recommendedToYou from '@salesforce/label/c.Recommended_To_You';
+import rememberMe from '@salesforce/label/c.Remember_Me';
 import removePhoto from '@salesforce/label/c.Remove_Photo';
 import resultsFor from '@salesforce/label/c.Results_For';
 import saturdayAbbreviation from '@salesforce/label/c.Saturday_Abbreviation';
@@ -60,6 +66,7 @@ import scheduled from '@salesforce/label/c.Scheduled';
 import scheduleYour1stAppointment from '@salesforce/label/c.Schedule_Your_1st_Appointment';
 import selectTimeSlot from '@salesforce/label/c.Select_Time_Slot';
 import setYourPassword from '@salesforce/label/c.Set_Your_Password';
+import signUp from '@salesforce/label/c.Sign_Up';
 import socialPhoto from '@salesforce/label/c.Social_Photo';
 import spanish from '@salesforce/label/c.Spanish';
 import state from '@salesforce/label/c.State';
@@ -95,6 +102,7 @@ const labels = {
     back,
     backToCenters,
     backToHomepage,
+    backToLogin,
     basicProfile,
     bus,
     cancel,
@@ -111,14 +119,17 @@ const labels = {
     confirmPassword,
     congratulations,
     email,
+    emailOrPrimaryPhone,
     english,
     enterPassword,
     firstName,
+    forgotPassword,
     fridayAbbreviation,
     howWillYouGetToCenter,
     invalidZipCode,
     joinUs,
     lastName,
+    login,
     logout,
     logoutConfirmation,
     middleName,
@@ -130,6 +141,7 @@ const labels = {
     next,
     nickname,
     notifications,
+    password,
     passwordRequirements,
     passwordsDontMatch,
     passwordTooShort,
@@ -140,6 +152,7 @@ const labels = {
     popularTimes,
     previous,
     recommendedToYou,
+    rememberMe,
     removePhoto,
     resultsFor,
     saturdayAbbreviation,
@@ -149,6 +162,7 @@ const labels = {
     scheduleYour1stAppointment,
     selectTimeSlot,
     setYourPassword,
+    signUp,
     socialPhoto,
     spanish,
     state,

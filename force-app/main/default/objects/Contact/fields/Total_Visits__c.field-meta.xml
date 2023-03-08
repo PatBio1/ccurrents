@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Total_Visits__c</fullName>
-    <description>All types and outcomes of Visits</description>
+    <description>All PAST Visits where the Donor showed up to the Center. Does not include no shows, cancellations or reschedules.</description>
     <externalId>false</externalId>
+    <inlineHelpText>All PAST Visits where the Donor showed up to the Center. Does not include no shows, cancellations or reschedules.</inlineHelpText>
     <label>Total Visits</label>
+    <summaryFilterItems>
+        <field>Visit__c.Status__c</field>
+        <operation>equals</operation>
+        <value>Complete</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Visit__c.Outcome__c</field>
+        <operation>notEqual</operation>
+        <value>No Show, Canceled, Rescheduled</value>
+    </summaryFilterItems>
     <summaryForeignKey>Visit__c.Donor__c</summaryForeignKey>
     <summaryOperation>count</summaryOperation>
     <type>Summary</type>

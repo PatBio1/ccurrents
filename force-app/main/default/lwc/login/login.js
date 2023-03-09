@@ -54,7 +54,8 @@ export default class Menu extends LightningElement {
 
         const request = {
             username: this.username,
-            password: this.password
+            password: this.password,
+            startUrl: '/'
         };
 
         console.log('login request', JSON.stringify(request));

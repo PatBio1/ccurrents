@@ -1,6 +1,21 @@
 <template>
-    <div draggable="true" ondragstart={dragstart} ondragend={dragend} data-text="foo" style="position: relative;">
+    <div style="position: relative;">
+        <div class={loyaltyBadgeDisplayClass}>
+            <lightning-icon class="rounded-slds-icon" icon-name="utility:favorite" size="xx-small">
+            </lightning-icon>
+        </div>
+
+        <div if:true={displaySpecialTasks} class="special-tasks-badge">
+            <p>{donor.visitNotes.length}</p>
+        </div>
+
+        <div if:true={isFirstVisit} class="first-visit-badge">
+            <lightning-icon class="rounded-slds-icon" icon-name="utility:add" size="xx-small">
+            </lightning-icon>
+        </div>
+        
         <lightning-avatar
+            draggable="true" ondragstart={dragstart} ondragend={dragend} data-text="foo"
             size="large"
             onclick={togglePopover}
             aria-haspopup="false"
@@ -11,72 +26,12 @@
             class={avatarClasses}
             style="margin-right:2px;">
         </lightning-avatar>
+    </div>
 
-        <template if:true={showpopover}>
-            <section class={popupContainerClasses} aria-label="Dialog title" aria-describedby="popover-body-id" role="dialog">
-                <div style="display: flex; flex-direction: column;">
-                    <div style="display: flex; justify-content: space-between; padding: 8px;">
-                        <div style="display: flex; align-items: center; gap: 16px;">
-                            <lightning-avatar
-                                size="medium"
-                                variant="circle"
-                                initials={donor.initials}
-                                fallback-icon-name={donor.icon}
-                                alternative-text={donor.donorName}>
-                            </lightning-avatar>
-
-                            <div style="display: flex; flex-direction: column;">
-                                <p><b><a href={donorLink} target="_blank" >{donor.donorName}</a></b></p>
-
-                                <ul style="font-size: 14px;" class="slds-list_horizontal slds-has-dividers_left">
-                                    <li class="slds-item">Card Issued</li>
-                                    <li class="slds-item">Signature</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <lightning-button-icon icon-name="utility:close" alternative-text="close" title="Close" onclick={hidePopover} class="slds-float_right slds-popover__close">
-                        </lightning-button-icon>
-                    </div>
-
-                    <div style="border-top: 1px solid #DDDBDA; border-bottom: 1px solid #DDDBDA; padding: 0.5rem; height: 96px; overflow-y: auto;">
-                        <ul style="font-size: 14px;" class="slds-list_dotted">
-                            <li>Special Note 1</li>
-                            <li>Special Note 2</li>
-                            <li>Special Note 3</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px;">
-                        <div class="slds-badge">{donor.status}</div>
-                        
-                        <div style="display: flex; justify-content: flex-end; gap: 8px;">
-                            <lightning-button-icon title="Exception Payment" icon-name="utility:money" variant="bare" size="large"></lightning-button-icon>
-                            <lightning-button-icon title="Reschedule Visit" icon-name="utility:date_input" variant="bare" size="large"></lightning-button-icon>
-                            <lightning-button-icon title="Cancel Visit" icon-name="utility:close" variant="bare" size="large"></lightning-button-icon>
-                        </div>
-
-                        <!-- <lightning-button label="Exceptional Payment">
-                        </lightning-button>
-
-                        <div>
-                            <lightning-button label="Reschedule Visit">
-                            </lightning-button>
-
-                            <lightning-button label="Cancel Visit">
-                            </lightning-button>
-                        </div> -->
-                    </div>
-                </div>
-                
-                <!-- <lightning-button-icon icon-name="utility:close"  alternative-text="close" title="Close" onclick={hidePopover} class="slds-float_right slds-popover__close"></lightning-button-icon>
-        
-                <div id="popover-body-id" class="slds-popover__body">
-                    <div class="slds-popover__meta">
-                        <span class="slds-badge">{donor.status}</span>
-                        <span if:true={donor.outcome} class="slds-badge">{donor.outcome}</span>
-                    </div>
-
+    <template if:true={showpopover}>
+        <section class={popupContainerClasses} aria-label="Dialog title" aria-describedby="popover-body-id" role="dialog">
+            <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; justify-content: space-between; padding: 8px;">
                     <div style="display: flex; align-items: center; gap: 16px;">
                         <lightning-avatar
                             size="medium"
@@ -86,18 +41,76 @@
                             alternative-text={donor.donorName}>
                         </lightning-avatar>
 
-                        <div style="display: flex; flex-direction: column; justify-content: center">
+                        <div style="display: flex; flex-direction: column;">
                             <p><b><a href={donorLink} target="_blank" >{donor.donorName}</a></b></p>
-                            <p><a href={visitLink} target="_blank" >Visit Details</a></p>
+
+                            <ul style="font-size: 14px;" class="slds-list_horizontal slds-has-dividers_left">
+                                <li class="slds-item">{donor.loyaltyTierName}</li>
+                                <li class="slds-item">Card Issued</li>
+                            </ul>
                         </div>
                     </div>
 
-                    <div style="display: flex; justify-content: flex-end">
-                        <lightning-button variant="destructive-text" label="Cancel Visit" title="Cancel Visit" onclick={cancelVisit} style="margin-top: 8px" icon-name="utility:delete">
-                        </lightning-button>
+                    <lightning-button-icon icon-name="utility:close" alternative-text="close" title="Close" onclick={hidePopover} class="slds-float_right slds-popover__close">
+                    </lightning-button-icon>
+                </div>
+
+                <div style="border-top: 1px solid #DDDBDA; border-bottom: 1px solid #DDDBDA; padding: 0.5rem; height: 96px; overflow-y: auto;">
+                    <ul if:true={donor.visitNotes.length} style="font-size: 14px;" class="slds-list_dotted">
+                        <template for:each={donor.visitNotes} for:item="visitNote">
+                            <li key={visitNote.visitNoteId}>{visitNote.visitNoteSubject}</li>
+                        </template>
+                    </ul>
+
+                    <div if:false={donor.visitNotes.length} style="display: flex; align-items: center; justify-content: center;">
+                        <p>No notes have been associated with this visit</p>
                     </div>
-                </div> -->
-            </section>
-        </template>
-    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px;">
+                    <div class="slds-badge">{donor.status}</div>
+                    
+                    <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                        <lightning-button-icon title="Exception Payment" icon-name="utility:money" variant="bare" size="large">
+                        </lightning-button-icon>
+
+                        <lightning-button-icon title="Reschedule Visit" icon-name="utility:date_input" variant="bare" size="large">
+                        </lightning-button-icon>
+
+                        <lightning-button-icon title="Cancel Visit" icon-name="utility:close" variant="bare" size="large" onclick={cancelVisit}>
+                        </lightning-button-icon>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- <lightning-button-icon icon-name="utility:close"  alternative-text="close" title="Close" onclick={hidePopover} class="slds-float_right slds-popover__close"></lightning-button-icon>
+    
+            <div id="popover-body-id" class="slds-popover__body">
+                <div class="slds-popover__meta">
+                    <span class="slds-badge">{donor.status}</span>
+                    <span if:true={donor.outcome} class="slds-badge">{donor.outcome}</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <lightning-avatar
+                        size="medium"
+                        variant="circle"
+                        initials={donor.initials}
+                        fallback-icon-name={donor.icon}
+                        alternative-text={donor.donorName}>
+                    </lightning-avatar>
+
+                    <div style="display: flex; flex-direction: column; justify-content: center">
+                        <p><b><a href={donorLink} target="_blank" >{donor.donorName}</a></b></p>
+                        <p><a href={visitLink} target="_blank" >Visit Details</a></p>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end">
+                    <lightning-button variant="destructive-text" label="Cancel Visit" title="Cancel Visit" onclick={cancelVisit} style="margin-top: 8px" icon-name="utility:delete">
+                    </lightning-button>
+                </div>
+            </div> -->
+        </section>
+    </template>
 </template>

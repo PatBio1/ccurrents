@@ -39,6 +39,30 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         return targetClasses.join(" ");
     }
 
+    get loyaltyBadgeDisplayClass() {
+        const loyaltyLevelNameToClass = new Map([
+            ["Donor (Default)", "regular-loyalty-badge"],
+            ["Normal Donor +15", "regular-loyalty-badge"],
+            ["Signature", "signature-loyalty-badge"],
+            ["VIP", "vip-loyalty-badge"],
+            ["Royal", "royal-loyalty-badge"]
+        ]);
+
+        return ["loyalty-badge", loyaltyLevelNameToClass.get(this.donor.loyaltyTierName) || "regular-loyalty-badge"].join(" ");
+    }
+
+    get isFirstVisit() {
+        return this.donor.isFirstVisit;
+    }
+
+    get displaySpecialTasks() {
+        if (this.isFirstVisit) {
+            return false;
+        }
+
+        return (this.donor.visitNotes && this.donor.visitNotes.length > 0);
+    }
+
     connectedCallback() {
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
@@ -62,6 +86,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     renderedCallback() {
+        console.log(this.donor);
         if (this.showpopover && !this.isPopupConfigured) {
             this.calculatePopupPosition();
         }

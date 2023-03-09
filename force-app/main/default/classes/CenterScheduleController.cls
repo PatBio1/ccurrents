@@ -47,9 +47,15 @@ public with sharing class CenterScheduleController {
                         Donor__r.Name,
                         Donor__r.FirstName,
                         Donor__r.LastName,
+                        Donor__r.Account.Loyalty_Level__pr.Name,
+                        Donor__r.Account.First_Visit__pc,
                         Donor__r.Email,
                         Status__c,
-                        Outcome__c
+                        Outcome__c,
+                        (
+                            SELECT Id, Subject
+                            FROM Tasks
+                        )
                 FROM Visit__c
                 WHERE Appointment__c =: appointmentId
                 ORDER BY lastmodifieddate
@@ -110,9 +116,15 @@ public with sharing class CenterScheduleController {
                         Donor__r.Name,
                         Donor__r.FirstName,
                         Donor__r.LastName,
+                        Donor__r.Account.Loyalty_Level__pr.Name,
+                        Donor__r.Account.First_Visit__pc,
                         Donor__r.Email,
                         Status__c,
-                        Outcome__c
+                        Outcome__c,
+                        (
+                            SELECT Id, Subject
+                            FROM Tasks
+                        )
                 FROM Visit__c
                 WHERE Appointment__c in: appMap.keyset()
                 ORDER BY lastmodifieddate
@@ -277,7 +289,15 @@ public with sharing class CenterScheduleController {
 
         @AuraEnabled
         public Boolean filtered {get;set;}
-        
+
+        @AuraEnabled
+        public String loyaltyTierName {get;set;}
+
+        @AuraEnabled
+        public Boolean isFirstVisit {get;set;}
+
+        @AuraEnabled
+        public VisitNote[] visitNotes {get;set;}
 
         public Visit(Visit__c visit){
             this.visitId = visit.Id;  
@@ -291,7 +311,29 @@ public with sharing class CenterScheduleController {
             this.outcome = visit.Outcome__c;
             this.icon = 'standard:account';
             this.filtered = false;
+
+            this.loyaltyTierName = visit.Donor__r.Account.Loyalty_Level__pr.Name;
+            this.isFirstVisit = (visit.Donor__r.Account.First_Visit__pc == null);
+
+            this.visitNotes = new VisitNote[] {};
+            if (visit.Tasks != null) {
+                for(Task visitTask : visit.Tasks) {
+                    this.visitNotes.add(new VisitNote(visitTask));
+                }
+            }
         }
     }
 
+    public class VisitNote {
+        @AuraEnabled
+        public String visitNoteId {get;set;}
+
+        @AuraEnabled
+        public String visitNoteSubject {get;set;}
+
+        public VisitNote(Task taskRecord) {
+            this.visitNoteId = taskRecord.Id;
+            this.visitNoteSubject = taskRecord.Subject;
+        }
+    }
 }    

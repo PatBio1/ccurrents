@@ -15,6 +15,67 @@
     left: -166px;
 }
 
+.loyalty-badge {
+    position: absolute;
+    left: -6px;
+    top: -4px;
+    --sds-c-icon-color-foreground-default: white;
+}
+
+.first-visit-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: -6px;
+    top: -4px;
+    --sds-c-icon-color-foreground-default: white;
+    --sds-c-icon-color-background: #8080e7;
+}
+
+.special-tasks-badge {
+    position: absolute;
+    right: -6px;
+    top: -4px;
+    background-color: #d14141;
+    padding: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+}
+
+.rounded-slds-icon {
+    padding: 4px;
+    border-radius: 100%;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.regular-loyalty-badge {
+    display: none;
+}
+
+.signature-loyalty-badge {
+    --sds-c-icon-color-background: #4e4edd;
+}
+
+.vip-loyalty-badge {
+    --sds-c-icon-color-background: #d3c723;
+}
+
+.royal-loyalty-badge {
+    --sds-c-icon-color-background: #0b7514;
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: 10px;

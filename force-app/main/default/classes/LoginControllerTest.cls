@@ -4,7 +4,7 @@ public with sharing class LoginControllerTest {
     @isTest
     static void testLogin() {
         System.runAs(TestUtil.createExperienceGuestUser()) {
-            String startUrl = LoginController.login('user', 'pass');
+            String startUrl = LoginController.login('user', 'pass', '/');
 
             System.assertEquals(null, startUrl);
         }
@@ -18,7 +18,7 @@ public with sharing class LoginControllerTest {
             Boolean exceptionThrown = false;
 
             try {
-                LoginController.login('user', 'pass');
+                LoginController.login('user', 'pass', '/');
             } catch (Exception e) {
                 exceptionThrown = true;
             }

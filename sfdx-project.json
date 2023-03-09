@@ -8,7 +8,9 @@
   "name": "proesis",
   "namespace": "",
   "packageAliases": {
-    "MarketingCloud": "04t6S000001Ujut"
+    "MarketingCloud": "04t6S000001Ujut",
+    "MobilePublisherAndroid" : "04t1I000003RkFaQAK",
+    "MobilePublisherIOS" : "04t1I000003RkFQQA0"
   },
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "57.0"

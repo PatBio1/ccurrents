@@ -34,4 +34,7 @@ export default class Menu extends NavigationMixin(LightningElement) {
         });
     }
 
+    onPhotoClick() {
+    }
+
 }

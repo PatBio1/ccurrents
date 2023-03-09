@@ -100,7 +100,8 @@ public with sharing class TestUtil {
             BillingCountry = 'US',
             CenterId__c = 'center-111',
             Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-            Site = 'P-00'
+            Site = 'P-00',
+            IsActive__c = false
         );
     }
     
@@ -117,7 +118,8 @@ public with sharing class TestUtil {
             Geolocation__Longitude__s = -80.242049,
             CenterId__c = 'center-222',
             Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-            Site = 'P-01'
+            Site = 'P-01',
+            IsActive__c = true
         );
     }
 
@@ -134,7 +136,8 @@ public with sharing class TestUtil {
             Geolocation__Longitude__s = -96.87149106359581,
             CenterId__c = 'center-333',
             Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
-            Site = 'P-02'
+            Site = 'P-02',
+            IsActive__c = true
         );
     }
 

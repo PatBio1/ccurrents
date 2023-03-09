@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <customValue>
-        <fullName>New</fullName>
-        <default>true</default>
-        <label>New</label>
-    </customValue>
-    <customValue>
         <fullName>Registered</fullName>
-        <default>false</default>
+        <default>true</default>
         <label>Registered</label>
-    </customValue>
-    <customValue>
-        <fullName>Verified</fullName>
-        <default>false</default>
-        <label>Verified</label>
     </customValue>
     <customValue>
         <fullName>Applicant</fullName>
@@ -35,9 +25,21 @@
         <default>false</default>
         <label>Excluded</label>
     </customValue>
-    <description>New: Transient state when record is first created
-Registered: Are in the system as a potential donor
-Verified: Has filled out basic profile information and have passed initial criteria
+    <customValue>
+        <fullName>New</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>New</label>
+    </customValue>
+    <customValue>
+        <fullName>Verified</fullName>
+        <default>false</default>
+        <isActive>false</isActive>
+        <label>Verified</label>
+    </customValue>
+    <description>*Lead: Transient state when record is first created
+*Verified(Lead): Has filled out basic profile information and have verified mobile number and email
+Registered: Are in the system as a potential donor and SFDC user
 Applicant: Has an appointment to assess their fitness for donation
 Eligible: Has met all criteria for donation and Eligiblity datetime is today or in the past
 Deferred: Has met all critieria for donation and Eligibility datetime is in the future

@@ -18,17 +18,20 @@ import CreateScheduleModal from "c/createScheduleModal";
 export default class CenterScheduler extends NavigationMixin(LightningElement) {
     statusOptions;
     outcomeOptions;
-    filterOnNull = false;
+    filterOnNull = true;
 
     //hardcoded to null recordTypeId, since we don't use RTs on Visit__c
     @wire(getPicklistValues, { fieldApiName: STATUS_FIELD, recordTypeId: '012000000000000AAA' })
     getStatusValues({ error, data }) {
         if (data) {
+            // API names for Status Picklist values that don't need to be displayed as a filter option
+            const omittedStatuses = ["New", "Complete"];
+            
             if (data.values.length > visitStatusToDisplayClass.size) {
                 console.error("There aren't enough configured status colors for the queried statuses");
             }
 
-            this.statusOptions = data.values.map((status) => {
+            this.statusOptions = data.values.filter((status => !omittedStatuses.includes(status.value))).map((status) => {
                 return {...status, displayClass: `legend-icon ${visitStatusToDisplayClass.get(status.value)}`}
             });
 
@@ -92,7 +95,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
             if (!!visit.status && this.hasStatusFilters() && !this.status.includes(visit.status)) {
                 passesFilters = false;
-            } else if ((filterOnNull || !!visit.outcome) && this.hasOutcomeFilters() && !this.outcome.includes(visit.outcome)) {
+            } else if ((filterOnNull || !!visit.outcome) && this.hasOutcomeFilters() && !this.outcome.includes(visit.outcome)) { 
                 passesFilters = false;
             }
 
@@ -108,11 +111,11 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         this.loadCenters();
     }
 
-    refresh(){
+    refresh() {
         this.fetchAppointments();
     }
 
-    openNewScheduleModal(){
+    openNewScheduleModal() {
         CreateScheduleModal.open({
             // pass data for the @api properties declared in the Modal component
             centerId: this.selectedCenterId,
@@ -136,7 +139,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         });
     }
     
-    drop(event){
+    drop(event) {
         
         event.preventDefault();
         var donorId = event.dataTransfer.getData("donorId");
@@ -199,11 +202,11 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
     }
 
-    allowDrop(event){
+    allowDrop(event) {
         event.preventDefault();
     }
 
-    dragenter(event){
+    dragenter(event) {
         // console.log('drag enter')
         event.target.classList.add('drop-ok');
     }
@@ -213,7 +216,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     }    
 
 
-    get filterLabel(){
+    get filterLabel() {
         if(this.showFilters){
             return 'Hide Filters'
         }else{
@@ -221,7 +224,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         }
     }
 
-    get appointmentTypes(){
+    get appointmentTypes() {
         return [
             {label:'induction', value:'induction'},
             {label:'plasma donation', value:'plasma donation'},
@@ -229,32 +232,26 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         ]
     }
 
-    toggleFilters(){
+    toggleFilters() {
         console.log('toggle')
         this.showFilters = !this.showFilters;
     }
 
-    filterChange(event){
+    filterChange(event) {
         console.log(event);
     }
 
-    applyFilters(){
+    applyFilters() {
         // only visits are filtered in js, not appointments
         // for each visit in each app row
-        for(let i= 0; i < this.appointments.length; i++){
-            let app = this.appointments[i];
-            app = this.appointments[i];
+        for(let appointment of this.appointments) {
+            if (appointment.visits && appointment.visits.length > 0) {
+                for(let visit of appointment.visits) {
 
-            if (app.visits.length > 0) {
-                for(let visit of app.visits){
                     let newFilterStatus = (
                         this.filters.hasActiveFilters() &&
                         !this.filters.passesFilters(visit, this.filterOnNull)
                     );
-
-                    if (visit.filtered === newFilterStatus) {
-                        continue;
-                    }
 
                     visit.filtered = newFilterStatus;
                 }
@@ -262,7 +259,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         }
     }
 
-    clearFilters(){
+    clearFilters() {
         console.log(this.filters);
         this.filters.start = '';
         this.filters.end = '';
@@ -302,45 +299,40 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
   
     }
 
-    fetchAppointments(){
+    async fetchAppointments(){
         this.appointments = [];    
         this.loading = true;
-        
-        let start = this.timeToDate(this.filters.start);
-        let end = this.timeToDate(this.filters.end);
-        console.log(this.filters.start);
-        console.log(this.filters.end);
-        getAppointments({
+
+        let queriedAppointments = await getAppointments({
             centerId: this.selectedCenterId,
             appointmentDay: this.selectedDate,
             timeStart: this.filters.start,
             timeStop: this.filters.end
-        }).then(async appointments =>{
-            for(let i=0;i<appointments.length;i++){
-                //generate appointment links
-                appointments[i].link = await this[NavigationMixin.GenerateUrl]({
+        });
+
+        let generateUrlPromises = [];
+        for(let appointment of queriedAppointments) {
+            generateUrlPromises.push(
+                this[NavigationMixin.GenerateUrl]({
                     type: 'standard__recordPage',
                     attributes: {
-                        recordId: appointments[i].Id,
+                        recordId: appointment.Id,
                         actionName: 'view',
                     }
                 }).then((url) => {
-                    return url;
-                }).catch(err => {
-                    this.showToast(err.body.message, 'error','error')
-                    console.log(err.body.message);
-                    
-                });
-                // console.log(appointments[i]);
-            }
+                    appointment.link = url;
+                })
+            );
+        }
 
-            console.log(appointments);
-            this.appointments = appointments;
-        }).catch(err =>{
-            console.error(err.body.message);
-        }).finally(()=>{
+        try {
+            await Promise.all(generateUrlPromises);
+        } catch(generateUrlError) {
+            console.log("generateUrlError", generateUrlPromises);
+        } finally {
+            this.appointments = queriedAppointments;
             this.loading = false;
-        });
+        }
     }
 
     changeCenter(event){
@@ -436,6 +428,8 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
                 allRelatedStatusButton.classList.remove('slds-button_brand');
             }
 
+            console.log(this.filters[filterName]);
+
             newFilterButton.classList.toggle("slds-button_brand");
         } else {
             this.filters[filterName] = [];
@@ -457,13 +451,18 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
     handleSelectOutcome(event) {
         let targetOutcome = event.currentTarget.dataset.outcomeApiName;
+        if (targetOutcome === "None") {
+            targetOutcome = undefined;
+        }
 
         this.handleSelectNewFilter(event.currentTarget, targetOutcome, "data-outcome-api-name", "outcome");
         this.applyFilters();
     }
 
     handleNullFilterChange(event) {
-        this.filterOnNull = event.detail.checked;
+        this.filterOnNull = !this.filterOnNull;
+
+        this.handleSelectNewFilter(event.currentTarget, "None", "data-outcome-api-name", "outcome");
         this.applyFilters();
     }
 }

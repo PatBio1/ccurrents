@@ -86,73 +86,40 @@
 }
 
 /* custom donor dot colors */
+:host .outcome-none {
+    --sds-c-icon-color-background: #F2E8CF;
+    outline: 4px solid #F2E8CF;
+}
 :host .outcome-no-show {
-    --sds-c-icon-color-background : #81A684;
-    /* background : #81A684; */
+    --sds-c-icon-color-background: #81A684;
     outline: 4px solid #81A684;
 }
 :host .outcome-canceled {
-    --sds-c-icon-color-background : #362417;
-    /* background : #362417; */
+    --sds-c-icon-color-background: #362417;
     outline: 4px solid #362417;
 }
 :host .outcome-rescheduled {
-    --sds-c-icon-color-background : #FE5F55;
-    /* background : #FE5F55; */
+    --sds-c-icon-color-background: #FE5F55;
     outline: 4px solid #FE5F55;
 }
 :host .outcome-donation {
-    --sds-c-icon-color-background : #020887;
-    /* background : #020887; */
+    --sds-c-icon-color-background: #020887;
     outline: 4px solid #020887;
 }
 
 :host .status-new {
-    --sds-c-icon-color-background : #748067;
+    --sds-c-icon-color-background: #748067;
     background : #748067;
 }
 :host .status-scheduled {
-    --sds-c-icon-color-background : #420039;
+    --sds-c-icon-color-background: #420039;
     background : #420039;
 }
 :host .status-checked-in {
-    --sds-c-icon-color-background : #F15BB5;
+    --sds-c-icon-color-background: #F15BB5;
     background : #F15BB5;
 }
 :host .status-completed {
-    --sds-c-icon-color-background : #3F403F;
+    --sds-c-icon-color-background: #3F403F;
     background : #3F403F;
-}
-
-/* Old Classes */
-:host .scheduled {
-    --sds-c-icon-color-background : #A5D6A7;
-}
-
-:host .checked-in {
-    --sds-c-icon-color-background : #66BB69;;
-}
-
-:host .donation-complete {
-    --sds-c-icon-color-background : #43A046;
-}
-
-:host .paid-visit-complete {
-    --sds-c-icon-color-background : #1B5E1F;
-}
-
-:host .late {
-    --sds-c-icon-color-background : #B0ADAB;
-}
-
-:host .cancelled {
-    --sds-c-icon-color-background : #EF9A9A;
-}
-
-:host .deferred-left-center {
-    --sds-c-icon-color-background : #E53835;
-}
-
-:host .missed {
-    --sds-c-icon-color-background :#B71A1C;
 }

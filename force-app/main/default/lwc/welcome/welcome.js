@@ -25,6 +25,10 @@ export default class Welcome extends NavigationMixin(LightningElement) {
         return (this.currentPage === 'Profile');
     }
 
+    get showLogin() {
+        return (this.currentPage === 'Login');
+    }
+
     get languageOptions() {
         return [
             {label: labels.english, value: 'en_US'},
@@ -63,12 +67,11 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     }
 
     onLoginButtonClick() {
-        this[NavigationMixin.Navigate]({
-            type: 'comm__loginPage',
-            attributes: {
-                actionName: 'login'
-            }
-        });
+        this.currentPage = 'Login';
+    }
+
+    onSignUpButtonClick() {
+        this.currentPage = 'Choose Center';
     }
 
 }

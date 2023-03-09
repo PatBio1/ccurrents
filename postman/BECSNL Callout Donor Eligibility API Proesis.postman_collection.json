@@ -1,0 +1,678 @@
+{
+	"info": {
+		"_postman_id": "4ec6ee1d-e29c-4947-8cc0-042e2e5b1044",
+		"name": "Donor Eligibility API Proesis",
+		"description": "Public API to retrieve donation eligibility data of a specified donor from NexLynk DMS version 4.7.\n\nAn authorization header is required for all endpoints.\n\nAll reponses will consist of a HTTP code and a status of:\n\n- success\n- fail\n- error\n    \n\naccompanied by a descriptive message.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25753988"
+	},
+	"item": [
+		{
+			"name": "Donors",
+			"item": [
+				{
+					"name": "Retrieve data regarding the donation eligibility date for a specific donor. ",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{basicAuthUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{basicAuthPassword}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/donors/:donorid",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"donors",
+								":donorid"
+							],
+							"variable": [
+								{
+									"key": "donorid",
+									"value": "00000234",
+									"description": "(Required) The donor number that uniquely identifies the donor record in NexLynk"
+								}
+							]
+						},
+						"description": "Given a valid donor number the eligibility date of the donor will be returned in a JSON object response."
+					},
+					"response": [
+						{
+							"name": "Donor exists and is eligible. JSON response contains donor eligibility data.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"description": "Added as a part of security scheme: basic",
+										"key": "Authorization",
+										"value": "Basic <credentials>"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/donors/:donorid",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"donors",
+										":donorid"
+									],
+									"variable": [
+										{
+											"key": "donorid",
+											"value": "00000234",
+											"description": "(Required) The donor number that uniquely identifies the donor record in NexLynk"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"code\": 200,\n    \"message\": \"Eligibility data for Donor (12345678) was successfully retrieved.\",\n    \"donor_number\": \"00000234\",\n    \"is_first_time_donor\": true,\n    \"eligibility_date\": \"2023-03-03\"\n  }\n}"
+						},
+						{
+							"name": "Donor number is invalid.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"description": "Added as a part of security scheme: basic",
+										"key": "Authorization",
+										"value": "Basic <credentials>"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/donors/:donorid",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"donors",
+										":donorid"
+									],
+									"variable": [
+										{
+											"key": "donorid",
+											"value": "b78cfk8888",
+											"description": "(Required) The donor number that uniquely identifies the donor record in NexLynk"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"fail\",\n  \"data\": {\n    \"code\": 400,\n    \"message\": \"ERROR: Donor number (b78cfk8888) is invalid. Cannot process.\"\n  }\n}"
+						},
+						{
+							"name": "Donor number is not found. Note that this may be an expected result if the donor is new and has not been entered into the NexLynk system.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"description": "Added as a part of security scheme: basic",
+										"key": "Authorization",
+										"value": "Basic <credentials>"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/donors/:donorid",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"donors",
+										":donorid"
+									],
+									"variable": [
+										{
+											"key": "donorid",
+											"value": "64704323",
+											"description": "(Required) The donor number that uniquely identifies the donor record in NexLynk"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"fail\",\n  \"data\": {\n    \"code\": 404,\n    \"messaage\": \"Donor number (64704323) was not found in NexLynk.\"\n  }\n}"
+						},
+						{
+							"name": "Donor exists but is not eligible.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"description": "Added as a part of security scheme: basic",
+										"key": "Authorization",
+										"value": "Basic <credentials>"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/donors/:donorid",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"donors",
+										":donorid"
+									],
+									"variable": [
+										{
+											"key": "donorid",
+											"value": "00000200",
+											"description": "(Required) The donor number that uniquely identifies the donor record in NexLynk"
+										}
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"fail\",\n  \"data\": {\n    \"code\": 409,\n    \"message\": \"Donor number (00000200) exists in NexLynk but the donor is not eligible.\"\n  }\n}"
+						},
+						{
+							"name": "Unhandled HTTP codes will have this response. this may be due to a problem with the host or an  API error that has occured while executing the request. There may be additonal nested exceptions reported by the internal NexLynk API attached to the response ",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"description": "Added as a part of security scheme: basic",
+										"key": "Authorization",
+										"value": "Basic <credentials>"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/donors/:donorid",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"donors",
+										":donorid"
+									],
+									"variable": [
+										{
+											"key": "donorid",
+											"value": "64704323",
+											"description": "(Required) The donor number that uniquely identifies the donor record in NexLynk"
+										}
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"error\",\n  \"data\": {\n    \"code\": 500,\n    \"message\": \"ERROR: Donor Eligibility API has nested exceptions from internal NexLynk API\",\n    \"errors\": [\n      {\n        \"nexlynk_code\": 403,\n        \"data\": {\n          \"content-type\": \"text/plain\",\n          \"content\": \"NexLynk API exception message.\"\n        }\n      },\n      {\n        \"nexlynk_code\": 522,\n        \"data\": {\n          \"content-type\": \"application/jason\",\n          \"content\": \"{ \\\"eCode\\\": \\\"0xDF44001\\\", \\\"eMessage\\\": \\\"NullPointerException at module foo line: 758\\\" }\"\n        }\n      }\n    ]\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "The /donors endpoint by itself has no function. Only a 422 error reponse will be returned.",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{basicAuthUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{basicAuthPassword}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/html"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/donors",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"donors"
+							]
+						},
+						"description": "This is the /donors endpoint with no donorid param which will always return a 422 error to the client since the donorid is a required parameter. JSON response will instruct the caller to use the correct endpoint."
+					},
+					"response": [
+						{
+							"name": "The main error response this endpoint will return.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"description": "Added as a part of security scheme: basic",
+										"key": "Authorization",
+										"value": "Basic <credentials>"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/donors",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"donors"
+									]
+								}
+							},
+							"status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"status\": \"error\",\n  \"data\": {\n    \"code\": 422,\n    \"messaage\": \"ERROR: A donor number is required. Use the /donors/<donorid> endpoint to query instead.\"\n  }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Error Requests",
+			"item": [
+				{
+					"name": "no auth",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "no auth",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										""
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Cache-Control",
+									"value": "max-age=0"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=16070400; includeSubDomains"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "frame-ancestors 'self' ;"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html;charset=UTF-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								}
+							],
+							"cookie": [],
+							"body": "Unauthorized"
+						}
+					]
+				},
+				{
+					"name": "invalid endpoint",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{basicAuthUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{basicAuthPassword}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/some/invalid/endpoint?goes=here",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"some",
+								"invalid",
+								"endpoint"
+							],
+							"query": [
+								{
+									"key": "goes",
+									"value": "here"
+								}
+							]
+						},
+						"description": "Given a valid donor number the eligibility date of the donor will be returned in a JSON object response."
+					},
+					"response": [
+						{
+							"name": "invalid endpoint",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/some/invalid/endpoint?goes=here",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"some",
+										"invalid",
+										"endpoint"
+									],
+									"query": [
+										{
+											"key": "goes",
+											"value": "here"
+										}
+									]
+								}
+							},
+							"status": "Not Implemented",
+							"code": 501,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Cache-Control",
+									"value": "max-age=0"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=16070400; includeSubDomains"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "frame-ancestors 'self' ;"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json;charset=UTF-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"error\",\n    \"data\": {\n        \"message\": \"ERROR: Endpoint does not exist.\",\n        \"code\": 501\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "invalid method",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{basicAuthUsername}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{basicAuthPassword}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/donors/:donorid",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"donors",
+								":donorid"
+							],
+							"variable": [
+								{
+									"key": "donorid",
+									"value": "1234567"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "invalid method",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										""
+									]
+								}
+							},
+							"status": "Not Implemented",
+							"code": 501,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Cache-Control",
+									"value": "max-age=0"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=16070400; includeSubDomains"
+								},
+								{
+									"key": "Content-Security-Policy",
+									"value": "frame-ancestors 'self' ;"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json;charset=UTF-8"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"error\",\n    \"data\": {\n        \"message\": \"ERROR: Endpoint does not exist.\",\n        \"code\": 501\n    }\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://pbi-nlp-ut1.hosting.local:6544/donoreligibility",
+			"type": "string"
+		}
+	]
+}

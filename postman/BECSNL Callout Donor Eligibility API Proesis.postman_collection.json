@@ -1,17 +1,17 @@
 {
 	"info": {
-		"_postman_id": "4ec6ee1d-e29c-4947-8cc0-042e2e5b1044",
+		"_postman_id": "e4ec7e72-9374-400e-8791-a00a541c47a7",
 		"name": "Donor Eligibility API Proesis",
 		"description": "Public API to retrieve donation eligibility data of a specified donor from NexLynk DMS version 4.7.\n\nAn authorization header is required for all endpoints.\n\nAll reponses will consist of a HTTP code and a status of:\n\n- success\n- fail\n- error\n    \n\naccompanied by a descriptive message.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "25753988"
+		"_exporter_id": "11546117"
 	},
 	"item": [
 		{
 			"name": "Donors",
 			"item": [
 				{
-					"name": "Retrieve data regarding the donation eligibility date for a specific donor. ",
+					"name": "Retrieve data regarding the donation eligibility date for a known eligible donor.",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -36,20 +36,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/donors/:donorid",
+							"raw": "{{baseUrl}}/donors/{{DonorId_KnownEligible}}",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"donors",
-								":donorid"
-							],
-							"variable": [
-								{
-									"key": "donorid",
-									"value": "00000234",
-									"description": "(Required) The donor number that uniquely identifies the donor record in NexLynk"
-								}
+								"{{DonorId_KnownEligible}}"
 							]
 						},
 						"description": "Given a valid donor number the eligibility date of the donor will be returned in a JSON object response."
@@ -672,6 +665,12 @@
 		{
 			"key": "baseUrl",
 			"value": "http://pbi-nlp-ut1.hosting.local:6544/donoreligibility",
+			"type": "string",
+			"disabled": true
+		},
+		{
+			"key": "baseUrl",
+			"value": "172.29.48.43/donoreligibility",
 			"type": "string"
 		}
 	]

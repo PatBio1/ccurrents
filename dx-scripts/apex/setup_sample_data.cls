@@ -189,10 +189,12 @@ upsert levelNormal Name;
 Level__c[] loyaltylevels = [select Id from Level__c where Donation_Type__c = :donationType.Id];
 System.debug('loyaltylevels: ' + loyaltylevels.size());
 
-for ( Account d : donors ) {
-    Integer rando = Math.round(Math.random()*(loyaltylevels.size()-1));
-    d.Loyalty_Level__pc = loyaltylevels[rando + 1].Id;
-    update d;
+if (loyaltylevels.size()>0) {
+    for ( Account d : donors ) {
+        Integer rando = Math.ceil(Math.random()*(loyaltylevels.size()));
+        d.Loyalty_Level__pc = loyaltylevels[rando + 1].Id;
+        update d;
+    }
 }
 
 List<Campaign> testCampaigns = new List<Campaign>{

@@ -119,11 +119,33 @@ Center_Donation_Type__c[] centerDonationTypes = new Center_Donation_Type__c[]{
 };
 insert centerDonationTypes;
 
+Rate__c[] centerRates = new Rate__c[]{
+    new Rate__c(
+            Center__c = centers[0].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 100.00, 
+            UOM__c = 'pint'
+    ),
+    new Rate__c(
+            Center__c = centers[1].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 50.00, 
+            UOM__c = 'pint'
+    ),
+    new Rate__c(
+            Center__c = centers[2].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 45.00, 
+            UOM__c = 'pint'
+    )
+};
+insert centerRates;
+
 // Create Levels for payment calculations
 // Has self reverential field to link the next level so have to make this verbose
 Level__c levelRoyal = new Level__c (
         Name = 'Royal',
-        Donation_Payment__c = 50.00,
+        Donation_Payment__c = 5.00,
         Donation_Points__c = 200,
         Donation_Threshold__c = 90,
         Donation_Type__c = donationType.Id,
@@ -135,7 +157,7 @@ upsert levelRoyal Name;
 
 Level__c levelVIP = new Level__c (
         Name = 'VIP',
-        Donation_Payment__c = 50.00,
+        Donation_Payment__c = 0.00,
         Donation_Points__c = 160,
         Donation_Threshold__c = 60,
         Donation_Type__c = donationType.Id,
@@ -148,7 +170,7 @@ upsert levelVIP Name;
 
 Level__c levelSignature = new Level__c (
         Name = 'Signature',
-        Donation_Payment__c = 50.00,
+        Donation_Payment__c = 0.00,
         Donation_Points__c = 100,
         Donation_Threshold__c = 30,
         Donation_Type__c = donationType.Id,
@@ -161,7 +183,7 @@ upsert levelSignature Name;
 
 Level__c levelNormal15 = new Level__c (
         Name = 'Normal Donor +15',
-        Donation_Payment__c = 50.00,
+        Donation_Payment__c = 0.00,
         Donation_Points__c = 0,
         Donation_Threshold__c = 14,
         Donation_Type__c = donationType.Id,
@@ -174,7 +196,7 @@ upsert levelNormal15 Name;
 
 Level__c levelNormal = new Level__c (
         Name = 'Donor (Default)',
-        Donation_Payment__c = 50.00,
+        Donation_Payment__c = -5.00,
         Donation_Points__c = 0,
         Donation_Threshold__c = 0,
         Donation_Type__c = donationType.Id,
@@ -189,10 +211,12 @@ upsert levelNormal Name;
 Level__c[] loyaltylevels = [select Id from Level__c where Donation_Type__c = :donationType.Id];
 System.debug('loyaltylevels: ' + loyaltylevels.size());
 
-for ( Account d : donors ) {
-    Integer rando = Math.round(Math.random()*(loyaltylevels.size()));
-    d.Loyalty_Level__pc = loyaltylevels[rando - 1].Id;
-    update d;
+if (loyaltylevels.size()>0) {
+    for ( Account d : donors ) {
+        Integer rando = Math.round(Math.ceil(Math.random()*(loyaltylevels.size())));
+        d.Loyalty_Level__pc = loyaltylevels[rando + 1].Id;
+        update d;
+    }
 }
 
 List<Campaign> testCampaigns = new List<Campaign>{

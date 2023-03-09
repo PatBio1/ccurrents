@@ -1,5 +1,5 @@
 <template>
-    <div draggable="true" ondragstart={dragstart} ondragend={dragend} data-text="foo">
+    <div style="position: relative;">
         <div class={loyaltyBadgeDisplayClass}>
             <lightning-icon class="rounded-slds-icon" icon-name="utility:favorite" size="xx-small">
             </lightning-icon>
@@ -15,6 +15,7 @@
         </div>
         
         <lightning-avatar
+            draggable="true" ondragstart={dragstart} ondragend={dragend} data-text="foo"
             size="large"
             onclick={togglePopover}
             aria-haspopup="false"

@@ -183,11 +183,12 @@
               key={appointment.key} 
               class="appointment-data-cell droppable" 
               title={appointment.key} 
-              style="justify-content: flex-start; text-align: left;position: relative; padding: 6px; gap: 8px;" 
+              style="justify-content: flex-start; text-align: left;position: relative; padding: 6px; gap: 14px;" 
               ondrop={drop} 
               ondragenter={dragenter} 
               ondragleave={dragleave} 
               ondragover={allowDrop}
+              draggable="false"
             >
                 <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
                     <c-donor-dot if:false={donor.filtered} oncancelvisit={handleCancelVisit} key={donorId} icon={donor.icon} donor={donor} appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString}>

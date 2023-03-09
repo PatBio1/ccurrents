@@ -13,9 +13,9 @@ For all work items, tracking, please refer to our [Proesis Build Project](https:
   ```./set_default_dev_hub.sh```
   5. Next, we'll kick off a series of actions by running:
   ```./create_branch.sh <working-branch-name>```
-  - This will create your new working branch, _and_ 
+  - This will create your new working branch from _integration_, _and_ 
   - spin up a scratch org (w sample data if available), _and_ 
-  - push your new working branch (from the integration branch) to the new scratch org
+  - push your new working branch to the your new scratch org
   8. The fresh scratch org will automatically open in your default browser
   9. Do your coding in vscode etc. then:
   ```force:source:push``` to your scratch org

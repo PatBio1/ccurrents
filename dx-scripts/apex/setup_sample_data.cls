@@ -145,7 +145,7 @@ insert centerRates;
 // Has self reverential field to link the next level so have to make this verbose
 Level__c levelRoyal = new Level__c (
         Name = 'Royal',
-        Donation_Payment__c = 50.00,
+        Donation_Payment__c = 5.00,
         Donation_Points__c = 200,
         Donation_Threshold__c = 90,
         Donation_Type__c = donationType.Id,
@@ -157,7 +157,7 @@ upsert levelRoyal Name;
 
 Level__c levelVIP = new Level__c (
         Name = 'VIP',
-        Donation_Payment__c = 50.00,
+        Donation_Payment__c = 0.00,
         Donation_Points__c = 160,
         Donation_Threshold__c = 60,
         Donation_Type__c = donationType.Id,
@@ -170,7 +170,7 @@ upsert levelVIP Name;
 
 Level__c levelSignature = new Level__c (
         Name = 'Signature',
-        Donation_Payment__c = 50.00,
+        Donation_Payment__c = 0.00,
         Donation_Points__c = 100,
         Donation_Threshold__c = 30,
         Donation_Type__c = donationType.Id,
@@ -183,7 +183,7 @@ upsert levelSignature Name;
 
 Level__c levelNormal15 = new Level__c (
         Name = 'Normal Donor +15',
-        Donation_Payment__c = 50.00,
+        Donation_Payment__c = 0.00,
         Donation_Points__c = 0,
         Donation_Threshold__c = 14,
         Donation_Type__c = donationType.Id,
@@ -196,7 +196,7 @@ upsert levelNormal15 Name;
 
 Level__c levelNormal = new Level__c (
         Name = 'Donor (Default)',
-        Donation_Payment__c = 50.00,
+        Donation_Payment__c = -5.00,
         Donation_Points__c = 0,
         Donation_Threshold__c = 0,
         Donation_Type__c = donationType.Id,

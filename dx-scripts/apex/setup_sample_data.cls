@@ -119,6 +119,28 @@ Center_Donation_Type__c[] centerDonationTypes = new Center_Donation_Type__c[]{
 };
 insert centerDonationTypes;
 
+Rate__c[] centerRates = new Rate__c[]{
+    new Rate__c(
+            Center__c = centers[0].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 100.00, 
+            UOM__c = 'pint'
+    ),
+    new Rate__c(
+            Center__c = centers[1].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 50.00, 
+            UOM__c = 'pint'
+    ),
+    new Rate__c(
+            Center__c = centers[2].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 45.00, 
+            UOM__c = 'pint'
+    )
+};
+insert centerRates;
+
 // Create Levels for payment calculations
 // Has self reverential field to link the next level so have to make this verbose
 Level__c levelRoyal = new Level__c (
@@ -191,7 +213,7 @@ System.debug('loyaltylevels: ' + loyaltylevels.size());
 
 if (loyaltylevels.size()>0) {
     for ( Account d : donors ) {
-        Integer rando = Math.ceil(Math.random()*(loyaltylevels.size()));
+        Integer rando = Math.round(Math.ceil(Math.random()*(loyaltylevels.size())));
         d.Loyalty_Level__pc = loyaltylevels[rando + 1].Id;
         update d;
     }

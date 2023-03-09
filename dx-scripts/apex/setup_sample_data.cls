@@ -190,8 +190,8 @@ Level__c[] loyaltylevels = [select Id from Level__c where Donation_Type__c = :do
 System.debug('loyaltylevels: ' + loyaltylevels.size());
 
 for ( Account d : donors ) {
-    Integer rando = Math.round(Math.random()*(loyaltylevels.size()));
-    d.Loyalty_Level__pc = loyaltylevels[rando - 1].Id;
+    Integer rando = Math.round(Math.random()*(loyaltylevels.size()-1));
+    d.Loyalty_Level__pc = loyaltylevels[rando + 1].Id;
     update d;
 }
 

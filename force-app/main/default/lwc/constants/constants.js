@@ -1,4 +1,5 @@
 const visitOutcomeToDisplayClass = new Map([
+    ["None", "outcome-none"],
     ["No Show", "outcome-no-show"],
     ["Canceled", "outcome-canceled"],
     ["Rescheduled", "outcome-rescheduled"],

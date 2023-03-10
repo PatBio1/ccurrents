@@ -158,19 +158,21 @@ public without sharing class ProfileController {
             Util.testExceptionHandling();
 
             // Set profile photo on User record.
-            MobileGuestService.SetUserPhotoRequest setUserPhotoRequest = new MobileGuestService.SetUserPhotoRequest();
-            setUserPhotoRequest.userId = profile.userId;
-            setUserPhotoRequest.contentVersionId = profile.photoContentVersionId;
+            if (profile.photoContentVersionId != null) {
+                MobileGuestService.SetUserPhotoRequest setUserPhotoRequest = new MobileGuestService.SetUserPhotoRequest();
+                setUserPhotoRequest.userId = profile.userId;
+                setUserPhotoRequest.contentVersionId = profile.photoContentVersionId;
 
-            String endpoint = MobileGuestService.ENDPOINT + MobileGuestService.SET_USER_PHOTO_PATH;
+                String endpoint = MobileGuestService.ENDPOINT + MobileGuestService.SET_USER_PHOTO_PATH;
 
-            HttpRequest httpRequest = new HttpRequest();
-            httpRequest.setMethod('POST');
-            httpRequest.setEndpoint(endpoint);
-            httpRequest.setHeader('Content-Type', 'application/json;charset=UTF-8');
-            httpRequest.setBody(JSON.serialize(setUserPhotoRequest));
+                HttpRequest httpRequest = new HttpRequest();
+                httpRequest.setMethod('POST');
+                httpRequest.setEndpoint(endpoint);
+                httpRequest.setHeader('Content-Type', 'application/json;charset=UTF-8');
+                httpRequest.setBody(JSON.serialize(setUserPhotoRequest));
 
-            HttpResponse httpResponse = new Http().send(httpRequest);
+                HttpResponse httpResponse = new Http().send(httpRequest);
+            }
 
             PermissionSet permissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.EXPERIENCE_PERMISSION_SET_NAME];
 

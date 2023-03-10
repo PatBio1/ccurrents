@@ -22,10 +22,9 @@ Excluded: Can never* give plasma for various reasons that are PHI</inlineHelpTex
     <required>false</required>
     <securityClassification>Confidential</securityClassification>
     <trackFeedHistory>false</trackFeedHistory>
-    <type>MultiselectPicklist</type>
+    <type>Picklist</type>
     <valueSet>
         <restricted>true</restricted>
         <valueSetName>Donor_Status</valueSetName>
     </valueSet>
-    <visibleLines>5</visibleLines>
 </CustomField>

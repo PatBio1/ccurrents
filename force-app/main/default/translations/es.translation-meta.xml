@@ -33,6 +33,10 @@
         <name>Back_To_Homepage</name>
     </customLabels>
     <customLabels>
+        <label>Atrás para iniciar sesión</label>
+        <name>Back_To_Login</name>
+    </customLabels>
+    <customLabels>
         <label>Perfil básico</label>
         <name>Basic_Profile</name>
     </customLabels>
@@ -49,12 +53,12 @@
         <name>Car</name>
     </customLabels>
     <customLabels>
-        <label>Centros</label>
-        <name>Centers</name>
-    </customLabels>
-    <customLabels>
         <label>Video del Centro</label>
         <name>Center_Video</name>
+    </customLabels>
+    <customLabels>
+        <label>Centros</label>
+        <name>Centers</name>
     </customLabels>
     <customLabels>
         <label>Cambiar</label>
@@ -97,6 +101,10 @@
         <name>Email</name>
     </customLabels>
     <customLabels>
+        <label>Correo electrónico o teléfono principal</label>
+        <name>Email_Or_Primary_Phone</name>
+    </customLabels>
+    <customLabels>
         <label>Inglés</label>
         <name>English</name>
     </customLabels>
@@ -107,6 +115,10 @@
     <customLabels>
         <label>Primer nombre</label>
         <name>First_Name</name>
+    </customLabels>
+    <customLabels>
+        <label>¿Has olvidado tu contraseña?</label>
+        <name>Forgot_Password</name>
     </customLabels>
     <customLabels>
         <label>Viernes</label>
@@ -131,6 +143,10 @@
     <customLabels>
         <label>Apellido</label>
         <name>Last_Name</name>
+    </customLabels>
+    <customLabels>
+        <label>Acceso</label>
+        <name>Login</name>
     </customLabels>
     <customLabels>
         <label>Cerrar sesión</label>
@@ -181,6 +197,10 @@
         <name>Notifications</name>
     </customLabels>
     <customLabels>
+        <label>Contraseña</label>
+        <name>Password</name>
+    </customLabels>
+    <customLabels>
         <label>La contraseña debe constar de al menos 8 caracteres: al menos 1 minúscula, al menos 1 mayúscula, al menos 1 número y al menos 1 carácter especial.</label>
         <name>Password_Requirements</name>
     </customLabels>
@@ -221,6 +241,10 @@
         <name>Recommended_To_You</name>
     </customLabels>
     <customLabels>
+        <label>Acuérdate de mí</label>
+        <name>Remember_Me</name>
+    </customLabels>
+    <customLabels>
         <label>Quitar foto</label>
         <name>Remove_Photo</name>
     </customLabels>
@@ -259,6 +283,10 @@
     <customLabels>
         <label>Establece tu contraseña</label>
         <name>Set_Your_Password</name>
+    </customLabels>
+    <customLabels>
+        <label>Inscribirse</label>
+        <name>Sign_Up</name>
     </customLabels>
     <customLabels>
         <label>Foto social</label>
@@ -329,16 +357,16 @@
         <name>Walk</name>
     </customLabels>
     <customLabels>
-        <label>Bienvenidos a Proesis</label>
-        <name>Welcome_To_Proesis</name>
-    </customLabels>
-    <customLabels>
         <label>Miércoles</label>
         <name>Wednesday</name>
     </customLabels>
     <customLabels>
         <label>Mié</label>
         <name>Wednesday_Abbreviation</name>
+    </customLabels>
+    <customLabels>
+        <label>Bienvenidos a Proesis</label>
+        <name>Welcome_To_Proesis</name>
     </customLabels>
     <customLabels>
         <label>Horarios</label>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ErrorDate__c</fullName>
+    <description>Date/Time where the error occurred</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Date/Time where the error occurred</inlineHelpText>
+    <label>Error Date</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

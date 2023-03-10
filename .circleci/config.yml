@@ -26,6 +26,9 @@ jobs:
           name: "Authenticate to Orgs"
       - run: 
           command: |
+              # connect to dev hub
+              echo $SFDXURL_HUB > /tmp/sfdx.url
+              sfdx auth:sfdxurl:store -f /tmp/sfdx.url -a dev-hub --setdefaultdevhubusername
               #convert DX to legacy metadata
               sfdx force:source:convert -r force-app/main/default/ -d deploy
   
@@ -49,8 +52,6 @@ jobs:
                 ./dx-scripts/deploy.sh UATSTAGING
               elif [[ $CIRCLE_BRANCH == "integration" ]];
               then
-                echo $SFDXURL_HUB > /tmp/sfdx.url
-                sfdx auth:sfdxurl:store -f /tmp/sfdx.url -a dev-hub --setdefaultdevhubusername
                 #spin up and push a scratch org
                 ./dx-scripts/setup_scratch.sh circle_build_$CIRCLE_BUILD_NUM do_not_open_browser
                 #run tests in scratch org
@@ -60,6 +61,13 @@ jobs:
                 echo "deploy $CIRCLE_BRANCH to PROD  org ENABLED"
                 ./dx-scripts/deploy.sh PROD checkonly
               else
+                # ANY OTHER BRANCHES DO THIS:
+                #spin up and push a scratch org
+                ./dx-scripts/setup_scratch.sh circle_build_$CIRCLE_BUILD_NUM do_not_open_browser
+                #run tests in scratch org
+                ./dx-scripts/run_tests.sh
+                ./dx-scripts/delete_scratch_org.sh circle_build_$CIRCLE_BUILD_NUM -p
+                #deploy UATSTAGING branch to UATSTAGING org
                 #deploy CHECKONLY to other branches
                 echo "Not on Main Branch CHECKONLY - Deploy $CIRCLE_BRANCH to PROD org ENABLED"
                 ./dx-scripts/deploy.sh PROD checkonly

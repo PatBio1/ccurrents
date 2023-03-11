@@ -304,8 +304,40 @@ public with sharing class CenterSchedulerControllerTests {
 
     }
 
-        
-    
+    @IsTest
+    static void testAddVisit() {
+        String targetDonorRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId();
 
+        Appointment__c targetAppointmentSlot = [SELECT Id, Schedule__r.Center__c FROM Appointment__c LIMIT 1];
+        Account targetCenter = [SELECT Id FROM Account WHERE Id = :targetAppointmentSlot.Schedule__r.Center__c LIMIT 1];
+        Account targetDonor = [SELECT Id, PersonContactId FROM Account WHERE RecordTypeId = :targetDonorRecordTypeId LIMIT 1];
 
+        // Create additional test data to allow visit insert
+        Donation_Type__c donationTypeTest = new Donation_Type__c(
+            Name = 'Test Donation Type'
+        );
+        insert donationTypeTest;
+
+        Center_Donation_Type__c centerDonationTypeTest = new Center_Donation_Type__c(
+            Center__c = targetCenter.Id,
+            Donation_Type__c = donationTypeTest.Id,
+            isActive__c = true
+        );
+        insert centerDonationTypeTest;
+
+        Test.startTest();
+        CenterScheduleController.addVisit(targetDonor.Id, targetAppointmentSlot.Id, targetCenter.Id);
+        Test.stopTest();
+
+        Visit__c createdVisit = [
+            SELECT Id, Status__c 
+            FROM Visit__c 
+            WHERE Center_Donation_Type__r.Center__c = :targetCenter.Id AND
+                Donor__c = :targetDonor.PersonContactId AND
+                Appointment__c = :targetAppointmentSlot.Id
+        ];
+
+        Assert.isNotNull(createdVisit, 'Couldn\'t find the desired visit record. Either it wasn\'t created or the data wasn\'t set correctly.');
+        Assert.areEqual('Scheduled', createdVisit.Status__c, 'The status of the visit should default to \'Scheduled\'');
+    }
 }

@@ -76,6 +76,10 @@
                 <behavior>Edit</behavior>
                 <field>Donation_Volume__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Collection_Number__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
@@ -129,6 +133,14 @@
     </layoutSections>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>Body__c</fields>
+        <fields>CREATED_DATE</fields>
+        <relatedList>Message__c.Visit__c</relatedList>
+        <sortField>CREATED_DATE</sortField>
+        <sortOrder>Desc</sortOrder>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
         <fields>Type__c</fields>
         <fields>Account.ACC_NAME</fields>
         <relatedList>Transaction__c.Visit__c</relatedList>
@@ -143,7 +155,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00hDH000002YGPt</masterLabel>
+        <masterLabel>00h8D0000026C4u</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

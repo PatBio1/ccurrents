@@ -100,7 +100,7 @@
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
     <subflows>
         <name>Call_Appointment_Reminder_Mobile_Push_Notification</name>
         <label>Call Appointment Reminder Mobile Push Notification</label>

@@ -14,4 +14,16 @@ public with sharing class Constants {
 
     public static final String USERNAME_SUFFIX = '.prodx';
 
+    public static final String VISIT_STATUS_CHECKEDIN = 'Checked-In';
+
+    public static final String VISIT_STATUS_COMPLETE = 'Complete';
+
+    public static final String VISIT_OUTCOME_DONATION = 'Donation';
+
+    public static final String ERRORLOG_TYPE_ERROR = 'Error';
+
+    public static final String ERRORLOG_TYPE_WARNING = 'Warning';
+
+    public static final String ERRORLOG_TYPE_INFORMATION = 'Information';
+
 }

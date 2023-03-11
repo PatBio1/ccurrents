@@ -19,10 +19,17 @@ export default class CreateScheduleModal extends LightningModal {
     }
     
     handleConfirm() {
-        // alert('hey now');
-        // Close the Modal
-       
-        this.createSlots()
+        const allValid = [
+            ...this.template.querySelectorAll('lightning-input'),
+        ].reduce((validSoFar, inputCmp) => {
+            inputCmp.reportValidity();
+            return validSoFar && inputCmp.checkValidity();
+        }, true);
+        if (allValid) {
+            this.createSlots();
+        } else {
+            this.showToast('Please update the invalid form entries and try again.','warning','warning');
+        }
         
     }
 
@@ -42,13 +49,26 @@ export default class CreateScheduleModal extends LightningModal {
     }
 
 
-    clearInput(){
+     async clearInput(){
+        
         this.startDate = null;
         this.endDate= null;
         this.appointmentTier = null;
         this.loyaltyTier = null;
-        this.intervalsPerHour = 0;
-        this.slotsPerInterval = 0;
+        this.intervalsPerHour = 1;
+        this.slotsPerInterval = 1;
+        await this.validate();
+    }
+
+    async validate(){
+        const allValid = await [
+            ...this.template.querySelectorAll('lightning-input'),
+        ].reduce((validSoFar, inputCmp) => {
+            inputCmp.reportValidity();
+            return validSoFar && inputCmp.checkValidity();
+        }, true);
+
+        
     }
 
     get inputDisabled(){
@@ -58,12 +78,18 @@ export default class CreateScheduleModal extends LightningModal {
         return true;
     }
 
+    get today(){
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '/' + mm + '/' + dd;
+        return today;
+    }
+
     createSlots(){
 
-        // console.log(`create slots for ${this.centerId} ${this.startDate} ${this.endDate} ${this.this.intervalsPerHour} ${this.slotsPerInterval}`);
-        console.log(`create slots for ${this.centerId} `);
-        console.log(`from ${this.startDate} `);
-        console.log(`until ${this.endDate} `);
         this.loading = true;
         CreateAppointmentSlots({
             centerId : this.centerId,

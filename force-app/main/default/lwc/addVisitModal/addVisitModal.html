@@ -1,0 +1,77 @@
+<template>
+    <lightning-modal-header aria-label={headerLabel} label={headerLabel}>
+    </lightning-modal-header>
+
+    <lightning-modal-body>
+        <div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <lightning-input is-loading={isSearching} type="search" label="Donor Name" onchange={handleDonorSearchUpdate} data-donor-name-search>
+                </lightning-input>
+
+                <table if:true={hasDonorsToDisplay} class="slds-table slds-table_bordered slds-table_cell-buffer slds-no-row-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col">
+                          <div class="slds-truncate">Donor Name</div>
+                        </th>
+                        <th scope="col">
+                          <div class="slds-truncate">Email</div>
+                        </th>
+                        <th scope="col">
+                          <div class="slds-truncate">Phone</div>
+                        </th>
+                        <th scope="col">
+                          <div class="slds-truncate">Soonest Available Visit</div>
+                        </th>
+                        <th scope="col">
+                          <div class="slds-truncate"></div>
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                        <template for:each={foundDonors} for:item="donor">
+                            <tr key={donor.Id}>
+                                <th scope="row">
+                                    <div class="donor-result-header-cell slds-truncate">
+                                        <lightning-icon icon-name="standard:person_account" size="small">
+                                        </lightning-icon>
+                                        
+                                        <span>{donor.Name}</span>
+                                    </div>
+                                </th>
+
+                                <td>
+                                    <div class="slds-truncate">{donor.PersonEmail}</div>
+                                </td>
+
+                                <td>
+                                    <div class="slds-truncate">
+                                        <lightning-formatted-phone value={donor.PersonMobilePhone}>
+                                        </lightning-formatted-phone>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="slds-truncate">
+                                        <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={donor.Soonest_Next_Visit__pc} time-zone="UTC">
+                                        </lightning-formatted-date-time>
+                                    </div>
+                                </td>
+
+                                <td style="text-align: end;">
+                                    <lightning-button variant="brand" label="Select" onclick={handleSelectDonor} data-donor-id={donor.Id}>
+                                    </lightning-button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                  </table>
+
+                <div if:false={hasDonorsToDisplay}>
+                    <p class="no-search-results-message"><b>No Donor Names match the provided search term. Please try again with a different search.</b></p>
+                </div>
+            </div>
+        </div>
+    </lightning-modal-body>
+</template>

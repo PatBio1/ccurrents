@@ -146,6 +146,20 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
+    public static void addVisit(Id donorId, Id appointmentSlotId, Id centerId) {
+        try {
+            insert new Visit__c(
+                Donor__c = [SELECT PersonContactId FROM Account WHERE Id = :donorId LIMIT 1]?.PersonContactId,
+                Center_Donation_Type__c = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :centerId LIMIT 1]?.Id,
+                Appointment__c = appointmentSlotId,
+                Status__c = 'Scheduled'
+            );
+        } catch(Exception addVisitException) {
+            throw Util.createAuraHandledException(addVisitException);
+        }
+    }
+
+    @AuraEnabled
     public static void changeVisitAppointment(Id visitId, Id appointmentId){
         try {
             if(appointmentId != null){
@@ -250,7 +264,6 @@ public with sharing class CenterScheduleController {
             this.capacity = app.Capacity__c;
             this.filtered = false;
         }
-
     }
 
     public class Visit {

@@ -14,6 +14,9 @@ import cancelVisit from '@salesforce/apex/CenterScheduleController.cancelVisit';
 
 import { visitStatusToDisplayClass, visitOutcomeToDisplayClass } from "c/constants";
 import CreateScheduleModal from "c/createScheduleModal";
+import AddVisitModal from "c/addVisitModal";
+import Confirm_Password from '@salesforce/label/c.Confirm_Password';
+import RecurrenceStartDateOnly from '@salesforce/schema/Task.RecurrenceStartDateOnly';
 
 export default class CenterScheduler extends NavigationMixin(LightningElement) {
     statusOptions;
@@ -68,6 +71,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     show = false;
     dateDisabled = true;
     loading = true;
+    popYFlipPoint;
 
     get hasAppointmentsToDisplay() {
         return (this.appointments && this.appointments.length);
@@ -111,8 +115,26 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         this.loadCenters();
     }
 
+    renderedCallback() {
+        this.calculatePopoverFlipPoint();
+    }
+
     refresh() {
         this.fetchAppointments();
+    }
+
+    calculatePopoverFlipPoint() {
+        if (this.popYFlipPoint) {
+            return;
+        }
+
+        let appointmentContainer = this.template.querySelector("div.appointments");
+        if (!appointmentContainer) {
+            return;
+        }
+
+        let appointmentBoundingBox = appointmentContainer.getBoundingClientRect();
+        this.popYFlipPoint = appointmentBoundingBox.y + (appointmentBoundingBox.height / 2);
     }
 
     openNewScheduleModal() {
@@ -312,6 +334,9 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
         let generateUrlPromises = [];
         for(let appointment of queriedAppointments) {
+            // Used to show/hide Add Visit on per row basis
+            appointment.hasAvailability = (appointment.availability > appointment.booked);
+
             generateUrlPromises.push(
                 this[NavigationMixin.GenerateUrl]({
                     type: 'standard__recordPage',
@@ -408,6 +433,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appRow.visits = appointment.visits;
             appRow.booked = appointment.booked;
             appRow.availability = appointment.availability;
+            appRow.hasAvailability = (appRow.availability > appRow.booked)
         }).catch(err => {
             console.log(err.message);
         })
@@ -464,5 +490,28 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
         this.handleSelectNewFilter(event.currentTarget, "None", "data-outcome-api-name", "outcome");
         this.applyFilters();
+    }
+
+    handleInitAddVisit(event) {
+        let targetAppointmentId = event.currentTarget.dataset.appointment;
+
+        AddVisitModal.open({
+            appointmentSlotId: targetAppointmentId,
+            appointmentSlotDate: this.selectedDate,
+            appointmentSlotTime: event.currentTarget.dataset.appointmenttime,
+            centerId: this.selectedCenterId,
+
+            onvisitcreated: (event) => {
+                event.stopPropagation();
+                this.handleVisitCreated(event, targetAppointmentId);
+            }
+        });
+    }
+
+    handleVisitCreated(event, appointmentId) {
+        this.refreshAppointmentSlot(
+            appointmentId,
+            this.appointments.find(appointment => appointment.Id === appointmentId)
+        );
     }
 }

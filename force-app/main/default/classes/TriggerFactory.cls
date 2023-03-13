@@ -183,7 +183,7 @@ public with sharing class TriggerFactory {
         * @param Boolean A flag to indicate 'isExecuting'.
         */
         public Parameters(List<SObject> oldList, List<SObject> newList, Map<Id, SObject> oldMap, Map<Id, SObject> newMap,
-                Boolean isBefore, Boolean isAfter, Boolean isDelete, Boolean isInert, Boolean isUpdate, Boolean isUndelete, Boolean isExecuting) {
+                Boolean isBefore, Boolean isAfter, Boolean isDelete, Boolean isInsert, Boolean isUpdate, Boolean isUndelete, Boolean isExecuting) {
 
             this.oldList = oldList;
             this.newList = newList;
@@ -193,7 +193,7 @@ public with sharing class TriggerFactory {
             this.triggerObject = ((this.oldList != null && this.oldList.size() > 0) ? this.oldList[0] : this.newList[0]).getSObjectType().getDescribe().getName();
 
             if (isBefore) {
-                if (isInert) {
+                if (isInsert) {
                     tEvent = TriggerEvent.beforeInsert;
                 } else if (isUpdate) {
                     tEvent = TriggerEvent.beforeUpdate;
@@ -201,7 +201,7 @@ public with sharing class TriggerFactory {
                     tEvent = TriggerEvent.beforeDelete;
                 }
             } else if (isAfter) {
-                if (isInert) {
+                if (isInsert) {
                     tEvent = TriggerEvent.afterInsert;
                 } else if (isUpdate) {
                     tEvent = TriggerEvent.afterUpdate;

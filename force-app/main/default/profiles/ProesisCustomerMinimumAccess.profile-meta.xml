@@ -73,4 +73,8 @@
         <visible>true</visible>
     </recordTypeVisibilities>
     <userLicense>Customer Community</userLicense>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>RunFlow</name>
+    </userPermissions>
 </Profile>

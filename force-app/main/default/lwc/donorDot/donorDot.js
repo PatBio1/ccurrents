@@ -9,11 +9,16 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     @api icon = 'standard:account';
     @api donor;
     @api appointment;
+    @api popFlipYPoint;
 
     donorLink;
     visitLink;
     isPopupConfigured = false;
     popUpDirection;
+
+    get cantCancelVisit() {
+        return (this.donor.status === "Complete" || this.donor.outcome === "Canceled");
+    }
 
     get popupContainerClasses() {
         let baseClasses = ["slds-popover", "visit-popup-container"];
@@ -86,7 +91,6 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     renderedCallback() {
-        console.log(this.donor);
         if (this.showpopover && !this.isPopupConfigured) {
             this.calculatePopupPosition();
         }
@@ -130,9 +134,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
             return;
         }
 
-        let screenHalfwayPoint = window.innerHeight / 2;
-        let popOnTop = (this.template.host.getBoundingClientRect().y >= screenHalfwayPoint);
-
+        let popOnTop = (this.template.host.getBoundingClientRect().y >= this.popFlipYPoint);
         if (popOnTop) {
             this.popUpDirection = "Top";
             popupContainer.style.top = "-218px";

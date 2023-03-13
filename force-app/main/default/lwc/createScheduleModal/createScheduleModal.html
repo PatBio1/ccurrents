@@ -9,14 +9,14 @@
         <div class="slds-grid slds-gutters">
             
             <div class="slds-col slds-size_6-of-12">
-                
                 <lightning-input 
                 type="date" 
                 name="input8" 
                 label="Start Date" 
                 value={startDate}
                 onchange={changeStart}
-                min="2023-01-01" 
+                min={today} 
+                required
                 ></lightning-input>
             </div>
 
@@ -27,8 +27,8 @@
                 label="End Date" 
                 value={endDate}
                 onchange={changeEnd}
-                min="2023-01-01" 
-                
+                min={startDate} 
+                required
                 ></lightning-input>
             </div>
 
@@ -65,7 +65,7 @@
                 max="10"
                 value={intervalsPerHour}
                 onchange={changeIntervalsPerHour}
-
+                required
                 ></lightning-input>
             </div>
             <div class="slds-col slds-size_6-of-12">
@@ -75,9 +75,9 @@
                 label="Number Slots Per Interval" 
                 value={slotsPerInterval}
                 min="1"
-                max="20"
+                max="100"
                 onchange={changeSlotsPerInterval}
-
+                required
                 ></lightning-input>
             </div>
 

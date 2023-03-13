@@ -140,6 +140,10 @@
     font-size: 16px;
 }
 
+.drop-ok {
+    background-color: #f5f0ff;
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: 10px;

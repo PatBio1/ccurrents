@@ -124,19 +124,19 @@ Rate__c[] centerRates = new Rate__c[]{
             Center__c = centers[0].Id,
             Donation_Type__c = donationType.Id,
             Base_Payment__c = 100.00, 
-            UOM__c = 'pint'
+            UOM__c = 'visit'
     ),
     new Rate__c(
             Center__c = centers[1].Id,
             Donation_Type__c = donationType.Id,
             Base_Payment__c = 50.00, 
-            UOM__c = 'pint'
+            UOM__c = 'visit'
     ),
     new Rate__c(
             Center__c = centers[2].Id,
             Donation_Type__c = donationType.Id,
             Base_Payment__c = 45.00, 
-            UOM__c = 'pint'
+            UOM__c = 'visit'
     )
 };
 insert centerRates;

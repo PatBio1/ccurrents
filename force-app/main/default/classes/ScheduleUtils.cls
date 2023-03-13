@@ -1,19 +1,25 @@
 public with sharing class ScheduleUtils {
 
     public static Schedule__c createScheduleRecord(Id centerId, Date startDate, Date endDate){
-        
+
         Schedule__c[] existingSchedules = new Schedule__c[]{};
         //check for any existing schedules overlapping range
+        //WHERE schedule is for this center
+        //AND Start date is in between new range
+        //OR End date is in between new range
+        //OR is encompassed by entire range
         Boolean scheduleExists  = false;
         for(Schedule__c sched: [
             SELECT  Id
             FROM    Schedule__c
             WHERE Center__c =: centerId
-            AND ( 
-                    (Begin_Date__c >=: startDate AND Begin_Date__c <=: endDate)
+            AND (
+                    (Begin_Date__c <=: startDate AND End_Date__c >=: startDate)
                     OR 
-                    ( End_Date__c >=: startDate AND End_Date__c  <=: endDate) 
-                )
+                    ( Begin_Date__c <=: endDate AND End_Date__c  >=: endDate) 
+                    OR
+                    ( Begin_Date__c >=: startDate AND End_Date__c <=: endDate) 
+            )
             LIMIT 1
         ]){
             scheduleExists = true;

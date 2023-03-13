@@ -5,6 +5,9 @@
     <columns>Type__c</columns>
     <columns>Donor__c</columns>
     <columns>Visit__c</columns>
+    <columns>Amount_Currency__c</columns>
+    <columns>Service__c</columns>
+    <columns>Status__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

@@ -62,6 +62,7 @@
     gap: 12px;
     cursor: pointer;
     height: 36px;
+    white-space: nowrap;
 }
 
 .legend-icon {

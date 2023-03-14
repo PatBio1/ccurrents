@@ -106,16 +106,16 @@
 
             <div class="legend-header">
               <template for:each={statusOptions} for:item="status">
-                <div key={status.value} class="slds-button slds-button_neutral legend-entry" data-status-api-name={status.value} onclick={handleSelectStatus}>
+                <div key={status.value} class="slds-button slds-button_neutral slds-button_stretch legend-entry" data-status-api-name={status.value} onclick={handleSelectStatus}>
                   <div class={status.displayClass}></div>
-                  <p>{status.label}</p>
+                  <span>{status.label}</span>
                 </div>
               </template>
 
               <template for:each={outcomeOptions} for:item="outcome">
-                <div key={outcome.value} class="slds-button slds-button_neutral legend-entry" data-outcome-api-name={outcome.value} onclick={handleSelectOutcome}>
+                <div key={outcome.value} class="slds-button slds-button_neutral slds-button_stretch legend-entry" data-outcome-api-name={outcome.value} onclick={handleSelectOutcome}>
                   <div class={outcome.displayClass}></div>
-                  <p>{outcome.label}</p>
+                  <span>{outcome.label}</span>
                 </div>
               </template>
             </div>

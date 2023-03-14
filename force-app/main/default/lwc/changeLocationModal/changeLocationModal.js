@@ -31,9 +31,10 @@ export default class ChangeLocationModal extends LightningModal {
     }
 
     onChangeButtonClick() {
-        let postalCodeInput = this.template.querySelector('lightning-input');
-
+        this.errorMessage = undefined;
         this.loading = true;
+
+        let postalCodeInput = this.template.querySelector('lightning-input');
 
         const request = {
             postalCode: postalCodeInput.value

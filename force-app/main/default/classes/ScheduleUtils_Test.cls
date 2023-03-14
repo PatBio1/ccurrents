@@ -159,4 +159,10 @@ public with sharing class ScheduleUtils_Test {
         Schedule__c sched = ScheduleUtils.createScheduleRecord(center1.Id, newStartDate, newEndDate);
        
     }
+
+    @isTest
+    static void testCreateFirstVisitCode(){
+        String firstVisitCode = ScheduleUtils.createFirstVisitCode();
+        system.assertEquals(9, firstVisitCode.length());
+    }
 }

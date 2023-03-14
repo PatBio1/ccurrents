@@ -133,6 +133,27 @@ public with sharing class ScheduleUtils {
         
         return appointments;
     }
+
+    public static String createFirstVisitCode() {
+        //removed letter 'O' and number '0' for better UX
+        String chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+    
+        String code = '';
+        for (Integer i = 0; i < 4; i++) {
+            Integer index = Math.mod(Math.abs(Crypto.getRandomInteger()), chars.length());
+            code += chars.substring(index, index+1);
+        }
+    
+        code += '-';
+        
+        for (Integer i = 0; i < 4; i++) {
+            Integer index = Math.mod(Math.abs(Crypto.getRandomInteger()), chars.length());
+            code += chars.substring(index, index+1);
+        }
+    
+        return code;
+    }
+    
     
     public class ScheduleException extends Exception{}
 }

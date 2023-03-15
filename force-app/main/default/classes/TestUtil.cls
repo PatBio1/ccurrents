@@ -62,6 +62,7 @@ public with sharing class TestUtil {
             Account = new Account(
                 FirstName = 'Test',
                 LastName = 'Last',
+                First_Visit_Code__c = ScheduleUtils.createFirstVisitCode(),
                 RecordTypeId = Constants.DONOR_RECORD_TYPE_ID
             );
             insert account;
@@ -104,7 +105,7 @@ public with sharing class TestUtil {
             IsActive__c = false
         );
     }
-    
+
     public static Account createMiramarCenter() {
         return new Account(
             Name = 'Proesis Miramar',
@@ -187,6 +188,55 @@ public with sharing class TestUtil {
         };
     }
 
+    public static Account createTestDonor(String donorId) {
+        return new Account(
+            RecordTypeId = Constants.DONOR_RECORD_TYPE_ID,
+            FirstName = 'Test',
+            LastName = 'Donor',
+            DonorId__c = donorId
+        );
+    }
+
+    public static Schedule__c createTestSchedule(Id centerId, Datetime testDateTime) {
+        return new Schedule__c(
+            Center__c = centerId,
+            Begin_Date__c = Date.valueOf(testDateTime).addDays(-1),
+            End_Date__c = Date.valueOf(testDateTime).addDays(1)
+        );
+    }
+
+    public static Appointment__c createTestAppointment(Id scheduleId, Datetime testDateTime) {
+        Integer testDateTimeHour = testDateTime.hourGmt();
+        Time appointmentTime = Time.newInstance(testDateTimeHour, 0, 0, 0);
+        Date appointmentDate = testDateTime.dateGmt();
+        Datetime appointmentDateTime = Datetime.newInstanceGmt(appointmentDate, appointmentTime);
+        return new Appointment__c(
+            Schedule__c = scheduleId,
+            Duration__c = 15,
+            Capacity__c = 4,
+            Datetime__c = appointmentDateTime
+        );
+    }
+
+    public static Center_Donation_Type__c createCenterDonationType(Id centerId) {
+        Donation_Type__c donationType = new Donation_Type__c(Name = 'Normal Source Plasma');
+        insert donationType;
+        return new Center_Donation_Type__c(
+            isActive__c = true,
+            Center__c = centerId,
+            Donation_Type__c = donationType.Id
+        );
+    }
+
+    public static Visit__c createVisit(Id donorId, Id centerDonationTypeId, Id appointmentId) {
+        return new Visit__c(
+            Donor__c = donorId,
+            Center_Donation_Type__c = centerDonationTypeId,
+            Appointment__c = appointmentId,
+            Status__c = 'New'
+        );
+    }
+
     public static ContentVersion createContentVersion() {
         return new ContentVersion(
             Title = 'Test',
@@ -195,6 +245,7 @@ public with sharing class TestUtil {
         );
     }
 
-    public class TestException extends Exception {}
+    public class TestException extends Exception {
+    }
 
 }

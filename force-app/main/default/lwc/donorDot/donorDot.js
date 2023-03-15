@@ -9,11 +9,24 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     @api icon = 'standard:account';
     @api donor;
     @api appointment;
+    @api popFlipYPoint;
 
     donorLink;
     visitLink;
     isPopupConfigured = false;
     popUpDirection;
+
+    get canReschedule() {
+        return (!this.appointment.isInThePast);
+    }
+
+    get displayStatus() {
+        return (this.donor.outcome) ? this.donor.outcome : this.donor.status;
+    }
+
+    get cantCancelVisit() {
+        return (this.donor.status === "Complete" || this.donor.outcome === "Canceled");
+    }
 
     get popupContainerClasses() {
         let baseClasses = ["slds-popover", "visit-popup-container"];
@@ -28,12 +41,12 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     get avatarClasses() {
-        let targetClasses = ['slds-m-right_small', 'donor-icon', visitStatusToDisplayClass.get(this.donor.status)];
+        let targetClasses = ['slds-m-right_small', 'donor-icon'];
         
         if (this.donor.outcome) {
             targetClasses.push(visitOutcomeToDisplayClass.get(this.donor.outcome));
         } else {
-            targetClasses.push(visitOutcomeToDisplayClass.get("None"));
+            targetClasses.push(visitStatusToDisplayClass.get(this.donor.status));
         }
 
         return targetClasses.join(" ");
@@ -86,7 +99,6 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     renderedCallback() {
-        console.log(this.donor);
         if (this.showpopover && !this.isPopupConfigured) {
             this.calculatePopupPosition();
         }
@@ -130,9 +142,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
             return;
         }
 
-        let screenHalfwayPoint = window.innerHeight / 2;
-        let popOnTop = (this.template.host.getBoundingClientRect().y >= screenHalfwayPoint);
-
+        let popOnTop = (this.template.host.getBoundingClientRect().y >= this.popFlipYPoint);
         if (popOnTop) {
             this.popUpDirection = "Top";
             popupContainer.style.top = "-218px";

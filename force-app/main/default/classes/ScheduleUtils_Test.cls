@@ -113,4 +113,56 @@ public with sharing class ScheduleUtils_Test {
         
         system.assertEquals(slotsPerInterval, appointments[119].Capacity__c);
     }
+
+    @isTest
+    static void ScheduleUtilsError_Test() {
+        Appointment__c[] appointments;
+        Test.startTest();
+
+        // create a set of appointment slots
+        Date startDate =  Date.newInstance(2023, 1, 1);
+        Date endDate = Date.newInstance(2023, 1, 31);
+        Id loyaltyTier = null;
+    
+
+        Account center1 = [SELECT Id FROM Account WHERE Name = 'Center 1'];
+
+        Schedule__c schedule = ScheduleUtils.createScheduleRecord(center1.Id, startDate, endDate);
+        insert schedule;
+        //end date overlaps existing
+        try{
+            Date newStartDate =  Date.newInstance(2022, 12, 1);
+            Date newEndDate = Date.newInstance(2023, 1, 15);
+            ScheduleUtils.createScheduleRecord(center1.Id, newStartDate, newEndDate);
+        }catch(ScheduleUtils.ScheduleException se){
+            system.assertEquals('A Schedule exists for this center in this date range',se.getMessage());
+        }
+        //start date overlaps existing
+        try{
+            Date newStartDate =  Date.newInstance(2023, 1, 15);
+            Date newEndDate = Date.newInstance(2023, 2, 15);
+            ScheduleUtils.createScheduleRecord(center1.Id, newStartDate, newEndDate);
+        }catch(ScheduleUtils.ScheduleException se){
+            system.assertEquals('A Schedule exists for this center in this date range',se.getMessage());
+        }
+        //new schedule totally encompasses another schedule
+        try{
+            Date newStartDate =  Date.newInstance(2022, 12, 1);
+            Date newEndDate = Date.newInstance(2023, 3, 1);
+            ScheduleUtils.createScheduleRecord(center1.Id, newStartDate, newEndDate);
+        }catch(ScheduleUtils.ScheduleException se){
+            system.assertEquals('A Schedule exists for this center in this date range',se.getMessage());
+        }
+
+        Date newStartDate =  Date.newInstance(2023, 2, 1);
+        Date newEndDate = Date.newInstance(2023, 3, 1);
+        Schedule__c sched = ScheduleUtils.createScheduleRecord(center1.Id, newStartDate, newEndDate);
+       
+    }
+
+    @isTest
+    static void testCreateFirstVisitCode(){
+        String firstVisitCode = ScheduleUtils.createFirstVisitCode();
+        system.assertEquals(7, firstVisitCode.length());
+    }
 }

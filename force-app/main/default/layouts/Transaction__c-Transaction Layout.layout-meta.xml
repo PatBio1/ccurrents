@@ -21,7 +21,7 @@
                 <field>Visit__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Required</behavior>
+                <behavior>Edit</behavior>
                 <field>Service__c</field>
             </layoutItems>
         </layoutColumns>
@@ -36,7 +36,11 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Amount__c</field>
+                <field>Amount_Currency__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Amount_Points__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
@@ -115,9 +119,23 @@
     </platformActionList>
     <relatedLists>
         <fields>NAME</fields>
+        <fields>Item__c</fields>
+        <fields>Quantity__c</fields>
+        <fields>Unit_of_Measure__c</fields>
+        <fields>Unit_Cost__c</fields>
+        <fields>Total__c</fields>
+        <fields>Type__c</fields>
+        <fields>CREATED_DATE</fields>
+        <relatedList>Txn_Line_Item__c.Transaction__c</relatedList>
+        <sortField>Type__c</sortField>
+        <sortOrder>Asc</sortOrder>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
         <fields>Message__c</fields>
         <fields>Payment_Service__c</fields>
         <fields>Datetime__c</fields>
+        <fields>CREATED_DATE</fields>
         <relatedList>Transaction_Log__c.Transaction__c</relatedList>
         <sortField>Datetime__c</sortField>
         <sortOrder>Desc</sortOrder>
@@ -128,7 +146,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00hDJ000002PTSh</masterLabel>
+        <masterLabel>00hDL000009ZHZk</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

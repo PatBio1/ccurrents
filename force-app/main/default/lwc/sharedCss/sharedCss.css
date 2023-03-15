@@ -86,10 +86,6 @@
 }
 
 /* custom donor dot colors */
-:host .outcome-none {
-    --sds-c-icon-color-background: #F2E8CF;
-    outline: 4px solid #F2E8CF;
-}
 :host .outcome-no-show {
     --sds-c-icon-color-background: #141115;
     background: #141115;

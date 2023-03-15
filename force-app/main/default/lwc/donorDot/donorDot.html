@@ -26,7 +26,6 @@
             class={avatarClasses}
             style="margin-right:2px;">
         </lightning-avatar>
-    </div>
 
         <template if:true={showpopover}>
             <section class={popupContainerClasses} aria-label="Dialog title" aria-describedby="popover-body-id" role="dialog">
@@ -82,36 +81,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- <lightning-button-icon icon-name="utility:close"  alternative-text="close" title="Close" onclick={hidePopover} class="slds-float_right slds-popover__close"></lightning-button-icon>
-    
-            <div id="popover-body-id" class="slds-popover__body">
-                <div class="slds-popover__meta">
-                    <span class="slds-badge">{donor.status}</span>
-                    <span if:true={donor.outcome} class="slds-badge">{donor.outcome}</span>
-                </div>
-
-                <div style="display: flex; align-items: center; gap: 16px;">
-                    <lightning-avatar
-                        size="medium"
-                        variant="circle"
-                        initials={donor.initials}
-                        fallback-icon-name={donor.icon}
-                        alternative-text={donor.donorName}>
-                    </lightning-avatar>
-
-                    <div style="display: flex; flex-direction: column; justify-content: center">
-                        <p><b><a href={donorLink} target="_blank" >{donor.donorName}</a></b></p>
-                        <p><a href={visitLink} target="_blank" >Visit Details</a></p>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: flex-end">
-                    <lightning-button variant="destructive-text" label="Cancel Visit" title="Cancel Visit" onclick={cancelVisit} style="margin-top: 8px" icon-name="utility:delete">
-                    </lightning-button>
-                </div>
-            </div> -->
-        </section>
-    </template>
+            </section>
+        </template>
+    </div>
 </template>

@@ -506,27 +506,4 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             this.appointments.find(appointment => appointment.Id === appointmentId)
         );
     }
-
-    handleInitAddVisit(event) {
-        let targetAppointmentId = event.currentTarget.dataset.appointment;
-
-        AddVisitModal.open({
-            appointmentSlotId: targetAppointmentId,
-            appointmentSlotDate: this.selectedDate,
-            appointmentSlotTime: event.currentTarget.dataset.appointmenttime,
-            centerId: this.selectedCenterId,
-
-            onvisitcreated: (event) => {
-                event.stopPropagation();
-                this.handleVisitCreated(event, targetAppointmentId);
-            }
-        });
-    }
-
-    handleVisitCreated(event, appointmentId) {
-        this.refreshAppointmentSlot(
-            appointmentId,
-            this.appointments.find(appointment => appointment.Id === appointmentId)
-        );
-    }
 }

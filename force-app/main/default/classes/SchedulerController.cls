@@ -82,7 +82,7 @@ public without sharing class SchedulerController {
 
             List<Visit__c> visitRecords = [
                 SELECT
-                    Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name, Appointment__r.Schedule__r.Center__r.BillingStreet
+                    Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name, Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.DonorId__c
                 FROM
                     Visit__c
                 WHERE
@@ -101,6 +101,7 @@ public without sharing class SchedulerController {
                 visit.centerName = visitRecord.Appointment__r.Schedule__r.Center__r.Name;
                 visit.centerAddress = visitRecord.Appointment__r.Schedule__r.Center__r.BillingStreet;
                 visit.status = visitRecord.Status__c;
+                visit.donorId = visitRecord.Donor__r.Account.DonorId__c;
                 visits.add(visit);
             }
 
@@ -200,6 +201,8 @@ public without sharing class SchedulerController {
         @AuraEnabled
         public String status {get; set;}
 
+        @AuraEnabled 
+        public String donorId {get; set;}
     }
 
 }

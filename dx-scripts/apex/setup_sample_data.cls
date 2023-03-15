@@ -16,13 +16,15 @@ Account[] donors = new Account[]{
         FirstName = 'Danny',
         LastName = 'Donor',
         RecordTypeID = Constants.DONOR_RECORD_TYPE_ID,
-        DonorId__c = 'donor-12345'
+        DonorId__c = 'donor-12345',
+        First_Visit_Code__c = ScheduleUtils.createFirstVisitCode()
     ),
     new Account(
         FirstName = 'Betty',
         LastName = 'Bond',
         RecordTypeID = Constants.DONOR_RECORD_TYPE_ID,
-        DonorId__c = 'donor-67890'    
+        DonorId__c = 'donor-67890',
+        First_Visit_Code__c = ScheduleUtils.createFirstVisitCode()    
     )
 };
 

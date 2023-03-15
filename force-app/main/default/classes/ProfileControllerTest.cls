@@ -152,7 +152,7 @@ public with sharing class ProfileControllerTest {
                 WHERE Name = 'Test First Test Last' 
             ];
 
-            system.assertEquals(9, personAccount.First_Visit_Code__c.length());
+            system.assertEquals(7, personAccount.First_Visit_Code__c.length());
 
             // Site.createExternalUser() doesn't work in unit tests so the user isn't
             // actually created and the following assertions won't work.

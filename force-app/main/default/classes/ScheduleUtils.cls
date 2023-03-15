@@ -139,14 +139,14 @@ public with sharing class ScheduleUtils {
         String chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
     
         String code = '';
-        for (Integer i = 0; i < 4; i++) {
+        for (Integer i = 0; i < 3; i++) {
             Integer index = Math.mod(Math.abs(Crypto.getRandomInteger()), chars.length());
             code += chars.substring(index, index+1);
         }
     
         code += '-';
         
-        for (Integer i = 0; i < 4; i++) {
+        for (Integer i = 0; i < 3; i++) {
             Integer index = Math.mod(Math.abs(Crypto.getRandomInteger()), chars.length());
             code += chars.substring(index, index+1);
         }

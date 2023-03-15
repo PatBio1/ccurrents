@@ -163,6 +163,6 @@ public with sharing class ScheduleUtils_Test {
     @isTest
     static void testCreateFirstVisitCode(){
         String firstVisitCode = ScheduleUtils.createFirstVisitCode();
-        system.assertEquals(9, firstVisitCode.length());
+        system.assertEquals(7, firstVisitCode.length());
     }
 }

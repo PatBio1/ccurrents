@@ -145,6 +145,15 @@ public with sharing class ProfileControllerTest {
 
             Id userId = ProfileController.createUser(profile);
 
+            Account personAccount = [
+                SELECT ID,
+                        First_Visit_Code__c
+                FROM Account 
+                WHERE Name = 'Test First Test Last' 
+            ];
+
+            system.assertEquals(7, personAccount.First_Visit_Code__c.length());
+
             // Site.createExternalUser() doesn't work in unit tests so the user isn't
             // actually created and the following assertions won't work.
 /*

@@ -110,7 +110,7 @@ public with sharing class CenterSchedulerControllerTests {
             centers = CenterScheduleController.getCenters();
         }
         Test.stopTest();
-        system.assertEquals(3, centers.size());
+        system.assertEquals(2, centers.size());
     }
 
     @IsTest

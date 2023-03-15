@@ -93,42 +93,6 @@
             </lightning-button-group>
           </div>
         </div>
-
-        <template if:true={hasAppointmentsToDisplay}>
-          <div class="filter-container">
-            <div class="legend-header">
-              <div class="slds-button slds-button_neutral slds-button_brand legend-entry" style="margin-right: 8px;" data-status-api-name="All" onclick={handleSelectStatus}>
-                <p>Show All Statuses</p>
-              </div>
-        
-              <template for:each={statusOptions} for:item="status">
-                <div key={status.value} class="slds-button slds-button_neutral legend-entry" data-status-api-name={status.value} onclick={handleSelectStatus}>
-                  <div class={status.displayClass}></div>
-                  <p>{status.label}</p>
-                </div>
-              </template>
-            </div>
-        
-            <div class="legend-header">
-              <div class="slds-button slds-button_neutral slds-button_brand legend-entry" style="margin-right: 8px;" data-outcome-api-name="All" onclick={handleSelectOutcome}>
-                <p>Show All Outcomes</p>
-              </div>
-    
-              <!-- Hiding for now in case we want this later, will remove at a later point -->
-              <!-- <div" class="slds-button slds-button_neutral legend-entry" onclick={handleNullFilterChange}>
-                <div class="legend-icon outcome-none"></div>
-                <p>No Outcome</p>
-              </div> -->
-        
-              <template for:each={outcomeOptions} for:item="outcome">
-                <div key={outcome.value} class="slds-button slds-button_neutral legend-entry" data-outcome-api-name={outcome.value} onclick={handleSelectOutcome}>
-                  <div class={outcome.displayClass}></div>
-                  <p>{outcome.label}</p>
-                </div>
-              </template>
-            </div>
-          </div>
-        </template>
       </div>
     </article>
 
@@ -139,6 +103,22 @@
           <div class="appointment-date-header">
             <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={selectedDate} time-zone="UTC">
             </lightning-formatted-date-time>
+
+            <div class="legend-header">
+              <template for:each={statusOptions} for:item="status">
+                <div key={status.value} class="slds-button slds-button_neutral slds-button_stretch legend-entry" data-status-api-name={status.value} onclick={handleSelectStatus}>
+                  <div class={status.displayClass}></div>
+                  <span>{status.label}</span>
+                </div>
+              </template>
+
+              <template for:each={outcomeOptions} for:item="outcome">
+                <div key={outcome.value} class="slds-button slds-button_neutral slds-button_stretch legend-entry" data-outcome-api-name={outcome.value} onclick={handleSelectOutcome}>
+                  <div class={outcome.displayClass}></div>
+                  <span>{outcome.label}</span>
+                </div>
+              </template>
+            </div>
           </div>
 
           <div style="display: grid; grid-template-columns: var(--appointment-grid-column-template);">
@@ -150,11 +130,6 @@
         </div>
 
         <div class="appointments">
-          <!-- <div class="appointment-column-header-cell" style="text-align: center;">Time</div>
-          <div class="appointment-column-header-cell" style="text-align: center;">Available</div>
-          <div class="appointment-column-header-cell" style="text-align: center;">Filled</div>
-          <div class="appointment-column-header-cell" style="text-align: left;">Donors</div> -->
-    
           <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
             <div key={appointment.key} if:false={appointment.filtered} style="background: #F5F0FF;" class="appointment-data-cell">
                 <a href={appointment.link} target="_blank">
@@ -183,7 +158,7 @@
               key={appointment.key} 
               class="appointment-data-cell droppable" 
               title={appointment.key} 
-              style="justify-content: flex-start; text-align: left;position: relative; padding: 6px; gap: 14px;" 
+              style="justify-content: flex-start; text-align: left;position: relative; padding: 6px; gap: 6px;" 
               ondrop={drop} 
               ondragenter={dragenter} 
               ondragleave={dragleave} 
@@ -195,7 +170,17 @@
                     </c-donor-dot>
                 </template>
 
-                <lightning-button if:true={appointment.hasAvailability} style="margin-left: 8px;" icon-name="utility:add" label="Add Visit" variant="base" onclick={handleInitAddVisit} data-appointment={appointment.Id}  data-appointmenttime={appointment.timeString}>
+                <lightning-button 
+                  style="margin-left: 8px;" 
+                  icon-name="utility:add" 
+                  label="Add Visit" 
+                  variant="base"
+                  onclick={handleInitAddVisit}
+                  data-appointment={appointment.Id}
+                  data-appointmenttime={appointment.timeString}
+                  disabled={appointment.cantAddVisit}
+                  draggable="false"
+                >
                 </lightning-button>
             </div>
           </template>

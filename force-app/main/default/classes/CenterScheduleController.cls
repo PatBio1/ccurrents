@@ -8,7 +8,8 @@ public with sharing class CenterScheduleController {
             for( Account a: [
                 Select Id, Name 
                 FROM Account 
-                WHERE RecordType.DeveloperName = 'Center'
+                WHERE RecordType.DeveloperName = 'Center' AND
+                    isActive__c = true
                 WITH SECURITY_ENFORCED
             ]){
                 centers.add(new Center(a));
@@ -251,6 +252,9 @@ public with sharing class CenterScheduleController {
         public Decimal capacity {get;set;}
 
         @AuraEnabled
+        public Boolean isInThePast {get;set;}
+
+        @AuraEnabled
         public Boolean filtered {get;set;}
 
         public AppointmentSlot(Appointment__c app){
@@ -263,6 +267,7 @@ public with sharing class CenterScheduleController {
             this.booked = app.Booked__c;
             this.capacity = app.Capacity__c;
             this.filtered = false;
+            this.isInThePast = this.appointmentDatetime < DateTime.now();
         }
     }
 

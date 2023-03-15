@@ -15,7 +15,7 @@
         </div>
         
         <lightning-avatar
-            draggable="true" ondragstart={dragstart} ondragend={dragend} data-text="foo"
+            draggable={canReschedule} ondragstart={dragstart} ondragend={dragend} data-text="foo"
             size="large"
             onclick={togglePopover}
             aria-haspopup="false"
@@ -67,7 +67,7 @@
                     </div>
                     
                     <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px;">
-                        <div class="slds-badge">{donor.status}</div>
+                        <div class="slds-badge">{displayStatus}</div>
                         
                         <div style="display: flex; justify-content: flex-end; gap: 8px;">
                             <lightning-button-icon title="Exception Payment" icon-name="utility:money" variant="bare" size="large">

@@ -82,7 +82,7 @@ public without sharing class SchedulerController {
 
             List<Visit__c> visitRecords = [
                 SELECT
-                    Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name, Appointment__r.Schedule__r.Center__r.BillingStreet
+                    Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name, Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.DonorId__c
                 FROM
                     Visit__c
                 WHERE
@@ -101,6 +101,7 @@ public without sharing class SchedulerController {
                 visit.centerName = visitRecord.Appointment__r.Schedule__r.Center__r.Name;
                 visit.centerAddress = visitRecord.Appointment__r.Schedule__r.Center__r.BillingStreet;
                 visit.status = visitRecord.Status__c;
+                visit.donorId = visitRecord.Donor__r.Account.DonorId__c;
                 visits.add(visit);
             }
 
@@ -115,6 +116,8 @@ public without sharing class SchedulerController {
         try {
             User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
 
+            Contact contact = [SELECT ID, Account.First_Visit_Code__c FROM Contact WHERE  Id =: user.ContactId][0];
+
             Appointment__c appointment = [SELECT Schedule__r.Center__c FROM Appointment__c WHERE Id = :appointmentId];
 
             Center_Donation_Type__c centerDonationType = [
@@ -127,6 +130,18 @@ public without sharing class SchedulerController {
             visit.Center_Donation_Type__c = centerDonationType.Id;
             visit.Status__c = 'Scheduled';
             insert visit;
+
+            Integer numberOfVisits = [SELECT COUNT() FROM Visit__c WHERE Donor__c =: user.ContactId];
+
+            if(numberOfVisits == 1){
+                //this is user's first visit, add First Visit Code as a Task
+                Task taskRecord = new Task();
+                taskRecord.Subject = 'First Visit Code';
+                taskRecord.Description = contact.Account.First_Visit_Code__c;
+                //Add your field mappings
+                taskRecord.whatid = visit.id;
+                insert taskRecord;
+            }
 
             return visit.Id;
         } catch (Exception e) {
@@ -186,6 +201,8 @@ public without sharing class SchedulerController {
         @AuraEnabled
         public String status {get; set;}
 
+        @AuraEnabled 
+        public String donorId {get; set;}
     }
 
 }

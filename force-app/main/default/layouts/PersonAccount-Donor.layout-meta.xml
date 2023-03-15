@@ -36,6 +36,10 @@
                 <behavior>Edit</behavior>
                 <field>PersonEmail</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>First_Visit_Code__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

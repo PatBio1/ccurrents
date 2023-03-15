@@ -14,6 +14,7 @@ export default class AddVisitModal extends LightningModal {
     foundDonors;
     updateSearchTimeout;
     isSearching;
+    isLoading;
 
     get headerLabel() {
         let dateString = (new Date(this.appointmentSlotDate).toLocaleDateString(
@@ -49,6 +50,8 @@ export default class AddVisitModal extends LightningModal {
     }
 
     async handleSelectDonor(event) {
+        this.isLoading = true;
+        
         try {
             await addVisit({ 
                 donorId: event.currentTarget.dataset.donorId,
@@ -62,6 +65,7 @@ export default class AddVisitModal extends LightningModal {
                 variant: "error"
             }));
 
+            this.isLoading = false;
             return;
         }
 

@@ -62,6 +62,7 @@ public with sharing class TestUtil {
             Account = new Account(
                 FirstName = 'Test',
                 LastName = 'Last',
+                First_Visit_Code__c = ScheduleUtils.createFirstVisitCode(),
                 RecordTypeId = Constants.DONOR_RECORD_TYPE_ID
             );
             insert account;

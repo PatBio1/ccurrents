@@ -16,6 +16,14 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     isPopupConfigured = false;
     popUpDirection;
 
+    get canReschedule() {
+        return (!this.appointment.isInThePast);
+    }
+
+    get displayStatus() {
+        return (this.donor.outcome) ? this.donor.outcome : this.donor.status;
+    }
+
     get cantCancelVisit() {
         return (this.donor.status === "Complete" || this.donor.outcome === "Canceled");
     }
@@ -33,12 +41,12 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     get avatarClasses() {
-        let targetClasses = ['slds-m-right_small', 'donor-icon', visitStatusToDisplayClass.get(this.donor.status)];
+        let targetClasses = ['slds-m-right_small', 'donor-icon'];
         
         if (this.donor.outcome) {
             targetClasses.push(visitOutcomeToDisplayClass.get(this.donor.outcome));
         } else {
-            targetClasses.push(visitOutcomeToDisplayClass.get("None"));
+            targetClasses.push(visitStatusToDisplayClass.get(this.donor.status));
         }
 
         return targetClasses.join(" ");

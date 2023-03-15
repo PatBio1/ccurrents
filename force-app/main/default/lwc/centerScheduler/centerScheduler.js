@@ -68,6 +68,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     tz=TIME_ZONE;
 
     showFilters=false;
+    initDefaultFilters=false;
     show = false;
     dateDisabled = true;
     loading = true;
@@ -95,15 +96,11 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         },
 
         passesFilters: function(visit, filterOnNull) {
-            let passesFilters = true;
-
-            if (!!visit.status && this.hasStatusFilters() && !this.status.includes(visit.status)) {
-                passesFilters = false;
-            } else if ((filterOnNull || !!visit.outcome) && this.hasOutcomeFilters() && !this.outcome.includes(visit.outcome)) { 
-                passesFilters = false;
+            if (!this.hasStatusFilters() && !this.hasOutcomeFilters()) {
+                return true;
             }
 
-            return passesFilters;
+            return (this.status.includes(visit.status) || this.outcome.includes(visit.outcome))
         }
     }
 
@@ -117,6 +114,16 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
     renderedCallback() {
         this.calculatePopoverFlipPoint();
+
+        if (this.hasAppointmentsToDisplay && !this.initDefaultFilters) {
+            // Apply Default Filters
+            this.handleSelectNewFilter(this.template.querySelector(".legend-entry[data-status-api-name='Scheduled']"), "Scheduled", "status");
+            this.handleSelectNewFilter(this.template.querySelector(".legend-entry[data-status-api-name='Checked-In']"), "Checked-In", "status");
+            this.handleSelectNewFilter(this.template.querySelector(".legend-entry[data-outcome-api-name='Donation']"), "Donation", "outcome");
+            this.applyFilters();
+
+            this.initDefaultFilters = true;
+        }
     }
 
     refresh() {
@@ -185,6 +192,12 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             return;
         }
 
+        let appointmentData = this.appointments.find((appointment) => appointment.Id === newAppointmentId);
+        if (!appointmentData || appointmentData.cantAddVisit) {
+            alert("This appointment slot doesn't have any remaining capacity");
+            return;
+        }
+
         //last chance to back out
         if(!confirm(`Really change appointment time for ${donorName} from ${appointmentTime} to ${newOppointmentTime}?`)){
             return;
@@ -229,19 +242,22 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     }
 
     dragenter(event) {
-        // console.log('drag enter')
-        event.target.classList.add('drop-ok');
+        let newAppointmentId = event.target.dataset.appointment;
+        let appointmentData = this.appointments.find((appointment) => appointment.Id === newAppointmentId);
+
+        if (appointmentData && !appointmentData.cantAddVisit) {
+            event.target.classList.add('drop-ok');
+        }
     }
-    dragleave(event){
-        // console.log('drag leave')
+
+    dragleave(event) {
         event.target.classList.remove('drop-ok');
     }    
 
-
     get filterLabel() {
-        if(this.showFilters){
+        if (this.showFilters) {
             return 'Hide Filters'
-        }else{
+        } else {
             return 'Show Filters'
         }
     }
@@ -335,7 +351,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         let generateUrlPromises = [];
         for(let appointment of queriedAppointments) {
             // Used to show/hide Add Visit on per row basis
-            appointment.hasAvailability = (appointment.availability > appointment.booked);
+            appointment.cantAddVisit = !(appointment.availability > appointment.booked && !appointment.isInThePast);
 
             generateUrlPromises.push(
                 this[NavigationMixin.GenerateUrl]({
@@ -433,43 +449,28 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appRow.visits = appointment.visits;
             appRow.booked = appointment.booked;
             appRow.availability = appointment.availability;
-            appRow.hasAvailability = (appRow.availability > appRow.booked)
+            appRow.cantAddVisit = !(appointment.availability > appointment.booked && !appointment.isInThePast);
         }).catch(err => {
             console.log(err.message);
         })
     }
 
-    handleSelectNewFilter(newFilterButton, newFilterApiName, filterDataKey, filterName) {
-        if (newFilterApiName !== "All") {
-            let allRelatedStatusButton = this.template.querySelector(`div[${filterDataKey}='All']`);
-            let existingFilterIndex = this.filters[filterName].findIndex((selectedFilter) => selectedFilter === newFilterApiName);
+    handleSelectNewFilter(newFilterButton, newFilterApiName, filterName) {
+        let existingFilterIndex = this.filters[filterName].findIndex((selectedFilter) => selectedFilter === newFilterApiName);
 
-            if (existingFilterIndex != -1) {
-                this.filters[filterName].splice(existingFilterIndex, 1);
-                if (!this.filters[filterName] || !this.filters[filterName].length) {
-                    allRelatedStatusButton.classList.add('slds-button_brand');
-                }
-            } else {
-                this.filters[filterName].push(newFilterApiName);
-                allRelatedStatusButton.classList.remove('slds-button_brand');
-            }
-
-            newFilterButton.classList.toggle("slds-button_brand");
+        if (existingFilterIndex != -1) {
+            this.filters[filterName].splice(existingFilterIndex, 1);
         } else {
-            this.filters[filterName] = [];
-
-            for(let relatedFilterButton of this.template.querySelectorAll(`div[${filterDataKey}]`)) {
-                relatedFilterButton.classList.remove("slds-button_brand");
-            }
-
-            newFilterButton.classList.toggle("slds-button_brand");
+            this.filters[filterName].push(newFilterApiName);
         }
+
+        newFilterButton.classList.toggle("slds-button_brand");
     }
 
     handleSelectStatus(event) {
         let targetStatus = event.currentTarget.dataset.statusApiName;
 
-        this.handleSelectNewFilter(event.currentTarget, targetStatus, "data-status-api-name", "status");
+        this.handleSelectNewFilter(event.currentTarget, targetStatus, "status");
         this.applyFilters();
     }
 
@@ -479,14 +480,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             targetOutcome = undefined;
         }
 
-        this.handleSelectNewFilter(event.currentTarget, targetOutcome, "data-outcome-api-name", "outcome");
-        this.applyFilters();
-    }
-
-    handleNullFilterChange(event) {
-        this.filterOnNull = !this.filterOnNull;
-
-        this.handleSelectNewFilter(event.currentTarget, "None", "data-outcome-api-name", "outcome");
+        this.handleSelectNewFilter(event.currentTarget, targetOutcome, "outcome");
         this.applyFilters();
     }
 

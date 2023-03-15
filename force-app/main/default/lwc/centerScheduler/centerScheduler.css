@@ -51,14 +51,18 @@
     flex-direction: row;
     align-items: center;
     gap: 6px;
+    font-size: 14px;
+    font-weight: 400;
 }
 
 .legend-entry {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     cursor: pointer;
+    height: 36px;
+    white-space: nowrap;
 }
 
 .legend-icon {
@@ -86,6 +90,7 @@
     position: sticky;
     top: 0;
     z-index: 2;
+    justify-content: space-between;
 }
 
 .appointment-column-header-cell {

@@ -2,7 +2,10 @@
     <lightning-modal-header aria-label={headerLabel} label={headerLabel}>
     </lightning-modal-header>
 
-    <lightning-modal-body>
+    <lightning-modal-body class="slds-is-relative">
+        <lightning-spinner if:true={isLoading} size="medium">
+        </lightning-spinner>
+
         <div>
             <div style="display: flex; flex-direction: column; gap: 4px;">
                 <lightning-input is-loading={isSearching} type="search" label="Donor Name" onchange={handleDonorSearchUpdate} data-donor-name-search>

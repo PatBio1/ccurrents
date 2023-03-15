@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Item__c</fullName>
+    <description>The item description for this line in the transaction; user will most likely see this exact content</description>
+    <externalId>false</externalId>
+    <inlineHelpText>The item description for this line in the transaction; user will most likely see this exact content</inlineHelpText>
+    <label>Item</label>
+    <length>50</length>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

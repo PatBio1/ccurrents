@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Service__c</fullName>
-    <description>The Service used to process this Transaction</description>
+    <fullName>Quantity__c</fullName>
+    <description>An amount of a specific item</description>
     <externalId>false</externalId>
-    <label>Service</label>
-    <length>40</length>
+    <label>Quantity</label>
+    <precision>18</precision>
     <required>false</required>
+    <scale>2</scale>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
-    <type>Text</type>
+    <type>Number</type>
     <unique>false</unique>
 </CustomField>

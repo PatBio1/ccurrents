@@ -121,6 +121,9 @@ public without sharing class ProfileController {
                     Id = :accountId
             ];
 
+            account.First_Visit_Code__c = ScheduleUtils.createFirstVisitCode();
+            update account;
+
             AccountContactRelation accountContactRelation = new AccountContactRelation();
             accountContactRelation.AccountId = profile.centerId;
             accountContactRelation.ContactId = lcr.getContactId();

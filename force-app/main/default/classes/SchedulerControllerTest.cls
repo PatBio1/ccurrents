@@ -141,8 +141,12 @@ public with sharing class SchedulerControllerTest {
         }
 
         System.runAs(experienceUser) {
-            Id visitId = SchedulerController.scheduleVisit(appointment.Id);
+            Id visitId = SchedulerController.scheduleVisit(appointment.Id);   
         }
+        Task[] tasks = [SELECT ID, Subject, Description  FROM Task];
+        system.assertEquals(1, tasks.size());
+        system.assertEquals('First Visit Code', tasks[0].Subject);
+        system.assertEquals(7, tasks[0].Description.length());
     }
 
 }

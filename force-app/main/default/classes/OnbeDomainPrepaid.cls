@@ -20,6 +20,71 @@ public class OnbeDomainPrepaid {
         private String[] templateId_type_info = new String[]{'templateId',uriAccountManagementPrepaidDomain,null,'1','1','true'};
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidDomain,'true','false'};
         private String[] field_order_type_info = new String[]{'amount','comment','keyValue','claimable','notificationIndicator','templateId'};
+
+		public Load(){
+		}
+
+		public Load(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			DOM.XmlNode amountNode = responseNode.getChildElement('amount', uriAccountManagementPrepaidDomain);
+			this.amount = (amountNode == null) ? null : Long.valueOf(amountNode.getText());
+			nodesParsed.add(amountNode);
+			//System.debug(this.amount);			
+			DOM.XmlNode commentNode = responseNode.getChildElement('comment', uriAccountManagementPrepaidDomain);
+			this.comment = (commentNode == null) ? null : commentNode.getText();
+			nodesParsed.add(commentNode);
+			//System.debug(this.comment);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidDomain);
+			if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+			DOM.XmlNode claimableNode = responseNode.getChildElement('claimable', uriAccountManagementPrepaidDomain);
+			this.claimable = (claimableNode == null || claimableNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : claimableNode.getText();
+			nodesParsed.add(claimableNode);
+			//System.debug(this.claimable);			
+			DOM.XmlNode notificationIndicatorNode = responseNode.getChildElement('notificationIndicator', uriAccountManagementPrepaidDomain);
+			this.notificationIndicator = (notificationIndicatorNode == null || notificationIndicatorNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : notificationIndicatorNode.getText();
+			nodesParsed.add(notificationIndicatorNode);
+			//System.debug(this.notificationIndicator);			
+			DOM.XmlNode templateIdNode = responseNode.getChildElement('templateId', uriAccountManagementPrepaidDomain);
+			this.templateId = (templateIdNode == null || templateIdNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : templateIdNode.getText();
+			nodesParsed.add(templateIdNode);
+			//System.debug(this.templateId);			
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			Dom.XmlNode amountNode = outerNode.addChildElement('amount', uriAccountManagementPrepaidDomain, '');
+			if(this.amount != null){
+				amountNode.addTextNode(String.valueOf(this.amount));
+			}
+			Dom.XmlNode commentNode = outerNode.addChildElement('comment', uriAccountManagementPrepaidDomain, '');
+			if(this.comment != null){
+				commentNode.addTextNode(this.comment);
+			}
+			
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidDomain, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+			Dom.XmlNode claimableNode = outerNode.addChildElement('claimable', uriAccountManagementPrepaidDomain, '');
+			if(this.claimable != null){
+				claimableNode.addTextNode(this.claimable);
+			}
+			Dom.XmlNode notificationIndicatorNode = outerNode.addChildElement('notificationIndicator', uriAccountManagementPrepaidDomain, '');
+			if(this.notificationIndicator != null){
+				notificationIndicatorNode.addTextNode(this.notificationIndicator);
+			}
+			Dom.XmlNode templateIdNode = outerNode.addChildElement('templateId', uriAccountManagementPrepaidDomain, '');
+			if(this.templateId != null){
+				templateIdNode.addTextNode(this.templateId);
+			}
+		}
     }
 
     public class Address {
@@ -44,6 +109,32 @@ public class OnbeDomainPrepaid {
         private String[] secondary_payee_name_type_info = new String[]{'secondary_payee_name',uriAccountManagementPrepaidDomain,null,'1','1','false'};
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidDomain,'true','false'};
         private String[] field_order_type_info = new String[]{'primary_payee_name','secondary_payee_name'};
+    
+        public WithdrawCheck(){
+		}
+
+		public WithdrawCheck(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			DOM.XmlNode primary_payee_nameNode = responseNode.getChildElement('primary_payee_name', uriAccountManagementPrepaidDomain);
+			this.primary_payee_name = (primary_payee_nameNode == null) ? null : primary_payee_nameNode.getText();
+			nodesParsed.add(primary_payee_nameNode);
+			//System.debug(this.primary_payee_name);			
+			DOM.XmlNode secondary_payee_nameNode = responseNode.getChildElement('secondary_payee_name', uriAccountManagementPrepaidDomain);
+			this.secondary_payee_name = (secondary_payee_nameNode == null) ? null : secondary_payee_nameNode.getText();
+			nodesParsed.add(secondary_payee_nameNode);
+			//System.debug(this.secondary_payee_name);			
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			Dom.XmlNode primary_payee_nameNode = outerNode.addChildElement('primary_payee_name', uriAccountManagementPrepaidDomain, '');
+			if(this.primary_payee_name != null){
+				primary_payee_nameNode.addTextNode(this.primary_payee_name);
+			}
+			Dom.XmlNode secondary_payee_nameNode = outerNode.addChildElement('secondary_payee_name', uriAccountManagementPrepaidDomain, '');
+			if(this.secondary_payee_name != null){
+				secondary_payee_nameNode.addTextNode(this.secondary_payee_name);
+			}
+		}
     }
 
     public class VoidACH {
@@ -51,6 +142,24 @@ public class OnbeDomainPrepaid {
         private String[] original_partner_withdraw_id_type_info = new String[]{'original_partner_withdraw_id',uriAccountManagementPrepaidDomain,null,'1','1','false'};
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidDomain,'true','false'};
         private String[] field_order_type_info = new String[]{'original_partner_withdraw_id'};
+
+		public VoidACH(){
+		}
+
+		public VoidACH(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			DOM.XmlNode original_partner_withdraw_idNode = responseNode.getChildElement('original_partner_withdraw_id', uriAccountManagementPrepaidDomain);
+			this.original_partner_withdraw_id = (original_partner_withdraw_idNode == null) ? null : original_partner_withdraw_idNode.getText();
+			nodesParsed.add(original_partner_withdraw_idNode);
+			//System.debug(this.original_partner_withdraw_id);			
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			Dom.XmlNode original_partner_withdraw_idNode = outerNode.addChildElement('original_partner_withdraw_id', uriAccountManagementPrepaidDomain, '');
+			if(this.original_partner_withdraw_id != null){
+				original_partner_withdraw_idNode.addTextNode(this.original_partner_withdraw_id);
+			}
+        }
     }
 
     public class Registration {
@@ -108,6 +217,238 @@ public class OnbeDomainPrepaid {
         private String[] notificationIndicator_type_info = new String[]{'notificationIndicator',uriAccountManagementPrepaidDomain,null,'1','1','false'};
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidDomain,'true','false'};
         private String[] field_order_type_info = new String[]{'addenda','address1','address2','address3','address4','businessEmail','businessPhone','city','country','county','date_of_birth','emailAddress','firstName','homeEmail','homePhone','keyValue','lastName','middleName','mobileEmail','mobilePhone','phone','postal','ssn','state','suffixName','notificationIndicator'};
+
+		public Registration(){
+		}
+
+		public Registration(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			DOM.XmlNode addendaNode = responseNode.getChildElement('addenda', uriAccountManagementPrepaidDomain);
+			if(addendaNode == null){
+				this.addenda = null;
+			} else{
+				OnbeDomainPrepaid.Addenda addendaObj = new OnbeDomainPrepaid.Addenda(addendaNode);
+				nodesParsed.add(addendaNode);
+				this.addenda = addendaObj;
+			}
+			//System.debug(this.addenda);			
+			DOM.XmlNode address1Node = responseNode.getChildElement('address1', uriAccountManagementPrepaidDomain);
+			this.address1 = (address1Node == null) ? null : address1Node.getText();
+			nodesParsed.add(address1Node);
+			//System.debug(this.address1);			
+			DOM.XmlNode address2Node = responseNode.getChildElement('address2', uriAccountManagementPrepaidDomain);
+			this.address2 = (address2Node == null || address2Node.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : address2Node.getText();
+			nodesParsed.add(address2Node);
+			//System.debug(this.address2);			
+			DOM.XmlNode address3Node = responseNode.getChildElement('address3', uriAccountManagementPrepaidDomain);
+			this.address3 = (address3Node == null || address3Node.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : address3Node.getText();
+			nodesParsed.add(address3Node);
+			//System.debug(this.address3);			
+			DOM.XmlNode address4Node = responseNode.getChildElement('address4', uriAccountManagementPrepaidDomain);
+			this.address4 = (address4Node == null || address4Node.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : address4Node.getText();
+			nodesParsed.add(address4Node);
+			//System.debug(this.address4);			
+			DOM.XmlNode businessEmailNode = responseNode.getChildElement('businessEmail', uriAccountManagementPrepaidDomain);
+			this.businessEmail = (businessEmailNode == null || businessEmailNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : businessEmailNode.getText();
+			nodesParsed.add(businessEmailNode);
+			//System.debug(this.businessEmail);			
+			DOM.XmlNode businessPhoneNode = responseNode.getChildElement('businessPhone', uriAccountManagementPrepaidDomain);
+			this.businessPhone = (businessPhoneNode == null || businessPhoneNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : businessPhoneNode.getText();
+			nodesParsed.add(businessPhoneNode);
+			//System.debug(this.businessPhone);			
+			DOM.XmlNode cityNode = responseNode.getChildElement('city', uriAccountManagementPrepaidDomain);
+			this.city = (cityNode == null) ? null : cityNode.getText();
+			nodesParsed.add(cityNode);
+			//System.debug(this.city);			
+			DOM.XmlNode countryNode = responseNode.getChildElement('country', uriAccountManagementPrepaidDomain);
+			this.country = (countryNode == null) ? null : countryNode.getText();
+			nodesParsed.add(countryNode);
+			//System.debug(this.country);			
+			DOM.XmlNode countyNode = responseNode.getChildElement('county', uriAccountManagementPrepaidDomain);
+			this.county = (countyNode == null || countyNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : countyNode.getText();
+			nodesParsed.add(countyNode);
+			//System.debug(this.county);			
+			DOM.XmlNode date_of_birthNode = responseNode.getChildElement('date_of_birth', uriAccountManagementPrepaidDomain);
+			this.date_of_birth = (date_of_birthNode == null || date_of_birthNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : date_of_birthNode.getText();
+			nodesParsed.add(date_of_birthNode);
+			//System.debug(this.date_of_birth);			
+			DOM.XmlNode emailAddressNode = responseNode.getChildElement('emailAddress', uriAccountManagementPrepaidDomain);
+			this.emailAddress = (emailAddressNode == null || emailAddressNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : emailAddressNode.getText();
+			nodesParsed.add(emailAddressNode);
+			//System.debug(this.emailAddress);			
+			DOM.XmlNode firstNameNode = responseNode.getChildElement('firstName', uriAccountManagementPrepaidDomain);
+			this.firstName = (firstNameNode == null) ? null : firstNameNode.getText();
+			nodesParsed.add(firstNameNode);
+			//System.debug(this.firstName);			
+			DOM.XmlNode homeEmailNode = responseNode.getChildElement('homeEmail', uriAccountManagementPrepaidDomain);
+			this.homeEmail = (homeEmailNode == null || homeEmailNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : homeEmailNode.getText();
+			nodesParsed.add(homeEmailNode);
+			//System.debug(this.homeEmail);			
+			DOM.XmlNode homePhoneNode = responseNode.getChildElement('homePhone', uriAccountManagementPrepaidDomain);
+			this.homePhone = (homePhoneNode == null) ? null : homePhoneNode.getText();
+			nodesParsed.add(homePhoneNode);
+			//System.debug(this.homePhone);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidDomain);
+			if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+			DOM.XmlNode lastNameNode = responseNode.getChildElement('lastName', uriAccountManagementPrepaidDomain);
+			this.lastName = (lastNameNode == null) ? null : lastNameNode.getText();
+			nodesParsed.add(lastNameNode);
+			//System.debug(this.lastName);			
+			DOM.XmlNode middleNameNode = responseNode.getChildElement('middleName', uriAccountManagementPrepaidDomain);
+			this.middleName = (middleNameNode == null || middleNameNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : middleNameNode.getText();
+			nodesParsed.add(middleNameNode);
+			//System.debug(this.middleName);			
+			DOM.XmlNode mobileEmailNode = responseNode.getChildElement('mobileEmail', uriAccountManagementPrepaidDomain);
+			this.mobileEmail = (mobileEmailNode == null || mobileEmailNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : mobileEmailNode.getText();
+			nodesParsed.add(mobileEmailNode);
+			//System.debug(this.mobileEmail);			
+			DOM.XmlNode mobilePhoneNode = responseNode.getChildElement('mobilePhone', uriAccountManagementPrepaidDomain);
+			this.mobilePhone = (mobilePhoneNode == null || mobilePhoneNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : mobilePhoneNode.getText();
+			nodesParsed.add(mobilePhoneNode);
+			//System.debug(this.mobilePhone);			
+			DOM.XmlNode phoneNode = responseNode.getChildElement('phone', uriAccountManagementPrepaidDomain);
+			this.phone = (phoneNode == null || phoneNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : phoneNode.getText();
+			nodesParsed.add(phoneNode);
+			//System.debug(this.phone);			
+			DOM.XmlNode postalNode = responseNode.getChildElement('postal', uriAccountManagementPrepaidDomain);
+			this.postal = (postalNode == null) ? null : postalNode.getText();
+			nodesParsed.add(postalNode);
+			//System.debug(this.postal);			
+			DOM.XmlNode ssnNode = responseNode.getChildElement('ssn', uriAccountManagementPrepaidDomain);
+			this.ssn = (ssnNode == null || ssnNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : ssnNode.getText();
+			nodesParsed.add(ssnNode);
+			//System.debug(this.ssn);			
+			DOM.XmlNode stateNode = responseNode.getChildElement('state', uriAccountManagementPrepaidDomain);
+			this.state = (stateNode == null) ? null : stateNode.getText();
+			nodesParsed.add(stateNode);
+			//System.debug(this.state);			
+			DOM.XmlNode suffixNameNode = responseNode.getChildElement('suffixName', uriAccountManagementPrepaidDomain);
+			this.suffixName = (suffixNameNode == null || suffixNameNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : suffixNameNode.getText();
+			nodesParsed.add(suffixNameNode);
+			//System.debug(this.suffixName);			
+			DOM.XmlNode notificationIndicatorNode = responseNode.getChildElement('notificationIndicator', uriAccountManagementPrepaidDomain);
+			this.notificationIndicator = (notificationIndicatorNode == null) ? null : notificationIndicatorNode.getText();
+			nodesParsed.add(notificationIndicatorNode);
+			//System.debug(this.notificationIndicator);			
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			OnbeDomainPrepaid.Addenda addendaObj = this.addenda;
+			Dom.XmlNode addendaNode = outerNode.addChildElement('addenda', uriAccountManagementPrepaidDomain, '');
+			if(addendaObj != null){
+				addendaObj.populateXmlNode(addendaNode);
+			}
+			Dom.XmlNode address1Node = outerNode.addChildElement('address1', uriAccountManagementPrepaidDomain, '');
+			if(this.address1 != null){
+				address1Node.addTextNode(this.address1);
+			}
+			Dom.XmlNode address2Node = outerNode.addChildElement('address2', uriAccountManagementPrepaidDomain, '');
+			if(this.address2 != null){
+				address2Node.addTextNode(this.address2);
+			}
+			Dom.XmlNode address3Node = outerNode.addChildElement('address3', uriAccountManagementPrepaidDomain, '');
+			if(this.address3 != null){
+				address3Node.addTextNode(this.address3);
+			}
+			Dom.XmlNode address4Node = outerNode.addChildElement('address4', uriAccountManagementPrepaidDomain, '');
+			if(this.address4 != null){
+				address4Node.addTextNode(this.address4);
+			}
+			Dom.XmlNode businessEmailNode = outerNode.addChildElement('businessEmail', uriAccountManagementPrepaidDomain, '');
+			if(this.businessEmail != null){
+				businessEmailNode.addTextNode(this.businessEmail);
+			}
+			Dom.XmlNode businessPhoneNode = outerNode.addChildElement('businessPhone', uriAccountManagementPrepaidDomain, '');
+			if(this.businessPhone != null){
+				businessPhoneNode.addTextNode(this.businessPhone);
+			}
+			Dom.XmlNode cityNode = outerNode.addChildElement('city', uriAccountManagementPrepaidDomain, '');
+			if(this.city != null){
+				cityNode.addTextNode(this.city);
+			}
+			Dom.XmlNode countryNode = outerNode.addChildElement('country', uriAccountManagementPrepaidDomain, '');
+			if(this.country != null){
+				countryNode.addTextNode(this.country);
+			}
+			Dom.XmlNode countyNode = outerNode.addChildElement('county', uriAccountManagementPrepaidDomain, '');
+			if(this.county != null){
+				countyNode.addTextNode(this.county);
+			}
+			Dom.XmlNode date_of_birthNode = outerNode.addChildElement('date_of_birth', uriAccountManagementPrepaidDomain, '');
+			if(this.date_of_birth != null){
+				date_of_birthNode.addTextNode(this.date_of_birth);
+			}
+			Dom.XmlNode emailAddressNode = outerNode.addChildElement('emailAddress', uriAccountManagementPrepaidDomain, '');
+			if(this.emailAddress != null){
+				emailAddressNode.addTextNode(this.emailAddress);
+			}
+			Dom.XmlNode firstNameNode = outerNode.addChildElement('firstName', uriAccountManagementPrepaidDomain, '');
+			if(this.firstName != null){
+				firstNameNode.addTextNode(this.firstName);
+			}
+			Dom.XmlNode homeEmailNode = outerNode.addChildElement('homeEmail', uriAccountManagementPrepaidDomain, '');
+			if(this.homeEmail != null){
+				homeEmailNode.addTextNode(this.homeEmail);
+			}
+			Dom.XmlNode homePhoneNode = outerNode.addChildElement('homePhone', uriAccountManagementPrepaidDomain, '');
+			if(this.homePhone != null){
+				homePhoneNode.addTextNode(this.homePhone);
+			}
+			
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidDomain, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+			Dom.XmlNode lastNameNode = outerNode.addChildElement('lastName', uriAccountManagementPrepaidDomain, '');
+			if(this.lastName != null){
+				lastNameNode.addTextNode(this.lastName);
+			}
+			Dom.XmlNode middleNameNode = outerNode.addChildElement('middleName', uriAccountManagementPrepaidDomain, '');
+			if(this.middleName != null){
+				middleNameNode.addTextNode(this.middleName);
+			}
+			Dom.XmlNode mobileEmailNode = outerNode.addChildElement('mobileEmail', uriAccountManagementPrepaidDomain, '');
+			if(this.mobileEmail != null){
+				mobileEmailNode.addTextNode(this.mobileEmail);
+			}
+			Dom.XmlNode mobilePhoneNode = outerNode.addChildElement('mobilePhone', uriAccountManagementPrepaidDomain, '');
+			if(this.mobilePhone != null){
+				mobilePhoneNode.addTextNode(this.mobilePhone);
+			}
+			Dom.XmlNode phoneNode = outerNode.addChildElement('phone', uriAccountManagementPrepaidDomain, '');
+			if(this.phone != null){
+				phoneNode.addTextNode(this.phone);
+			}
+			Dom.XmlNode postalNode = outerNode.addChildElement('postal', uriAccountManagementPrepaidDomain, '');
+			if(this.postal != null){
+				postalNode.addTextNode(this.postal);
+			}
+			Dom.XmlNode ssnNode = outerNode.addChildElement('ssn', uriAccountManagementPrepaidDomain, '');
+			if(this.ssn != null){
+				ssnNode.addTextNode(this.ssn);
+			}
+			Dom.XmlNode stateNode = outerNode.addChildElement('state', uriAccountManagementPrepaidDomain, '');
+			if(this.state != null){
+				stateNode.addTextNode(this.state);
+			}
+			Dom.XmlNode suffixNameNode = outerNode.addChildElement('suffixName', uriAccountManagementPrepaidDomain, '');
+			if(this.suffixName != null){
+				suffixNameNode.addTextNode(this.suffixName);
+			}
+			Dom.XmlNode notificationIndicatorNode = outerNode.addChildElement('notificationIndicator', uriAccountManagementPrepaidDomain, '');
+			if(this.notificationIndicator != null){
+				notificationIndicatorNode.addTextNode(this.notificationIndicator);
+			}
+		}
     }
 
     public class WithdrawACH {
@@ -123,6 +464,56 @@ public class OnbeDomainPrepaid {
         private String[] bank_name_type_info = new String[]{'bank_name',uriAccountManagementPrepaidDomain,null,'1','1','false'};
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidDomain,'true','false'};
         private String[] field_order_type_info = new String[]{'account_holder_name','account_number','routing_number','account_type','bank_name'};
+
+		public WithdrawACH(){
+		}
+
+		public WithdrawACH(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			DOM.XmlNode account_holder_nameNode = responseNode.getChildElement('account_holder_name', uriAccountManagementPrepaidDomain);
+			this.account_holder_name = (account_holder_nameNode == null) ? null : account_holder_nameNode.getText();
+			nodesParsed.add(account_holder_nameNode);
+			//System.debug(this.account_holder_name);			
+			DOM.XmlNode account_numberNode = responseNode.getChildElement('account_number', uriAccountManagementPrepaidDomain);
+			this.account_number = (account_numberNode == null) ? null : account_numberNode.getText();
+			nodesParsed.add(account_numberNode);
+			//System.debug(this.account_number);			
+			DOM.XmlNode routing_numberNode = responseNode.getChildElement('routing_number', uriAccountManagementPrepaidDomain);
+			this.routing_number = (routing_numberNode == null) ? null : routing_numberNode.getText();
+			nodesParsed.add(routing_numberNode);
+			//System.debug(this.routing_number);			
+			DOM.XmlNode account_typeNode = responseNode.getChildElement('account_type', uriAccountManagementPrepaidDomain);
+			this.account_type = (account_typeNode == null) ? null : account_typeNode.getText();
+			nodesParsed.add(account_typeNode);
+			//System.debug(this.account_type);			
+			DOM.XmlNode bank_nameNode = responseNode.getChildElement('bank_name', uriAccountManagementPrepaidDomain);
+			this.bank_name = (bank_nameNode == null) ? null : bank_nameNode.getText();
+			nodesParsed.add(bank_nameNode);
+			//System.debug(this.bank_name);			
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			Dom.XmlNode account_holder_nameNode = outerNode.addChildElement('account_holder_name', uriAccountManagementPrepaidDomain, '');
+			if(this.account_holder_name != null){
+				account_holder_nameNode.addTextNode(this.account_holder_name);
+			}
+			Dom.XmlNode account_numberNode = outerNode.addChildElement('account_number', uriAccountManagementPrepaidDomain, '');
+			if(this.account_number != null){
+				account_numberNode.addTextNode(this.account_number);
+			}
+			Dom.XmlNode routing_numberNode = outerNode.addChildElement('routing_number', uriAccountManagementPrepaidDomain, '');
+			if(this.routing_number != null){
+				routing_numberNode.addTextNode(this.routing_number);
+			}
+			Dom.XmlNode account_typeNode = outerNode.addChildElement('account_type', uriAccountManagementPrepaidDomain, '');
+			if(this.account_type != null){
+				account_typeNode.addTextNode(this.account_type);
+			}
+			Dom.XmlNode bank_nameNode = outerNode.addChildElement('bank_name', uriAccountManagementPrepaidDomain, '');
+			if(this.bank_name != null){
+				bank_nameNode.addTextNode(this.bank_name);
+			}
+		}
     }
 
     public class VoidCheck {
@@ -132,6 +523,32 @@ public class OnbeDomainPrepaid {
         private String[] check_number_type_info = new String[]{'check_number',uriAccountManagementPrepaidDomain,null,'1','1','false'};
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidDomain,'true','false'};
         private String[] field_order_type_info = new String[]{'original_partner_withdraw_id','check_number'};
+
+		public VoidCheck(){
+		}
+
+		public VoidCheck(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			DOM.XmlNode original_partner_withdraw_idNode = responseNode.getChildElement('original_partner_withdraw_id', uriAccountManagementPrepaidDomain);
+			this.original_partner_withdraw_id = (original_partner_withdraw_idNode == null) ? null : original_partner_withdraw_idNode.getText();
+			nodesParsed.add(original_partner_withdraw_idNode);
+			//System.debug(this.original_partner_withdraw_id);			
+			DOM.XmlNode check_numberNode = responseNode.getChildElement('check_number', uriAccountManagementPrepaidDomain);
+			this.check_number = (check_numberNode == null) ? null : check_numberNode.getText();
+			nodesParsed.add(check_numberNode);
+			//System.debug(this.check_number);			
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			Dom.XmlNode original_partner_withdraw_idNode = outerNode.addChildElement('original_partner_withdraw_id', uriAccountManagementPrepaidDomain, '');
+			if(this.original_partner_withdraw_id != null){
+				original_partner_withdraw_idNode.addTextNode(this.original_partner_withdraw_id);
+			}
+			Dom.XmlNode check_numberNode = outerNode.addChildElement('check_number', uriAccountManagementPrepaidDomain, '');
+			if(this.check_number != null){
+				check_numberNode.addTextNode(this.check_number);
+			}
+		}
     }
 
     public class Addenda {
@@ -145,6 +562,48 @@ public class OnbeDomainPrepaid {
         private String[] reference_4_type_info = new String[]{'reference_4',uriAccountManagementPrepaidDomain,null,'1','1','true'};
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidDomain,'true','false'};
         private String[] field_order_type_info = new String[]{'reference_1','reference_2','reference_3','reference_4'};
+ 
+        public Addenda(){
+		}
+
+		public Addenda(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			DOM.XmlNode reference_1Node = responseNode.getChildElement('reference_1', uriAccountManagementPrepaidDomain);
+			this.reference_1 = (reference_1Node == null || reference_1Node.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : reference_1Node.getText();
+			nodesParsed.add(reference_1Node);
+			//System.debug(this.reference_1);			
+			DOM.XmlNode reference_2Node = responseNode.getChildElement('reference_2', uriAccountManagementPrepaidDomain);
+			this.reference_2 = (reference_2Node == null || reference_2Node.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : reference_2Node.getText();
+			nodesParsed.add(reference_2Node);
+			//System.debug(this.reference_2);			
+			DOM.XmlNode reference_3Node = responseNode.getChildElement('reference_3', uriAccountManagementPrepaidDomain);
+			this.reference_3 = (reference_3Node == null || reference_3Node.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : reference_3Node.getText();
+			nodesParsed.add(reference_3Node);
+			//System.debug(this.reference_3);			
+			DOM.XmlNode reference_4Node = responseNode.getChildElement('reference_4', uriAccountManagementPrepaidDomain);
+			this.reference_4 = (reference_4Node == null || reference_4Node.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : reference_4Node.getText();
+			nodesParsed.add(reference_4Node);
+			//System.debug(this.reference_4);			
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			Dom.XmlNode reference_1Node = outerNode.addChildElement('reference_1', uriAccountManagementPrepaidDomain, '');
+			if(this.reference_1 != null){
+				reference_1Node.addTextNode(this.reference_1);
+			}
+			Dom.XmlNode reference_2Node = outerNode.addChildElement('reference_2', uriAccountManagementPrepaidDomain, '');
+			if(this.reference_2 != null){
+				reference_2Node.addTextNode(this.reference_2);
+			}
+			Dom.XmlNode reference_3Node = outerNode.addChildElement('reference_3', uriAccountManagementPrepaidDomain, '');
+			if(this.reference_3 != null){
+				reference_3Node.addTextNode(this.reference_3);
+			}
+			Dom.XmlNode reference_4Node = outerNode.addChildElement('reference_4', uriAccountManagementPrepaidDomain, '');
+			if(this.reference_4 != null){
+				reference_4Node.addTextNode(this.reference_4);
+			}
+		}
     }
 
     public class Link {
@@ -156,6 +615,48 @@ public class OnbeDomainPrepaid {
         private String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidDomain,null,'1','1','true'};
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidDomain,'true','false'};
         private String[] field_order_type_info = new String[]{'cardPackageId','block','keyValue'};
+
+		public Link(){
+		}
+
+		public Link(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			DOM.XmlNode cardPackageIdNode = responseNode.getChildElement('cardPackageId', uriAccountManagementPrepaidDomain);
+			this.cardPackageId = (cardPackageIdNode == null) ? null : cardPackageIdNode.getText();
+			nodesParsed.add(cardPackageIdNode);
+			//System.debug(this.cardPackageId);			
+			DOM.XmlNode blockNode = responseNode.getChildElement('block', uriAccountManagementPrepaidDomain);
+			this.block = (blockNode == null || blockNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : blockNode.getText();
+			nodesParsed.add(blockNode);
+			//System.debug(this.block);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidDomain);
+			
+            if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			Dom.XmlNode cardPackageIdNode = outerNode.addChildElement('cardPackageId', uriAccountManagementPrepaidDomain, '');
+			if(this.cardPackageId != null){
+				cardPackageIdNode.addTextNode(this.cardPackageId);
+			}
+			Dom.XmlNode blockNode = outerNode.addChildElement('block', uriAccountManagementPrepaidDomain, '');
+			if(this.block != null){
+				blockNode.addTextNode(this.block);
+			}
+			
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidDomain, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+		}
     }
     
     public class Card {
@@ -165,5 +666,38 @@ public class OnbeDomainPrepaid {
         private String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidDomain,null,'1','1','true'};
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidDomain,'true','false'};
         private String[] field_order_type_info = new String[]{'cardAccessLevel','keyValue'};
+
+		public Card(){
+		}
+
+		public Card(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			DOM.XmlNode cardAccessLevelNode = responseNode.getChildElement('cardAccessLevel', uriAccountManagementPrepaidDomain);
+			this.cardAccessLevel = (cardAccessLevelNode == null) ? null : cardAccessLevelNode.getText();
+			nodesParsed.add(cardAccessLevelNode);
+			//System.debug(this.cardAccessLevel);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidDomain);
+			if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			Dom.XmlNode cardAccessLevelNode = outerNode.addChildElement('cardAccessLevel', uriAccountManagementPrepaidDomain, '');
+			if(this.cardAccessLevel != null){
+				cardAccessLevelNode.addTextNode(this.cardAccessLevel);
+			}
+			
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidDomain, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+		}
     }
 }

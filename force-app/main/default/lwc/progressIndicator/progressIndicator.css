@@ -4,24 +4,53 @@
     max-width: unset;
 }
 
-.slds-progress__marker {
-    background-color: #8979A9;
-    border-color: var(--pro-background-color);
+.progress-bar-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.slds-progress__item.slds-is-active .slds-progress__marker {
-    box-shadow: var(--pro-background-color) 0 0 0 4px;
-  }
+.progress-item-wrapper {
+    background-color: #F5F0FF;
+    width: 32px;
 
-.slds-progress__item.slds-is-completed .slds-progress__marker, .slds-progress__item.slds-is-active .slds-progress__marker {
-    background: var(--pro-background-color);
-    border-color: #99429C;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
 }
 
-.slds-progress__item.slds-is-completed .slds-progress__marker {
-    border-color: var(--pro-background-color);
+.progress-item-active {
+    border: 1px solid #983285;
+    background: #983285;
+    color: white;
 }
 
-.slds-progress-bar {
+.progress-item-complete {
     background-color: #D1C7E4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.progress-item-inactive {
+    border: 1px solid #983285;
+}
+
+.progess-text {
+    font-weight: bold;
+}
+
+.progress-item-complete,
+.progress-item-active,
+.progress-item-inactive {
+    width: 22px;
+    height: 22px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 100%;
 }

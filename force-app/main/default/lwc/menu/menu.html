@@ -9,8 +9,19 @@
                 <div class="logoContainer"></div>
             </div>
             <div class="slds-col slds-size_1-of-3 slds-text-align_right">
-                <lightning-icon if:false={isGuest} icon-name="utility:notification" size="x-small" class="slds-p-right_medium" variant="inverse" onclick={onNotificationsClick}></lightning-icon>
-                <lightning-avatar if:false={isGuest} variant="circle" src={photoUrl} fallback-icon-name="standard:user" onclick={onPhotoClick}></lightning-avatar>
+                <template if:false={isGuest}>
+                    <div style="display: flex; flex-direction: row; justify-content: flex-end; align-items: center;">
+                        <div style="position: relative;">
+                            <div if:true={hasUnreadNotifications} class="notification-badge"></div>
+                            <lightning-icon icon-name="utility:notification" size="x-small" class="slds-p-right_medium" variant="inverse" onclick={onNotificationsClick}></lightning-icon>
+                        </div>
+                        
+                        <div style="position: relative;">
+                            <lightning-icon class="loyalty-badge" icon-name="utility:favorite" size="xx-small"></lightning-icon>
+                            <lightning-avatar variant="circle" src={photoUrl} fallback-icon-name="standard:user" onclick={onPhotoClick}></lightning-avatar>
+                        </div>
+                    </div> 
+                </template>
             </div>
         </div>
     </div>

@@ -13,22 +13,6 @@
         <visible>true</visible>
     </applicationVisibilities>
     <classAccesses>
-        <apexClass>AsyncOnbeResponsePrepaid</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>AsyncOnbeWsPrepaid</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>AsyncOnbeWsPrepaidMock</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>AsyncOnbeWsPrepaidTest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>CalloutMock</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -218,6 +202,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>OnbeWsPrepaid</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>OnbeWsPrepaidHttpCalloutMock</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>

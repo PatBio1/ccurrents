@@ -4,63 +4,367 @@ public class OnbeRequestPrepaid {
 
     // Constant
     private static final String uriAccountManagementPrepaidRequest = 'http://request.accountmanagementapi.prepaid.citi.com';
-      
+
     public class UpdateRegistrationRequest {
-        public String accessLevel;
-        public Boolean accountPersonalized;
-        public String newPartnerUserID;
-        public OnbeDomainPrepaid.Registration registation;
-        private String[] accessLevel_type_info = new String[]{'accessLevel',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] accountPersonalized_type_info = new String[]{'accountPersonalized',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] newPartnerUserID_type_info = new String[]{'newPartnerUserID',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] registation_type_info = new String[]{'registation',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'accessLevel','accountPersonalized','newPartnerUserID','registation'};
+
+		public String accountNumber;
+		private transient String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String partner_user_id;
+		public String program_id;
+		public String promotion_id;
+		public String transaction_id;
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidRequest,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] promotion_id_type_info = new String[]{'promotion_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] transaction_id_type_info = new String[]{'transaction_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		public String accessLevel;
+		public Boolean accountPersonalized;
+		public String newPartnerUserID;
+		public OnbeDomainPrepaid.Registration registration;
+		private transient String[] accessLevel_type_info = new String[]{'accessLevel',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] accountPersonalized_type_info = new String[]{'accountPersonalized',uriAccountManagementPrepaidRequest,'boolean','1','1','true'};
+		private transient String[] newPartnerUserID_type_info = new String[]{'newPartnerUserID',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] registation_type_info = new String[]{'registation',uriAccountManagementPrepaidRequest,'Registration','1','1','false'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'accountNumber','keyValue','partner_user_id','program_id','promotion_id','transaction_id','accessLevel','accountPersonalized','newPartnerUserID','registation'};
+
+        public UpdateRegistrationRequest(){
+		}
+
+        public UpdateRegistrationRequest(String accessLevel,
+            Boolean accountPersonalized,
+            String newPartnerUserID,
+            OnbeDomainPrepaid.Registration registration){
+                this.accessLevel = accessLevel;
+                this.accountPersonalized = accountPersonalized;
+                this.newPartnerUserID = newPartnerUserID;
+                this.registration = registration;
+            }
+
+		public UpdateRegistrationRequest(String accountNumber, 
+            OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue,
+            String partner_user_id,
+            String program_id,
+            String promotion_id,
+            String transaction_id,
+            String accessLevel,
+            Boolean accountPersonalized,
+            String newPartnerUserID,
+            OnbeDomainPrepaid.Registration registration){
+                this.accountNumber = accountNumber;
+                this.keyValue = keyValue;
+                this.partner_user_id = partner_user_id;
+                this.program_id = program_id;
+                this.promotion_id = promotion_id;
+                this.transaction_id = transaction_id;
+                this.accessLevel = accessLevel;
+                this.accountPersonalized = accountPersonalized;
+                this.newPartnerUserID = newPartnerUserID;
+                this.registration = registration;
+		}
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('updateRegistration', outerNode.getName());
+			Dom.XmlNode accountNumberNode = outerNode.addChildElement('accountNumber', uriAccountManagementPrepaidRequest, '');
+			if(this.accountNumber != null){
+				accountNumberNode.addTextNode(this.accountNumber);
+			}
+			
+		    OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidRequest, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+			Dom.XmlNode partner_user_idNode = outerNode.addChildElement('partner_user_id', uriAccountManagementPrepaidRequest, '');
+			if(this.partner_user_id != null){
+				partner_user_idNode.addTextNode(this.partner_user_id);
+			}
+			Dom.XmlNode program_idNode = outerNode.addChildElement('program_id', uriAccountManagementPrepaidRequest, '');
+			if(this.program_id != null){
+				program_idNode.addTextNode(this.program_id);
+			}
+			Dom.XmlNode promotion_idNode = outerNode.addChildElement('promotion_id', uriAccountManagementPrepaidRequest, '');
+			if(this.promotion_id != null){
+				promotion_idNode.addTextNode(this.promotion_id);
+			}
+			Dom.XmlNode transaction_idNode = outerNode.addChildElement('transaction_id', uriAccountManagementPrepaidRequest, '');
+			if(this.transaction_id != null){
+				transaction_idNode.addTextNode(this.transaction_id);
+			}
+			Dom.XmlNode accessLevelNode = outerNode.addChildElement('accessLevel', uriAccountManagementPrepaidRequest, '');
+			if(this.accessLevel != null){
+				accessLevelNode.addTextNode(this.accessLevel);
+			}
+			Dom.XmlNode accountPersonalizedNode = outerNode.addChildElement('accountPersonalized', uriAccountManagementPrepaidRequest, '');
+			if(this.accountPersonalized != null){
+				accountPersonalizedNode.addTextNode(String.valueOf(this.accountPersonalized));
+			}
+			Dom.XmlNode newPartnerUserIDNode = outerNode.addChildElement('newPartnerUserID', uriAccountManagementPrepaidRequest, '');
+			if(this.newPartnerUserID != null){
+				newPartnerUserIDNode.addTextNode(this.newPartnerUserID);
+			}
+			
+			OnbeDomainPrepaid.Registration registrationObj = this.registration;
+			Dom.XmlNode registrationNode = outerNode.addChildElement('registration', uriAccountManagementPrepaidRequest, '');
+			if(registrationObj != null){
+				registrationObj.populateXmlNode(registrationNode);
+			}
+		}
     }
 
     public class activationStatusInquiryRequest {
-        public String card_number;
-        public String cvv;
-        public String postal_code;
-        public String validate_postal;
-        private String[] card_number_type_info = new String[]{'card_number',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] cvv_type_info = new String[]{'cvv',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] postal_code_type_info = new String[]{'postal_code',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] validate_postal_type_info = new String[]{'validate_postal',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'card_number','cvv','postal_code','validate_postal'};
+
+        // private String[] card_number_type_info = new String[]{'card_number',uriAccountManagementPrepaidRequest,null,'1','1','false'};
+        // private String[] cvv_type_info = new String[]{'cvv',uriAccountManagementPrepaidRequest,null,'1','1','false'};
+        // private String[] postal_code_type_info = new String[]{'postal_code',uriAccountManagementPrepaidRequest,null,'1','1','false'};
+        // private String[] validate_postal_type_info = new String[]{'validate_postal',uriAccountManagementPrepaidRequest,null,'1','1','false'};
+        // private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+        // private String[] field_order_type_info = new String[]{'card_number','cvv','postal_code','validate_postal'};
+		public String card_number;
+		public String cvv;
+		public String postal_code;
+		public String validate_postal;
+		private transient String[] card_number_type_info = new String[]{'card_number',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] cvv_type_info = new String[]{'cvv',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] postal_code_type_info = new String[]{'postal_code',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] validate_postal_type_info = new String[]{'validate_postal',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'card_number','cvv','postal_code','validate_postal'};
+		
+        public activationStatusInquiryRequest(){
+		}
+
+		public activationStatusInquiryRequest(String card_number,String cvv,String postal_code,String validate_postal){
+			this.card_number = card_number;
+			this.cvv = cvv;
+			this.postal_code = postal_code;
+			this.validate_postal = validate_postal;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('activationStatusInquiry', outerNode.getName());
+			Dom.XmlNode card_numberNode = outerNode.addChildElement('card_number', uriAccountManagementPrepaidRequest, '');
+			if(this.card_number != null){
+				card_numberNode.addTextNode(this.card_number);
+			}
+			Dom.XmlNode cvvNode = outerNode.addChildElement('cvv', uriAccountManagementPrepaidRequest, '');
+			if(this.cvv != null){
+				cvvNode.addTextNode(this.cvv);
+			}
+			Dom.XmlNode postal_codeNode = outerNode.addChildElement('postal_code', uriAccountManagementPrepaidRequest, '');
+			if(this.postal_code != null){
+				postal_codeNode.addTextNode(this.postal_code);
+			}
+			Dom.XmlNode validate_postalNode = outerNode.addChildElement('validate_postal', uriAccountManagementPrepaidRequest, '');
+			if(this.validate_postal != null){
+				validate_postalNode.addTextNode(this.validate_postal);
+			}
+		}
+
     }
 
     public class UpdateAccountStatusRequest {
-        public String accountStatus;
-        private String[] accountStatus_type_info = new String[]{'accountStatus',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'accountStatus'};
+        public String accountNumber;
+		private transient String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String partner_user_id;
+		public String program_id;
+		public String promotion_id;
+		public String transaction_id;
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidRequest,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] promotion_id_type_info = new String[]{'promotion_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] transaction_id_type_info = new String[]{'transaction_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		public String accountStatus;
+		private transient String[] accountStatus_type_info = new String[]{'accountStatus',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'accountNumber','keyValue','partner_user_id','program_id','promotion_id','transaction_id','accountStatus'};
+
+		public UpdateAccountStatusRequest(){
+		}
+
+        public UpdateAccountStatusRequest(String accountStatus){
+            this.accountStatus = accountStatus;
+        }
+
+		public UpdateAccountStatusRequest(String accountNumber,
+            OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue,
+            String partner_user_id,String program_id,
+            String promotion_id,
+            String transaction_id,
+            String accountStatus){
+                this.accountNumber = accountNumber;
+                this.keyValue = keyValue;
+                this.partner_user_id = partner_user_id;
+                this.program_id = program_id;
+                this.promotion_id = promotion_id;
+                this.transaction_id = transaction_id;
+                this.accountStatus = accountStatus;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('updateAccountStatus', outerNode.getName());
+			Dom.XmlNode accountNumberNode = outerNode.addChildElement('accountNumber', uriAccountManagementPrepaidRequest, '');
+			if(this.accountNumber != null){
+				accountNumberNode.addTextNode(this.accountNumber);
+			}
+			
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidRequest, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+			Dom.XmlNode partner_user_idNode = outerNode.addChildElement('partner_user_id', uriAccountManagementPrepaidRequest, '');
+			if(this.partner_user_id != null){
+				partner_user_idNode.addTextNode(this.partner_user_id);
+			}
+			Dom.XmlNode program_idNode = outerNode.addChildElement('program_id', uriAccountManagementPrepaidRequest, '');
+			if(this.program_id != null){
+				program_idNode.addTextNode(this.program_id);
+			}
+			Dom.XmlNode promotion_idNode = outerNode.addChildElement('promotion_id', uriAccountManagementPrepaidRequest, '');
+			if(this.promotion_id != null){
+				promotion_idNode.addTextNode(this.promotion_id);
+			}
+			Dom.XmlNode transaction_idNode = outerNode.addChildElement('transaction_id', uriAccountManagementPrepaidRequest, '');
+			if(this.transaction_id != null){
+				transaction_idNode.addTextNode(this.transaction_id);
+			}
+			Dom.XmlNode accountStatusNode = outerNode.addChildElement('accountStatus', uriAccountManagementPrepaidRequest, '');
+			if(this.accountStatus != null){
+				accountStatusNode.addTextNode(this.accountStatus);
+			}
+		}
     }
 
     public class CardInquiryRequest {
-        public String program_id;
-        public String partner_user_id;
-        public String accountNumber;
-        private String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'program_id','partner_user_id','accountNumber'};
+
+		public String program_id;
+		public String partner_user_id;
+		public String accountNumber;
+		private transient String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'program_id','partner_user_id','accountNumber'};
+		
+        public CardInquiryRequest(){
+		}
+
+		public CardInquiryRequest(String program_id, String partner_user_id, String accountNumber){
+			this.program_id = program_id;
+			this.partner_user_id = partner_user_id;
+			this.accountNumber = accountNumber;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('cardInquiry', outerNode.getName());
+			Dom.XmlNode program_idNode = outerNode.addChildElement('program_id', uriAccountManagementPrepaidRequest, '');
+			if(this.program_id != null){
+				program_idNode.addTextNode(this.program_id);
+			}
+			Dom.XmlNode partner_user_idNode = outerNode.addChildElement('partner_user_id', uriAccountManagementPrepaidRequest, '');
+			if(this.partner_user_id != null){
+				partner_user_idNode.addTextNode(this.partner_user_id);
+			}
+			Dom.XmlNode accountNumberNode = outerNode.addChildElement('accountNumber', uriAccountManagementPrepaidRequest, '');
+			if(this.accountNumber != null){
+				accountNumberNode.addTextNode(this.accountNumber);
+			}
+		}
     }
 
-    public class ServiceRequestAccountNumber {
-        public String accountNumber;
-        private String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'accountNumber'};
-    }
+    // public class ServiceRequestAccountNumber {
+    //     public String accountNumber;
+    //     private String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,null,'1','1','true'};
+    //     private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+    //     private String[] field_order_type_info = new String[]{'accountNumber'};
+    // }
 
     public class LinkCardRequest {
-        public OnbeDomainPrepaid.Link link;
-        private String[] link_type_info = new String[]{'link',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'link'};
+
+        public String accountNumber;
+		private transient String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String partner_user_id;
+		public String program_id;
+		public String promotion_id;
+		public String transaction_id;
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidRequest,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] promotion_id_type_info = new String[]{'promotion_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] transaction_id_type_info = new String[]{'transaction_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		public OnbeDomainPrepaid.Link link;
+		private transient String[] link_type_info = new String[]{'link',uriAccountManagementPrepaidRequest,'Link','1','1','false'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'accountNumber','keyValue','partner_user_id','program_id','promotion_id','transaction_id','link'};
+
+		public LinkCardRequest(){
+		}
+
+        public LinkCardRequest(OnbeDomainPrepaid.Link link){
+            this.link = link;
+		}
+
+		public LinkCardRequest(String accountNumber, 
+            OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue,
+            String partner_user_id,
+            String program_id,
+            String promotion_id,
+            String transaction_id,
+            OnbeDomainPrepaid.Link link){
+                this.accountNumber = accountNumber;
+                this.keyValue = keyValue;
+                this.partner_user_id = partner_user_id;
+                this.program_id = program_id;
+                this.promotion_id = promotion_id;
+                this.transaction_id = transaction_id;
+                this.link = link;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('linkCard', outerNode.getName());
+			Dom.XmlNode accountNumberNode = outerNode.addChildElement('accountNumber', uriAccountManagementPrepaidRequest, '');
+			if(this.accountNumber != null){
+				accountNumberNode.addTextNode(this.accountNumber);
+			}
+			
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidRequest, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+			Dom.XmlNode partner_user_idNode = outerNode.addChildElement('partner_user_id', uriAccountManagementPrepaidRequest, '');
+			if(this.partner_user_id != null){
+				partner_user_idNode.addTextNode(this.partner_user_id);
+			}
+			Dom.XmlNode program_idNode = outerNode.addChildElement('program_id', uriAccountManagementPrepaidRequest, '');
+			if(this.program_id != null){
+				program_idNode.addTextNode(this.program_id);
+			}
+			Dom.XmlNode promotion_idNode = outerNode.addChildElement('promotion_id', uriAccountManagementPrepaidRequest, '');
+			if(this.promotion_id != null){
+				promotion_idNode.addTextNode(this.promotion_id);
+			}
+			Dom.XmlNode transaction_idNode = outerNode.addChildElement('transaction_id', uriAccountManagementPrepaidRequest, '');
+			if(this.transaction_id != null){
+				transaction_idNode.addTextNode(this.transaction_id);
+			}
+			
+			OnbeDomainPrepaid.Link linkObj = this.link;
+			Dom.XmlNode linkNode = outerNode.addChildElement('link', uriAccountManagementPrepaidRequest, '');
+			if(linkObj != null){
+				linkObj.populateXmlNode(linkNode);
+			}
+		}
     }
 
     public class CreateBulkOrderRequest {
@@ -87,6 +391,40 @@ public class OnbeRequestPrepaid {
         private String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,null,'1','1','true'};
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
         private String[] field_order_type_info = new String[]{'card_number','cvv','postal_code','accountNumber'};
+
+		public ActivateCardRequest(){
+		}
+
+		public ActivateCardRequest(String card_number,
+            String cvv,
+            String postal_code,
+            String accountNumber){
+                this.card_number = card_number;
+                this.cvv = cvv;
+                this.postal_code = postal_code;
+                this.accountNumber = accountNumber;
+		}    
+
+        public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('activateCard', outerNode.getName());
+			Dom.XmlNode card_numberNode = outerNode.addChildElement('card_number', uriAccountManagementPrepaidRequest, '');
+			if(this.card_number != null){
+				card_numberNode.addTextNode(this.card_number);
+			}
+			Dom.XmlNode cvvNode = outerNode.addChildElement('cvv', uriAccountManagementPrepaidRequest, '');
+			if(this.cvv != null){
+				cvvNode.addTextNode(this.cvv);
+			}
+			Dom.XmlNode postal_codeNode = outerNode.addChildElement('postal_code', uriAccountManagementPrepaidRequest, '');
+			if(this.postal_code != null){
+				postal_codeNode.addTextNode(this.postal_code);
+			}
+			Dom.XmlNode accountNumberNode = outerNode.addChildElement('accountNumber', uriAccountManagementPrepaidRequest, '');
+			if(this.accountNumber != null){
+				accountNumberNode.addTextNode(this.accountNumber);
+			}
+		}
     }
 
     public class CreatePackageRequest {
@@ -105,95 +443,622 @@ public class OnbeRequestPrepaid {
     }
 
     public class ServiceRequest {
-        public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
-        public String partner_user_id;
-        public String program_id;
-        public String promotion_id;
-        public String transaction_id;
-        private String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] promotion_id_type_info = new String[]{'promotion_id',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] transaction_id_type_info = new String[]{'transaction_id',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'keyValue','partner_user_id','program_id','promotion_id','transaction_id'};
+
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String partner_user_id;
+		public String program_id;
+		public String promotion_id;
+		public String transaction_id;
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidRequest,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] promotion_id_type_info = new String[]{'promotion_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] transaction_id_type_info = new String[]{'transaction_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'keyValue','partner_user_id','program_id','promotion_id','transaction_id'};
+		
+        public ServiceRequest(){
+		}
+
+		public ServiceRequest(OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue,
+            String partner_user_id,
+            String program_id,
+            String promotion_id,
+            String transaction_id){
+                this.keyValue = keyValue;
+                this.partner_user_id = partner_user_id;
+                this.program_id = program_id;
+                this.promotion_id = promotion_id;
+                this.transaction_id = transaction_id;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('getRequestStatus', outerNode.getName());
+			
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidRequest, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+			Dom.XmlNode partner_user_idNode = outerNode.addChildElement('partner_user_id', uriAccountManagementPrepaidRequest, '');
+			if(this.partner_user_id != null){
+				partner_user_idNode.addTextNode(this.partner_user_id);
+			}
+			Dom.XmlNode program_idNode = outerNode.addChildElement('program_id', uriAccountManagementPrepaidRequest, '');
+			if(this.program_id != null){
+				program_idNode.addTextNode(this.program_id);
+			}
+			Dom.XmlNode promotion_idNode = outerNode.addChildElement('promotion_id', uriAccountManagementPrepaidRequest, '');
+			if(this.promotion_id != null){
+				promotion_idNode.addTextNode(this.promotion_id);
+			}
+			Dom.XmlNode transaction_idNode = outerNode.addChildElement('transaction_id', uriAccountManagementPrepaidRequest, '');
+			if(this.transaction_id != null){
+				transaction_idNode.addTextNode(this.transaction_id);
+			}
+		}
     }
 
     public class withdrawRequest {
-        public String withdraw_type;
-        public Long amount;
-        public String partner_withdraw_id;
-        public String express_flag;
-        public String comment;
-        public OnbeDomainPrepaid.WithdrawACH ach;
-        public OnbeDomainPrepaid.VoidACH achvoid;
-        public OnbeDomainPrepaid.WithdrawCheck check;
-        public OnbeDomainPrepaid.VoidCheck checkvoid;
-        private String[] withdraw_type_type_info = new String[]{'withdraw_type',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] amount_type_info = new String[]{'amount',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] partner_withdraw_id_type_info = new String[]{'partner_withdraw_id',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] express_flag_type_info = new String[]{'express_flag',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] comment_type_info = new String[]{'comment',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] ach_type_info = new String[]{'ach',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] achvoid_type_info = new String[]{'achvoid',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] check_type_info = new String[]{'check',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] checkvoid_type_info = new String[]{'checkvoid',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'withdraw_type','amount','partner_withdraw_id','express_flag','comment','ach','achvoid','check','checkvoid'};
+
+        public String accountNumber;
+		private transient String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String partner_user_id;
+		public String program_id;
+		public String promotion_id;
+		public String transaction_id;
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidRequest,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] promotion_id_type_info = new String[]{'promotion_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] transaction_id_type_info = new String[]{'transaction_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		public String withdraw_type;
+		public Long amount;
+		public String partner_withdraw_id;
+		public String express_flag;
+		public String comment;
+		public OnbeDomainPrepaid.WithdrawACH ach;
+		public OnbeDomainPrepaid.VoidACH achvoid;
+		public OnbeDomainPrepaid.WithdrawCheck check;
+		public OnbeDomainPrepaid.VoidCheck checkvoid;
+		private transient String[] withdraw_type_type_info = new String[]{'withdraw_type',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] amount_type_info = new String[]{'amount',uriAccountManagementPrepaidRequest,'long','1','1','false'};
+		private transient String[] partner_withdraw_id_type_info = new String[]{'partner_withdraw_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] express_flag_type_info = new String[]{'express_flag',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] comment_type_info = new String[]{'comment',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] ach_type_info = new String[]{'ach',uriAccountManagementPrepaidRequest,'WithdrawACH','1','1','true'};
+		private transient String[] achvoid_type_info = new String[]{'achvoid',uriAccountManagementPrepaidRequest,'VoidACH','1','1','true'};
+		private transient String[] check_type_info = new String[]{'check',uriAccountManagementPrepaidRequest,'WithdrawCheck','1','1','true'};
+		private transient String[] checkvoid_type_info = new String[]{'checkvoid',uriAccountManagementPrepaidRequest,'VoidCheck','1','1','true'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'accountNumber','keyValue','partner_user_id','program_id','promotion_id','transaction_id','withdraw_type','amount','partner_withdraw_id','express_flag','comment','ach','achvoid','check','checkvoid'};
+
+		public withdrawRequest(){
+		}
+
+        public withdrawRequest(String withdraw_type,
+            Long amount,
+            String partner_withdraw_id,
+            String express_flag,
+            String comment,
+            OnbeDomainPrepaid.WithdrawACH ach,
+            OnbeDomainPrepaid.VoidACH achvoid,
+            OnbeDomainPrepaid.WithdrawCheck check,
+            OnbeDomainPrepaid.VoidCheck checkvoid){
+                this.withdraw_type = withdraw_type;
+                this.amount = amount;
+                this.partner_withdraw_id = partner_withdraw_id;
+                this.express_flag = express_flag;
+                this.comment = comment;
+                this.ach = ach;
+                this.achvoid = achvoid;
+                this.check = check;
+                this.checkvoid = checkvoid;
+        }
+
+		public withdrawRequest(String accountNumber, OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue,
+            String partner_user_id,
+            String program_id,
+            String promotion_id,
+            String transaction_id,
+            String withdraw_type,
+            Long amount,
+            String partner_withdraw_id,
+            String express_flag,
+            String comment,
+            OnbeDomainPrepaid.WithdrawACH ach,
+            OnbeDomainPrepaid.VoidACH achvoid,
+            OnbeDomainPrepaid.WithdrawCheck check,
+            OnbeDomainPrepaid.VoidCheck checkvoid){
+                this.accountNumber = accountNumber;
+                this.keyValue = keyValue;
+                this.partner_user_id = partner_user_id;
+                this.program_id = program_id;
+                this.promotion_id = promotion_id;
+                this.transaction_id = transaction_id;
+                this.withdraw_type = withdraw_type;
+                this.amount = amount;
+                this.partner_withdraw_id = partner_withdraw_id;
+                this.express_flag = express_flag;
+                this.comment = comment;
+                this.ach = ach;
+                this.achvoid = achvoid;
+                this.check = check;
+                this.checkvoid = checkvoid;
+		}
+
+        public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('withdraw', outerNode.getName());
+			Dom.XmlNode accountNumberNode = outerNode.addChildElement('accountNumber', uriAccountManagementPrepaidRequest, '');
+			if(this.accountNumber != null){
+				accountNumberNode.addTextNode(this.accountNumber);
+			}
+			
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidRequest, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+			Dom.XmlNode partner_user_idNode = outerNode.addChildElement('partner_user_id', uriAccountManagementPrepaidRequest, '');
+			if(this.partner_user_id != null){
+				partner_user_idNode.addTextNode(this.partner_user_id);
+			}
+			Dom.XmlNode program_idNode = outerNode.addChildElement('program_id', uriAccountManagementPrepaidRequest, '');
+			if(this.program_id != null){
+				program_idNode.addTextNode(this.program_id);
+			}
+			Dom.XmlNode promotion_idNode = outerNode.addChildElement('promotion_id', uriAccountManagementPrepaidRequest, '');
+			if(this.promotion_id != null){
+				promotion_idNode.addTextNode(this.promotion_id);
+			}
+			Dom.XmlNode transaction_idNode = outerNode.addChildElement('transaction_id', uriAccountManagementPrepaidRequest, '');
+			if(this.transaction_id != null){
+				transaction_idNode.addTextNode(this.transaction_id);
+			}
+			Dom.XmlNode withdraw_typeNode = outerNode.addChildElement('withdraw_type', uriAccountManagementPrepaidRequest, '');
+			if(this.withdraw_type != null){
+				withdraw_typeNode.addTextNode(this.withdraw_type);
+			}
+			Dom.XmlNode amountNode = outerNode.addChildElement('amount', uriAccountManagementPrepaidRequest, '');
+			if(this.amount != null){
+				amountNode.addTextNode(String.valueOf(this.amount));
+			}
+			Dom.XmlNode partner_withdraw_idNode = outerNode.addChildElement('partner_withdraw_id', uriAccountManagementPrepaidRequest, '');
+			if(this.partner_withdraw_id != null){
+				partner_withdraw_idNode.addTextNode(this.partner_withdraw_id);
+			}
+			Dom.XmlNode express_flagNode = outerNode.addChildElement('express_flag', uriAccountManagementPrepaidRequest, '');
+			if(this.express_flag != null){
+				express_flagNode.addTextNode(this.express_flag);
+			}
+			Dom.XmlNode commentNode = outerNode.addChildElement('comment', uriAccountManagementPrepaidRequest, '');
+			if(this.comment != null){
+				commentNode.addTextNode(this.comment);
+			}
+			
+			OnbeDomainPrepaid.WithdrawACH achObj = this.ach;
+			Dom.XmlNode achNode = outerNode.addChildElement('ach', uriAccountManagementPrepaidRequest, '');
+			if(achObj != null){
+				achObj.populateXmlNode(achNode);
+			}
+			
+			OnbeDomainPrepaid.VoidACH achvoidObj = this.achvoid;
+			Dom.XmlNode achvoidNode = outerNode.addChildElement('achvoid', uriAccountManagementPrepaidRequest, '');
+			if(achvoidObj != null){
+				achvoidObj.populateXmlNode(achvoidNode);
+			}
+			
+			OnbeDomainPrepaid.WithdrawCheck checkObj = this.check;
+			Dom.XmlNode checkNode = outerNode.addChildElement('check', uriAccountManagementPrepaidRequest, '');
+			if(checkObj != null){
+				checkObj.populateXmlNode(checkNode);
+			}
+			
+			OnbeDomainPrepaid.VoidCheck checkvoidObj = this.checkvoid;
+			Dom.XmlNode checkvoidNode = outerNode.addChildElement('checkvoid', uriAccountManagementPrepaidRequest, '');
+			if(checkvoidObj != null){
+				checkvoidObj.populateXmlNode(checkvoidNode);
+			}
+		}
     }
 
     public class CreateAccountRequest {
-        public String accessLevel;
-        public Boolean accountPersonalized;
-        public OnbeDomainPrepaid.Card card;
-        public OnbeDomainPrepaid.Load load;
-        public OnbeDomainPrepaid.Link link;
-        public OnbeDomainPrepaid.Registration registation;
-        private String[] accessLevel_type_info = new String[]{'accessLevel',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] accountPersonalized_type_info = new String[]{'accountPersonalized',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] card_type_info = new String[]{'card',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] load_type_info = new String[]{'load',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] link_type_info = new String[]{'link',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] registation_type_info = new String[]{'registation',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'accessLevel','accountPersonalized','card','load','link','registation'};
-    }
 
-    public class CvvInquiryRequest {
-        public String program_id;
-        public String partner_user_id;
-        public String accountNumber;
-        private String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'program_id','partner_user_id','accountNumber'};
+        public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String partner_user_id;
+		public String program_id;
+		public String promotion_id;
+		public String transaction_id;
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidRequest,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] promotion_id_type_info = new String[]{'promotion_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] transaction_id_type_info = new String[]{'transaction_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		public String accessLevel;
+		public Boolean accountPersonalized;
+		public OnbeDomainPrepaid.Card card;
+		public OnbeDomainPrepaid.Load load;
+		public OnbeDomainPrepaid.Link link;
+		public OnbeDomainPrepaid.Registration registration;
+		private transient String[] accessLevel_type_info = new String[]{'accessLevel',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] accountPersonalized_type_info = new String[]{'accountPersonalized',uriAccountManagementPrepaidRequest,'boolean','1','1','true'};
+		private transient String[] card_type_info = new String[]{'card',uriAccountManagementPrepaidRequest,'Card','1','1','true'};
+		private transient String[] load_type_info = new String[]{'load',uriAccountManagementPrepaidRequest,'Load','1','1','true'};
+		private transient String[] link_type_info = new String[]{'link',uriAccountManagementPrepaidRequest,'Link','1','1','true'};
+		private transient String[] registration_type_info = new String[]{'registration',uriAccountManagementPrepaidRequest,'Registration','1','1','false'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'keyValue','partner_user_id','program_id','promotion_id','transaction_id','accessLevel','accountPersonalized','card','load','link','registration'};
+
+        public CreateAccountRequest(){
+		}
+
+        public CreateAccountRequest(String accessLevel, Boolean accountPersonalized, 
+            OnbeDomainPrepaid.Card card,
+            OnbeDomainPrepaid.Load load,
+            OnbeDomainPrepaid.Link link,
+            OnbeDomainPrepaid.Registration registration){
+                this.accountPersonalized = accountPersonalized;
+                this.card = card;
+                this.load = load;
+                this.link = link;
+                this.registration = registration;
+            }
+
+		public CreateAccountRequest(OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue,
+            String partner_user_id,
+            String program_id,
+            String promotion_id,
+            String transaction_id,
+            String accessLevel,
+            Boolean accountPersonalized,
+            OnbeDomainPrepaid.Card card,
+            OnbeDomainPrepaid.Load load,
+            OnbeDomainPrepaid.Link link,
+            OnbeDomainPrepaid.Registration registration){
+                this.keyValue = keyValue;
+                this.partner_user_id = partner_user_id;
+                this.program_id = program_id;
+                this.promotion_id = promotion_id;
+                this.transaction_id = transaction_id;
+                this.accessLevel = accessLevel;
+                this.accountPersonalized = accountPersonalized;
+                this.card = card;
+                this.load = load;
+                this.link = link;
+                this.registration = registration;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('createAccount', outerNode.getName());
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidRequest, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+			Dom.XmlNode partner_user_idNode = outerNode.addChildElement('partner_user_id', uriAccountManagementPrepaidRequest, '');
+			if(this.partner_user_id != null){
+				partner_user_idNode.addTextNode(this.partner_user_id);
+			}
+			Dom.XmlNode program_idNode = outerNode.addChildElement('program_id', uriAccountManagementPrepaidRequest, '');
+			if(this.program_id != null){
+				program_idNode.addTextNode(this.program_id);
+			}
+			Dom.XmlNode promotion_idNode = outerNode.addChildElement('promotion_id', uriAccountManagementPrepaidRequest, '');
+			if(this.promotion_id != null){
+				promotion_idNode.addTextNode(this.promotion_id);
+			}
+			Dom.XmlNode transaction_idNode = outerNode.addChildElement('transaction_id', uriAccountManagementPrepaidRequest, '');
+			if(this.transaction_id != null){
+				transaction_idNode.addTextNode(this.transaction_id);
+			}
+			Dom.XmlNode accessLevelNode = outerNode.addChildElement('accessLevel', uriAccountManagementPrepaidRequest, '');
+			if(this.accessLevel != null){
+				accessLevelNode.addTextNode(this.accessLevel);
+			}
+			Dom.XmlNode accountPersonalizedNode = outerNode.addChildElement('accountPersonalized', uriAccountManagementPrepaidRequest, '');
+			if(this.accountPersonalized != null){
+				accountPersonalizedNode.addTextNode(String.valueOf(this.accountPersonalized));
+			}
+			
+			OnbeDomainPrepaid.Card cardObj = this.card;
+			Dom.XmlNode cardNode = outerNode.addChildElement('card', uriAccountManagementPrepaidRequest, '');
+			if(cardObj != null){
+				cardObj.populateXmlNode(cardNode);
+			}
+			
+			OnbeDomainPrepaid.Load loadObj = this.load;
+			Dom.XmlNode loadNode = outerNode.addChildElement('load', uriAccountManagementPrepaidRequest, '');
+			if(loadObj != null){
+				loadObj.populateXmlNode(loadNode);
+			}
+			
+			OnbeDomainPrepaid.Link linkObj = this.link;
+			Dom.XmlNode linkNode = outerNode.addChildElement('link', uriAccountManagementPrepaidRequest, '');
+			if(linkObj != null){
+				linkObj.populateXmlNode(linkNode);
+			}
+			
+			OnbeDomainPrepaid.Registration registationObj = this.registration;
+			Dom.XmlNode registrationNode = outerNode.addChildElement('registation', uriAccountManagementPrepaidRequest, '');
+			if(registationObj != null){
+				registationObj.populateXmlNode(registrationNode);
+			}
+		}
     }
 
     public class AddFundsRequest {
-        public OnbeDomainPrepaid.Load load;
-        private String[] load_type_info = new String[]{'load',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'load'};
+        // private String[] load_type_info = new String[]{'load',uriAccountManagementPrepaidRequest,null,'1','1','false'};
+        // private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+        // private String[] field_order_type_info = new String[]{'load'};
+		public String accountNumber;
+		private transient String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String partner_user_id;
+		public String program_id;
+		public String promotion_id;
+		public String transaction_id;
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidRequest,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] promotion_id_type_info = new String[]{'promotion_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] transaction_id_type_info = new String[]{'transaction_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		public OnbeDomainPrepaid.Load load;
+		private transient String[] load_type_info = new String[]{'load',uriAccountManagementPrepaidRequest,'Load','1','1','false'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'accountNumber','keyValue','partner_user_id','program_id','promotion_id','transaction_id','load'};
+		
+        public AddFundsRequest(){
+		}
+
+        public AddFundsRequest(OnbeDomainPrepaid.Load load){
+            this.load = load;
+		}
+
+		public AddFundsRequest(String accountNumber,
+            OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue,
+            String partner_user_id,
+            String program_id,
+            String promotion_id,
+            String transaction_id,
+            OnbeDomainPrepaid.Load load){
+                this.accountNumber = accountNumber;
+                this.keyValue = keyValue;
+                this.partner_user_id = partner_user_id;
+                this.program_id = program_id;
+                this.promotion_id = promotion_id;
+                this.transaction_id = transaction_id;
+                this.load = load;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('addFunds', outerNode.getName());
+			Dom.XmlNode accountNumberNode = outerNode.addChildElement('accountNumber', uriAccountManagementPrepaidRequest, '');
+			if(this.accountNumber != null){
+				accountNumberNode.addTextNode(this.accountNumber);
+			}
+			
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidRequest, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+			Dom.XmlNode partner_user_idNode = outerNode.addChildElement('partner_user_id', uriAccountManagementPrepaidRequest, '');
+			if(this.partner_user_id != null){
+				partner_user_idNode.addTextNode(this.partner_user_id);
+			}
+			Dom.XmlNode program_idNode = outerNode.addChildElement('program_id', uriAccountManagementPrepaidRequest, '');
+			if(this.program_id != null){
+				program_idNode.addTextNode(this.program_id);
+			}
+			Dom.XmlNode promotion_idNode = outerNode.addChildElement('promotion_id', uriAccountManagementPrepaidRequest, '');
+			if(this.promotion_id != null){
+				promotion_idNode.addTextNode(this.promotion_id);
+			}
+			Dom.XmlNode transaction_idNode = outerNode.addChildElement('transaction_id', uriAccountManagementPrepaidRequest, '');
+			if(this.transaction_id != null){
+				transaction_idNode.addTextNode(this.transaction_id);
+			}
+			
+			OnbeDomainPrepaid.Load loadObj = this.load;
+			Dom.XmlNode loadNode = outerNode.addChildElement('load', uriAccountManagementPrepaidRequest, '');
+			if(loadObj != null){
+				loadObj.populateXmlNode(loadNode);
+			}
+		}
     }
 
     public class SetPinRequest {
-        public String new_pin;
-        private String[] new_pin_type_info = new String[]{'new_pin',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'new_pin'};
+
+        public String accountNumber;
+		private transient String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String partner_user_id;
+		public String program_id;
+		public String promotion_id;
+		public String transaction_id;
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidRequest,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] promotion_id_type_info = new String[]{'promotion_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] transaction_id_type_info = new String[]{'transaction_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		public String new_pin;
+		private transient String[] new_pin_type_info = new String[]{'new_pin',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'accountNumber','keyValue','partner_user_id','program_id','promotion_id','transaction_id','new_pin'};
+
+        // public String new_pin;
+        // private String[] new_pin_type_info = new String[]{'new_pin',uriAccountManagementPrepaidRequest,null,'1','1','true'};
+        // private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+        // private String[] field_order_type_info = new String[]{'new_pin'};
+
+		public SetPinRequest(){
+		}
+
+		public SetPinRequest(String new_pin){
+			this.new_pin = new_pin;
+		}
+
+		public SetPinRequest(String accountNumber, 
+            OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue,
+            String partner_user_id,String program_id,
+            String promotion_id,
+            String transaction_id,
+            String new_pin){
+                this.accountNumber = accountNumber;
+                this.keyValue = keyValue;
+                this.partner_user_id = partner_user_id;
+                this.program_id = program_id;
+                this.promotion_id = promotion_id;
+                this.transaction_id = transaction_id;
+                this.new_pin = new_pin;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('setPin', outerNode.getName());
+			Dom.XmlNode accountNumberNode = outerNode.addChildElement('accountNumber', uriAccountManagementPrepaidRequest, '');
+			if(this.accountNumber != null){
+				accountNumberNode.addTextNode(this.accountNumber);
+			}
+			
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidRequest, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+			Dom.XmlNode partner_user_idNode = outerNode.addChildElement('partner_user_id', uriAccountManagementPrepaidRequest, '');
+			if(this.partner_user_id != null){
+				partner_user_idNode.addTextNode(this.partner_user_id);
+			}
+			Dom.XmlNode program_idNode = outerNode.addChildElement('program_id', uriAccountManagementPrepaidRequest, '');
+			if(this.program_id != null){
+				program_idNode.addTextNode(this.program_id);
+			}
+			Dom.XmlNode promotion_idNode = outerNode.addChildElement('promotion_id', uriAccountManagementPrepaidRequest, '');
+			if(this.promotion_id != null){
+				promotion_idNode.addTextNode(this.promotion_id);
+			}
+			Dom.XmlNode transaction_idNode = outerNode.addChildElement('transaction_id', uriAccountManagementPrepaidRequest, '');
+			if(this.transaction_id != null){
+				transaction_idNode.addTextNode(this.transaction_id);
+			}
+			Dom.XmlNode new_pinNode = outerNode.addChildElement('new_pin', uriAccountManagementPrepaidRequest, '');
+			if(this.new_pin != null){
+				new_pinNode.addTextNode(this.new_pin);
+			}
+		}
     }
     
     public class AssignPackageRequest {
-        public String package_type;
-        public String package_id;
-        public OnbeDomainPrepaid.Registration registration_Primary;
-        public OnbeDomainPrepaid.Registration registration_Secondary;
-        private String[] package_type_type_info = new String[]{'package_type',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] package_id_type_info = new String[]{'package_id',uriAccountManagementPrepaidRequest,null,'1','1','false'};
-        private String[] registration_Primary_type_info = new String[]{'registration_Primary',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] registration_Secondary_type_info = new String[]{'registration_Secondary',uriAccountManagementPrepaidRequest,null,'1','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
-        private String[] field_order_type_info = new String[]{'package_type','package_id','registration_Primary','registration_Secondary'};
+        // private String[] package_type_type_info = new String[]{'package_type',uriAccountManagementPrepaidRequest,null,'1','1','false'};
+        // private String[] package_id_type_info = new String[]{'package_id',uriAccountManagementPrepaidRequest,null,'1','1','false'};
+        // private String[] registration_Primary_type_info = new String[]{'registration_Primary',uriAccountManagementPrepaidRequest,null,'1','1','true'};
+        // private String[] registration_Secondary_type_info = new String[]{'registration_Secondary',uriAccountManagementPrepaidRequest,null,'1','1','true'};
+        // private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+        // private String[] field_order_type_info = new String[]{'package_type','package_id','registration_Primary','registration_Secondary'};
+        public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String partner_user_id;
+		public String program_id;
+		public String promotion_id;
+		public String transaction_id;
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidRequest,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidRequest,'string','1','1','true'};
+		private transient String[] program_id_type_info = new String[]{'program_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] promotion_id_type_info = new String[]{'promotion_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] transaction_id_type_info = new String[]{'transaction_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		public String package_type;
+		public String package_id;
+		public OnbeDomainPrepaid.Registration registration_Primary;
+		public OnbeDomainPrepaid.Registration registration_Secondary;
+		private transient String[] package_type_type_info = new String[]{'package_type',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] package_id_type_info = new String[]{'package_id',uriAccountManagementPrepaidRequest,'string','1','1','false'};
+		private transient String[] registration_Primary_type_info = new String[]{'registration_Primary',uriAccountManagementPrepaidRequest,'Registration','1','1','true'};
+		private transient String[] registration_Secondary_type_info = new String[]{'registration_Secondary',uriAccountManagementPrepaidRequest,'Registration','1','1','true'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidRequest,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'keyValue','partner_user_id','program_id','promotion_id','transaction_id','package_type','package_id','registration_Primary','registration_Secondary'};
+		
+        public AssignPackageRequest(){
+		}
+
+        public AssignPackageRequest(String package_type, 
+            String package_id, 
+            OnbeDomainPrepaid.Registration registration_Primary,
+            OnbeDomainPrepaid.Registration registration_Secondary){
+                this.package_type = package_type;
+                this.package_id = package_id;
+                this.registration_Primary = registration_Primary;
+                this.registration_Secondary = registration_Secondary;
+        }
+		
+        public AssignPackageRequest(OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue,
+            String partner_user_id,
+            String program_id,
+            String promotion_id,
+            String transaction_id,
+            String package_type,
+            String package_id,
+            OnbeDomainPrepaid.Registration registration_Primary,
+            OnbeDomainPrepaid.Registration registration_Secondary){
+                this.keyValue = keyValue;
+                this.partner_user_id = partner_user_id;
+                this.program_id = program_id;
+                this.promotion_id = promotion_id;
+                this.transaction_id = transaction_id;
+                this.package_type = package_type;
+                this.package_id = package_id;
+                this.registration_Primary = registration_Primary;
+                this.registration_Secondary = registration_Secondary;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('assignPackage', outerNode.getName());
+			OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = this.keyValue;
+			Dom.XmlNode keyValueNode = outerNode.addChildElement('keyValue', uriAccountManagementPrepaidRequest, '');
+			if(keyValueObj != null){
+				keyValueObj.populateXmlNode(keyValueNode);
+			}
+			Dom.XmlNode partner_user_idNode = outerNode.addChildElement('partner_user_id', uriAccountManagementPrepaidRequest, '');
+			if(this.partner_user_id != null){
+				partner_user_idNode.addTextNode(this.partner_user_id);
+			}
+			Dom.XmlNode program_idNode = outerNode.addChildElement('program_id', uriAccountManagementPrepaidRequest, '');
+			if(this.program_id != null){
+				program_idNode.addTextNode(this.program_id);
+			}
+			Dom.XmlNode promotion_idNode = outerNode.addChildElement('promotion_id', uriAccountManagementPrepaidRequest, '');
+			if(this.promotion_id != null){
+				promotion_idNode.addTextNode(this.promotion_id);
+			}
+			Dom.XmlNode transaction_idNode = outerNode.addChildElement('transaction_id', uriAccountManagementPrepaidRequest, '');
+			if(this.transaction_id != null){
+				transaction_idNode.addTextNode(this.transaction_id);
+			}
+			Dom.XmlNode package_typeNode = outerNode.addChildElement('package_type', uriAccountManagementPrepaidRequest, '');
+			if(this.package_type != null){
+				package_typeNode.addTextNode(this.package_type);
+			}
+			Dom.XmlNode package_idNode = outerNode.addChildElement('package_id', uriAccountManagementPrepaidRequest, '');
+			if(this.package_id != null){
+				package_idNode.addTextNode(this.package_id);
+			}
+			
+			OnbeDomainPrepaid.Registration registration_PrimaryObj = this.registration_Primary;
+			Dom.XmlNode registration_PrimaryNode = outerNode.addChildElement('registration_Primary', uriAccountManagementPrepaidRequest, '');
+			if(registration_PrimaryObj != null){
+				registration_PrimaryObj.populateXmlNode(registration_PrimaryNode);
+			}
+			
+			OnbeDomainPrepaid.Registration registration_SecondaryObj = this.registration_Secondary;
+			Dom.XmlNode registration_SecondaryNode = outerNode.addChildElement('registration_Secondary', uriAccountManagementPrepaidRequest, '');
+			if(registration_SecondaryObj != null){
+				registration_SecondaryObj.populateXmlNode(registration_SecondaryNode);
+			}
+		}
     }
 }

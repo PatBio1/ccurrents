@@ -7,3 +7,24 @@
     background-size: contain;
     height: 50px;
 }
+
+.notification-badge {
+    position: absolute;
+    right: 15px;
+    top: -2px;
+    background-color: #ff4c4c;
+    border-radius: 100%;
+    width: 10px;
+    height: 10px;
+}
+
+.loyalty-badge {
+    position: absolute;
+    right: -8px;
+    top: -6px;
+    --sds-c-icon-color-foreground-default: white;
+    --sds-c-icon-color-background: #8080e7;
+    border-radius: 100%;
+    padding: 2px;
+    outline: 1px solid black;
+}

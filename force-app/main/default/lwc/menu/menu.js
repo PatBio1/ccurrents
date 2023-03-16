@@ -14,6 +14,10 @@ export default class Menu extends NavigationMixin(LightningElement) {
 
     photoUrl;
 
+    get hasUnreadNotifications() {
+        return true;
+    }
+
     @wire(getRecord, { recordId: userId, fields: [userSmallPhotoUrl]}) 
     userDetails({error, data}) {
         if (data) {

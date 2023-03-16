@@ -1,21 +1,14 @@
 <template>
+    <div class="slds-progress progress-bar-container">
+        <div class="slds-progress-bar slds-progress-bar_x-small"></div>
 
-    <div class="slds-progress">
-        <ol class="slds-progress__list">
-            <template for:each={items} for:item="item" for:index="itemIndex">
-                <li key={item.num} class={item.classes}>
-                    <button class={item.buttonClasses} title={item.title}>
-                        <lightning-icon if:true={item.completed} icon-name="utility:success" size="x-small"></lightning-icon>
-                        <span class="slds-assistive-text">{item.title}</span>
-                    </button>
-                </li>
-            </template>
-        </ol>
-        <div class="slds-progress-bar slds-progress-bar_x-small" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" role="progressbar">
-            <span class="slds-progress-bar__value" style="width:0%">
-                <span class="slds-assistive-text">Progress: 0%</span>
-            </span>
-        </div>
+        <template for:each={items} for:item="item" for:index="itemIndex">
+            <div key={item.num} class="progress-item-wrapper">
+                <div class={item.classes}>
+                    <span if:false={item.completed} class="progess-text">{item.num}</span>
+                    <lightning-icon if:true={item.completed} icon-name="utility:check" size="xx-small"></lightning-icon>
+                </div>
+            </div>
+        </template>
     </div>
-
 </template>

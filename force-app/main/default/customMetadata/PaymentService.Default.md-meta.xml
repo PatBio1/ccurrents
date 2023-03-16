@@ -4,6 +4,6 @@
     <protected>false</protected>
     <values>
         <field>ImplementationApexClass__c</field>
-        <value xsi:type="xsd:string">OnbePaymentServiceImpl</value>
+        <value xsi:type="xsd:string">OnbePaymentService</value>  <!-- was OnbePaymentServiceImpl -->
     </values>
 </CustomMetadata>

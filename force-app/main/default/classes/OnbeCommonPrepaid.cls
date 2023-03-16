@@ -12,5 +12,31 @@ public class OnbeCommonPrepaid {
         private String[] value_type_info = new String[]{'value', uriAccountManagementPrepaidCommon ,null,'1','1','true'};
         private String[] apex_schema_type_info = new String[]{ uriAccountManagementPrepaidCommon,'true','false'};
         private String[] field_order_type_info = new String[]{'key','value'};
+
+		public keyValue(){
+		}
+
+		public keyValue(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			DOM.XmlNode keyNode = responseNode.getChildElement('key', uriAccountManagementPrepaidCommon);
+			this.key = (keyNode == null || keyNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : keyNode.getText();
+			nodesParsed.add(keyNode);
+			//System.debug(this.key);			
+			DOM.XmlNode valueNode = responseNode.getChildElement('value', uriAccountManagementPrepaidCommon);
+			this.value = (valueNode == null || valueNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : valueNode.getText();
+			nodesParsed.add(valueNode);
+			//System.debug(this.value);			
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			Dom.XmlNode keyNode = outerNode.addChildElement('key', uriAccountManagementPrepaidCommon, '');
+			if(this.key != null){
+				keyNode.addTextNode(this.key);
+			}
+			Dom.XmlNode valueNode = outerNode.addChildElement('value', uriAccountManagementPrepaidCommon, '');
+			if(this.value != null){
+				valueNode.addTextNode(this.value);
+			}
+		}
     }
 }

@@ -10,24 +10,100 @@ public class OnbeResponsePrepaid {
     private static final String uriAccountManagementPrepaidCommon = 'http://common.accountmanagementapi.prepaid.citi.com';
 
     public class CreateAccountResponse {
-        public String accountNumber;
-        public String cardExpiryDateMMYY;
-        public String cardNumber;
-        public String panSeqNum;
-        public String partner_user_id;
-        public String claimCode;
-        public String virtualExpressURL;
-        public String notificationStatus;
-        private String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] cardExpiryDateMMYY_type_info = new String[]{'cardExpiryDateMMYY',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] cardNumber_type_info = new String[]{'cardNumber',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] panSeqNum_type_info = new String[]{'panSeqNum',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] claimCode_type_info = new String[]{'claimCode',uriAccountManagementPrepaidResponse,null,'0','1','true'};
-        private String[] virtualExpressURL_type_info = new String[]{'virtualExpressURL',uriAccountManagementPrepaidResponse,null,'0','1','true'};
-        private String[] notificationStatus_type_info = new String[]{'notificationStatus',uriAccountManagementPrepaidResponse,null,'0','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
-        private String[] field_order_type_info = new String[]{'accountNumber','cardExpiryDateMMYY','cardNumber','panSeqNum','partner_user_id','claimCode','virtualExpressURL','notificationStatus'};
+        // private String[] field_order_type_info = new String[]{'accountNumber','cardExpiryDateMMYY','cardNumber','panSeqNum','partner_user_id','claimCode','virtualExpressURL','notificationStatus'};
+        public Integer code;
+		public String description;
+		public Boolean existingTransaction;
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String sub_code;
+		private transient String[] code_type_info = new String[]{'code',uriAccountManagementPrepaidResponse,'int','1','1','false'};
+		private transient String[] description_type_info = new String[]{'description',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] existingTransaction_type_info = new String[]{'existingTransaction',uriAccountManagementPrepaidResponse,'boolean','1','1','false'};
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidResponse,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] sub_code_type_info = new String[]{'sub_code',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		public String accountNumber;
+		public String cardExpiryDateMMYY;
+		public String cardNumber;
+		public String panSeqNum;
+		public String partner_user_id;
+		public String claimCode;
+		public String virtualExpressURL;
+		public String notificationStatus;
+		private transient String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] cardExpiryDateMMYY_type_info = new String[]{'cardExpiryDateMMYY',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] cardNumber_type_info = new String[]{'cardNumber',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] panSeqNum_type_info = new String[]{'panSeqNum',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] claimCode_type_info = new String[]{'claimCode',uriAccountManagementPrepaidResponse,'string','0','1','true'};
+		private transient String[] virtualExpressURL_type_info = new String[]{'virtualExpressURL',uriAccountManagementPrepaidResponse,'string','0','1','true'};
+		private transient String[] notificationStatus_type_info = new String[]{'notificationStatus',uriAccountManagementPrepaidResponse,'string','0','1','true'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'code','description','existingTransaction','keyValue','sub_code','accountNumber','cardExpiryDateMMYY','cardNumber','panSeqNum','partner_user_id','claimCode','virtualExpressURL','notificationStatus'};
+		
+        public CreateAccountResponse(){
+		}
+
+		public CreateAccountResponse(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			//System.assertEquals('createAccountResponse', responseNode.getName());
+			DOM.XmlNode codeNode = responseNode.getChildElement('code', uriAccountManagementPrepaidResponse);
+			this.code = (codeNode == null) ? null : Integer.valueOf(codeNode.getText());
+			nodesParsed.add(codeNode);
+			//System.debug(this.code);			
+			DOM.XmlNode descriptionNode = responseNode.getChildElement('description', uriAccountManagementPrepaidResponse);
+			this.description = (descriptionNode == null || descriptionNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : descriptionNode.getText();
+			nodesParsed.add(descriptionNode);
+			//System.debug(this.description);			
+			DOM.XmlNode existingTransactionNode = responseNode.getChildElement('existingTransaction', uriAccountManagementPrepaidResponse);
+			this.existingTransaction = (existingTransactionNode == null) ? null : Boolean.valueOf(existingTransactionNode.getText());
+			nodesParsed.add(existingTransactionNode);
+			//System.debug(this.existingTransaction);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidResponse);
+			if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+			DOM.XmlNode sub_codeNode = responseNode.getChildElement('sub_code', uriAccountManagementPrepaidResponse);
+			this.sub_code = (sub_codeNode == null || sub_codeNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : sub_codeNode.getText();
+			nodesParsed.add(sub_codeNode);
+			//System.debug(this.sub_code);			
+			DOM.XmlNode accountNumberNode = responseNode.getChildElement('accountNumber', uriAccountManagementPrepaidResponse);
+			this.accountNumber = (accountNumberNode == null || accountNumberNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : accountNumberNode.getText();
+			nodesParsed.add(accountNumberNode);
+			//System.debug(this.accountNumber);			
+			DOM.XmlNode cardExpiryDateMMYYNode = responseNode.getChildElement('cardExpiryDateMMYY', uriAccountManagementPrepaidResponse);
+			this.cardExpiryDateMMYY = (cardExpiryDateMMYYNode == null || cardExpiryDateMMYYNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : cardExpiryDateMMYYNode.getText();
+			nodesParsed.add(cardExpiryDateMMYYNode);
+			//System.debug(this.cardExpiryDateMMYY);			
+			DOM.XmlNode cardNumberNode = responseNode.getChildElement('cardNumber', uriAccountManagementPrepaidResponse);
+			this.cardNumber = (cardNumberNode == null || cardNumberNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : cardNumberNode.getText();
+			nodesParsed.add(cardNumberNode);
+			//System.debug(this.cardNumber);			
+			DOM.XmlNode panSeqNumNode = responseNode.getChildElement('panSeqNum', uriAccountManagementPrepaidResponse);
+			this.panSeqNum = (panSeqNumNode == null || panSeqNumNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : panSeqNumNode.getText();
+			nodesParsed.add(panSeqNumNode);
+			//System.debug(this.panSeqNum);			
+			DOM.XmlNode partner_user_idNode = responseNode.getChildElement('partner_user_id', uriAccountManagementPrepaidResponse);
+			this.partner_user_id = (partner_user_idNode == null || partner_user_idNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : partner_user_idNode.getText();
+			nodesParsed.add(partner_user_idNode);
+			//System.debug(this.partner_user_id);			
+			DOM.XmlNode claimCodeNode = responseNode.getChildElement('claimCode', uriAccountManagementPrepaidResponse);
+			this.claimCode = (claimCodeNode == null || claimCodeNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : claimCodeNode.getText();
+			nodesParsed.add(claimCodeNode);
+			//System.debug(this.claimCode);			
+			DOM.XmlNode virtualExpressURLNode = responseNode.getChildElement('virtualExpressURL', uriAccountManagementPrepaidResponse);
+			this.virtualExpressURL = (virtualExpressURLNode == null || virtualExpressURLNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : virtualExpressURLNode.getText();
+			nodesParsed.add(virtualExpressURLNode);
+			//System.debug(this.virtualExpressURL);			
+			DOM.XmlNode notificationStatusNode = responseNode.getChildElement('notificationStatus', uriAccountManagementPrepaidResponse);
+			this.notificationStatus = (notificationStatusNode == null || notificationStatusNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : notificationStatusNode.getText();
+			nodesParsed.add(notificationStatusNode);
+			//System.debug(this.notificationStatus);			
+		}
     }
 
     public class UpdateAccountStatusResponse {
@@ -35,49 +111,200 @@ public class OnbeResponsePrepaid {
         private String[] field_order_type_info = new String[]{};
     }
 
-    public class CreatePackageResponse {
-        public String accountNumber;
-        public String partner_user_id;
-        private String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
-        private String[] field_order_type_info = new String[]{'accountNumber','partner_user_id'};
-    }
-
     public class AssignPackageResponse {
-        public String accountNumber;
-        public String partner_user_id;
-        public String batch_id;
-        private String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] batch_id_type_info = new String[]{'batch_id',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
-        private String[] field_order_type_info = new String[]{'accountNumber','partner_user_id','batch_id'};
-    }
 
-    public class CvvInquiryResponse {
-        public String cvv;
-        private String[] cvv_type_info = new String[]{'cvv',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
-        private String[] field_order_type_info = new String[]{'cvv'};
+		public Integer code;
+		public String description;
+		public Boolean existingTransaction;
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String sub_code;
+		private transient String[] code_type_info = new String[]{'code',uriAccountManagementPrepaidResponse,'int','1','1','false'};
+		private transient String[] description_type_info = new String[]{'description',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] existingTransaction_type_info = new String[]{'existingTransaction',uriAccountManagementPrepaidResponse,'boolean','1','1','false'};
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidResponse,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] sub_code_type_info = new String[]{'sub_code',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		public String accountNumber;
+		public String partner_user_id;
+		public String batch_id;
+		private transient String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] partner_user_id_type_info = new String[]{'partner_user_id',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] batch_id_type_info = new String[]{'batch_id',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'code','description','existingTransaction','keyValue','sub_code','accountNumber','partner_user_id','batch_id'};
+		
+        public AssignPackageResponse(){
+		}
+
+		public AssignPackageResponse(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			//System.assertEquals('assignPackageResponse', responseNode.getName());
+			DOM.XmlNode codeNode = responseNode.getChildElement('code', uriAccountManagementPrepaidResponse);
+			this.code = (codeNode == null) ? null : Integer.valueOf(codeNode.getText());
+			nodesParsed.add(codeNode);
+			//System.debug(this.code);			
+			DOM.XmlNode descriptionNode = responseNode.getChildElement('description', uriAccountManagementPrepaidResponse);
+			this.description = (descriptionNode == null || descriptionNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : descriptionNode.getText();
+			nodesParsed.add(descriptionNode);
+			//System.debug(this.description);			
+			DOM.XmlNode existingTransactionNode = responseNode.getChildElement('existingTransaction', uriAccountManagementPrepaidResponse);
+			this.existingTransaction = (existingTransactionNode == null) ? null : Boolean.valueOf(existingTransactionNode.getText());
+			nodesParsed.add(existingTransactionNode);
+			//System.debug(this.existingTransaction);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidResponse);
+			if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+			DOM.XmlNode sub_codeNode = responseNode.getChildElement('sub_code', uriAccountManagementPrepaidResponse);
+			this.sub_code = (sub_codeNode == null || sub_codeNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : sub_codeNode.getText();
+			nodesParsed.add(sub_codeNode);
+			//System.debug(this.sub_code);			
+			DOM.XmlNode accountNumberNode = responseNode.getChildElement('accountNumber', uriAccountManagementPrepaidResponse);
+			this.accountNumber = (accountNumberNode == null || accountNumberNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : accountNumberNode.getText();
+			nodesParsed.add(accountNumberNode);
+			//System.debug(this.accountNumber);			
+			DOM.XmlNode partner_user_idNode = responseNode.getChildElement('partner_user_id', uriAccountManagementPrepaidResponse);
+			this.partner_user_id = (partner_user_idNode == null || partner_user_idNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : partner_user_idNode.getText();
+			nodesParsed.add(partner_user_idNode);
+			//System.debug(this.partner_user_id);			
+			DOM.XmlNode batch_idNode = responseNode.getChildElement('batch_id', uriAccountManagementPrepaidResponse);
+			this.batch_id = (batch_idNode == null || batch_idNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : batch_idNode.getText();
+			nodesParsed.add(batch_idNode);
+			//System.debug(this.batch_id);			
+		}
     }
 
     public class AddFundsResponse {
-        public String claimCode;
-        public String virtualExpressURL;
-        public String notificationStatus;
-        private String[] claimCode_type_info = new String[]{'claimCode',uriAccountManagementPrepaidResponse,null,'0','1','true'};
-        private String[] virtualExpressURL_type_info = new String[]{'virtualExpressURL',uriAccountManagementPrepaidResponse,null,'0','1','true'};
-        private String[] notificationStatus_type_info = new String[]{'notificationStatus',uriAccountManagementPrepaidResponse,null,'0','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
-        private String[] field_order_type_info = new String[]{'claimCode','virtualExpressURL','notificationStatus'};
+        // private String[] claimCode_type_info = new String[]{'claimCode',uriAccountManagementPrepaidResponse,null,'0','1','true'};
+        // private String[] virtualExpressURL_type_info = new String[]{'virtualExpressURL',uriAccountManagementPrepaidResponse,null,'0','1','true'};
+        // private String[] notificationStatus_type_info = new String[]{'notificationStatus',uriAccountManagementPrepaidResponse,null,'0','1','true'};
+        // private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
+        // private String[] field_order_type_info = new String[]{'claimCode','virtualExpressURL','notificationStatus'};
+		public Integer code;
+		public String description;
+		public Boolean existingTransaction;
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String sub_code;
+		private transient String[] code_type_info = new String[]{'code',uriAccountManagementPrepaidResponse,'int','1','1','false'};
+		private transient String[] description_type_info = new String[]{'description',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] existingTransaction_type_info = new String[]{'existingTransaction',uriAccountManagementPrepaidResponse,'boolean','1','1','false'};
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidResponse,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] sub_code_type_info = new String[]{'sub_code',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		public String claimCode;
+		public String virtualExpressURL;
+		public String notificationStatus;
+		private transient String[] claimCode_type_info = new String[]{'claimCode',uriAccountManagementPrepaidResponse,'string','0','1','true'};
+		private transient String[] virtualExpressURL_type_info = new String[]{'virtualExpressURL',uriAccountManagementPrepaidResponse,'string','0','1','true'};
+		private transient String[] notificationStatus_type_info = new String[]{'notificationStatus',uriAccountManagementPrepaidResponse,'string','0','1','true'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'code','description','existingTransaction','keyValue','sub_code','claimCode','virtualExpressURL','notificationStatus'};
+		
+        public AddFundsResponse(){
+		}
+
+		public AddFundsResponse(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			//System.assertEquals('addFundsResponse', responseNode.getName());
+			DOM.XmlNode codeNode = responseNode.getChildElement('code', uriAccountManagementPrepaidResponse);
+			this.code = (codeNode == null) ? null : Integer.valueOf(codeNode.getText());
+			nodesParsed.add(codeNode);
+			//System.debug(this.code);			
+			DOM.XmlNode descriptionNode = responseNode.getChildElement('description', uriAccountManagementPrepaidResponse);
+			this.description = (descriptionNode == null || descriptionNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : descriptionNode.getText();
+			nodesParsed.add(descriptionNode);
+			//System.debug(this.description);			
+			DOM.XmlNode existingTransactionNode = responseNode.getChildElement('existingTransaction', uriAccountManagementPrepaidResponse);
+			this.existingTransaction = (existingTransactionNode == null) ? null : Boolean.valueOf(existingTransactionNode.getText());
+			nodesParsed.add(existingTransactionNode);
+			//System.debug(this.existingTransaction);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidResponse);
+			if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+			DOM.XmlNode sub_codeNode = responseNode.getChildElement('sub_code', uriAccountManagementPrepaidResponse);
+			this.sub_code = (sub_codeNode == null || sub_codeNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : sub_codeNode.getText();
+			nodesParsed.add(sub_codeNode);
+			//System.debug(this.sub_code);			
+			DOM.XmlNode claimCodeNode = responseNode.getChildElement('claimCode', uriAccountManagementPrepaidResponse);
+			this.claimCode = (claimCodeNode == null || claimCodeNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : claimCodeNode.getText();
+			nodesParsed.add(claimCodeNode);
+			//System.debug(this.claimCode);			
+			DOM.XmlNode virtualExpressURLNode = responseNode.getChildElement('virtualExpressURL', uriAccountManagementPrepaidResponse);
+			this.virtualExpressURL = (virtualExpressURLNode == null || virtualExpressURLNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : virtualExpressURLNode.getText();
+			nodesParsed.add(virtualExpressURLNode);
+			//System.debug(this.virtualExpressURL);			
+			DOM.XmlNode notificationStatusNode = responseNode.getChildElement('notificationStatus', uriAccountManagementPrepaidResponse);
+			this.notificationStatus = (notificationStatusNode == null || notificationStatusNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : notificationStatusNode.getText();
+			nodesParsed.add(notificationStatusNode);
+			//System.debug(this.notificationStatus);			
+		}
     }
 
     public class ActivationCardResponse {
-        public String activationStatus;
-        private String[] activationStatus_type_info = new String[]{'activationStatus',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
-        private String[] field_order_type_info = new String[]{'activationStatus'};
+        // public String activationStatus;
+        // private String[] activationStatus_type_info = new String[]{'activationStatus',uriAccountManagementPrepaidResponse,null,'1','1','true'};
+        // private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
+        // private String[] field_order_type_info = new String[]{'activationStatus'};
+        public Integer code;
+		public String description;
+		public Boolean existingTransaction;
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String sub_code;
+		private transient String[] code_type_info = new String[]{'code',uriAccountManagementPrepaidResponse,'int','1','1','false'};
+		private transient String[] description_type_info = new String[]{'description',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] existingTransaction_type_info = new String[]{'existingTransaction',uriAccountManagementPrepaidResponse,'boolean','1','1','false'};
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidResponse,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] sub_code_type_info = new String[]{'sub_code',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		public String activationStatus;
+		private transient String[] activationStatus_type_info = new String[]{'activationStatus',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'code','description','existingTransaction','keyValue','sub_code','activationStatus'};
+		
+        public ActivationCardResponse(){
+		}
+
+		public ActivationCardResponse(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			//System.assertEquals('activateCardResponse', responseNode.getName());
+			DOM.XmlNode codeNode = responseNode.getChildElement('code', uriAccountManagementPrepaidResponse);
+			this.code = (codeNode == null) ? null : Integer.valueOf(codeNode.getText());
+			nodesParsed.add(codeNode);
+			//System.debug(this.code);			
+			DOM.XmlNode descriptionNode = responseNode.getChildElement('description', uriAccountManagementPrepaidResponse);
+			this.description = (descriptionNode == null || descriptionNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : descriptionNode.getText();
+			nodesParsed.add(descriptionNode);
+			//System.debug(this.description);			
+			DOM.XmlNode existingTransactionNode = responseNode.getChildElement('existingTransaction', uriAccountManagementPrepaidResponse);
+			this.existingTransaction = (existingTransactionNode == null) ? null : Boolean.valueOf(existingTransactionNode.getText());
+			nodesParsed.add(existingTransactionNode);
+			//System.debug(this.existingTransaction);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidResponse);
+			if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+			DOM.XmlNode sub_codeNode = responseNode.getChildElement('sub_code', uriAccountManagementPrepaidResponse);
+			this.sub_code = (sub_codeNode == null || sub_codeNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : sub_codeNode.getText();
+			nodesParsed.add(sub_codeNode);
+			//System.debug(this.sub_code);			
+			DOM.XmlNode activationStatusNode = responseNode.getChildElement('activationStatus', uriAccountManagementPrepaidResponse);
+			this.activationStatus = (activationStatusNode == null || activationStatusNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : activationStatusNode.getText();
+			nodesParsed.add(activationStatusNode);
+			//System.debug(this.activationStatus);			
+		}
     }
 
     public class UpdateRegistrationResponse {
@@ -86,14 +313,70 @@ public class OnbeResponsePrepaid {
     }
 
     public class activationStatusInquiryResponse {
-        public String activationStatus;
-        public String accountNumber;
-        public String binBankName;
-        private String[] activationStatus_type_info = new String[]{'activationStatus',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] binBankName_type_info = new String[]{'binBankName',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
-        private String[] field_order_type_info = new String[]{'activationStatus','accountNumber','binBankName'};
+
+		public Integer code;
+		public String description;
+		public Boolean existingTransaction;
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String sub_code;
+		private transient String[] code_type_info = new String[]{'code',uriAccountManagementPrepaidResponse,'int','1','1','false'};
+		private transient String[] description_type_info = new String[]{'description',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] existingTransaction_type_info = new String[]{'existingTransaction',uriAccountManagementPrepaidResponse,'boolean','1','1','false'};
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidResponse,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] sub_code_type_info = new String[]{'sub_code',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		public String activationStatus;
+		public String accountNumber;
+		public String binBankName;
+		private transient String[] activationStatus_type_info = new String[]{'activationStatus',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] accountNumber_type_info = new String[]{'accountNumber',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] binBankName_type_info = new String[]{'binBankName',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'code','description','existingTransaction','keyValue','sub_code','activationStatus','accountNumber','binBankName'};
+
+		public activationStatusInquiryResponse(){
+		}
+
+		public activationStatusInquiryResponse(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			//System.assertEquals('activationStatusInquiryResponse', responseNode.getName());
+			DOM.XmlNode codeNode = responseNode.getChildElement('code', uriAccountManagementPrepaidResponse);
+			this.code = (codeNode == null) ? null : Integer.valueOf(codeNode.getText());
+			nodesParsed.add(codeNode);
+			//System.debug(this.code);			
+			DOM.XmlNode descriptionNode = responseNode.getChildElement('description', uriAccountManagementPrepaidResponse);
+			this.description = (descriptionNode == null || descriptionNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : descriptionNode.getText();
+			nodesParsed.add(descriptionNode);
+			//System.debug(this.description);			
+			DOM.XmlNode existingTransactionNode = responseNode.getChildElement('existingTransaction', uriAccountManagementPrepaidResponse);
+			this.existingTransaction = (existingTransactionNode == null) ? null : Boolean.valueOf(existingTransactionNode.getText());
+			nodesParsed.add(existingTransactionNode);
+			//System.debug(this.existingTransaction);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidResponse);
+			if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+			DOM.XmlNode sub_codeNode = responseNode.getChildElement('sub_code', uriAccountManagementPrepaidResponse);
+			this.sub_code = (sub_codeNode == null || sub_codeNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : sub_codeNode.getText();
+			nodesParsed.add(sub_codeNode);
+			//System.debug(this.sub_code);			
+			DOM.XmlNode activationStatusNode = responseNode.getChildElement('activationStatus', uriAccountManagementPrepaidResponse);
+			this.activationStatus = (activationStatusNode == null || activationStatusNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : activationStatusNode.getText();
+			nodesParsed.add(activationStatusNode);
+			//System.debug(this.activationStatus);			
+			DOM.XmlNode accountNumberNode = responseNode.getChildElement('accountNumber', uriAccountManagementPrepaidResponse);
+			this.accountNumber = (accountNumberNode == null || accountNumberNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : accountNumberNode.getText();
+			nodesParsed.add(accountNumberNode);
+			//System.debug(this.accountNumber);			
+			DOM.XmlNode binBankNameNode = responseNode.getChildElement('binBankName', uriAccountManagementPrepaidResponse);
+			this.binBankName = (binBankNameNode == null || binBankNameNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : binBankNameNode.getText();
+			nodesParsed.add(binBankNameNode);
+			//System.debug(this.binBankName);			
+		}
     }
 
     public class LinkCardResponse {
@@ -102,18 +385,52 @@ public class OnbeResponsePrepaid {
     }
 
     public class ServiceResponse {
+   
         public Integer code;
-        public String description;
-        public Boolean existingTransaction;
-        public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
-        public String sub_code;
-        private String[] code_type_info = new String[]{'code',uriAccountManagementPrepaidResponse,null,'1','1','false'};
-        private String[] description_type_info = new String[]{'description',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] existingTransaction_type_info = new String[]{'existingTransaction',uriAccountManagementPrepaidResponse,null,'1','1','false'};
-        private String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] sub_code_type_info = new String[]{'sub_code',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
-        private String[] field_order_type_info = new String[]{'code','description','existingTransaction','keyValue','sub_code'};
+		public String description;
+		public Boolean existingTransaction;
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String sub_code;
+		private transient String[] code_type_info = new String[]{'code',uriAccountManagementPrepaidResponse,'int','1','1','false'};
+		private transient String[] description_type_info = new String[]{'description',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] existingTransaction_type_info = new String[]{'existingTransaction',uriAccountManagementPrepaidResponse,'boolean','1','1','false'};
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidResponse,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] sub_code_type_info = new String[]{'sub_code',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'code','description','existingTransaction','keyValue','sub_code'};
+		
+        public ServiceResponse(){
+		}
+
+		public ServiceResponse(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			//System.assertEquals('getRequestStatusResponse', responseNode.getName());
+			DOM.XmlNode codeNode = responseNode.getChildElement('code', uriAccountManagementPrepaidResponse);
+			this.code = (codeNode == null) ? null : Integer.valueOf(codeNode.getText());
+			nodesParsed.add(codeNode);
+			//System.debug(this.code);			
+			DOM.XmlNode descriptionNode = responseNode.getChildElement('description', uriAccountManagementPrepaidResponse);
+			this.description = (descriptionNode == null || descriptionNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : descriptionNode.getText();
+			nodesParsed.add(descriptionNode);
+			//System.debug(this.description);			
+			DOM.XmlNode existingTransactionNode = responseNode.getChildElement('existingTransaction', uriAccountManagementPrepaidResponse);
+			this.existingTransaction = (existingTransactionNode == null) ? null : Boolean.valueOf(existingTransactionNode.getText());
+			nodesParsed.add(existingTransactionNode);
+			//System.debug(this.existingTransaction);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidResponse);
+			if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+			DOM.XmlNode sub_codeNode = responseNode.getChildElement('sub_code', uriAccountManagementPrepaidResponse);
+			this.sub_code = (sub_codeNode == null || sub_codeNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : sub_codeNode.getText();
+			nodesParsed.add(sub_codeNode);
+			//System.debug(this.sub_code);			
+		}
     }
 
     public class CreateBulkOrderResponse {
@@ -124,16 +441,115 @@ public class OnbeResponsePrepaid {
     }
 
     public class CardInquiryResponse {
-        public String cardNumber;
-        public String cardExpiryDateMMYY;
-        private String[] cardNumber_type_info = new String[]{'cardNumber',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] cardExpiryDateMMYY_type_info = new String[]{'cardExpiryDateMMYY',uriAccountManagementPrepaidResponse,null,'1','1','true'};
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
-        private String[] field_order_type_info = new String[]{'cardNumber','cardExpiryDateMMYY'};
+
+ 		public Integer code;
+		public String description;
+		public Boolean existingTransaction;
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String sub_code;
+		private transient String[] code_type_info = new String[]{'code',uriAccountManagementPrepaidResponse,'int','1','1','false'};
+		private transient String[] description_type_info = new String[]{'description',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] existingTransaction_type_info = new String[]{'existingTransaction',uriAccountManagementPrepaidResponse,'boolean','1','1','false'};
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidResponse,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] sub_code_type_info = new String[]{'sub_code',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		public String cardNumber;
+		public String cardExpiryDateMMYY;
+		private transient String[] cardNumber_type_info = new String[]{'cardNumber',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] cardExpiryDateMMYY_type_info = new String[]{'cardExpiryDateMMYY',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'code','description','existingTransaction','keyValue','sub_code','cardNumber','cardExpiryDateMMYY'};
+		
+        public CardInquiryResponse(){
+		}
+
+		public CardInquiryResponse(DOM.XmlNode responseNode){
+
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			//System.assertEquals('cardInquiryResponse', responseNode.getName());
+			DOM.XmlNode codeNode = responseNode.getChildElement('code', uriAccountManagementPrepaidResponse);
+			this.code = (codeNode == null) ? null : Integer.valueOf(codeNode.getText());
+			nodesParsed.add(codeNode);
+			//System.debug(this.code);			
+			DOM.XmlNode descriptionNode = responseNode.getChildElement('description', uriAccountManagementPrepaidResponse);
+			this.description = (descriptionNode == null || descriptionNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : descriptionNode.getText();
+			nodesParsed.add(descriptionNode);
+			//System.debug(this.description);			
+			DOM.XmlNode existingTransactionNode = responseNode.getChildElement('existingTransaction', uriAccountManagementPrepaidResponse);
+			this.existingTransaction = (existingTransactionNode == null) ? null : Boolean.valueOf(existingTransactionNode.getText());
+			nodesParsed.add(existingTransactionNode);
+			//System.debug(this.existingTransaction);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidResponse);
+			if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+			DOM.XmlNode sub_codeNode = responseNode.getChildElement('sub_code', uriAccountManagementPrepaidResponse);
+			this.sub_code = (sub_codeNode == null || sub_codeNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : sub_codeNode.getText();
+			nodesParsed.add(sub_codeNode);
+			//System.debug(this.sub_code);			
+			DOM.XmlNode cardNumberNode = responseNode.getChildElement('cardNumber', uriAccountManagementPrepaidResponse);
+			this.cardNumber = (cardNumberNode == null || cardNumberNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : cardNumberNode.getText();
+			nodesParsed.add(cardNumberNode);
+			//System.debug(this.cardNumber);			
+			DOM.XmlNode cardExpiryDateMMYYNode = responseNode.getChildElement('cardExpiryDateMMYY', uriAccountManagementPrepaidResponse);
+			this.cardExpiryDateMMYY = (cardExpiryDateMMYYNode == null || cardExpiryDateMMYYNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : cardExpiryDateMMYYNode.getText();
+			nodesParsed.add(cardExpiryDateMMYYNode);
+			//System.debug(this.cardExpiryDateMMYY);			
+		}
     }
     
     public class withdrawResponse {
-        private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
-        private String[] field_order_type_info = new String[]{};
+        public Integer code;
+		public String description;
+		public Boolean existingTransaction;
+		public OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue;
+		public String sub_code;
+		private transient String[] code_type_info = new String[]{'code',uriAccountManagementPrepaidResponse,'int','1','1','false'};
+		private transient String[] description_type_info = new String[]{'description',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] existingTransaction_type_info = new String[]{'existingTransaction',uriAccountManagementPrepaidResponse,'boolean','1','1','false'};
+		private transient String[] keyValue_type_info = new String[]{'keyValue',uriAccountManagementPrepaidResponse,'ArrayOf_tns2_keyValue','1','1','true'};
+		private transient String[] sub_code_type_info = new String[]{'sub_code',uriAccountManagementPrepaidResponse,'string','1','1','true'};
+		private transient String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
+		private transient String[] field_order_type_info = new String[]{'code','description','existingTransaction','keyValue','sub_code'};
+
+        // private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
+        // private String[] field_order_type_info = new String[]{};
+
+        public withdrawResponse(){
+		}
+
+		public withdrawResponse(DOM.XmlNode responseNode){
+			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+			//System.assertEquals('withdrawResponse', responseNode.getName());
+			DOM.XmlNode codeNode = responseNode.getChildElement('code', uriAccountManagementPrepaidResponse);
+			this.code = (codeNode == null) ? null : Integer.valueOf(codeNode.getText());
+			nodesParsed.add(codeNode);
+			//System.debug(this.code);			
+			DOM.XmlNode descriptionNode = responseNode.getChildElement('description', uriAccountManagementPrepaidResponse);
+			this.description = (descriptionNode == null || descriptionNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : descriptionNode.getText();
+			nodesParsed.add(descriptionNode);
+			//System.debug(this.description);			
+			DOM.XmlNode existingTransactionNode = responseNode.getChildElement('existingTransaction', uriAccountManagementPrepaidResponse);
+			this.existingTransaction = (existingTransactionNode == null) ? null : Boolean.valueOf(existingTransactionNode.getText());
+			nodesParsed.add(existingTransactionNode);
+			//System.debug(this.existingTransaction);			
+			DOM.XmlNode keyValueNode = responseNode.getChildElement('keyValue', uriAccountManagementPrepaidResponse);
+			if(keyValueNode == null){
+				this.keyValue = null;
+			} else{
+				OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValueObj = new OnbeWsPrepaid.ArrayOf_tns2_keyValue(keyValueNode);
+				nodesParsed.add(keyValueNode);
+				this.keyValue = keyValueObj;
+			}
+			//System.debug(this.keyValue);			
+			DOM.XmlNode sub_codeNode = responseNode.getChildElement('sub_code', uriAccountManagementPrepaidResponse);
+			this.sub_code = (sub_codeNode == null || sub_codeNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : sub_codeNode.getText();
+			nodesParsed.add(sub_codeNode);
+			//System.debug(this.sub_code);			
+		}
     }
 }

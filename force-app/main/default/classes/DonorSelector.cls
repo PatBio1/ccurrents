@@ -4,13 +4,21 @@ public with sharing class DonorSelector {
         if (String.isEmpty(nameSearchString)) {
             return null;
         }
-        
+
         return [
             SELECT Id, Name, PersonEmail, PersonMobilePhone, Soonest_Next_Visit__pc
             FROM Account
-            WHERE Name LIKE :(nameSearchString + '%') AND 
-                RecordTypeId = :Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId() AND 
-                Soonest_Next_Visit__pc <= :targetVisitDateString
+            WHERE Name LIKE :(nameSearchString + '%') AND
+            RecordTypeId = :Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId() AND
+            Soonest_Next_Visit__pc <= :targetVisitDateString
+        ];
+    }
+
+    public static List<AccountContactRelation> getDonorsForCenter(Id centerId) {
+        return [
+            SELECT ContactId
+            FROM AccountContactRelation
+            WHERE AccountId = :centerId AND Roles = 'Donor' AND IsActive = TRUE
         ];
     }
 }

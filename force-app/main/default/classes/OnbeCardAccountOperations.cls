@@ -14,12 +14,12 @@ public class OnbeCardAccountOperations {
 		}
     
 	public class AccountInquiry {
-		public accountmanagement.Balance balance;
-		public accountmanagement.CardDetail card;
-		public accountmanagement.ArrayOf_tns1_CommentHistory comments;
-		public accountmanagement.ArrayOf_tns1_TransactionDetail journal;
-		public accountmanagement.Registration registration;
-		public accountmanagement.Response response;
+		public OnbeCardAccountOperations.Balance balance;
+		public OnbeCardAccountOperations.CardDetail card;
+		// public OnbeCardAccountOperations.ArrayOf_tns1_CommentHistory comments;
+		// public OnbeCardAccountOperations.ArrayOf_tns1_TransactionDetail journal;
+		public OnbeCardAccountOperations.Registration registration;
+		public OnbeCardAccountOperations.Response response;
 		private transient String[] balance_type_info = new String[]{'balance',s_ns0,'Balance','1','1','true'};
 		private transient String[] card_type_info = new String[]{'card',s_ns0,'CardDetail','1','1','true'};
 		private transient String[] comments_type_info = new String[]{'comments',s_ns0,'ArrayOf_tns1_CommentHistory','1','1','true'};
@@ -34,11 +34,11 @@ public class OnbeCardAccountOperations {
 
 		public AccountInquiry(DOM.XmlNode responseNode){
 			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
-			DOM.XmlNode balanceNode = responseNode.getChildElement('balance', 'urn:AccountManagement');
+			DOM.XmlNode balanceNode = responseNode.getChildElement('balance', 'urn:OnbeCardAccountOperations');
 			if(balanceNode == null){
 				this.balance = null;
 			} else{
-				accountmanagement.Balance balanceObj = new accountmanagement.Balance(balanceNode);
+				OnbeCardAccountOperations.Balance balanceObj = new OnbeCardAccountOperations.Balance(balanceNode);
 				nodesParsed.add(balanceNode);
 				this.balance = balanceObj;
 			}
@@ -47,82 +47,85 @@ public class OnbeCardAccountOperations {
 			if(cardNode == null){
 				this.card = null;
 			} else{
-				accountmanagement.CardDetail cardObj = new accountmanagement.CardDetail(cardNode);
+				OnbeCardAccountOperations.CardDetail cardObj = new OnbeCardAccountOperations.CardDetail(cardNode);
 				nodesParsed.add(cardNode);
 				this.card = cardObj;
 			}
 			//System.debug(this.card);			
-			DOM.XmlNode commentsNode = responseNode.getChildElement('comments', 'urn:AccountManagement');
+/* 			DOM.XmlNode commentsNode = responseNode.getChildElement('comments', 'urn:AccountManagement');
 			if(commentsNode == null){
 				this.comments = null;
-			} else{
-				accountmanagement.ArrayOf_tns1_CommentHistory commentsObj = new accountmanagement.ArrayOf_tns1_CommentHistory(commentsNode);
+			} 
+			else{
+				OnbeCardAccountOperations.ArrayOf_tns1_CommentHistory commentsObj = new OnbeCardAccountOperations.ArrayOf_tns1_CommentHistory(commentsNode);
 				nodesParsed.add(commentsNode);
 				this.comments = commentsObj;
 			}
-			//System.debug(this.comments);			
+			System.debug(this.comments);			
 			DOM.XmlNode journalNode = responseNode.getChildElement('journal', 'urn:AccountManagement');
 			if(journalNode == null){
 				this.journal = null;
-			} else{
-				accountmanagement.ArrayOf_tns1_TransactionDetail journalObj = new accountmanagement.ArrayOf_tns1_TransactionDetail(journalNode);
+			} 
+			else{
+				OnbeCardAccountOperations.ArrayOf_tns1_TransactionDetail journalObj = new OnbeCardAccountOperations.ArrayOf_tns1_TransactionDetail(journalNode);
 				nodesParsed.add(journalNode);
 				this.journal = journalObj;
 			}
-			//System.debug(this.journal);			
+			System.debug(this.journal);	 
+			*/		
 			DOM.XmlNode registrationNode = responseNode.getChildElement('registration', 'urn:AccountManagement');
 			if(registrationNode == null){
 				this.registration = null;
 			} else{
-				accountmanagement.Registration registrationObj = new accountmanagement.Registration(registrationNode);
+				OnbeCardAccountOperations.Registration registrationObj = new OnbeCardAccountOperations.Registration(registrationNode);
 				nodesParsed.add(registrationNode);
 				this.registration = registrationObj;
 			}
 			//System.debug(this.registration);			
-			DOM.XmlNode responseNode = responseNode.getChildElement('response', 'urn:AccountManagement');
+			/* DOM.XmlNode responseNode = responseNode.getChildElement('response', 'urn:AccountManagement');
 			if(responseNode == null){
 				this.response = null;
 			} else{
-				accountmanagement.Response responseObj = new accountmanagement.Response(responseNode);
+				OnbeCardAccountOperations.Response responseObj = new OnbeCardAccountOperations.Response(responseNode);
 				nodesParsed.add(responseNode);
 				this.response = responseObj;
-			}
+			} */
 			//System.debug(this.response);			
 		}
 
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.Balance balanceObj = this.balance;
+			OnbeCardAccountOperations.Balance balanceObj = this.balance;
 			Dom.XmlNode balanceNode = outerNode.addChildElement('balance', 'urn:AccountManagement', '');
 			if(balanceObj != null){
 				balanceObj.populateXmlNode(balanceNode);
 			}
 			
-			accountmanagement.CardDetail cardObj = this.card;
+			OnbeCardAccountOperations.CardDetail cardObj = this.card;
 			Dom.XmlNode cardNode = outerNode.addChildElement('card', 'urn:AccountManagement', '');
 			if(cardObj != null){
 				cardObj.populateXmlNode(cardNode);
 			}
 			
-			accountmanagement.ArrayOf_tns1_CommentHistory commentsObj = this.comments;
+			/* OnbeCardAccountOperations.ArrayOf_tns1_CommentHistory commentsObj = this.comments;
 			Dom.XmlNode commentsNode = outerNode.addChildElement('comments', 'urn:AccountManagement', '');
 			if(commentsObj != null){
 				commentsObj.populateXmlNode(commentsNode);
 			}
 			
-			accountmanagement.ArrayOf_tns1_TransactionDetail journalObj = this.journal;
+			OnbeCardAccountOperations.ArrayOf_tns1_TransactionDetail journalObj = this.journal;
 			Dom.XmlNode journalNode = outerNode.addChildElement('journal', 'urn:AccountManagement', '');
 			if(journalObj != null){
 				journalObj.populateXmlNode(journalNode);
-			}
+			} */
 			
-			accountmanagement.Registration registrationObj = this.registration;
+			OnbeCardAccountOperations.Registration registrationObj = this.registration;
 			Dom.XmlNode registrationNode = outerNode.addChildElement('registration', 'urn:AccountManagement', '');
 			if(registrationObj != null){
 				registrationObj.populateXmlNode(registrationNode);
 			}
 			
-			accountmanagement.Response responseObj = this.response;
+			OnbeCardAccountOperations.Response responseObj = this.response;
 			Dom.XmlNode responseNode = outerNode.addChildElement('response', 'urn:AccountManagement', '');
 			if(responseObj != null){
 				responseObj.populateXmlNode(responseNode);
@@ -131,23 +134,23 @@ public class OnbeCardAccountOperations {
 	}
 
 	public class AccountProfile {
-		public accountmanagement.string_x address_1;
-		public accountmanagement.string_x address_2;
-		public accountmanagement.string_x application_id;
-		public accountmanagement.string_x business_phone;
-		public accountmanagement.string_x city;
-		public accountmanagement.string_x country;
-		public accountmanagement.string_x first_name;
-		public accountmanagement.string_x home_email;
-		public accountmanagement.string_x home_phone;
-		public accountmanagement.string_x last_name;
-		public accountmanagement.string_x middle_name;
-		public accountmanagement.string_x mobile_phone;
-		public accountmanagement.string_x postal;
-		public accountmanagement.string_x program_id;
-		public accountmanagement.string_x puid;
-		public accountmanagement.string_x state;
-		public accountmanagement.string_x suffix_name;
+		public DOM.XmlNode address_1;  // OnbeCardAccountOperations.string_x
+		public DOM.XmlNode address_2;
+		public DOM.XmlNode application_id;
+		public DOM.XmlNode business_phone;
+		public DOM.XmlNode city;
+		public DOM.XmlNode country;
+		public DOM.XmlNode first_name;
+		public DOM.XmlNode home_email;
+		public Dom.XmlNode home_phone; // String
+		public DOM.XmlNode last_name;
+		public DOM.XmlNode middle_name;
+		public DOM.XmlNode mobile_phone;
+		public DOM.XmlNode postal;
+		public DOM.XmlNode program_id;
+		public DOM.XmlNode puid;
+		public DOM.XmlNode state;
+		public DOM.XmlNode suffix_name;
 		private transient String[] address_1_type_info = new String[]{'address_1',s_ns0,'string','1','1','true'};
 		private transient String[] address_2_type_info = new String[]{'address_2',s_ns0,'string','1','1','true'};
 		private transient String[] application_id_type_info = new String[]{'application_id',s_ns0,'string','1','1','true'};
@@ -167,15 +170,17 @@ public class OnbeCardAccountOperations {
 		private transient String[] suffix_name_type_info = new String[]{'suffix_name',s_ns0,'string','1','1','true'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
 		private transient String[] field_order_type_info = new String[]{'address_1','address_2','application_id','business_phone','city','country','first_name','home_email','home_phone','last_name','middle_name','mobile_phone','postal','program_id','puid','state','suffix_name'};
+		
 		public AccountProfile(){
 		}
+
 		public AccountProfile(DOM.XmlNode responseNode){
 			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
 			DOM.XmlNode address_1Node = responseNode.getChildElement('address_1', 'urn:AccountManagement');
 			if(address_1Node == null){
 				this.address_1 = null;
 			} else{
-				accountmanagement.string_x address_1Obj = new accountmanagement.string_x(address_1Node);
+				DOM.XmlNode address_1Obj = address_1Node;  //  new OnbeCardAccountOperations.string_x
 				nodesParsed.add(address_1Node);
 				this.address_1 = address_1Obj;
 			}
@@ -184,7 +189,7 @@ public class OnbeCardAccountOperations {
 			if(address_2Node == null){
 				this.address_2 = null;
 			} else{
-				accountmanagement.string_x address_2Obj = new accountmanagement.string_x(address_2Node);
+				DOM.XmlNode address_2Obj = address_2Node;
 				nodesParsed.add(address_2Node);
 				this.address_2 = address_2Obj;
 			}
@@ -193,7 +198,7 @@ public class OnbeCardAccountOperations {
 			if(application_idNode == null){
 				this.application_id = null;
 			} else{
-				accountmanagement.string_x application_idObj = new accountmanagement.string_x(application_idNode);
+				DOM.XmlNode application_idObj = application_idNode;
 				nodesParsed.add(application_idNode);
 				this.application_id = application_idObj;
 			}
@@ -202,16 +207,17 @@ public class OnbeCardAccountOperations {
 			if(business_phoneNode == null){
 				this.business_phone = null;
 			} else{
-				accountmanagement.string_x business_phoneObj = new accountmanagement.string_x(business_phoneNode);
+				DOM.XmlNode business_phoneObj = business_phoneNode;
 				nodesParsed.add(business_phoneNode);
 				this.business_phone = business_phoneObj;
 			}
-			//System.debug(this.business_phone);			
+			//System.debug(this.business_phone);
+			/* 		
 			DOM.XmlNode cityNode = responseNode.getChildElement('city', 'urn:AccountManagement');
 			if(cityNode == null){
 				this.city = null;
 			} else{
-				accountmanagement.string_x cityObj = new accountmanagement.string_x(cityNode);
+				String cityObj = new OnbeCardAccountOperations.string_x(cityNode);
 				nodesParsed.add(cityNode);
 				this.city = cityObj;
 			}
@@ -220,7 +226,7 @@ public class OnbeCardAccountOperations {
 			if(countryNode == null){
 				this.country = null;
 			} else{
-				accountmanagement.string_x countryObj = new accountmanagement.string_x(countryNode);
+				String countryObj = new OnbeCardAccountOperations.string_x(countryNode);
 				nodesParsed.add(countryNode);
 				this.country = countryObj;
 			}
@@ -229,7 +235,7 @@ public class OnbeCardAccountOperations {
 			if(first_nameNode == null){
 				this.first_name = null;
 			} else{
-				accountmanagement.string_x first_nameObj = new accountmanagement.string_x(first_nameNode);
+				String first_nameObj = new OnbeCardAccountOperations.string_x(first_nameNode);
 				nodesParsed.add(first_nameNode);
 				this.first_name = first_nameObj;
 			}
@@ -238,7 +244,7 @@ public class OnbeCardAccountOperations {
 			if(home_emailNode == null){
 				this.home_email = null;
 			} else{
-				accountmanagement.string_x home_emailObj = new accountmanagement.string_x(home_emailNode);
+				String home_emailObj = new OnbeCardAccountOperations.string_x(home_emailNode);
 				nodesParsed.add(home_emailNode);
 				this.home_email = home_emailObj;
 			}
@@ -247,7 +253,7 @@ public class OnbeCardAccountOperations {
 			if(home_phoneNode == null){
 				this.home_phone = null;
 			} else{
-				accountmanagement.string_x home_phoneObj = new accountmanagement.string_x(home_phoneNode);
+				String home_phoneObj = new OnbeCardAccountOperations.string_x(home_phoneNode);
 				nodesParsed.add(home_phoneNode);
 				this.home_phone = home_phoneObj;
 			}
@@ -256,7 +262,7 @@ public class OnbeCardAccountOperations {
 			if(last_nameNode == null){
 				this.last_name = null;
 			} else{
-				accountmanagement.string_x last_nameObj = new accountmanagement.string_x(last_nameNode);
+				String last_nameObj = new OnbeCardAccountOperations.string_x(last_nameNode);
 				nodesParsed.add(last_nameNode);
 				this.last_name = last_nameObj;
 			}
@@ -265,7 +271,7 @@ public class OnbeCardAccountOperations {
 			if(middle_nameNode == null){
 				this.middle_name = null;
 			} else{
-				accountmanagement.string_x middle_nameObj = new accountmanagement.string_x(middle_nameNode);
+				String middle_nameObj = new OnbeCardAccountOperations.string_x(middle_nameNode);
 				nodesParsed.add(middle_nameNode);
 				this.middle_name = middle_nameObj;
 			}
@@ -274,7 +280,7 @@ public class OnbeCardAccountOperations {
 			if(mobile_phoneNode == null){
 				this.mobile_phone = null;
 			} else{
-				accountmanagement.string_x mobile_phoneObj = new accountmanagement.string_x(mobile_phoneNode);
+				String mobile_phoneObj = new OnbeCardAccountOperations.string_x(mobile_phoneNode);
 				nodesParsed.add(mobile_phoneNode);
 				this.mobile_phone = mobile_phoneObj;
 			}
@@ -283,7 +289,7 @@ public class OnbeCardAccountOperations {
 			if(postalNode == null){
 				this.postal = null;
 			} else{
-				accountmanagement.string_x postalObj = new accountmanagement.string_x(postalNode);
+				String postalObj = new OnbeCardAccountOperations.string_x(postalNode);
 				nodesParsed.add(postalNode);
 				this.postal = postalObj;
 			}
@@ -292,7 +298,7 @@ public class OnbeCardAccountOperations {
 			if(program_idNode == null){
 				this.program_id = null;
 			} else{
-				accountmanagement.string_x program_idObj = new accountmanagement.string_x(program_idNode);
+				String program_idObj = new OnbeCardAccountOperations.string_x(program_idNode);
 				nodesParsed.add(program_idNode);
 				this.program_id = program_idObj;
 			}
@@ -301,7 +307,7 @@ public class OnbeCardAccountOperations {
 			if(puidNode == null){
 				this.puid = null;
 			} else{
-				accountmanagement.string_x puidObj = new accountmanagement.string_x(puidNode);
+				String puidObj = new OnbeCardAccountOperations.string_x(puidNode);
 				nodesParsed.add(puidNode);
 				this.puid = puidObj;
 			}
@@ -310,7 +316,7 @@ public class OnbeCardAccountOperations {
 			if(stateNode == null){
 				this.state = null;
 			} else{
-				accountmanagement.string_x stateObj = new accountmanagement.string_x(stateNode);
+				String stateObj = new OnbeCardAccountOperations.string_x(stateNode);
 				nodesParsed.add(stateNode);
 				this.state = stateObj;
 			}
@@ -319,115 +325,116 @@ public class OnbeCardAccountOperations {
 			if(suffix_nameNode == null){
 				this.suffix_name = null;
 			} else{
-				accountmanagement.string_x suffix_nameObj = new accountmanagement.string_x(suffix_nameNode);
+				String suffix_nameObj = new OnbeCardAccountOperations.string_x(suffix_nameNode);
 				nodesParsed.add(suffix_nameNode);
 				this.suffix_name = suffix_nameObj;
-			}
+			} */
 			//System.debug(this.suffix_name);			
 		}
+
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.string_x address_1Obj = this.address_1;
+			DOM.XmlNode address_1Obj = this.address_1;
 			Dom.XmlNode address_1Node = outerNode.addChildElement('address_1', 'urn:AccountManagement', '');
-			if(address_1Obj != null){
-				address_1Obj.populateXmlNode(address_1Node);
-			}
+			// if(address_1Obj != null){
+			// 	address_1Obj.populateXmlNode(address_1Node);
+			// }
 			
-			accountmanagement.string_x address_2Obj = this.address_2;
+			DOM.XmlNode address_2Obj = this.address_2;
 			Dom.XmlNode address_2Node = outerNode.addChildElement('address_2', 'urn:AccountManagement', '');
-			if(address_2Obj != null){
-				address_2Obj.populateXmlNode(address_2Node);
-			}
+			// if(address_2Obj != null){
+			// 	address_2Obj.populateXmlNode(address_2Node);
+			// }
 			
-			accountmanagement.string_x application_idObj = this.application_id;
+			DOM.XmlNode application_idObj = this.application_id;
 			Dom.XmlNode application_idNode = outerNode.addChildElement('application_id', 'urn:AccountManagement', '');
-			if(application_idObj != null){
-				application_idObj.populateXmlNode(application_idNode);
-			}
+			// if(application_idObj != null){
+			// 	application_idObj.populateXmlNode(application_idNode);
+			// }
 			
-			accountmanagement.string_x business_phoneObj = this.business_phone;
+			DOM.XmlNode business_phoneObj = this.business_phone;
 			Dom.XmlNode business_phoneNode = outerNode.addChildElement('business_phone', 'urn:AccountManagement', '');
-			if(business_phoneObj != null){
-				business_phoneObj.populateXmlNode(business_phoneNode);
-			}
+			// if(business_phoneObj != null){
+			// 	business_phoneObj.populateXmlNode(business_phoneNode);
+			// }
 			
-			accountmanagement.string_x cityObj = this.city;
+			DOM.XmlNode cityObj = this.city;
 			Dom.XmlNode cityNode = outerNode.addChildElement('city', 'urn:AccountManagement', '');
-			if(cityObj != null){
-				cityObj.populateXmlNode(cityNode);
-			}
+			// if(cityObj != null){
+			// 	cityObj.populateXmlNode(cityNode);
+			// }
 			
-			accountmanagement.string_x countryObj = this.country;
+			DOM.XmlNode countryObj = this.country;
 			Dom.XmlNode countryNode = outerNode.addChildElement('country', 'urn:AccountManagement', '');
-			if(countryObj != null){
-				countryObj.populateXmlNode(countryNode);
-			}
+			// if(countryObj != null){
+			// 	countryObj.populateXmlNode(countryNode);
+			// }
 			
-			accountmanagement.string_x first_nameObj = this.first_name;
+			DOM.XmlNode first_nameObj = this.first_name;
 			Dom.XmlNode first_nameNode = outerNode.addChildElement('first_name', 'urn:AccountManagement', '');
-			if(first_nameObj != null){
-				first_nameObj.populateXmlNode(first_nameNode);
-			}
+			// if(first_nameObj != null){
+			// 	first_nameObj.populateXmlNode(first_nameNode);
+			// }
 			
-			accountmanagement.string_x home_emailObj = this.home_email;
+			DOM.XmlNode home_emailObj = this.home_email;
 			Dom.XmlNode home_emailNode = outerNode.addChildElement('home_email', 'urn:AccountManagement', '');
-			if(home_emailObj != null){
-				home_emailObj.populateXmlNode(home_emailNode);
-			}
+			// if(home_emailObj != null){
+			// 	home_emailObj.populateXmlNode(home_emailNode);
+			// }
 			
-			accountmanagement.string_x home_phoneObj = this.home_phone;
+			Dom.XmlNode home_phoneObj = this.home_phone; // String
 			Dom.XmlNode home_phoneNode = outerNode.addChildElement('home_phone', 'urn:AccountManagement', '');
-			if(home_phoneObj != null){
-				home_phoneObj.populateXmlNode(home_phoneNode);
-			}
+			// if(home_phoneObj != null){
+			// 	home_phoneObj.populateXmlNode(home_phoneNode);
+			// }
 			
-			accountmanagement.string_x last_nameObj = this.last_name;
+			DOM.XmlNode last_nameObj = this.last_name;
 			Dom.XmlNode last_nameNode = outerNode.addChildElement('last_name', 'urn:AccountManagement', '');
-			if(last_nameObj != null){
-				last_nameObj.populateXmlNode(last_nameNode);
-			}
+			// if(last_nameObj != null){
+			// 	last_nameObj.populateXmlNode(last_nameNode);
+			// }
 			
-			accountmanagement.string_x middle_nameObj = this.middle_name;
+			DOM.XmlNode middle_nameObj = this.middle_name;
 			Dom.XmlNode middle_nameNode = outerNode.addChildElement('middle_name', 'urn:AccountManagement', '');
-			if(middle_nameObj != null){
-				middle_nameObj.populateXmlNode(middle_nameNode);
-			}
+			// if(middle_nameObj != null){
+			// 	middle_nameObj.populateXmlNode(middle_nameNode);
+			// }
 			
-			accountmanagement.string_x mobile_phoneObj = this.mobile_phone;
+			DOM.XmlNode mobile_phoneObj = this.mobile_phone;
 			Dom.XmlNode mobile_phoneNode = outerNode.addChildElement('mobile_phone', 'urn:AccountManagement', '');
-			if(mobile_phoneObj != null){
-				mobile_phoneObj.populateXmlNode(mobile_phoneNode);
-			}
+			// if(mobile_phoneObj != null){
+			// 	mobile_phoneObj.populateXmlNode(mobile_phoneNode);
+			// }
 			
-			accountmanagement.string_x postalObj = this.postal;
+			DOM.XmlNode postalObj = this.postal;
 			Dom.XmlNode postalNode = outerNode.addChildElement('postal', 'urn:AccountManagement', '');
-			if(postalObj != null){
-				postalObj.populateXmlNode(postalNode);
-			}
+			// if(postalObj != null){
+			// 	postalObj.populateXmlNode(postalNode);
+			// }
 			
-			accountmanagement.string_x program_idObj = this.program_id;
+			DOM.XmlNode program_idObj = this.program_id;
 			Dom.XmlNode program_idNode = outerNode.addChildElement('program_id', 'urn:AccountManagement', '');
-			if(program_idObj != null){
-				program_idObj.populateXmlNode(program_idNode);
-			}
+			// if(program_idObj != null){
+			// 	program_idObj.populateXmlNode(program_idNode);
+			// }
 			
-			accountmanagement.string_x puidObj = this.puid;
+			DOM.XmlNode puidObj = this.puid;
 			Dom.XmlNode puidNode = outerNode.addChildElement('puid', 'urn:AccountManagement', '');
-			if(puidObj != null){
-				puidObj.populateXmlNode(puidNode);
-			}
+			// if(puidObj != null){
+			// 	puidObj.populateXmlNode(puidNode);
+			// }
 			
-			accountmanagement.string_x stateObj = this.state;
+			DOM.XmlNode stateObj = this.state;
 			Dom.XmlNode stateNode = outerNode.addChildElement('state', 'urn:AccountManagement', '');
-			if(stateObj != null){
-				stateObj.populateXmlNode(stateNode);
-			}
+			// if(stateObj != null){
+			// 	stateObj.populateXmlNode(stateNode);
+			// }
 			
-			accountmanagement.string_x suffix_nameObj = this.suffix_name;
+			DOM.XmlNode suffix_nameObj = this.suffix_name;
 			Dom.XmlNode suffix_nameNode = outerNode.addChildElement('suffix_name', 'urn:AccountManagement', '');
-			if(suffix_nameObj != null){
-				suffix_nameObj.populateXmlNode(suffix_nameNode);
-			}
+			// if(suffix_nameObj != null){
+			// 	suffix_nameObj.populateXmlNode(suffix_nameNode);
+			// }
 		}
 	}
 
@@ -442,8 +449,10 @@ public class OnbeCardAccountOperations {
 		private transient String[] balance_pending_type_info = new String[]{'balance_pending',s_ns0,'int','1','1','false'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
 		private transient String[] field_order_type_info = new String[]{'balance_available','balance_date','balance_ledger','balance_pending'};
+		
 		public Balance(){
 		}
+
 		public Balance(DOM.XmlNode responseNode){
 			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
 			DOM.XmlNode balance_availableNode = responseNode.getChildElement('balance_available', 'urn:AccountManagement');
@@ -451,7 +460,7 @@ public class OnbeCardAccountOperations {
 			nodesParsed.add(balance_availableNode);
 			//System.debug(this.balance_available);			
 			DOM.XmlNode balance_dateNode = responseNode.getChildElement('balance_date', 'urn:AccountManagement');
-			this.balance_date = (balance_dateNode == null || balance_dateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : accountmanagement.parseDateTime(balance_dateNode.getText());
+			this.balance_date = (balance_dateNode == null || balance_dateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : OnbeCardAccountOperations.parseDateTime(balance_dateNode.getText());
 			nodesParsed.add(balance_dateNode);
 			//System.debug(this.balance_date);			
 			DOM.XmlNode balance_ledgerNode = responseNode.getChildElement('balance_ledger', 'urn:AccountManagement');
@@ -463,6 +472,7 @@ public class OnbeCardAccountOperations {
 			nodesParsed.add(balance_pendingNode);
 			//System.debug(this.balance_pending);			
 		}
+
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			Dom.XmlNode balance_availableNode = outerNode.addChildElement('balance_available', 'urn:AccountManagement', '');
 			if(this.balance_available != null){
@@ -484,13 +494,13 @@ public class OnbeCardAccountOperations {
 	}
 
 	public class CardDetail {
-		public accountmanagement.string_x account_status;
-		public accountmanagement.string_x card_number;
+		public DOM.XmlNode[] account_status;
+		public String card_number;
 		public DateTime created_date;
-		public accountmanagement.string_x expiration;
+		public String expiration;
 		public DateTime last_plastic_date;
 		public Integer program_id;
-		public accountmanagement.string_x puid;
+		public String puid;
 		public DateTime ship_date;
 		private transient String[] account_status_type_info = new String[]{'account_status',s_ns0,'string','1','1','true'};
 		private transient String[] card_number_type_info = new String[]{'card_number',s_ns0,'string','1','1','true'};
@@ -502,43 +512,46 @@ public class OnbeCardAccountOperations {
 		private transient String[] ship_date_type_info = new String[]{'ship_date',s_ns0,'dateTime','1','1','true'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
 		private transient String[] field_order_type_info = new String[]{'account_status','card_number','created_date','expiration','last_plastic_date','program_id','puid','ship_date'};
+		
 		public CardDetail(){
 		}
+		
 		public CardDetail(DOM.XmlNode responseNode){
 			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
 			DOM.XmlNode account_statusNode = responseNode.getChildElement('account_status', 'urn:AccountManagement');
 			if(account_statusNode == null){
 				this.account_status = null;
 			} else{
-				accountmanagement.string_x account_statusObj = new accountmanagement.string_x(account_statusNode);
+				List<DOM.XmlNode> account_statusObj = account_statusNode.getChildElements(); // OnbeCardAccountOperations.string_x
 				nodesParsed.add(account_statusNode);
 				this.account_status = account_statusObj;
 			}
+			/* 
 			//System.debug(this.account_status);			
 			DOM.XmlNode card_numberNode = responseNode.getChildElement('card_number', 'urn:AccountManagement');
 			if(card_numberNode == null){
 				this.card_number = null;
 			} else{
-				accountmanagement.string_x card_numberObj = new accountmanagement.string_x(card_numberNode);
+				String card_numberObj = new OnbeCardAccountOperations.string_x(card_numberNode);
 				nodesParsed.add(card_numberNode);
 				this.card_number = card_numberObj;
 			}
 			//System.debug(this.card_number);			
 			DOM.XmlNode created_dateNode = responseNode.getChildElement('created_date', 'urn:AccountManagement');
-			this.created_date = (created_dateNode == null || created_dateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : accountmanagement.parseDateTime(created_dateNode.getText());
+			this.created_date = (created_dateNode == null || created_dateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : OnbeCardAccountOperations.parseDateTime(created_dateNode.getText());
 			nodesParsed.add(created_dateNode);
 			//System.debug(this.created_date);			
 			DOM.XmlNode expirationNode = responseNode.getChildElement('expiration', 'urn:AccountManagement');
 			if(expirationNode == null){
 				this.expiration = null;
 			} else{
-				accountmanagement.string_x expirationObj = new accountmanagement.string_x(expirationNode);
+				String expirationObj = new OnbeCardAccountOperations.string_x(expirationNode);
 				nodesParsed.add(expirationNode);
 				this.expiration = expirationObj;
 			}
 			//System.debug(this.expiration);			
 			DOM.XmlNode last_plastic_dateNode = responseNode.getChildElement('last_plastic_date', 'urn:AccountManagement');
-			this.last_plastic_date = (last_plastic_dateNode == null || last_plastic_dateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : accountmanagement.parseDateTime(last_plastic_dateNode.getText());
+			this.last_plastic_date = (last_plastic_dateNode == null || last_plastic_dateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : OnbeCardAccountOperations.parseDateTime(last_plastic_dateNode.getText());
 			nodesParsed.add(last_plastic_dateNode);
 			//System.debug(this.last_plastic_date);			
 			DOM.XmlNode program_idNode = responseNode.getChildElement('program_id', 'urn:AccountManagement');
@@ -549,25 +562,26 @@ public class OnbeCardAccountOperations {
 			if(puidNode == null){
 				this.puid = null;
 			} else{
-				accountmanagement.string_x puidObj = new accountmanagement.string_x(puidNode);
+				String puidObj = new OnbeCardAccountOperations.string_x(puidNode);
 				nodesParsed.add(puidNode);
 				this.puid = puidObj;
 			}
 			//System.debug(this.puid);			
 			DOM.XmlNode ship_dateNode = responseNode.getChildElement('ship_date', 'urn:AccountManagement');
-			this.ship_date = (ship_dateNode == null || ship_dateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : accountmanagement.parseDateTime(ship_dateNode.getText());
+			this.ship_date = (ship_dateNode == null || ship_dateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : OnbeCardAccountOperations.parseDateTime(ship_dateNode.getText());
 			nodesParsed.add(ship_dateNode);
-			//System.debug(this.ship_date);			
+			//System.debug(this.ship_date);		 */	
 		}
+
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.string_x account_statusObj = this.account_status;
+			DOM.XmlNode[] account_statusObj = this.account_status;
 			Dom.XmlNode account_statusNode = outerNode.addChildElement('account_status', 'urn:AccountManagement', '');
-			if(account_statusObj != null){
-				account_statusObj.populateXmlNode(account_statusNode);
-			}
+			// if(account_statusObj != null){
+			// 	account_statusObj.populateXmlNode(account_statusNode);
+			// }
 			
-			accountmanagement.string_x card_numberObj = this.card_number;
+			/* String[] card_numberObj = this.card_number;
 			Dom.XmlNode card_numberNode = outerNode.addChildElement('card_number', 'urn:AccountManagement', '');
 			if(card_numberObj != null){
 				card_numberObj.populateXmlNode(card_numberNode);
@@ -577,7 +591,7 @@ public class OnbeCardAccountOperations {
 				created_dateNode.addTextNode(String.valueOf(this.created_date));
 			}
 			
-			accountmanagement.string_x expirationObj = this.expiration;
+			String[] expirationObj = this.expiration;
 			Dom.XmlNode expirationNode = outerNode.addChildElement('expiration', 'urn:AccountManagement', '');
 			if(expirationObj != null){
 				expirationObj.populateXmlNode(expirationNode);
@@ -591,7 +605,7 @@ public class OnbeCardAccountOperations {
 				program_idNode.addTextNode(String.valueOf(this.program_id));
 			}
 			
-			accountmanagement.string_x puidObj = this.puid;
+			String[] puidObj = this.puid;
 			Dom.XmlNode puidNode = outerNode.addChildElement('puid', 'urn:AccountManagement', '');
 			if(puidObj != null){
 				puidObj.populateXmlNode(puidNode);
@@ -599,20 +613,20 @@ public class OnbeCardAccountOperations {
 			Dom.XmlNode ship_dateNode = outerNode.addChildElement('ship_date', 'urn:AccountManagement', '');
 			if(this.ship_date != null){
 				ship_dateNode.addTextNode(String.valueOf(this.ship_date));
-			}
+			} */
 		}
 	}
-
+/* 
 	public class CommentHistory {
 		public DateTime closedDate;
-		public accountmanagement.string_x emailOrPhone;
-		public accountmanagement.string_x employeeId;
+		public String emailOrPhone;
+		public String employeeId;
 		public Integer inquiryIdNumber;
-		public accountmanagement.string_x inquiryTypeDesc;
+		public String inquiryTypeDesc;
 		public DateTime origDateReceived;
-		public accountmanagement.string_x problemDescription;
-		public accountmanagement.string_x secondaryTypeDesc;
-		public accountmanagement.string_x status;
+		public String problemDescription;
+		public String secondaryTypeDesc;
+		public String status;
 		private transient String[] closedDate_type_info = new String[]{'closedDate',s_ns0,'dateTime','1','1','true'};
 		private transient String[] emailOrPhone_type_info = new String[]{'emailOrPhone',s_ns0,'string','1','1','true'};
 		private transient String[] employeeId_type_info = new String[]{'employeeId',s_ns0,'string','1','1','true'};
@@ -624,19 +638,21 @@ public class OnbeCardAccountOperations {
 		private transient String[] status_type_info = new String[]{'status',s_ns0,'string','1','1','true'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
 		private transient String[] field_order_type_info = new String[]{'closedDate','emailOrPhone','employeeId','inquiryIdNumber','inquiryTypeDesc','origDateReceived','problemDescription','secondaryTypeDesc','status'};
+		
 		public CommentHistory(){
 		}
+
 		public CommentHistory(DOM.XmlNode responseNode){
 			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
 			DOM.XmlNode closedDateNode = responseNode.getChildElement('closedDate', 'urn:AccountManagement');
-			this.closedDate = (closedDateNode == null || closedDateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : accountmanagement.parseDateTime(closedDateNode.getText());
+			this.closedDate = (closedDateNode == null || closedDateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : OnbeCardAccountOperations.parseDateTime(closedDateNode.getText());
 			nodesParsed.add(closedDateNode);
 			//System.debug(this.closedDate);			
 			DOM.XmlNode emailOrPhoneNode = responseNode.getChildElement('emailOrPhone', 'urn:AccountManagement');
 			if(emailOrPhoneNode == null){
 				this.emailOrPhone = null;
 			} else{
-				accountmanagement.string_x emailOrPhoneObj = new accountmanagement.string_x(emailOrPhoneNode);
+				String emailOrPhoneObj = new OnbeCardAccountOperations.string_x(emailOrPhoneNode);
 				nodesParsed.add(emailOrPhoneNode);
 				this.emailOrPhone = emailOrPhoneObj;
 			}
@@ -645,7 +661,7 @@ public class OnbeCardAccountOperations {
 			if(employeeIdNode == null){
 				this.employeeId = null;
 			} else{
-				accountmanagement.string_x employeeIdObj = new accountmanagement.string_x(employeeIdNode);
+				String employeeIdObj = new OnbeCardAccountOperations.string_x(employeeIdNode);
 				nodesParsed.add(employeeIdNode);
 				this.employeeId = employeeIdObj;
 			}
@@ -658,20 +674,20 @@ public class OnbeCardAccountOperations {
 			if(inquiryTypeDescNode == null){
 				this.inquiryTypeDesc = null;
 			} else{
-				accountmanagement.string_x inquiryTypeDescObj = new accountmanagement.string_x(inquiryTypeDescNode);
+				String inquiryTypeDescObj = new OnbeCardAccountOperations.string_x(inquiryTypeDescNode);
 				nodesParsed.add(inquiryTypeDescNode);
 				this.inquiryTypeDesc = inquiryTypeDescObj;
 			}
 			//System.debug(this.inquiryTypeDesc);			
 			DOM.XmlNode origDateReceivedNode = responseNode.getChildElement('origDateReceived', 'urn:AccountManagement');
-			this.origDateReceived = (origDateReceivedNode == null || origDateReceivedNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : accountmanagement.parseDateTime(origDateReceivedNode.getText());
+			this.origDateReceived = (origDateReceivedNode == null || origDateReceivedNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : OnbeCardAccountOperations.parseDateTime(origDateReceivedNode.getText());
 			nodesParsed.add(origDateReceivedNode);
 			//System.debug(this.origDateReceived);			
 			DOM.XmlNode problemDescriptionNode = responseNode.getChildElement('problemDescription', 'urn:AccountManagement');
 			if(problemDescriptionNode == null){
 				this.problemDescription = null;
 			} else{
-				accountmanagement.string_x problemDescriptionObj = new accountmanagement.string_x(problemDescriptionNode);
+				String problemDescriptionObj = new OnbeCardAccountOperations.string_x(problemDescriptionNode);
 				nodesParsed.add(problemDescriptionNode);
 				this.problemDescription = problemDescriptionObj;
 			}
@@ -680,7 +696,7 @@ public class OnbeCardAccountOperations {
 			if(secondaryTypeDescNode == null){
 				this.secondaryTypeDesc = null;
 			} else{
-				accountmanagement.string_x secondaryTypeDescObj = new accountmanagement.string_x(secondaryTypeDescNode);
+				String secondaryTypeDescObj = new OnbeCardAccountOperations.string_x(secondaryTypeDescNode);
 				nodesParsed.add(secondaryTypeDescNode);
 				this.secondaryTypeDesc = secondaryTypeDescObj;
 			}
@@ -689,7 +705,7 @@ public class OnbeCardAccountOperations {
 			if(statusNode == null){
 				this.status = null;
 			} else{
-				accountmanagement.string_x statusObj = new accountmanagement.string_x(statusNode);
+				String statusObj = new OnbeCardAccountOperations.string_x(statusNode);
 				nodesParsed.add(statusNode);
 				this.status = statusObj;
 			}
@@ -701,13 +717,13 @@ public class OnbeCardAccountOperations {
 				closedDateNode.addTextNode(String.valueOf(this.closedDate));
 			}
 			
-			accountmanagement.string_x emailOrPhoneObj = this.emailOrPhone;
+			String emailOrPhoneObj = this.emailOrPhone;
 			Dom.XmlNode emailOrPhoneNode = outerNode.addChildElement('emailOrPhone', 'urn:AccountManagement', '');
 			if(emailOrPhoneObj != null){
 				emailOrPhoneObj.populateXmlNode(emailOrPhoneNode);
 			}
 			
-			accountmanagement.string_x employeeIdObj = this.employeeId;
+			String employeeIdObj = this.employeeId;
 			Dom.XmlNode employeeIdNode = outerNode.addChildElement('employeeId', 'urn:AccountManagement', '');
 			if(employeeIdObj != null){
 				employeeIdObj.populateXmlNode(employeeIdNode);
@@ -717,7 +733,7 @@ public class OnbeCardAccountOperations {
 				inquiryIdNumberNode.addTextNode(String.valueOf(this.inquiryIdNumber));
 			}
 			
-			accountmanagement.string_x inquiryTypeDescObj = this.inquiryTypeDesc;
+			String inquiryTypeDescObj = this.inquiryTypeDesc;
 			Dom.XmlNode inquiryTypeDescNode = outerNode.addChildElement('inquiryTypeDesc', 'urn:AccountManagement', '');
 			if(inquiryTypeDescObj != null){
 				inquiryTypeDescObj.populateXmlNode(inquiryTypeDescNode);
@@ -727,42 +743,46 @@ public class OnbeCardAccountOperations {
 				origDateReceivedNode.addTextNode(String.valueOf(this.origDateReceived));
 			}
 			
-			accountmanagement.string_x problemDescriptionObj = this.problemDescription;
+			String problemDescriptionObj = this.problemDescription;
 			Dom.XmlNode problemDescriptionNode = outerNode.addChildElement('problemDescription', 'urn:AccountManagement', '');
 			if(problemDescriptionObj != null){
 				problemDescriptionObj.populateXmlNode(problemDescriptionNode);
 			}
 			
-			accountmanagement.string_x secondaryTypeDescObj = this.secondaryTypeDesc;
+			String secondaryTypeDescObj = this.secondaryTypeDesc;
 			Dom.XmlNode secondaryTypeDescNode = outerNode.addChildElement('secondaryTypeDesc', 'urn:AccountManagement', '');
 			if(secondaryTypeDescObj != null){
 				secondaryTypeDescObj.populateXmlNode(secondaryTypeDescNode);
 			}
 			
-			accountmanagement.string_x statusObj = this.status;
+			String statusObj = this.status;
 			Dom.XmlNode statusNode = outerNode.addChildElement('status', 'urn:AccountManagement', '');
 			if(statusObj != null){
 				statusObj.populateXmlNode(statusNode);
 			}
 		}
 	}
+ */
 
+ /* 
 	public class EscalationAssigneeValue {
-		public accountmanagement.string_x assigneeDescription;
-		public accountmanagement.int_x assigneeId;
+		public String assigneeDescription;
+		public Integer assigneeId;
 		private transient String[] assigneeDescription_type_info = new String[]{'assigneeDescription',s_ns0,'string','1','1','true'};
 		private transient String[] assigneeId_type_info = new String[]{'assigneeId',s_ns0,'int','1','1','true'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
 		private transient String[] field_order_type_info = new String[]{'assigneeDescription','assigneeId'};
+		
 		public EscalationAssigneeValue(){
 		}
+
 		public EscalationAssigneeValue(DOM.XmlNode responseNode){
 			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
 			DOM.XmlNode assigneeDescriptionNode = responseNode.getChildElement('assigneeDescription', 'urn:AccountManagement');
 			if(assigneeDescriptionNode == null){
 				this.assigneeDescription = null;
 			} else{
-				accountmanagement.string_x assigneeDescriptionObj = new accountmanagement.string_x(assigneeDescriptionNode);
+				String assigneeDescriptionObj =  assigneeDescriptionNode;
 				nodesParsed.add(assigneeDescriptionNode);
 				this.assigneeDescription = assigneeDescriptionObj;
 			}
@@ -771,21 +791,22 @@ public class OnbeCardAccountOperations {
 			if(assigneeIdNode == null){
 				this.assigneeId = null;
 			} else{
-				accountmanagement.int_x assigneeIdObj = new accountmanagement.int_x(assigneeIdNode);
-				nodesParsed.add(assigneeIdNode);
+				OnbeCardAccountOperations.Integer assigneeIdObj = Integer.valueOf(assigneeIdNode.getText()) ;  // OnbeCardAccountOperations.int_x
+ 				nodesParsed.add(assigneeIdNode);
 				this.assigneeId = assigneeIdObj;
 			}
 			//System.debug(this.assigneeId);			
 		}
+
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.string_x assigneeDescriptionObj = this.assigneeDescription;
+			String assigneeDescriptionObj = this.assigneeDescription;
 			Dom.XmlNode assigneeDescriptionNode = outerNode.addChildElement('assigneeDescription', 'urn:AccountManagement', '');
 			if(assigneeDescriptionObj != null){
 				assigneeDescriptionObj.populateXmlNode(assigneeDescriptionNode);
 			}
 			
-			accountmanagement.int_x assigneeIdObj = this.assigneeId;
+			OnbeCardAccountOperations.Integer assigneeIdObj = this.assigneeId;
 			Dom.XmlNode assigneeIdNode = outerNode.addChildElement('assigneeId', 'urn:AccountManagement', '');
 			if(assigneeIdObj != null){
 				assigneeIdObj.populateXmlNode(assigneeIdNode);
@@ -794,25 +815,27 @@ public class OnbeCardAccountOperations {
 	}
 
 	public class EscalationResponse {
-		public accountmanagement.ArrayOf_tns1_EscalationAssigneeValue escalationAssigneeValue;
-		public accountmanagement.ArrayOf_tns1_GetCsaInquiryTypesByInquiryCategoryValue getCsaInquiryTypesByInquiryCategoryValue;
-		public accountmanagement.ArrayOf_tns1_GetCsaInquiryTypesCategoryValue getCsaInquiryTypesCategoryValue;
-		public accountmanagement.Response response;
+		public OnbeCardAccountOperations.ArrayOf_tns1_EscalationAssigneeValue escalationAssigneeValue;
+		public OnbeCardAccountOperations.ArrayOf_tns1_GetCsaInquiryTypesByInquiryCategoryValue getCsaInquiryTypesByInquiryCategoryValue;
+		public OnbeCardAccountOperations.ArrayOf_tns1_GetCsaInquiryTypesCategoryValue getCsaInquiryTypesCategoryValue;
+		public OnbeCardAccountOperations.Response response;
 		private transient String[] escalationAssigneeValue_type_info = new String[]{'escalationAssigneeValue',s_ns0,'ArrayOf_tns1_EscalationAssigneeValue','1','1','true'};
 		private transient String[] getCsaInquiryTypesByInquiryCategoryValue_type_info = new String[]{'getCsaInquiryTypesByInquiryCategoryValue',s_ns0,'ArrayOf_tns1_GetCsaInquiryTypesByInquiryCategoryValue','1','1','true'};
 		private transient String[] getCsaInquiryTypesCategoryValue_type_info = new String[]{'getCsaInquiryTypesCategoryValue',s_ns0,'ArrayOf_tns1_GetCsaInquiryTypesCategoryValue','1','1','true'};
 		private transient String[] response_type_info = new String[]{'response',s_ns0,'Response','1','1','true'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
 		private transient String[] field_order_type_info = new String[]{'escalationAssigneeValue','getCsaInquiryTypesByInquiryCategoryValue','getCsaInquiryTypesCategoryValue','response'};
+		
 		public EscalationResponse(){
 		}
+
 		public EscalationResponse(DOM.XmlNode responseNode){
 			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
 			DOM.XmlNode escalationAssigneeValueNode = responseNode.getChildElement('escalationAssigneeValue', 'urn:AccountManagement');
 			if(escalationAssigneeValueNode == null){
 				this.escalationAssigneeValue = null;
 			} else{
-				accountmanagement.ArrayOf_tns1_EscalationAssigneeValue escalationAssigneeValueObj = new accountmanagement.ArrayOf_tns1_EscalationAssigneeValue(escalationAssigneeValueNode);
+				OnbeCardAccountOperations.ArrayOf_tns1_EscalationAssigneeValue escalationAssigneeValueObj = new OnbeCardAccountOperations.ArrayOf_tns1_EscalationAssigneeValue(escalationAssigneeValueNode);
 				nodesParsed.add(escalationAssigneeValueNode);
 				this.escalationAssigneeValue = escalationAssigneeValueObj;
 			}
@@ -821,7 +844,7 @@ public class OnbeCardAccountOperations {
 			if(getCsaInquiryTypesByInquiryCategoryValueNode == null){
 				this.getCsaInquiryTypesByInquiryCategoryValue = null;
 			} else{
-				accountmanagement.ArrayOf_tns1_GetCsaInquiryTypesByInquiryCategoryValue getCsaInquiryTypesByInquiryCategoryValueObj = new accountmanagement.ArrayOf_tns1_GetCsaInquiryTypesByInquiryCategoryValue(getCsaInquiryTypesByInquiryCategoryValueNode);
+				OnbeCardAccountOperations.ArrayOf_tns1_GetCsaInquiryTypesByInquiryCategoryValue getCsaInquiryTypesByInquiryCategoryValueObj = new OnbeCardAccountOperations.ArrayOf_tns1_GetCsaInquiryTypesByInquiryCategoryValue(getCsaInquiryTypesByInquiryCategoryValueNode);
 				nodesParsed.add(getCsaInquiryTypesByInquiryCategoryValueNode);
 				this.getCsaInquiryTypesByInquiryCategoryValue = getCsaInquiryTypesByInquiryCategoryValueObj;
 			}
@@ -830,7 +853,7 @@ public class OnbeCardAccountOperations {
 			if(getCsaInquiryTypesCategoryValueNode == null){
 				this.getCsaInquiryTypesCategoryValue = null;
 			} else{
-				accountmanagement.ArrayOf_tns1_GetCsaInquiryTypesCategoryValue getCsaInquiryTypesCategoryValueObj = new accountmanagement.ArrayOf_tns1_GetCsaInquiryTypesCategoryValue(getCsaInquiryTypesCategoryValueNode);
+				OnbeCardAccountOperations.ArrayOf_tns1_GetCsaInquiryTypesCategoryValue getCsaInquiryTypesCategoryValueObj = new OnbeCardAccountOperations.ArrayOf_tns1_GetCsaInquiryTypesCategoryValue(getCsaInquiryTypesCategoryValueNode);
 				nodesParsed.add(getCsaInquiryTypesCategoryValueNode);
 				this.getCsaInquiryTypesCategoryValue = getCsaInquiryTypesCategoryValueObj;
 			}
@@ -839,44 +862,46 @@ public class OnbeCardAccountOperations {
 			if(responseNode == null){
 				this.response = null;
 			} else{
-				accountmanagement.Response responseObj = new accountmanagement.Response(responseNode);
+				OnbeCardAccountOperations.Response responseObj = new OnbeCardAccountOperations.Response(responseNode);
 				nodesParsed.add(responseNode);
 				this.response = responseObj;
 			}
 			//System.debug(this.response);			
 		}
+
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.ArrayOf_tns1_EscalationAssigneeValue escalationAssigneeValueObj = this.escalationAssigneeValue;
+//			OnbeCardAccountOperations.ArrayOf_tns1_EscalationAssigneeValue escalationAssigneeValueObj = this.escalationAssigneeValue;
 			Dom.XmlNode escalationAssigneeValueNode = outerNode.addChildElement('escalationAssigneeValue', 'urn:AccountManagement', '');
 			if(escalationAssigneeValueObj != null){
 				escalationAssigneeValueObj.populateXmlNode(escalationAssigneeValueNode);
 			}
 			
-			accountmanagement.ArrayOf_tns1_GetCsaInquiryTypesByInquiryCategoryValue getCsaInquiryTypesByInquiryCategoryValueObj = this.getCsaInquiryTypesByInquiryCategoryValue;
+			OnbeCardAccountOperations.ArrayOf_tns1_GetCsaInquiryTypesByInquiryCategoryValue getCsaInquiryTypesByInquiryCategoryValueObj = this.getCsaInquiryTypesByInquiryCategoryValue;
 			Dom.XmlNode getCsaInquiryTypesByInquiryCategoryValueNode = outerNode.addChildElement('getCsaInquiryTypesByInquiryCategoryValue', 'urn:AccountManagement', '');
 			if(getCsaInquiryTypesByInquiryCategoryValueObj != null){
 				getCsaInquiryTypesByInquiryCategoryValueObj.populateXmlNode(getCsaInquiryTypesByInquiryCategoryValueNode);
 			}
 			
-			accountmanagement.ArrayOf_tns1_GetCsaInquiryTypesCategoryValue getCsaInquiryTypesCategoryValueObj = this.getCsaInquiryTypesCategoryValue;
+			OnbeCardAccountOperations.ArrayOf_tns1_GetCsaInquiryTypesCategoryValue getCsaInquiryTypesCategoryValueObj = this.getCsaInquiryTypesCategoryValue;
 			Dom.XmlNode getCsaInquiryTypesCategoryValueNode = outerNode.addChildElement('getCsaInquiryTypesCategoryValue', 'urn:AccountManagement', '');
 			if(getCsaInquiryTypesCategoryValueObj != null){
 				getCsaInquiryTypesCategoryValueObj.populateXmlNode(getCsaInquiryTypesCategoryValueNode);
-			}
+			} 
 			
-			accountmanagement.Response responseObj = this.response;
+			OnbeCardAccountOperations.Response responseObj = this.response;
 			Dom.XmlNode responseNode = outerNode.addChildElement('response', 'urn:AccountManagement', '');
 			if(responseObj != null){
 				responseObj.populateXmlNode(responseNode);
 			}
 		}
 	}
+ */
 
 	public class GetCsaInquiryTypesByInquiryCategoryValue {
-		public accountmanagement.string_x inquiryDesc;
-		public accountmanagement.int_x inquiryType;
-		public accountmanagement.int_x inquiryTypeCategory;
+		public String inquiryDesc;
+		public Integer inquiryType;
+		public Integer inquiryTypeCategory;
 		private transient String[] inquiryDesc_type_info = new String[]{'inquiryDesc',s_ns0,'string','1','1','true'};
 		private transient String[] inquiryType_type_info = new String[]{'inquiryType',s_ns0,'int','1','1','true'};
 		private transient String[] inquiryTypeCategory_type_info = new String[]{'inquiryTypeCategory',s_ns0,'int','1','1','true'};
@@ -892,16 +917,16 @@ public class OnbeCardAccountOperations {
 			if(inquiryDescNode == null){
 				this.inquiryDesc = null;
 			} else{
-				accountmanagement.string_x inquiryDescObj = new accountmanagement.string_x(inquiryDescNode);
+				String inquiryDescObj = inquiryDescNode.getText();
 				nodesParsed.add(inquiryDescNode);
 				this.inquiryDesc = inquiryDescObj;
 			}
 			//System.debug(this.inquiryDesc);			
-			DOM.XmlNode inquiryTypeNode = responseNode.getChildElement('inquiryType', 'urn:AccountManagement');
+		/* 	DOM.XmlNode inquiryTypeNode = responseNode.getChildElement('inquiryType', 'urn:AccountManagement');
 			if(inquiryTypeNode == null){
 				this.inquiryType = null;
 			} else{
-				accountmanagement.int_x inquiryTypeObj = new accountmanagement.int_x(inquiryTypeNode);
+				OnbeCardAccountOperations.Integer inquiryTypeObj = Integer.valueOf(inquiryTypeNode.getText()); // OnbeCardAccountOperations.int_x
 				nodesParsed.add(inquiryTypeNode);
 				this.inquiryType = inquiryTypeObj;
 			}
@@ -910,38 +935,38 @@ public class OnbeCardAccountOperations {
 			if(inquiryTypeCategoryNode == null){
 				this.inquiryTypeCategory = null;
 			} else{
-				accountmanagement.int_x inquiryTypeCategoryObj = new accountmanagement.int_x(inquiryTypeCategoryNode);
+				OnbeCardAccountOperations.Integer inquiryTypeCategoryObj =  Integer.valueOf(inquiryTypeCategoryNode.getText());
 				nodesParsed.add(inquiryTypeCategoryNode);
 				this.inquiryTypeCategory = inquiryTypeCategoryObj;
-			}
+			} */
 			//System.debug(this.inquiryTypeCategory);			
 		}
 
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.string_x inquiryDescObj = this.inquiryDesc;
+			String inquiryDescObj = this.inquiryDesc;
 			Dom.XmlNode inquiryDescNode = outerNode.addChildElement('inquiryDesc', 'urn:AccountManagement', '');
-			if(inquiryDescObj != null){
-				inquiryDescObj.populateXmlNode(inquiryDescNode);
-			}
+			// if(inquiryDescObj != null){
+			// 	inquiryDescObj.populateXmlNode(inquiryDescNode);
+			// }
 			
-			accountmanagement.int_x inquiryTypeObj = this.inquiryType;
+			Integer inquiryTypeObj = this.inquiryType;
 			Dom.XmlNode inquiryTypeNode = outerNode.addChildElement('inquiryType', 'urn:AccountManagement', '');
-			if(inquiryTypeObj != null){
-				inquiryTypeObj.populateXmlNode(inquiryTypeNode);
-			}
+			// if(inquiryTypeObj != null){
+			// 	inquiryTypeObj.populateXmlNode(inquiryTypeNode);
+			// }
 			
-			accountmanagement.int_x inquiryTypeCategoryObj = this.inquiryTypeCategory;
+			Integer inquiryTypeCategoryObj = this.inquiryTypeCategory;
 			Dom.XmlNode inquiryTypeCategoryNode = outerNode.addChildElement('inquiryTypeCategory', 'urn:AccountManagement', '');
-			if(inquiryTypeCategoryObj != null){
-				inquiryTypeCategoryObj.populateXmlNode(inquiryTypeCategoryNode);
-			}
+			// if(inquiryTypeCategoryObj != null){
+			// 	inquiryTypeCategoryObj.populateXmlNode(inquiryTypeCategoryNode);
+			// }
 		}
 	}
 
 	public class GetCsaInquiryTypesCategoryValue {
-		public accountmanagement.int_x inquiryTypeCategory;
-		public accountmanagement.string_x inquiryTypeCategoryDesc;
+		public Integer inquiryTypeCategory;
+		public String inquiryTypeCategoryDesc;
 		private transient String[] inquiryTypeCategory_type_info = new String[]{'inquiryTypeCategory',s_ns0,'int','1','1','true'};
 		private transient String[] inquiryTypeCategoryDesc_type_info = new String[]{'inquiryTypeCategoryDesc',s_ns0,'string','1','1','true'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
@@ -956,41 +981,41 @@ public class OnbeCardAccountOperations {
 			if(inquiryTypeCategoryNode == null){
 				this.inquiryTypeCategory = null;
 			} else{
-				accountmanagement.int_x inquiryTypeCategoryObj = new accountmanagement.int_x(inquiryTypeCategoryNode);
+				Integer inquiryTypeCategoryObj = Integer.valueOf(inquiryTypeCategoryNode.getText());
 				nodesParsed.add(inquiryTypeCategoryNode);
 				this.inquiryTypeCategory = inquiryTypeCategoryObj;
 			}
 			//System.debug(this.inquiryTypeCategory);			
-			DOM.XmlNode inquiryTypeCategoryDescNode = responseNode.getChildElement('inquiryTypeCategoryDesc', 'urn:AccountManagement');
+	/* 		DOM.XmlNode inquiryTypeCategoryDescNode = responseNode.getChildElement('inquiryTypeCategoryDesc', 'urn:AccountManagement');
 			if(inquiryTypeCategoryDescNode == null){
 				this.inquiryTypeCategoryDesc = null;
 			} else{
-				accountmanagement.string_x inquiryTypeCategoryDescObj = new accountmanagement.string_x(inquiryTypeCategoryDescNode);
+				String inquiryTypeCategoryDescObj = new OnbeCardAccountOperations.string_x(inquiryTypeCategoryDescNode);
 				nodesParsed.add(inquiryTypeCategoryDescNode);
 				this.inquiryTypeCategoryDesc = inquiryTypeCategoryDescObj;
-			}
+			} */
 			//System.debug(this.inquiryTypeCategoryDesc);			
 		}
 
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.int_x inquiryTypeCategoryObj = this.inquiryTypeCategory;
-			Dom.XmlNode inquiryTypeCategoryNode = outerNode.addChildElement('inquiryTypeCategory', 'urn:AccountManagement', '');
-			if(inquiryTypeCategoryObj != null){
-				inquiryTypeCategoryObj.populateXmlNode(inquiryTypeCategoryNode);
-			}
+			Integer inquiryTypeCategoryObj = this.inquiryTypeCategory;
+			Dom.XmlNode inquiryTypeCategoryNode = outerNode.addChildElement('inquiryTypeCategory', 'urn:OnbeCardAccountOperations', '');
+			// if(inquiryTypeCategoryObj != null){
+			// 	inquiryTypeCategoryObj.populateXmlNode(inquiryTypeCategoryNode);
+			// }
 			
-			accountmanagement.string_x inquiryTypeCategoryDescObj = this.inquiryTypeCategoryDesc;
+			String inquiryTypeCategoryDescObj = this.inquiryTypeCategoryDesc;
 			Dom.XmlNode inquiryTypeCategoryDescNode = outerNode.addChildElement('inquiryTypeCategoryDesc', 'urn:AccountManagement', '');
-			if(inquiryTypeCategoryDescObj != null){
-				inquiryTypeCategoryDescObj.populateXmlNode(inquiryTypeCategoryDescNode);
-			}
+			// if(inquiryTypeCategoryDescObj != null){
+			// 	inquiryTypeCategoryDescObj.populateXmlNode(inquiryTypeCategoryDescNode);
+			// }
 		}
 	}
 
 	public class PaymentDetail {
-		public accountmanagement.string_x label;
-		public accountmanagement.string_x value;
+		public DOM.XmlNode label;
+		public DOM.XmlNode value;
 		private transient String[] label_type_info = new String[]{'label',s_ns0,'string','1','1','true'};
 		private transient String[] value_type_info = new String[]{'value',s_ns0,'string','1','1','true'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
@@ -1005,7 +1030,7 @@ public class OnbeCardAccountOperations {
 			if(labelNode == null){
 				this.label = null;
 			} else{
-				accountmanagement.string_x labelObj = new accountmanagement.string_x(labelNode);
+				DOM.XmlNode labelObj = labelNode;
 				nodesParsed.add(labelNode);
 				this.label = labelObj;
 			}
@@ -1014,7 +1039,7 @@ public class OnbeCardAccountOperations {
 			if(valueNode == null){
 				this.value = null;
 			} else{
-				accountmanagement.string_x valueObj = new accountmanagement.string_x(valueNode);
+				DOM.XmlNode valueObj = valueNode;
 				nodesParsed.add(valueNode);
 				this.value = valueObj;
 			}
@@ -1022,38 +1047,38 @@ public class OnbeCardAccountOperations {
 		}
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.string_x labelObj = this.label;
+			DOM.XmlNode labelObj = this.label;
 			Dom.XmlNode labelNode = outerNode.addChildElement('label', 'urn:AccountManagement', '');
-			if(labelObj != null){
-				labelObj.populateXmlNode(labelNode);
-			}
+			// if(labelObj != null){
+			// 	labelObj.populateXmlNode(labelNode);
+			// }
 			
-			accountmanagement.string_x valueObj = this.value;
+			DOM.XmlNode valueObj = this.value;
 			Dom.XmlNode valueNode = outerNode.addChildElement('value', 'urn:AccountManagement', '');
-			if(valueObj != null){
-				valueObj.populateXmlNode(valueNode);
-			}
+			// if(valueObj != null){
+			// 	valueObj.populateXmlNode(valueNode);
+			// }
 		}
 	}
 	
 	//Extends urn:AccountManagement:AccountInquiry
 	public class PayoutAccountInquiry {
-		public accountmanagement.Balance balance;
-		public accountmanagement.CardDetail card;
-		public accountmanagement.ArrayOf_tns1_CommentHistory comments;
-		public accountmanagement.ArrayOf_tns1_TransactionDetail journal;
-		public accountmanagement.Registration registration;
-		public accountmanagement.Response response;
+		public OnbeCardAccountOperations.Balance balance;
+		public OnbeCardAccountOperations.CardDetail card;
+		// public OnbeCardAccountOperations.ArrayOf_tns1_CommentHistory comments;
+		// public OnbeCardAccountOperations.ArrayOf_tns1_TransactionDetail journal;
+		// public OnbeCardAccountOperations.Registration registration;
+		public OnbeCardAccountOperations.Response response;
 		private transient String[] balance_type_info = new String[]{'balance',s_ns0,'Balance','1','1','true'};
 		private transient String[] card_type_info = new String[]{'card',s_ns0,'CardDetail','1','1','true'};
 		private transient String[] comments_type_info = new String[]{'comments',s_ns0,'ArrayOf_tns1_CommentHistory','1','1','true'};
 		private transient String[] journal_type_info = new String[]{'journal',s_ns0,'ArrayOf_tns1_TransactionDetail','1','1','true'};
 		private transient String[] registration_type_info = new String[]{'registration',s_ns0,'Registration','1','1','true'};
 		private transient String[] response_type_info = new String[]{'response',s_ns0,'Response','1','1','true'};
-		public accountmanagement.string_x cardStatus;
-		public accountmanagement.string_x opRegistrationStatus;
-		public accountmanagement.PayoutApp payoutApp;
-		public accountmanagement.PayoutAppRegistration payoutAppRegistration;
+		public String cardStatus;
+		public String opRegistrationStatus;
+		// public OnbeCardAccountOperations.PayoutApp payoutApp;
+		// public OnbeCardAccountOperations.PayoutAppRegistration payoutAppRegistration;
 		private transient String[] cardStatus_type_info = new String[]{'cardStatus',s_ns0,'string','1','1','true'};
 		private transient String[] opRegistrationStatus_type_info = new String[]{'opRegistrationStatus',s_ns0,'string','1','1','true'};
 		private transient String[] payoutApp_type_info = new String[]{'payoutApp',s_ns0,'PayoutApp','1','1','true'};
@@ -1070,7 +1095,7 @@ public class OnbeCardAccountOperations {
 			if(balanceNode == null){
 				this.balance = null;
 			} else{
-				accountmanagement.Balance balanceObj = new accountmanagement.Balance(balanceNode);
+				OnbeCardAccountOperations.Balance balanceObj = new OnbeCardAccountOperations.Balance(balanceNode);
 				nodesParsed.add(balanceNode);
 				this.balance = balanceObj;
 			}
@@ -1079,16 +1104,16 @@ public class OnbeCardAccountOperations {
 			if(cardNode == null){
 				this.card = null;
 			} else{
-				accountmanagement.CardDetail cardObj = new accountmanagement.CardDetail(cardNode);
+				OnbeCardAccountOperations.CardDetail cardObj = new OnbeCardAccountOperations.CardDetail(cardNode);
 				nodesParsed.add(cardNode);
 				this.card = cardObj;
 			}
 			//System.debug(this.card);			
-			DOM.XmlNode commentsNode = responseNode.getChildElement('comments', 'urn:AccountManagement');
+		/* 	DOM.XmlNode commentsNode = responseNode.getChildElement('comments', 'urn:AccountManagement');
 			if(commentsNode == null){
 				this.comments = null;
 			} else{
-				accountmanagement.ArrayOf_tns1_CommentHistory commentsObj = new accountmanagement.ArrayOf_tns1_CommentHistory(commentsNode);
+				OnbeCardAccountOperations.ArrayOf_tns1_CommentHistory commentsObj = new OnbeCardAccountOperations.ArrayOf_tns1_CommentHistory(commentsNode);
 				nodesParsed.add(commentsNode);
 				this.comments = commentsObj;
 			}
@@ -1097,34 +1122,34 @@ public class OnbeCardAccountOperations {
 			if(journalNode == null){
 				this.journal = null;
 			} else{
-				accountmanagement.ArrayOf_tns1_TransactionDetail journalObj = new accountmanagement.ArrayOf_tns1_TransactionDetail(journalNode);
+				OnbeCardAccountOperations.ArrayOf_tns1_TransactionDetail journalObj = new OnbeCardAccountOperations.ArrayOf_tns1_TransactionDetail(journalNode);
 				nodesParsed.add(journalNode);
 				this.journal = journalObj;
-			}
+			} */
 			//System.debug(this.journal);			
-			DOM.XmlNode registrationNode = responseNode.getChildElement('registration', 'urn:AccountManagement');
-			if(registrationNode == null){
-				this.registration = null;
-			} else{
-				accountmanagement.Registration registrationObj = new accountmanagement.Registration(registrationNode);
-				nodesParsed.add(registrationNode);
-				this.registration = registrationObj;
-			}
+			// DOM.XmlNode registrationNode = responseNode.getChildElement('registration', 'urn:AccountManagement');
+			// if(registrationNode == null){
+			// 	this.registration = null;
+			// } else{
+			// 	OnbeCardAccountOperations.Registration registrationObj = new OnbeCardAccountOperations.Registration(registrationNode);
+			// 	nodesParsed.add(registrationNode);
+			// 	this.registration = registrationObj;
+			// }
 			//System.debug(this.registration);			
-			DOM.XmlNode responseNode = responseNode.getChildElement('response', 'urn:AccountManagement');
-			if(responseNode == null){
-				this.response = null;
-			} else{
-				accountmanagement.Response responseObj = new accountmanagement.Response(responseNode);
-				nodesParsed.add(responseNode);
-				this.response = responseObj;
-			}
+			// DOM.XmlNode responseNode = responseNode.getChildElement('response', 'urn:AccountManagement');
+			// if(responseNode == null){
+			// 	this.response = null;
+			// } else{
+			// 	OnbeCardAccountOperations.Response responseObj = new OnbeCardAccountOperations.Response(responseNode);
+			// 	nodesParsed.add(responseNode);
+			// 	this.response = responseObj;
+			// }
 			//System.debug(this.response);			
-			DOM.XmlNode cardStatusNode = responseNode.getChildElement('cardStatus', 'urn:AccountManagement');
+		/* 	DOM.XmlNode cardStatusNode = responseNode.getChildElement('cardStatus', 'urn:AccountManagement');
 			if(cardStatusNode == null){
 				this.cardStatus = null;
 			} else{
-				accountmanagement.string_x cardStatusObj = new accountmanagement.string_x(cardStatusNode);
+				String cardStatusObj = new OnbeCardAccountOperations.string_x(cardStatusNode);
 				nodesParsed.add(cardStatusNode);
 				this.cardStatus = cardStatusObj;
 			}
@@ -1133,7 +1158,7 @@ public class OnbeCardAccountOperations {
 			if(opRegistrationStatusNode == null){
 				this.opRegistrationStatus = null;
 			} else{
-				accountmanagement.string_x opRegistrationStatusObj = new accountmanagement.string_x(opRegistrationStatusNode);
+				String opRegistrationStatusObj = new OnbeCardAccountOperations.string_x(opRegistrationStatusNode);
 				nodesParsed.add(opRegistrationStatusNode);
 				this.opRegistrationStatus = opRegistrationStatusObj;
 			}
@@ -1142,7 +1167,7 @@ public class OnbeCardAccountOperations {
 			if(payoutAppNode == null){
 				this.payoutApp = null;
 			} else{
-				accountmanagement.PayoutApp payoutAppObj = new accountmanagement.PayoutApp(payoutAppNode);
+				OnbeCardAccountOperations.PayoutApp payoutAppObj = new OnbeCardAccountOperations.PayoutApp(payoutAppNode);
 				nodesParsed.add(payoutAppNode);
 				this.payoutApp = payoutAppObj;
 			}
@@ -1151,82 +1176,83 @@ public class OnbeCardAccountOperations {
 			if(payoutAppRegistrationNode == null){
 				this.payoutAppRegistration = null;
 			} else{
-				accountmanagement.PayoutAppRegistration payoutAppRegistrationObj = new accountmanagement.PayoutAppRegistration(payoutAppRegistrationNode);
+				OnbeCardAccountOperations.PayoutAppRegistration payoutAppRegistrationObj = new OnbeCardAccountOperations.PayoutAppRegistration(payoutAppRegistrationNode);
 				nodesParsed.add(payoutAppRegistrationNode);
 				this.payoutAppRegistration = payoutAppRegistrationObj;
-			}
+			} */
 			//System.debug(this.payoutAppRegistration);			
 		}
 
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.Balance balanceObj = this.balance;
+			OnbeCardAccountOperations.Balance balanceObj = this.balance;
 			Dom.XmlNode balanceNode = outerNode.addChildElement('balance', 'urn:AccountManagement', '');
 			if(balanceObj != null){
 				balanceObj.populateXmlNode(balanceNode);
 			}
 			
-			accountmanagement.CardDetail cardObj = this.card;
+			OnbeCardAccountOperations.CardDetail cardObj = this.card;
 			Dom.XmlNode cardNode = outerNode.addChildElement('card', 'urn:AccountManagement', '');
 			if(cardObj != null){
 				cardObj.populateXmlNode(cardNode);
 			}
 			
-			accountmanagement.ArrayOf_tns1_CommentHistory commentsObj = this.comments;
+	/* 		OnbeCardAccountOperations.ArrayOf_tns1_CommentHistory commentsObj = this.comments;
 			Dom.XmlNode commentsNode = outerNode.addChildElement('comments', 'urn:AccountManagement', '');
 			if(commentsObj != null){
 				commentsObj.populateXmlNode(commentsNode);
 			}
 			
-			accountmanagement.ArrayOf_tns1_TransactionDetail journalObj = this.journal;
+			OnbeCardAccountOperations.ArrayOf_tns1_TransactionDetail journalObj = this.journal;
 			Dom.XmlNode journalNode = outerNode.addChildElement('journal', 'urn:AccountManagement', '');
 			if(journalObj != null){
 				journalObj.populateXmlNode(journalNode);
 			}
 			
-			accountmanagement.Registration registrationObj = this.registration;
+			OnbeCardAccountOperations.Registration registrationObj = this.registration;
 			Dom.XmlNode registrationNode = outerNode.addChildElement('registration', 'urn:AccountManagement', '');
 			if(registrationObj != null){
 				registrationObj.populateXmlNode(registrationNode);
 			}
 			
-			accountmanagement.Response responseObj = this.response;
+			OnbeCardAccountOperations.Response responseObj = this.response;
 			Dom.XmlNode responseNode = outerNode.addChildElement('response', 'urn:AccountManagement', '');
 			if(responseObj != null){
 				responseObj.populateXmlNode(responseNode);
 			}
 			
-			accountmanagement.string_x cardStatusObj = this.cardStatus;
+			String cardStatusObj = this.cardStatus;
 			Dom.XmlNode cardStatusNode = outerNode.addChildElement('cardStatus', 'urn:AccountManagement', '');
 			if(cardStatusObj != null){
 				cardStatusObj.populateXmlNode(cardStatusNode);
 			}
 			
-			accountmanagement.string_x opRegistrationStatusObj = this.opRegistrationStatus;
+			String opRegistrationStatusObj = this.opRegistrationStatus;
 			Dom.XmlNode opRegistrationStatusNode = outerNode.addChildElement('opRegistrationStatus', 'urn:AccountManagement', '');
 			if(opRegistrationStatusObj != null){
 				opRegistrationStatusObj.populateXmlNode(opRegistrationStatusNode);
 			}
 			
-			accountmanagement.PayoutApp payoutAppObj = this.payoutApp;
+			OnbeCardAccountOperations.PayoutApp payoutAppObj = this.payoutApp;
 			Dom.XmlNode payoutAppNode = outerNode.addChildElement('payoutApp', 'urn:AccountManagement', '');
 			if(payoutAppObj != null){
 				payoutAppObj.populateXmlNode(payoutAppNode);
 			}
 			
-			accountmanagement.PayoutAppRegistration payoutAppRegistrationObj = this.payoutAppRegistration;
+			OnbeCardAccountOperations.PayoutAppRegistration payoutAppRegistrationObj = this.payoutAppRegistration;
 			Dom.XmlNode payoutAppRegistrationNode = outerNode.addChildElement('payoutAppRegistration', 'urn:AccountManagement', '');
 			if(payoutAppRegistrationObj != null){
 				payoutAppRegistrationObj.populateXmlNode(payoutAppRegistrationNode);
-			}
+			} */
 		}
 	}
-	public class PayoutApp {
-		public accountmanagement.string_x ATMType;
-		public accountmanagement.string_x CSPhone;
-		public accountmanagement.string_x customLogoURL;
-		public accountmanagement.string_x feesURL;
-		public accountmanagement.string_x termsURL;
+
+	/* public class PayoutApp {
+		public String ATMType;
+		public String CSPhone;
+		public String customLogoURL;
+		public String feesURL;
+		public String termsURL;
 		private transient String[] ATMType_type_info = new String[]{'ATMType',s_ns0,'string','1','1','true'};
 		private transient String[] CSPhone_type_info = new String[]{'CSPhone',s_ns0,'string','1','1','true'};
 		private transient String[] customLogoURL_type_info = new String[]{'customLogoURL',s_ns0,'string','1','1','true'};
@@ -1244,7 +1270,7 @@ public class OnbeCardAccountOperations {
 			if(ATMTypeNode == null){
 				this.ATMType = null;
 			} else{
-				accountmanagement.string_x ATMTypeObj = new accountmanagement.string_x(ATMTypeNode);
+				String ATMTypeObj = new OnbeCardAccountOperations.string_x(ATMTypeNode);
 				nodesParsed.add(ATMTypeNode);
 				this.ATMType = ATMTypeObj;
 			}
@@ -1253,7 +1279,7 @@ public class OnbeCardAccountOperations {
 			if(CSPhoneNode == null){
 				this.CSPhone = null;
 			} else{
-				accountmanagement.string_x CSPhoneObj = new accountmanagement.string_x(CSPhoneNode);
+				String CSPhoneObj = new OnbeCardAccountOperations.string_x(CSPhoneNode);
 				nodesParsed.add(CSPhoneNode);
 				this.CSPhone = CSPhoneObj;
 			}
@@ -1262,7 +1288,7 @@ public class OnbeCardAccountOperations {
 			if(customLogoURLNode == null){
 				this.customLogoURL = null;
 			} else{
-				accountmanagement.string_x customLogoURLObj = new accountmanagement.string_x(customLogoURLNode);
+				String customLogoURLObj = new OnbeCardAccountOperations.string_x(customLogoURLNode);
 				nodesParsed.add(customLogoURLNode);
 				this.customLogoURL = customLogoURLObj;
 			}
@@ -1271,7 +1297,7 @@ public class OnbeCardAccountOperations {
 			if(feesURLNode == null){
 				this.feesURL = null;
 			} else{
-				accountmanagement.string_x feesURLObj = new accountmanagement.string_x(feesURLNode);
+				String feesURLObj = new OnbeCardAccountOperations.string_x(feesURLNode);
 				nodesParsed.add(feesURLNode);
 				this.feesURL = feesURLObj;
 			}
@@ -1280,7 +1306,7 @@ public class OnbeCardAccountOperations {
 			if(termsURLNode == null){
 				this.termsURL = null;
 			} else{
-				accountmanagement.string_x termsURLObj = new accountmanagement.string_x(termsURLNode);
+				String termsURLObj = new OnbeCardAccountOperations.string_x(termsURLNode);
 				nodesParsed.add(termsURLNode);
 				this.termsURL = termsURLObj;
 			}
@@ -1289,31 +1315,31 @@ public class OnbeCardAccountOperations {
 
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.string_x ATMTypeObj = this.ATMType;
+			String ATMTypeObj = this.ATMType;
 			Dom.XmlNode ATMTypeNode = outerNode.addChildElement('ATMType', 'urn:AccountManagement', '');
 			if(ATMTypeObj != null){
 				ATMTypeObj.populateXmlNode(ATMTypeNode);
 			}
 			
-			accountmanagement.string_x CSPhoneObj = this.CSPhone;
+			String CSPhoneObj = this.CSPhone;
 			Dom.XmlNode CSPhoneNode = outerNode.addChildElement('CSPhone', 'urn:AccountManagement', '');
 			if(CSPhoneObj != null){
 				CSPhoneObj.populateXmlNode(CSPhoneNode);
 			}
 			
-			accountmanagement.string_x customLogoURLObj = this.customLogoURL;
+			String customLogoURLObj = this.customLogoURL;
 			Dom.XmlNode customLogoURLNode = outerNode.addChildElement('customLogoURL', 'urn:AccountManagement', '');
 			if(customLogoURLObj != null){
 				customLogoURLObj.populateXmlNode(customLogoURLNode);
 			}
 			
-			accountmanagement.string_x feesURLObj = this.feesURL;
+			String feesURLObj = this.feesURL;
 			Dom.XmlNode feesURLNode = outerNode.addChildElement('feesURL', 'urn:AccountManagement', '');
 			if(feesURLObj != null){
 				feesURLObj.populateXmlNode(feesURLNode);
 			}
 			
-			accountmanagement.string_x termsURLObj = this.termsURL;
+			String termsURLObj = this.termsURL;
 			Dom.XmlNode termsURLNode = outerNode.addChildElement('termsURL', 'urn:AccountManagement', '');
 			if(termsURLObj != null){
 				termsURLObj.populateXmlNode(termsURLNode);
@@ -1323,17 +1349,17 @@ public class OnbeCardAccountOperations {
 	
 	//Extends urn:AccountManagement:Registration
 	public class PayoutAppRegistration {
-		public accountmanagement.string_x address_1;
-		public accountmanagement.string_x address_2;
-		public accountmanagement.string_x business_phone;
-		public accountmanagement.string_x city;
-		public accountmanagement.string_x email;
-		public accountmanagement.string_x first_name;
-		public accountmanagement.string_x home_phone;
-		public accountmanagement.string_x last_name;
-		public accountmanagement.string_x mobile_phone;
-		public accountmanagement.string_x state;
-		public accountmanagement.string_x zip;
+		public String address_1;
+		public String address_2;
+		public String business_phone;
+		public String city;
+		public String email;
+		public String first_name;
+		public String home_phone;
+		public String last_name;
+		public String mobile_phone;
+		public String state;
+		public String zip;
 		private transient String[] address_1_type_info = new String[]{'address_1',s_ns0,'string','1','1','true'};
 		private transient String[] address_2_type_info = new String[]{'address_2',s_ns0,'string','1','1','true'};
 		private transient String[] business_phone_type_info = new String[]{'business_phone',s_ns0,'string','1','1','true'};
@@ -1345,7 +1371,7 @@ public class OnbeCardAccountOperations {
 		private transient String[] mobile_phone_type_info = new String[]{'mobile_phone',s_ns0,'string','1','1','true'};
 		private transient String[] state_type_info = new String[]{'state',s_ns0,'string','1','1','true'};
 		private transient String[] zip_type_info = new String[]{'zip',s_ns0,'string','1','1','true'};
-		public accountmanagement.string_x country;
+		public String country;
 		private transient String[] country_type_info = new String[]{'country',s_ns0,'string','1','1','true'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
 		private transient String[] field_order_type_info = new String[]{'address_1','address_2','business_phone','city','email','first_name','home_phone','last_name','mobile_phone','state','zip','country'};
@@ -1359,7 +1385,7 @@ public class OnbeCardAccountOperations {
 			if(address_1Node == null){
 				this.address_1 = null;
 			} else{
-				accountmanagement.string_x address_1Obj = new accountmanagement.string_x(address_1Node);
+				String address_1Obj = new OnbeCardAccountOperations.string_x(address_1Node);
 				nodesParsed.add(address_1Node);
 				this.address_1 = address_1Obj;
 			}
@@ -1368,7 +1394,7 @@ public class OnbeCardAccountOperations {
 			if(address_2Node == null){
 				this.address_2 = null;
 			} else{
-				accountmanagement.string_x address_2Obj = new accountmanagement.string_x(address_2Node);
+				String address_2Obj = new OnbeCardAccountOperations.string_x(address_2Node);
 				nodesParsed.add(address_2Node);
 				this.address_2 = address_2Obj;
 			}
@@ -1377,7 +1403,7 @@ public class OnbeCardAccountOperations {
 			if(business_phoneNode == null){
 				this.business_phone = null;
 			} else{
-				accountmanagement.string_x business_phoneObj = new accountmanagement.string_x(business_phoneNode);
+				String business_phoneObj = new OnbeCardAccountOperations.string_x(business_phoneNode);
 				nodesParsed.add(business_phoneNode);
 				this.business_phone = business_phoneObj;
 			}
@@ -1386,7 +1412,7 @@ public class OnbeCardAccountOperations {
 			if(cityNode == null){
 				this.city = null;
 			} else{
-				accountmanagement.string_x cityObj = new accountmanagement.string_x(cityNode);
+				String cityObj = new OnbeCardAccountOperations.string_x(cityNode);
 				nodesParsed.add(cityNode);
 				this.city = cityObj;
 			}
@@ -1395,7 +1421,7 @@ public class OnbeCardAccountOperations {
 			if(emailNode == null){
 				this.email = null;
 			} else{
-				accountmanagement.string_x emailObj = new accountmanagement.string_x(emailNode);
+				String emailObj = new OnbeCardAccountOperations.string_x(emailNode);
 				nodesParsed.add(emailNode);
 				this.email = emailObj;
 			}
@@ -1404,7 +1430,7 @@ public class OnbeCardAccountOperations {
 			if(first_nameNode == null){
 				this.first_name = null;
 			} else{
-				accountmanagement.string_x first_nameObj = new accountmanagement.string_x(first_nameNode);
+				String first_nameObj = new OnbeCardAccountOperations.string_x(first_nameNode);
 				nodesParsed.add(first_nameNode);
 				this.first_name = first_nameObj;
 			}
@@ -1413,7 +1439,7 @@ public class OnbeCardAccountOperations {
 			if(home_phoneNode == null){
 				this.home_phone = null;
 			} else{
-				accountmanagement.string_x home_phoneObj = new accountmanagement.string_x(home_phoneNode);
+				String home_phoneObj = new OnbeCardAccountOperations.string_x(home_phoneNode);
 				nodesParsed.add(home_phoneNode);
 				this.home_phone = home_phoneObj;
 			}
@@ -1422,7 +1448,7 @@ public class OnbeCardAccountOperations {
 			if(last_nameNode == null){
 				this.last_name = null;
 			} else{
-				accountmanagement.string_x last_nameObj = new accountmanagement.string_x(last_nameNode);
+				String last_nameObj = new OnbeCardAccountOperations.string_x(last_nameNode);
 				nodesParsed.add(last_nameNode);
 				this.last_name = last_nameObj;
 			}
@@ -1431,7 +1457,7 @@ public class OnbeCardAccountOperations {
 			if(mobile_phoneNode == null){
 				this.mobile_phone = null;
 			} else{
-				accountmanagement.string_x mobile_phoneObj = new accountmanagement.string_x(mobile_phoneNode);
+				String mobile_phoneObj = new OnbeCardAccountOperations.string_x(mobile_phoneNode);
 				nodesParsed.add(mobile_phoneNode);
 				this.mobile_phone = mobile_phoneObj;
 			}
@@ -1440,7 +1466,7 @@ public class OnbeCardAccountOperations {
 			if(stateNode == null){
 				this.state = null;
 			} else{
-				accountmanagement.string_x stateObj = new accountmanagement.string_x(stateNode);
+				String stateObj = new OnbeCardAccountOperations.string_x(stateNode);
 				nodesParsed.add(stateNode);
 				this.state = stateObj;
 			}
@@ -1449,7 +1475,7 @@ public class OnbeCardAccountOperations {
 			if(zipNode == null){
 				this.zip = null;
 			} else{
-				accountmanagement.string_x zipObj = new accountmanagement.string_x(zipNode);
+				String zipObj = new OnbeCardAccountOperations.string_x(zipNode);
 				nodesParsed.add(zipNode);
 				this.zip = zipObj;
 			}
@@ -1458,7 +1484,7 @@ public class OnbeCardAccountOperations {
 			if(countryNode == null){
 				this.country = null;
 			} else{
-				accountmanagement.string_x countryObj = new accountmanagement.string_x(countryNode);
+				String countryObj = new OnbeCardAccountOperations.string_x(countryNode);
 				nodesParsed.add(countryNode);
 				this.country = countryObj;
 			}
@@ -1467,92 +1493,92 @@ public class OnbeCardAccountOperations {
 
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.string_x address_1Obj = this.address_1;
+			String address_1Obj = this.address_1;
 			Dom.XmlNode address_1Node = outerNode.addChildElement('address_1', 'urn:AccountManagement', '');
 			if(address_1Obj != null){
 				address_1Obj.populateXmlNode(address_1Node);
 			}
 			
-			accountmanagement.string_x address_2Obj = this.address_2;
+			String address_2Obj = this.address_2;
 			Dom.XmlNode address_2Node = outerNode.addChildElement('address_2', 'urn:AccountManagement', '');
 			if(address_2Obj != null){
 				address_2Obj.populateXmlNode(address_2Node);
 			}
 			
-			accountmanagement.string_x business_phoneObj = this.business_phone;
+			String business_phoneObj = this.business_phone;
 			Dom.XmlNode business_phoneNode = outerNode.addChildElement('business_phone', 'urn:AccountManagement', '');
 			if(business_phoneObj != null){
 				business_phoneObj.populateXmlNode(business_phoneNode);
 			}
 			
-			accountmanagement.string_x cityObj = this.city;
+			String cityObj = this.city;
 			Dom.XmlNode cityNode = outerNode.addChildElement('city', 'urn:AccountManagement', '');
 			if(cityObj != null){
 				cityObj.populateXmlNode(cityNode);
 			}
 			
-			accountmanagement.string_x emailObj = this.email;
+			String emailObj = this.email;
 			Dom.XmlNode emailNode = outerNode.addChildElement('email', 'urn:AccountManagement', '');
 			if(emailObj != null){
 				emailObj.populateXmlNode(emailNode);
 			}
 			
-			accountmanagement.string_x first_nameObj = this.first_name;
+			String first_nameObj = this.first_name;
 			Dom.XmlNode first_nameNode = outerNode.addChildElement('first_name', 'urn:AccountManagement', '');
 			if(first_nameObj != null){
 				first_nameObj.populateXmlNode(first_nameNode);
 			}
 			
-			accountmanagement.string_x home_phoneObj = this.home_phone;
+			String home_phoneObj = this.home_phone;
 			Dom.XmlNode home_phoneNode = outerNode.addChildElement('home_phone', 'urn:AccountManagement', '');
 			if(home_phoneObj != null){
 				home_phoneObj.populateXmlNode(home_phoneNode);
 			}
 			
-			accountmanagement.string_x last_nameObj = this.last_name;
+			String last_nameObj = this.last_name;
 			Dom.XmlNode last_nameNode = outerNode.addChildElement('last_name', 'urn:AccountManagement', '');
 			if(last_nameObj != null){
 				last_nameObj.populateXmlNode(last_nameNode);
 			}
 			
-			accountmanagement.string_x mobile_phoneObj = this.mobile_phone;
+			String mobile_phoneObj = this.mobile_phone;
 			Dom.XmlNode mobile_phoneNode = outerNode.addChildElement('mobile_phone', 'urn:AccountManagement', '');
 			if(mobile_phoneObj != null){
 				mobile_phoneObj.populateXmlNode(mobile_phoneNode);
 			}
 			
-			accountmanagement.string_x stateObj = this.state;
+			String stateObj = this.state;
 			Dom.XmlNode stateNode = outerNode.addChildElement('state', 'urn:AccountManagement', '');
 			if(stateObj != null){
 				stateObj.populateXmlNode(stateNode);
 			}
 			
-			accountmanagement.string_x zipObj = this.zip;
+			String zipObj = this.zip;
 			Dom.XmlNode zipNode = outerNode.addChildElement('zip', 'urn:AccountManagement', '');
 			if(zipObj != null){
 				zipObj.populateXmlNode(zipNode);
 			}
 			
-			accountmanagement.string_x countryObj = this.country;
+			String countryObj = this.country;
 			Dom.XmlNode countryNode = outerNode.addChildElement('country', 'urn:AccountManagement', '');
 			if(countryObj != null){
 				countryObj.populateXmlNode(countryNode);
 			}
 		}
 	}
-
+ */
 	public class Registration {
-		public accountmanagement.string_x address_1;
-		public accountmanagement.string_x address_2;
-		public accountmanagement.string_x business_phone;
-		public accountmanagement.string_x city;
-		public accountmanagement.string_x email;
-		public accountmanagement.string_x first_name;
-		public accountmanagement.string_x home_phone;
-		public accountmanagement.string_x last_name;
-		public accountmanagement.string_x mobile_phone;
-		public accountmanagement.string_x state;
-		public accountmanagement.string_x zip;
+		public DOM.XmlNode address_1;
+		public DOM.XmlNode address_2;
+		public DOM.XmlNode business_phone;
+		public DOM.XmlNode city;
+		public DOM.XmlNode email;
+		public DOM.XmlNode first_name;
+		public DOM.XmlNode home_phone;
+		public DOM.XmlNode last_name;
+		public DOM.XmlNode mobile_phone;
+		public DOM.XmlNode state;
+		public DOM.XmlNode zip;
 		private transient String[] address_1_type_info = new String[]{'address_1',s_ns0,'string','1','1','true'};
 		private transient String[] address_2_type_info = new String[]{'address_2',s_ns0,'string','1','1','true'};
 		private transient String[] business_phone_type_info = new String[]{'business_phone',s_ns0,'string','1','1','true'};
@@ -1576,7 +1602,7 @@ public class OnbeCardAccountOperations {
 			if(address_1Node == null){
 				this.address_1 = null;
 			} else{
-				accountmanagement.string_x address_1Obj = new accountmanagement.string_x(address_1Node);
+				DOM.XmlNode address_1Obj = address_1Node;
 				nodesParsed.add(address_1Node);
 				this.address_1 = address_1Obj;
 			}
@@ -1585,7 +1611,7 @@ public class OnbeCardAccountOperations {
 			if(address_2Node == null){
 				this.address_2 = null;
 			} else{
-				accountmanagement.string_x address_2Obj = new accountmanagement.string_x(address_2Node);
+				DOM.XmlNode address_2Obj = address_2Node;
 				nodesParsed.add(address_2Node);
 				this.address_2 = address_2Obj;
 			}
@@ -1594,7 +1620,7 @@ public class OnbeCardAccountOperations {
 			if(business_phoneNode == null){
 				this.business_phone = null;
 			} else{
-				accountmanagement.string_x business_phoneObj = new accountmanagement.string_x(business_phoneNode);
+				DOM.XmlNode business_phoneObj = business_phoneNode;
 				nodesParsed.add(business_phoneNode);
 				this.business_phone = business_phoneObj;
 			}
@@ -1603,7 +1629,7 @@ public class OnbeCardAccountOperations {
 			if(cityNode == null){
 				this.city = null;
 			} else{
-				accountmanagement.string_x cityObj = new accountmanagement.string_x(cityNode);
+				DOM.XmlNode cityObj = cityNode;
 				nodesParsed.add(cityNode);
 				this.city = cityObj;
 			}
@@ -1612,7 +1638,7 @@ public class OnbeCardAccountOperations {
 			if(emailNode == null){
 				this.email = null;
 			} else{
-				accountmanagement.string_x emailObj = new accountmanagement.string_x(emailNode);
+				DOM.XmlNode emailObj = emailNode;
 				nodesParsed.add(emailNode);
 				this.email = emailObj;
 			}
@@ -1621,7 +1647,7 @@ public class OnbeCardAccountOperations {
 			if(first_nameNode == null){
 				this.first_name = null;
 			} else{
-				accountmanagement.string_x first_nameObj = new accountmanagement.string_x(first_nameNode);
+				DOM.XmlNode first_nameObj = first_nameNode;
 				nodesParsed.add(first_nameNode);
 				this.first_name = first_nameObj;
 			}
@@ -1630,7 +1656,7 @@ public class OnbeCardAccountOperations {
 			if(home_phoneNode == null){
 				this.home_phone = null;
 			} else{
-				accountmanagement.string_x home_phoneObj = new accountmanagement.string_x(home_phoneNode);
+				DOM.XmlNode home_phoneObj = home_phoneNode;
 				nodesParsed.add(home_phoneNode);
 				this.home_phone = home_phoneObj;
 			}
@@ -1639,7 +1665,7 @@ public class OnbeCardAccountOperations {
 			if(last_nameNode == null){
 				this.last_name = null;
 			} else{
-				accountmanagement.string_x last_nameObj = new accountmanagement.string_x(last_nameNode);
+				DOM.XmlNode last_nameObj = last_nameNode;
 				nodesParsed.add(last_nameNode);
 				this.last_name = last_nameObj;
 			}
@@ -1648,7 +1674,7 @@ public class OnbeCardAccountOperations {
 			if(mobile_phoneNode == null){
 				this.mobile_phone = null;
 			} else{
-				accountmanagement.string_x mobile_phoneObj = new accountmanagement.string_x(mobile_phoneNode);
+				DOM.XmlNode mobile_phoneObj = mobile_phoneNode;
 				nodesParsed.add(mobile_phoneNode);
 				this.mobile_phone = mobile_phoneObj;
 			}
@@ -1657,7 +1683,7 @@ public class OnbeCardAccountOperations {
 			if(stateNode == null){
 				this.state = null;
 			} else{
-				accountmanagement.string_x stateObj = new accountmanagement.string_x(stateNode);
+				DOM.XmlNode stateObj = stateNode;
 				nodesParsed.add(stateNode);
 				this.state = stateObj;
 			}
@@ -1666,7 +1692,7 @@ public class OnbeCardAccountOperations {
 			if(zipNode == null){
 				this.zip = null;
 			} else{
-				accountmanagement.string_x zipObj = new accountmanagement.string_x(zipNode);
+				DOM.XmlNode zipObj = zipNode;
 				nodesParsed.add(zipNode);
 				this.zip = zipObj;
 			}
@@ -1675,81 +1701,81 @@ public class OnbeCardAccountOperations {
 
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.string_x address_1Obj = this.address_1;
+			Dom.XmlNode address_1Obj = this.address_1;
 			Dom.XmlNode address_1Node = outerNode.addChildElement('address_1', 'urn:AccountManagement', '');
-			if(address_1Obj != null){
-				address_1Obj.populateXmlNode(address_1Node);
-			}
+			// if(address_1Obj != null){
+			// 	address_1Obj.populateXmlNode(address_1Node);
+			// }
 			
-			accountmanagement.string_x address_2Obj = this.address_2;
+			Dom.XmlNode address_2Obj = this.address_2;
 			Dom.XmlNode address_2Node = outerNode.addChildElement('address_2', 'urn:AccountManagement', '');
-			if(address_2Obj != null){
-				address_2Obj.populateXmlNode(address_2Node);
-			}
+			// if(address_2Obj != null){
+			// 	address_2Obj.populateXmlNode(address_2Node);
+			// }
 			
-			accountmanagement.string_x business_phoneObj = this.business_phone;
+			Dom.XmlNode business_phoneObj = this.business_phone;
 			Dom.XmlNode business_phoneNode = outerNode.addChildElement('business_phone', 'urn:AccountManagement', '');
-			if(business_phoneObj != null){
-				business_phoneObj.populateXmlNode(business_phoneNode);
-			}
+			// if(business_phoneObj != null){
+			// 	business_phoneObj.populateXmlNode(business_phoneNode);
+			// }
 			
-			accountmanagement.string_x cityObj = this.city;
+			Dom.XmlNode cityObj = this.city;
 			Dom.XmlNode cityNode = outerNode.addChildElement('city', 'urn:AccountManagement', '');
-			if(cityObj != null){
-				cityObj.populateXmlNode(cityNode);
-			}
+			// if(cityObj != null){
+			// 	cityObj.populateXmlNode(cityNode);
+			// }
 			
-			accountmanagement.string_x emailObj = this.email;
+			Dom.XmlNode emailObj = this.email;
 			Dom.XmlNode emailNode = outerNode.addChildElement('email', 'urn:AccountManagement', '');
-			if(emailObj != null){
-				emailObj.populateXmlNode(emailNode);
-			}
+			// if(emailObj != null){
+			// 	emailObj.populateXmlNode(emailNode);
+			// }
 			
-			accountmanagement.string_x first_nameObj = this.first_name;
+			Dom.XmlNode first_nameObj = this.first_name;
 			Dom.XmlNode first_nameNode = outerNode.addChildElement('first_name', 'urn:AccountManagement', '');
-			if(first_nameObj != null){
-				first_nameObj.populateXmlNode(first_nameNode);
-			}
+			// if(first_nameObj != null){
+			// 	first_nameObj.populateXmlNode(first_nameNode);
+			// }
 			
-			accountmanagement.string_x home_phoneObj = this.home_phone;
+			Dom.XmlNode home_phoneObj = this.home_phone;
 			Dom.XmlNode home_phoneNode = outerNode.addChildElement('home_phone', 'urn:AccountManagement', '');
-			if(home_phoneObj != null){
-				home_phoneObj.populateXmlNode(home_phoneNode);
-			}
+			// if(home_phoneObj != null){
+			// 	home_phoneObj.populateXmlNode(home_phoneNode);
+			// }
 			
-			accountmanagement.string_x last_nameObj = this.last_name;
+			Dom.XmlNode last_nameObj = this.last_name;
 			Dom.XmlNode last_nameNode = outerNode.addChildElement('last_name', 'urn:AccountManagement', '');
-			if(last_nameObj != null){
-				last_nameObj.populateXmlNode(last_nameNode);
-			}
+			// if(last_nameObj != null){
+			// 	last_nameObj.populateXmlNode(last_nameNode);
+			// }
 			
-			accountmanagement.string_x mobile_phoneObj = this.mobile_phone;
+			Dom.XmlNode mobile_phoneObj = this.mobile_phone;
 			Dom.XmlNode mobile_phoneNode = outerNode.addChildElement('mobile_phone', 'urn:AccountManagement', '');
-			if(mobile_phoneObj != null){
-				mobile_phoneObj.populateXmlNode(mobile_phoneNode);
-			}
+			// if(mobile_phoneObj != null){
+			// 	mobile_phoneObj.populateXmlNode(mobile_phoneNode);
+			// }
 			
-			accountmanagement.string_x stateObj = this.state;
+			Dom.XmlNode stateObj = this.state;
 			Dom.XmlNode stateNode = outerNode.addChildElement('state', 'urn:AccountManagement', '');
-			if(stateObj != null){
-				stateObj.populateXmlNode(stateNode);
-			}
+			// if(stateObj != null){
+			// 	stateObj.populateXmlNode(stateNode);
+			// }
 			
-			accountmanagement.string_x zipObj = this.zip;
+			Dom.XmlNode zipObj = this.zip;
 			Dom.XmlNode zipNode = outerNode.addChildElement('zip', 'urn:AccountManagement', '');
-			if(zipObj != null){
-				zipObj.populateXmlNode(zipNode);
-			}
+			// if(zipObj != null){
+			// 	zipObj.populateXmlNode(zipNode);
+			// }
 		}
 	}
 	
 	//Extends urn:AccountManagement:Response
 	public class ReissueResponse {
-		public Integer code;
-		public accountmanagement.string_x message;
+		public DOM.XmlNode code;
+		public DOM.XmlNode message;
 		private transient String[] code_type_info = new String[]{'code',s_ns0,'int','1','1','false'};
 		private transient String[] message_type_info = new String[]{'message',s_ns0,'string','1','1','true'};
-		public accountmanagement.CardDetail cardDetail;
+		public OnbeCardAccountOperations.CardDetail cardDetail;
 		private transient String[] cardDetail_type_info = new String[]{'cardDetail',s_ns0,'CardDetail','1','1','true'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
 		private transient String[] field_order_type_info = new String[]{'code','message','cardDetail'};
@@ -1760,14 +1786,14 @@ public class OnbeCardAccountOperations {
 		public ReissueResponse(DOM.XmlNode responseNode){
 			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
 			DOM.XmlNode codeNode = responseNode.getChildElement('code', 'urn:AccountManagement');
-			this.code = (codeNode == null) ? null : Integer.valueOf(codeNode.getText());
+			this.code = (codeNode == null) ? null : codeNode;
 			nodesParsed.add(codeNode);
 			//System.debug(this.code);			
 			DOM.XmlNode messageNode = responseNode.getChildElement('message', 'urn:AccountManagement');
 			if(messageNode == null){
 				this.message = null;
 			} else{
-				accountmanagement.string_x messageObj = new accountmanagement.string_x(messageNode);
+				DOM.XmlNode messageObj = messageNode;
 				nodesParsed.add(messageNode);
 				this.message = messageObj;
 			}
@@ -1776,7 +1802,7 @@ public class OnbeCardAccountOperations {
 			if(cardDetailNode == null){
 				this.cardDetail = null;
 			} else{
-				accountmanagement.CardDetail cardDetailObj = new accountmanagement.CardDetail(cardDetailNode);
+				OnbeCardAccountOperations.CardDetail cardDetailObj = new OnbeCardAccountOperations.CardDetail(cardDetailNode);
 				nodesParsed.add(cardDetailNode);
 				this.cardDetail = cardDetailObj;
 			}
@@ -1789,13 +1815,13 @@ public class OnbeCardAccountOperations {
 				codeNode.addTextNode(String.valueOf(this.code));
 			}
 			
-			accountmanagement.string_x messageObj = this.message;
+			DOM.XmlNode messageObj = this.message;
 			Dom.XmlNode messageNode = outerNode.addChildElement('message', 'urn:AccountManagement', '');
-			if(messageObj != null){
-				messageObj.populateXmlNode(messageNode);
-			}
+			// if(messageObj != null){
+			// 	messageObj.populateXmlNode(messageNode);
+			// }
 			
-			accountmanagement.CardDetail cardDetailObj = this.cardDetail;
+			OnbeCardAccountOperations.CardDetail cardDetailObj = this.cardDetail;
 			Dom.XmlNode cardDetailNode = outerNode.addChildElement('cardDetail', 'urn:AccountManagement', '');
 			if(cardDetailObj != null){
 				cardDetailObj.populateXmlNode(cardDetailNode);
@@ -1804,8 +1830,8 @@ public class OnbeCardAccountOperations {
 	}
 
 	public class Response {
-		public Integer code;
-		public accountmanagement.string_x message;
+		public DOM.XmlNode code;
+		public DOM.XmlNode message;
 		private transient String[] code_type_info = new String[]{'code',s_ns0,'int','1','1','false'};
 		private transient String[] message_type_info = new String[]{'message',s_ns0,'string','1','1','true'};
 		private transient String[] apex_schema_type_info = new String[]{s_ns0,'true','false'};
@@ -1817,14 +1843,14 @@ public class OnbeCardAccountOperations {
 		public Response(DOM.XmlNode responseNode){
 			Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
 			DOM.XmlNode codeNode = responseNode.getChildElement('code', 'urn:AccountManagement');
-			this.code = (codeNode == null) ? null : Integer.valueOf(codeNode.getText());
+			this.code = (codeNode == null) ? null : codeNode;
 			nodesParsed.add(codeNode);
 			//System.debug(this.code);			
 			DOM.XmlNode messageNode = responseNode.getChildElement('message', 'urn:AccountManagement');
 			if(messageNode == null){
 				this.message = null;
 			} else{
-				accountmanagement.string_x messageObj = new accountmanagement.string_x(messageNode);
+				DOM.XmlNode messageObj = messageNode;
 				nodesParsed.add(messageNode);
 				this.message = messageObj;
 			}
@@ -1837,21 +1863,22 @@ public class OnbeCardAccountOperations {
 				codeNode.addTextNode(String.valueOf(this.code));
 			}
 			
-			accountmanagement.string_x messageObj = this.message;
-			Dom.XmlNode messageNode = outerNode.addChildElement('message', 'urn:AccountManagement', '');
-			if(messageObj != null){
-				messageObj.populateXmlNode(messageNode);
-			}
+			// String messageObj = this.message;
+			// Dom.XmlNode messageNode = outerNode.addChildElement('message', 'urn:AccountManagement', '');
+			// if(messageObj != null){
+			// 	messageObj.populateXmlNode(messageNode);
+			// }
 		}
 	}
 
+	/* 
 	public class TransactionDetail {
-		public accountmanagement.ArrayOf_tns1_PaymentDetail payment_details;
+		public OnbeCardAccountOperations.ArrayOf_tns1_PaymentDetail payment_details;
 		public Integer transaction_amount;
 		public DateTime transaction_date;
-		public accountmanagement.string_x transaction_details;
+		public String transaction_details;
 		public Integer transaction_fee;
-		public accountmanagement.string_x transaction_type;
+		public String transaction_type;
 		private transient String[] payment_details_type_info = new String[]{'payment_details',s_ns0,'ArrayOf_tns1_PaymentDetail','1','1','true'};
 		private transient String[] transaction_amount_type_info = new String[]{'transaction_amount',s_ns0,'int','1','1','false'};
 		private transient String[] transaction_date_type_info = new String[]{'transaction_date',s_ns0,'dateTime','1','1','true'};
@@ -1870,7 +1897,7 @@ public class OnbeCardAccountOperations {
 			if(payment_detailsNode == null){
 				this.payment_details = null;
 			} else{
-				accountmanagement.ArrayOf_tns1_PaymentDetail payment_detailsObj = new accountmanagement.ArrayOf_tns1_PaymentDetail(payment_detailsNode);
+				OnbeCardAccountOperations.ArrayOf_tns1_PaymentDetail payment_detailsObj = new OnbeCardAccountOperations.ArrayOf_tns1_PaymentDetail(payment_detailsNode);
 				nodesParsed.add(payment_detailsNode);
 				this.payment_details = payment_detailsObj;
 			}
@@ -1880,14 +1907,14 @@ public class OnbeCardAccountOperations {
 			nodesParsed.add(transaction_amountNode);
 			//System.debug(this.transaction_amount);			
 			DOM.XmlNode transaction_dateNode = responseNode.getChildElement('transaction_date', 'urn:AccountManagement');
-			this.transaction_date = (transaction_dateNode == null || transaction_dateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : accountmanagement.parseDateTime(transaction_dateNode.getText());
+			this.transaction_date = (transaction_dateNode == null || transaction_dateNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : OnbeCardAccountOperations.parseDateTime(transaction_dateNode.getText());
 			nodesParsed.add(transaction_dateNode);
 			//System.debug(this.transaction_date);			
 			DOM.XmlNode transaction_detailsNode = responseNode.getChildElement('transaction_details', 'urn:AccountManagement');
 			if(transaction_detailsNode == null){
 				this.transaction_details = null;
 			} else{
-				accountmanagement.string_x transaction_detailsObj = new accountmanagement.string_x(transaction_detailsNode);
+				String transaction_detailsObj = new OnbeCardAccountOperations.string_x(transaction_detailsNode);
 				nodesParsed.add(transaction_detailsNode);
 				this.transaction_details = transaction_detailsObj;
 			}
@@ -1900,7 +1927,7 @@ public class OnbeCardAccountOperations {
 			if(transaction_typeNode == null){
 				this.transaction_type = null;
 			} else{
-				accountmanagement.string_x transaction_typeObj = new accountmanagement.string_x(transaction_typeNode);
+				String transaction_typeObj = new OnbeCardAccountOperations.string_x(transaction_typeNode);
 				nodesParsed.add(transaction_typeNode);
 				this.transaction_type = transaction_typeObj;
 			}
@@ -1909,7 +1936,7 @@ public class OnbeCardAccountOperations {
 
 		public void populateXmlNode(Dom.XmlNode outerNode){
 			
-			accountmanagement.ArrayOf_tns1_PaymentDetail payment_detailsObj = this.payment_details;
+			OnbeCardAccountOperations.ArrayOf_tns1_PaymentDetail payment_detailsObj = this.payment_details;
 			Dom.XmlNode payment_detailsNode = outerNode.addChildElement('payment_details', 'urn:AccountManagement', '');
 			if(payment_detailsObj != null){
 				payment_detailsObj.populateXmlNode(payment_detailsNode);
@@ -1923,7 +1950,7 @@ public class OnbeCardAccountOperations {
 				transaction_dateNode.addTextNode(String.valueOf(this.transaction_date));
 			}
 			
-			accountmanagement.string_x transaction_detailsObj = this.transaction_details;
+			String transaction_detailsObj = this.transaction_details;
 			Dom.XmlNode transaction_detailsNode = outerNode.addChildElement('transaction_details', 'urn:AccountManagement', '');
 			if(transaction_detailsObj != null){
 				transaction_detailsObj.populateXmlNode(transaction_detailsNode);
@@ -1933,12 +1960,12 @@ public class OnbeCardAccountOperations {
 				transaction_feeNode.addTextNode(String.valueOf(this.transaction_fee));
 			}
 			
-			accountmanagement.string_x transaction_typeObj = this.transaction_type;
+			String transaction_typeObj = this.transaction_type;
 			Dom.XmlNode transaction_typeNode = outerNode.addChildElement('transaction_type', 'urn:AccountManagement', '');
 			if(transaction_typeObj != null){
 				transaction_typeObj.populateXmlNode(transaction_typeNode);
 			}
 		}
-	}
+	} */
     
 }

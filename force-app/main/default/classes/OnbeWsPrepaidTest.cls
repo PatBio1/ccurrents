@@ -169,7 +169,7 @@ private class OnbeWsPrepaidTest {
 	@isTest static void coverCodeForcreateAccount(){
 		Test.setMock(WebServiceMock.class, new OnBeWsPrepaidHttpMock());
 		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
-		System.assertEquals(null, testObject.createAccount(null, null, null, null, null, null));
+		System.assertEquals(null, testObject.createAccount(null, null, null, null, null, null, null, null));
 	}
 
 	@isTest static void coverCodeForcreateBulkOrder(){
@@ -253,7 +253,7 @@ private class OnbeWsPrepaidTest {
 	@isTest static void coverCodeForCreateAccount_Http(){
 		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
-		System.assertNotEquals(null, testObject.createAccount_Http(null, null, null, null, null, null));		
+		System.assertNotEquals(null, testObject.createAccount_Http(null, null, null, null, null, null, null, null, null, null));		
 	}
 
 /**

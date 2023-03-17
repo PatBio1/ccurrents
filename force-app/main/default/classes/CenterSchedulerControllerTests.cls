@@ -221,9 +221,10 @@ public with sharing class CenterSchedulerControllerTests {
             
             Test.stopTest();
 
-            visit = [SELECT Id, Appointment__c FROM Visit__c limit 1];
+            visit = [SELECT Id, Appointment__c, Appointment__r.Booked__c FROM Visit__c limit 1];
 
             system.assertEquals(appointments[1].id, visit.Appointment__c);
+            system.assertEquals(1, visit.Appointment__r.Booked__c);
         }
 
     }
@@ -246,7 +247,8 @@ public with sharing class CenterSchedulerControllerTests {
                         Schedule__c = schedule.Id,
                     Datetime__c = DateTime.newInstance(2023, 1, 10, 10, 0, 0),
                     Duration__c = 10,
-                    Capacity__c = 5
+                    Capacity__c = 5,
+                    Booked__c = 1 // A visit is added later in the test
                 ),
                 new Appointment__c(
                         Schedule__c = schedule.Id,
@@ -280,10 +282,11 @@ public with sharing class CenterSchedulerControllerTests {
             
             Test.stopTest();
 
-            visit = [SELECT Id, Status__c, Outcome__c FROM Visit__c limit 1];
+            visit = [SELECT Id, Status__c, Outcome__c, Appointment__r.Booked__c FROM Visit__c limit 1];
 
             system.assertEquals('Complete', visit.Status__c);
             system.assertEquals('Canceled', visit.Outcome__c);
+            system.assertEquals(0, visit.Appointment__r.Booked__c);
         }
 
     }
@@ -330,7 +333,7 @@ public with sharing class CenterSchedulerControllerTests {
         Test.stopTest();
 
         Visit__c createdVisit = [
-            SELECT Id, Status__c 
+            SELECT Id, Status__c, Appointment__r.Booked__c 
             FROM Visit__c 
             WHERE Center_Donation_Type__r.Center__c = :targetCenter.Id AND
                 Donor__c = :targetDonor.PersonContactId AND
@@ -339,5 +342,6 @@ public with sharing class CenterSchedulerControllerTests {
 
         Assert.isNotNull(createdVisit, 'Couldn\'t find the desired visit record. Either it wasn\'t created or the data wasn\'t set correctly.');
         Assert.areEqual('Scheduled', createdVisit.Status__c, 'The status of the visit should default to \'Scheduled\'');
+        Assert.areEqual(1, createdVisit.Appointment__r.Booked__c, 'Adding a visit should have incremented the appointment booked value');
     }
 }

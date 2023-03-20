@@ -47,6 +47,10 @@
                 <field>DonorId__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Edit</behavior>
+                <field>isLegacyDonor__pc</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Required</behavior>
                 <field>Status__pc</field>
             </layoutItems>
@@ -92,15 +96,19 @@
         <customLabel>true</customLabel>
         <detailHeading>true</detailHeading>
         <editHeading>true</editHeading>
-        <label>Visit Calcs</label>
+        <label>Visit History</label>
         <layoutColumns>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>Last_Donation__pc</field>
+                <field>Total_Visits__pc</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>First_Donation__pc</field>
+                <behavior>Edit</behavior>
+                <field>Total_Visits_32d__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Total_Visits_365d__pc</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
@@ -108,11 +116,46 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Last_Previous_Donation__pc</field>
+                <field>Last_Used_Center__pc</field>
+            </layoutItems>
+        </layoutColumns>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>First_Visit__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>First_Donation__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>First_Visit_Anniversary__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Next_Visit__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Total_Future_Visits__pc</field>
+            </layoutItems>
+        </layoutColumns>
+        <style>TwoColumnsLeftToRight</style>
+    </layoutSections>
+    <layoutSections>
+        <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>Visit Calcs</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Last_Donation__pc</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
-                <field>Last_Used_Center__pc</field>
+                <field>Last_Previous_Donation__pc</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
@@ -132,26 +175,6 @@
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Total_Visits__pc</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Total_Future_Visits__pc</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>First_Visit__pc</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>First_Visit_Anniversary__pc</field>
-            </layoutItems>
-            <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Next_Visit__pc</field>
-            </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>Soonest_Next_Visit__pc</field>
@@ -354,6 +377,11 @@
     <platformActionList>
         <actionListContext>Record</actionListContext>
         <platformActionListItems>
+            <actionName>Edit</actionName>
+            <actionType>StandardButton</actionType>
+            <sortOrder>0</sortOrder>
+        </platformActionListItems>
+        <platformActionListItems>
             <actionName>FeedItem.TextPost</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>1</sortOrder>
@@ -412,11 +440,6 @@
             <actionName>NewTask</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>12</sortOrder>
-        </platformActionListItems>
-        <platformActionListItems>
-            <actionName>Edit</actionName>
-            <actionType>StandardButton</actionType>
-            <sortOrder>0</sortOrder>
         </platformActionListItems>
     </platformActionList>
     <relatedLists>
@@ -495,7 +518,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00hDL000009ZHZo</masterLabel>
+        <masterLabel>00h8I000000qhQ6</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

@@ -65,7 +65,8 @@ private class OnbeWsManageCardTest {
 	@isTest static void coverCodeForaccountInquiry(){
 		Test.setMock(WebServiceMock.class, new OnbeWsManageCardHttpMock());
 		OnbeWsManageCard.AccountManagement testObject = new OnbeWsManageCard.AccountManagement();
-		testObject.accountInquiry();
+		testObject.accountInquiry('', '', '', '', '', 
+			null, null, null, 0, 0, 0);
 	}
 	@isTest static void coverCodeForpayoutAccountInquiry(){
 		Test.setMock(WebServiceMock.class, new OnbeWsManageCardHttpMock());
@@ -85,7 +86,8 @@ private class OnbeWsManageCardTest {
 	@isTest static void coverCodeForaccountInquiry_Http(){
 		Test.setMock(HttpCalloutMock.class, new OnbeWsManageCardHttpCalloutMock());
 		OnbeWsManageCard.AccountManagement testObject = new OnbeWsManageCard.AccountManagement();
-		testObject.accountInquiry_Http();		
+		testObject.accountInquiry_Http('', '', '', '', '', 
+			null, null, null, 0, 0, 0);		
 	}
 	@isTest static void coverCodeForpayoutAccountInquiry_Http(){
 		Test.setMock(HttpCalloutMock.class, new OnbeWsManageCardHttpCalloutMock());

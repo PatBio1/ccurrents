@@ -16,8 +16,32 @@ public with sharing class OnbeWsManageCard {
 		public Integer timeout_x;
 		private transient String[] ns_map_type_info = new String[]{'urn:CardManagement','cardmanagement'};
 		
-        public void accountInquiry() {
-			OnbeWsManageCard.AccountManagement request_x = new OnbeWsManageCard.AccountManagement();
+        public void accountInquiry(String application_id,
+			String card_number, //Card Number string, or pass an empty string if you do not want to pass.
+			String puid,  //PUID string, or pass an empty string if you do not want to pass.
+		 	String ppd,   //PPD string, or pass an empty string if you do not want to pass.
+			String mobile_phone,  // Phone Number string, or pass an empty string if you do not want to pass.
+			Integer balance_detail,  // INT 0 indicates no balance information to be returned. 1 to have it returned.
+			Integer journal_detail,  // 0 have it returned indicates no transaction history and 2 to have it returned and to set to be returned. 1 to PPID, if any, in the transaction_details response field.
+			Integer registration_detail, // Pass 0 for no registration information to be returned, or 1 to have it returned.
+			Integer start_date,  // year, month, day. Example: 20090213 would be passed for February 13, 2009. Can pass 0 if you don't want a start date.
+			Integer end_date, // Same as above. Can pass 0 if you don't want a end date.
+			Integer max_items
+		) {
+			// OnbeWsManageCard.AccountManagement request_x = new OnbeWsManageCard.AccountManagement();
+			OnbeWsManageCard.AccountInquiryRequest request_x = new OnbeWsManageCard.AccountInquiryRequest();
+			request_x.application_id = application_id;
+			request_x.card_number = card_number;
+			request_x.puid = puid;
+			request_x.ppd = ppd;
+			request_x.mobile_phone = mobile_phone;
+			request_x.balance_detail = balance_detail;
+			request_x.journal_detail = journal_detail;
+			request_x.registration_detail = registration_detail;
+			request_x.start_date = start_date;
+			request_x.end_date = end_date;
+			request_x.max_items = max_items;
+
 			OnbeWsManageCard.AccountManagement response_x;
 		    // A map of key-value pairs that represent the response that the external service sends after receiving the request. In each pair, the key is a response identifier. The value is the response object, which is an instance of a type that is created as part of the auto-generated stub class.
 			Map<String, OnbeWsManageCard.AccountManagement> response_map_x = new Map<String, OnbeWsManageCard.AccountManagement>();
@@ -78,11 +102,38 @@ public with sharing class OnbeWsManageCard {
 		private void AddHeader(DOM.XmlNode header){
 		}
 
-		public void accountInquiry_Http() {
+		// String application_id;
+		// public String card_number;  //Card Number string, or pass an empty string if you do not want to pass.
+		// public String puid;  //PUID string, or pass an empty string if you do not want to pass.
+		// public String ppd;   //PPD string, or pass an empty string if you do not want to pass.
+		// public String mobile_phone;  // Phone Number string, or pass an empty string if you do not want to pass.
+		// public Integer balance_detail;  // INT 0 indicates no balance information to be returned. 1 to have it returned.
+		// public Integer journal_detail;  // 0 have it returned indicates no transaction history and 2 to have it returned and to set to be returned. 1 to PPID, if any, in the transaction_details response field.
+		// public Integer registration_detail; // Pass 0 for no registration information to be returned, or 1 to have it returned.
+		// public Integer start_date;  // year, month, day. Example: 20090213 would be passed for February 13, 2009. Can pass 0 if you don't want a start date.
+		// public Integer end_date; // Same as above. Can pass 0 if you don't want a end date.
+		// public Integer max_items; 
+		public void accountInquiry_Http( String application_id,
+			String card_number,
+			String puid,
+		 	String ppd, 
+			String mobile_phone,
+			Integer balance_detail, 
+			Integer journal_detail, 
+			Integer registration_detail, 
+			Integer start_date, 
+			Integer end_date,
+			Integer max_items) {
+
 			DOM.Document doc = new DOM.Document();
 			DOM.XmlNode body = populateDoc(doc);
 			DOM.XmlNode methodNode = body.addChildElement('accountInquiry', uriCardManagementMainEndpoint, '');			
 			
+			// http method needs some type of request object which can be populated and passed into the SOAP body element
+			OnbeWsManageCard.AccountInquiryRequest request_x = new OnbeWsManageCard.AccountInquiryRequest(application_id, card_number, puid, ppd, mobile_phone,
+				balance_detail, journal_detail, registration_detail, start_date, end_date, max_items);
+			request_x.populateXmlNode(methodNode);
+
 			HttpRequest req = new HttpRequest();
 			req.setEndpoint(endpoint_x);
 			req.setMethod('POST');
@@ -92,13 +143,12 @@ public with sharing class OnbeWsManageCard {
 			req.setBodyDocument(doc);
 			//System.debug(req.getBody());
 			Http http = new Http();
-			HTTPResponse res = http.send(req);
+			HttpResponse res = http.send(req);
 			//System.debug(res.getBody());
 			Dom.Document responseDoc = res.getBodyDocument();
 			Dom.XmlNode rootNode = responseDoc.getRootElement();
 			Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
-			Dom.XmlNode Node = bodyNode.getChildElement('', uriCardManagementMainEndpoint);
-						
+			Dom.XmlNode Node = bodyNode.getChildElement('', uriCardManagementMainEndpoint);			
 		}
  
 		public void payoutAccountInquiry_Http() {
@@ -123,4 +173,136 @@ public with sharing class OnbeWsManageCard {
 			Dom.XmlNode Node = bodyNode.getChildElement('', uriCardManagementMainEndpoint);
 		}
  	}
+
+	public class AccountInquiryRequest {
+
+		// Request
+		public String application_id;
+		public String card_number;  //Card Number string, or pass an empty string if you do not want to pass.
+		public String puid;  //PUID string, or pass an empty string if you do not want to pass.
+		public String ppd;   //PPD string, or pass an empty string if you do not want to pass.
+		public String mobile_phone;  // Phone Number string, or pass an empty string if you do not want to pass.
+		public Integer balance_detail;  // INT 0 indicates no balance information to be returned. 1 to have it returned.
+		public Integer journal_detail;  // 0 have it returned indicates no transaction history and 2 to have it returned and to set to be returned. 1 to PPID, if any, in the transaction_details response field.
+		public Integer registration_detail; // Pass 0 for no registration information to be returned, or 1 to have it returned.
+		public Integer start_date;  // year, month, day. Example: 20090213 would be passed for February 13, 2009. Can pass 0 if you don't want a start date.
+		public Integer end_date; // Same as above. Can pass 0 if you don't want a end date.
+		public Integer max_items;  // Maximum number of transactions to return. If you pass 0 for start_date and end_date, and 20 for max_items, then you will get the last 20 transactions.There will be an array of transactions returned, up to "max_items".
+
+		public AccountInquiryRequest() {
+		}
+
+		public AccountInquiryRequest( String application_id,
+			String card_number,
+			String puid,
+			String ppd,
+			String mobile_phone,
+			Integer balance_detail,
+			Integer journal_detail,
+			Integer registration_detail,
+			Integer start_date,
+			Integer end_date,
+			Integer max_items ){
+				this.application_id = application_id;
+				this.card_number = card_number;
+				this.puid = puid;
+				this.ppd = ppd;
+				this.mobile_phone = mobile_phone;
+				this.balance_detail = balance_detail;
+				this.journal_detail = journal_detail;
+				this.registration_detail = registration_detail;
+				this.start_date = start_date;
+				this.end_date = end_date;
+				this.max_items = max_items;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode){
+			
+			//System.assertEquals('accountInquiry', outerNode.getName());
+			Dom.XmlNode applicationIdNode = outerNode.addChildElement('application_id', uriCardManagementMainEndpoint, '');
+			if(this.application_id != null){
+				applicationIdNode.addTextNode(this.application_id);
+			}
+			
+			Dom.XmlNode cardNumberNode = outerNode.addChildElement('card_number', uriCardManagementMainEndpoint, '');
+			if(this.card_number != null){
+				cardNumberNode.addTextNode(this.card_number);
+			}
+			Dom.XmlNode puidNode = outerNode.addChildElement('puid', uriCardManagementMainEndpoint, '');
+			if(this.puid != null){
+				puidNode.addTextNode(this.puid);
+			}
+			Dom.XmlNode ppdNode = outerNode.addChildElement('ppd', uriCardManagementMainEndpoint, '');
+			if(this.ppd != null){
+				ppdNode.addTextNode(this.ppd);
+			}
+			Dom.XmlNode mobilePhoneNode = outerNode.addChildElement('mobile_phone', uriCardManagementMainEndpoint, '');
+			if(this.mobile_phone != null){
+				mobilePhoneNode.addTextNode(this.mobile_phone);
+			}
+			Dom.XmlNode balanceDetailNode = outerNode.addChildElement('balance_detail', uriCardManagementMainEndpoint, '');
+			if(this.balance_detail != null){
+				balanceDetailNode.addTextNode(String.valueOf(this.balance_detail));
+			}
+			Dom.XmlNode journeyDetailNode = outerNode.addChildElement('journey_detail', uriCardManagementMainEndpoint, '');
+			if(this.journal_detail != null){
+				journeyDetailNode.addTextNode(String.valueOf(this.journal_detail));
+			}
+			Dom.XmlNode registrationDetailNode = outerNode.addChildElement('registration_detail', uriCardManagementMainEndpoint, '');
+			if(this.registration_detail != null){
+				registrationDetailNode.addTextNode(String.valueOf(this.registration_detail));
+			}
+			Dom.XmlNode startDateNode = outerNode.addChildElement('start_date', uriCardManagementMainEndpoint, '');
+			if(this.start_date != null){
+				startDateNode.addTextNode(String.valueOf(this.start_date));
+			}
+			Dom.XmlNode endDateNode = outerNode.addChildElement('end_date', uriCardManagementMainEndpoint, '');
+			if(this.end_date != null){
+				endDateNode.addTextNode(String.valueOf(this.end_date));
+			}
+			Dom.XmlNode maxItemsNode = outerNode.addChildElement('max_items', uriCardManagementMainEndpoint, '');
+			if(this.max_items != null){
+				maxItemsNode.addTextNode(String.valueOf(this.max_items));
+			}
+			// OnbeDomainPrepaid.Link linkObj = this.link;
+			// Dom.XmlNode linkNode = outerNode.addChildElement('link', uriCardManagementMainEndpoint, '');
+			// if(linkObj != null){
+			// 	linkObj.populateXmlNode(linkNode);
+			// }
+		}
+
+	}
+
+	public class AccountInquiryResponse {
+
+		public Integer code; // 0 Request Processed Successfully
+		public String message; // Diagnostic message (80 Characters max)
+			// > Registration - populated only if 1 was passed in registration_detail
+			// public String first_name;  // First name of cardholder.
+			// public String last_name;  // Last name of cardholder.
+			// public String email;  // Email Address of cardholder.
+			// public String address_1;  // Address 1 field of cardholder address.
+			// public String address_2;  // Address 2 field of cardholder address.
+			// public String city;  // City field of cardholder address.
+			// public String state; // State field of cardholder address.
+			// public String zip;  //Postal code field of cardholder address
+			// public String home_phone;  // Home phone number of cardholder.
+			// public String business_phone;   //Business phone number of cardholder.
+			// public String mobile_phone;  // Mobile (Cell) phone number of cardholder.
+			// > Balance - populated only if 1 was passed in balance_detail
+			// public Integer balance_available;  // Available balance after deducting any pending transactions.
+			// public Integer balance_ledger;  // Balance of settled transactions (without deducting pending).
+			// public Integer balance_pending;  // Amount pending on the account,Not yet settled.
+			// public Datetime balance_date;  // May be null. Date of last sync of balance.
+			// > Card Detail
+			// public String card_number; // Card number will always be masked (except last eight digits).
+			// public String puid;  // Partner user identifier.
+			// public Integer program_id;  // Program ID associated with cardholder’s card.
+			// public Datetime created_date;  // Creation date of account.
+			// public Datetime last_plastic_date;  //  Date of last plastic issued.
+			// public Datetime ship_date;  // Date card shipped in the mail.
+			// public String expiration;  // Expiration date of card. (Example:"02/2010")
+			// public String account_status;  //  Possible Values: Active Canceled  Frozen  Lost/Stolen Contact us for Status 
+	}
+
 }

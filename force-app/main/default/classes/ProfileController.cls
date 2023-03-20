@@ -1,5 +1,10 @@
 public without sharing class ProfileController {
 
+    public static final Integer MAX_EMAIL_VERIFICATION_CODES = 3;
+    public static final Integer MAX_EMAIL_VERIFICATION_ATTEMPTS = 3;
+    public static final Integer MAX_SMS_VERIFICATION_CODES = 3;
+    public static final Integer MAX_SMS_VERIFICATION_ATTEMPTS = 3;
+
     @AuraEnabled
     public static Id upsertLead(Profile profile) {
         try {
@@ -91,6 +96,125 @@ public without sharing class ProfileController {
             ];
 
             Database.delete(contentVersion.ContentDocumentId);
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
+    public static Boolean sendVerificationEmail(Profile profile) {
+        try {
+            Util.testExceptionHandling();
+
+            Lead lead = [SELECT Email_Verification_Codes_Sent__c FROM Lead WHERE Id = :profile.id];
+
+            Integer emailVerificationCodesSent = (lead.Email_Verification_Codes_Sent__c == null ? 0 : lead.Email_Verification_Codes_Sent__c.intValue());
+
+            if (emailVerificationCodesSent < MAX_EMAIL_VERIFICATION_CODES) {
+                lead.Email_Verification_Code__c = Util.generateVerificationCode();
+                lead.Email_Verification_Codes_Sent__c = emailVerificationCodesSent + 1;
+                lead.Email_Verification_Attempts__c = 0;
+                update lead;
+
+                Id orgWideEmailId = Util.getOrgWideEmailAddress(Constants.ORG_WIDE_EMAIL_NAME);
+
+                Id verificationCodeTemplateId = [SELECT Id FROM EmailTemplate WHERE DeveloperName = 'Verification_Code'].Id;
+
+                Messaging.SingleEmailMessage emailMessage = new Messaging.SingleEmailMessage();
+                emailMessage.setOrgWideEmailAddressId(orgWideEmailId);
+                emailMessage.setTemplateId(verificationCodeTemplateId);
+                emailMessage.setTargetObjectId(lead.Id);
+    
+                Messaging.sendEmail(new List<Messaging.SingleEmailMessage>{emailMessage});
+
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
+    public static String verifyEmailCode(Profile profile) {
+        try {
+            Util.testExceptionHandling();
+
+            Lead lead = [SELECT Email_Verification_Code__c, Email_Verification_Attempts__c FROM Lead WHERE Id = :profile.id];
+
+            Integer emailVerificationAttempts = (lead.Email_Verification_Attempts__c == null ? 0 : lead.Email_Verification_Attempts__c.intValue());
+
+            if (emailVerificationAttempts < MAX_EMAIL_VERIFICATION_ATTEMPTS) {
+                if (profile.emailCode == lead.Email_Verification_Code__c) {
+                    lead.isEmailVerified__c = true;
+                    update lead;
+    
+                    return Constants.VERIFICATION_RESULT_SUCCESS;
+                } else {
+                    lead.Email_Verification_Attempts__c = emailVerificationAttempts + 1;
+                    update lead;
+
+                    return Constants.VERIFICATION_RESULT_INCORRECT;
+                }
+            } else {
+                return Constants.VERIFICATION_RESULT_TOO_MANY;
+            }
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
+    public static Boolean sendVerificationSms(Profile profile) {
+        try {
+            Util.testExceptionHandling();
+
+            Lead lead = [SELECT SMS_Verification_Codes_Sent__c FROM Lead WHERE Id = :profile.id];
+
+            Integer smsVerificationCodesSent = (lead.SMS_Verification_Codes_Sent__c == null ? 0 : lead.SMS_Verification_Codes_Sent__c.intValue());
+
+            if (smsVerificationCodesSent < MAX_SMS_VERIFICATION_CODES) {
+                lead.SMS_Verification_Code__c = Util.generateVerificationCode();
+                lead.SMS_Verification_Codes_Sent__c = smsVerificationCodesSent + 1;
+                lead.SMS_Verification_Attempts__c = 0;
+                update lead;
+
+                // TODO - send code via SMS.
+
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
+    public static String verifySmsCode(Profile profile) {
+        try {
+            Util.testExceptionHandling();
+
+            Lead lead = [SELECT SMS_Verification_Code__c, SMS_Verification_Attempts__c FROM Lead WHERE Id = :profile.id];
+
+            Integer smsVerificationAttempts = (lead.SMS_Verification_Attempts__c == null ? 0 : lead.SMS_Verification_Attempts__c.intValue());
+
+            if (smsVerificationAttempts < MAX_SMS_VERIFICATION_ATTEMPTS) {
+                if (profile.smsCode == lead.SMS_Verification_Code__c) {
+                    lead.isSMSVerified__c = true;
+                    update lead;
+    
+                    return Constants.VERIFICATION_RESULT_SUCCESS;
+                } else {
+                    lead.SMS_Verification_Attempts__c = smsVerificationAttempts + 1;
+                    update lead;
+
+                    return Constants.VERIFICATION_RESULT_INCORRECT;
+                }
+            } else {
+                return Constants.VERIFICATION_RESULT_TOO_MANY;
+            }
         } catch (Exception e) {
             throw Util.createAuraHandledException(e);
         }
@@ -243,6 +367,12 @@ public without sharing class ProfileController {
 
         @AuraEnabled
         public String password {get; set;}
+
+        @AuraEnabled
+        public String emailCode {get; set;}
+
+        @AuraEnabled
+        public String smsCode {get; set;}
 
     }
 

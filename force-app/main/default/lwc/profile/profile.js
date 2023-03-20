@@ -1,5 +1,6 @@
 import { api, track, LightningElement } from 'lwc';
 import { loadStyle } from 'lightning/platformResourceLoader';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import labels from 'c/labelService';
 import util from 'c/util';
 import upsertLead from '@salesforce/apex/ProfileController.upsertLead';
@@ -7,8 +8,20 @@ import createUser from '@salesforce/apex/ProfileController.createUser';
 import setupUser from '@salesforce/apex/ProfileController.setupUser';
 import setupPhoto from '@salesforce/apex/ProfileController.setupPhoto';
 import removePhoto from '@salesforce/apex/ProfileController.removePhoto';
+import sendVerificationEmail from '@salesforce/apex/ProfileController.sendVerificationEmail';
+import verifyEmailCode from '@salesforce/apex/ProfileController.verifyEmailCode';
+import sendVerificationSms from '@salesforce/apex/ProfileController.sendVerificationSms';
+import verifySmsCode from '@salesforce/apex/ProfileController.verifySmsCode';
 import login from '@salesforce/apex/LoginController.login';
 import fileUploadStyles from '@salesforce/resourceUrl/fileUploadStyles';
+
+const PAGE_BASIC_PROFILE = 'Basic Profile';
+const PAGE_ADDRESS = 'Address';
+const PAGE_PICTURE = 'Picture';
+const PAGE_PASSWORD = 'Password';
+const PAGE_VERIFY_EMAIL = 'Verify Email';
+const PAGE_VERIFY_PHONE = 'Verify Phone';
+const PAGE_CONGRATULATIONS = 'Congratulations';
 
 export default class Profile extends LightningElement {
 
@@ -20,31 +33,51 @@ export default class Profile extends LightningElement {
 
     labels = labels;
     loading = false;
-    currentPage = 'Basic Profile';
+    currentPage = PAGE_BASIC_PROFILE;
     @track profile = {
         howGetToCenter: ''
     };
+    resendEmailCodeEnabled = true;
+    emailVerificationsExhausted = false;
+    resendSmsCodeEnabled = true;
+    smsVerificationsExhausted = false;
 
     @api center;
 
+    get verifyEmailInstructionsLabel() {
+        return labels.formatLabel(labels.verifyEmailInstructions, [this.profile.email]);
+    }
+
+    get verifyPhoneInstructionsLabel() {
+        return labels.formatLabel(labels.verifyPhoneInstructions, [this.profile.mobilePhone]);
+    }
+
     get showBasicProfile() {
-        return (this.currentPage === 'Basic Profile');
+        return (this.currentPage === PAGE_BASIC_PROFILE);
     }
 
     get showAddress() {
-        return (this.currentPage === 'Address');
+        return (this.currentPage === PAGE_ADDRESS);
     }
 
     get showPicture() {
-        return (this.currentPage === 'Picture');
+        return (this.currentPage === PAGE_PICTURE);
     }
 
     get showPassword() {
-        return (this.currentPage === 'Password');
+        return (this.currentPage === PAGE_PASSWORD);
+    }
+
+    get showVerifyEmail() {
+        return (this.currentPage === PAGE_VERIFY_EMAIL);
+    }
+
+    get showVerifyPhone() {
+        return (this.currentPage === PAGE_VERIFY_PHONE);
     }
 
     get showCongratulations() {
-        return (this.currentPage === 'Congratulations');
+        return (this.currentPage === PAGE_CONGRATULATIONS);
     }
 
     get carSelected() {
@@ -165,6 +198,20 @@ export default class Profile extends LightningElement {
         );
     }
 
+    get verifyEmailValid() {
+        return (
+            util.isNotBlank(this.profile.emailCode) &&
+            this.profile.emailCode.trim().length === 6
+        );
+    }
+
+    get verifySmsValid() {
+        return (
+            util.isNotBlank(this.profile.smsCode) &&
+            this.profile.smsCode.trim().length === 6
+        );
+    }
+
     connectedCallback() {
         Promise.all([
             loadStyle(this, fileUploadStyles)
@@ -233,7 +280,7 @@ export default class Profile extends LightningElement {
             console.log('upsertLead response', response);
             this.profile.id = response;
 
-            this.currentPage = 'Address';
+            this.currentPage = PAGE_ADDRESS;
         }).catch((error) => {
             console.log(error);
         }).finally(() => {
@@ -253,7 +300,7 @@ export default class Profile extends LightningElement {
         upsertLead(request).then(response => {
             console.log('upsertLead response', response);
 
-            this.currentPage = 'Basic Profile';
+            this.currentPage = PAGE_BASIC_PROFILE;
         }).catch((error) => {
             console.log(error);
         }).finally(() => {
@@ -273,7 +320,7 @@ export default class Profile extends LightningElement {
         upsertLead(request).then(response => {
             console.log('upsertLead response', response);
 
-            this.currentPage = 'Picture';
+            this.currentPage = PAGE_PICTURE;
         }).catch((error) => {
             console.log(error);
         }).finally(() => {
@@ -322,18 +369,170 @@ export default class Profile extends LightningElement {
     }
 
     onPicturePreviousButtonClick() {
-        this.currentPage = 'Address';
+        this.currentPage = PAGE_ADDRESS;
     }
 
     onPictureNextButtonClick() {
-        this.currentPage = 'Password';
+        this.currentPage = PAGE_PASSWORD;
     }
 
     onPasswordPreviousButtonClick() {
-        this.currentPage = 'Picture';
+        this.currentPage = PAGE_PICTURE;
     }
 
     onPasswordNextButtonClick() {
+        this.loading = true;
+
+        const request = {
+            profile: this.profile
+        };
+
+        console.log('sendVerificationEmail request', JSON.stringify(request));
+
+        sendVerificationEmail(request).then(response => {
+            console.log('sendVerificationEmail response', response);
+
+            this.currentPage = PAGE_VERIFY_EMAIL;
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
+            this.loading = false;
+        });
+    }
+
+    onResendEmailCodeButtonClick() {
+        this.loading = true;
+
+        const request = {
+            profile: this.profile
+        };
+
+        console.log('sendVerificationEmail request', JSON.stringify(request));
+
+        sendVerificationEmail(request).then(response => {
+            console.log('sendVerificationEmail response', response);
+            if (response !== true) {
+                this.resendEmailCodeEnabled = false;
+                console.log('out of attempts');
+            }
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
+            this.loading = false;
+        });
+
+        this.profile.emailCode = '';
+    }
+
+    onVerifyEmailSkipButtonClick() {
+        this.currentPage = PAGE_VERIFY_PHONE;
+    }
+
+    onVerifyEmailButtonClick() {
+        this.loading = true;
+
+        const request = {
+            profile: this.profile
+        };
+
+        console.log('verifyEmailCode request', JSON.stringify(request));
+
+        verifyEmailCode(request).then(response => {
+            console.log('verifyEmailCode response', response);
+            const result = response.replaceAll('"', '');
+
+            if (result === 'Success') {
+                sendVerificationSms(request).then(response => {
+                    console.log('sendVerificationSms response', response);
+                    this.currentPage = PAGE_VERIFY_PHONE;
+                }).catch((error) => {
+                    console.log('sendVerificationSms error', error);
+                }).finally(() => {
+                    this.loading = false;
+                });
+            } else if (result === 'Incorrect') {
+                this.loading = false;
+
+                const event = new ShowToastEvent({
+                    variant: 'error',
+                    title: 'Incorrect Code',
+                    message: 'The code you entered is incorrect, please try again.'
+                });
+
+                this.dispatchEvent(event);
+            } else {
+                this.emailVerificationsExhausted = true;
+                this.loading = false;
+            }
+        }).catch((error) => {
+            console.log(error);
+            this.loading = false;
+        });
+    }
+
+    onResendSmsCodeButtonClick() {
+        this.loading = true;
+
+        const request = {
+            profile: this.profile
+        };
+
+        console.log('sendVerificationSms request', JSON.stringify(request));
+
+        sendVerificationSms(request).then(response => {
+            console.log('sendVerificationSms response', response);
+            if (response !== true) {
+                console.log('out of attempts');
+            }
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
+            this.loading = false;
+        });
+
+        this.profile.smsCode = '';
+    }
+
+    onVerifyPhoneSkipButtonClick() {
+        this.phoneVerified();
+    }
+
+    onVerifyPhoneButtonClick() {
+        this.loading = true;
+
+        const request = {
+            profile: this.profile
+        };
+
+        console.log('verifySmsCode request', JSON.stringify(request));
+
+        verifySmsCode(request).then(response => {
+            console.log('verifySmsCode response', response);
+            const result = response.replaceAll('"', '');
+
+            if (result === 'Success') {
+                this.phoneVerified();
+            } else if (result === 'Incorrect') {
+                this.loading = false;
+
+                const event = new ShowToastEvent({
+                    variant: 'error',
+                    title: 'Incorrect Code',
+                    message: 'The code you entered is incorrect, please try again.'
+                });
+
+                this.dispatchEvent(event);
+            } else {
+                this.smsVerificationsExhausted = true;
+                this.loading = false;
+            }
+        }).catch((error) => {
+            console.log(error);
+            this.loading = false;
+        });
+    }
+
+    phoneVerified() {
         this.loading = true;
 
         this.profile.centerId = this.center.id;
@@ -385,7 +584,7 @@ export default class Profile extends LightningElement {
         console.log('setupUser request', JSON.stringify(request));
 
         setupUser(request).then(response => {
-            this.currentPage = 'Congratulations';
+            this.currentPage = PAGE_CONGRATULATIONS;
         }).catch((error) => {
             console.log(error);
         }).finally(() => {

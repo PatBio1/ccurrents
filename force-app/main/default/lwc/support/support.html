@@ -1,0 +1,36 @@
+<template>
+
+    <div class="slds-var-p-around_medium">
+        <div class="title-medium slds-m-bottom_small">
+            {labels.contactAndSupport}
+        </div>
+
+        <div class="slds-m-bottom_small">
+            {labels.supportInformation}
+        </div>
+
+        <div class="slds-m-bottom_small">
+            <strong>{labels.loveToHearFromYou}</strong>
+        </div>
+
+        <div class="slds-m-bottom_small">
+            <lightning-textarea label={labels.message} value={message} onchange={onMessageChange}></lightning-textarea>
+        </div>
+
+        <div class="slds-m-bottom_medium">
+            <lightning-button if:true={messageValid} label={labels.submit} variant="brand" stretch="true" class="primary-button" onclick={onSubmitButtonClick}></lightning-button>
+            <button if:false={messageValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.submit}</button>
+        </div>
+
+        <div class="slds-m-bottom_small">
+            <strong>{labels.phone}</strong><br/>
+            (800) 504-1337
+        </div>
+
+        <div>
+            <strong>{labels.email}</strong><br/>
+            info@proesisbio.com
+        </div>
+    </div>
+
+</template>

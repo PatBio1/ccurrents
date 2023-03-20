@@ -12,7 +12,13 @@ public with sharing class Constants {
 
     public static final String EXPERIENCE_GUEST_PERMISSION_SET_NAME = 'Proesis Mobile Guest User';
 
+    public static final String ORG_WIDE_EMAIL_NAME = 'Proesis Plus';
+
     public static final String USERNAME_SUFFIX = '.prodx';
+
+    public static final String VERIFICATION_RESULT_SUCCESS = 'Success';
+    public static final String VERIFICATION_RESULT_INCORRECT = 'Incorrect';
+    public static final String VERIFICATION_RESULT_TOO_MANY = 'Too Many';
 
     public static final String VISIT_STATUS_CHECKEDIN = 'Checked-In';
 

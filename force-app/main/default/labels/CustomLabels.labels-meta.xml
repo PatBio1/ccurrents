@@ -29,11 +29,25 @@
         <value>Address</value>
     </labels>
     <labels>
+        <fullName>All</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>All</shortDescription>
+        <value>All</value>
+    </labels>
+    <labels>
         <fullName>Already_Have_An_Account</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Already Have An Account</shortDescription>
         <value>I already have an account</value>
+    </labels>
+    <labels>
+        <fullName>Apply</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Apply</shortDescription>
+        <value>Apply</value>
     </labels>
     <labels>
         <fullName>Back</fullName>
@@ -48,6 +62,13 @@
         <protected>true</protected>
         <shortDescription>Back To Centers</shortDescription>
         <value>Back to Centers</value>
+    </labels>
+    <labels>
+        <fullName>Back_To_Donor_Tips</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Back To Donor Tips</shortDescription>
+        <value>Back to Donor Tips</value>
     </labels>
     <labels>
         <fullName>Back_To_Homepage</fullName>
@@ -69,6 +90,13 @@
         <protected>true</protected>
         <shortDescription>Basic Profile</shortDescription>
         <value>Basic Profile</value>
+    </labels>
+    <labels>
+        <fullName>Buddy_Rewards</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Buddy Rewards</shortDescription>
+        <value>Buddy Rewards</value>
     </labels>
     <labels>
         <fullName>Bus</fullName>
@@ -169,6 +197,20 @@
         <value>Congratulations</value>
     </labels>
     <labels>
+        <fullName>Contact_And_Support</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Contact And Support</shortDescription>
+        <value>Contact &amp; Support</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tips</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donor Tips</shortDescription>
+        <value>Donor Tips</value>
+    </labels>
+    <labels>
         <fullName>Email</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -188,6 +230,13 @@
         <protected>true</protected>
         <shortDescription>English</shortDescription>
         <value>English</value>
+    </labels>
+    <labels>
+        <fullName>Enter_Code</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Enter Code</shortDescription>
+        <value>Enter Code</value>
     </labels>
     <labels>
         <fullName>Enter_Password</fullName>
@@ -223,6 +272,13 @@
         <protected>true</protected>
         <shortDescription>Friday Abbreviation</shortDescription>
         <value>Fri</value>
+    </labels>
+    <labels>
+        <fullName>Goals_Tracker</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Goals_Tracker</shortDescription>
+        <value>Goals Tracker</value>
     </labels>
     <labels>
         <fullName>How_Will_You_Get_To_Center</fullName>
@@ -274,6 +330,34 @@
         <value>Are you sure that you want to log out?</value>
     </labels>
     <labels>
+        <fullName>Lost_My_Card</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Lost My Card</shortDescription>
+        <value>I lost my card</value>
+    </labels>
+    <labels>
+        <fullName>Love_To_Hear_From_You</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Love To Hear From You</shortDescription>
+        <value>We'd Love to Hear From You!</value>
+    </labels>
+    <labels>
+        <fullName>Loyalty_Tiers</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loyalty Tiers</shortDescription>
+        <value>Loyalty Tiers</value>
+    </labels>
+    <labels>
+        <fullName>Message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Message</shortDescription>
+        <value>Message</value>
+    </labels>
+    <labels>
         <fullName>Middle_Name</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -307,6 +391,13 @@
         <protected>true</protected>
         <shortDescription>My Appointments</shortDescription>
         <value>My Appointments</value>
+    </labels>
+    <labels>
+        <fullName>My_Balance</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>My Balance</shortDescription>
+        <value>My Balance</value>
     </labels>
     <labels>
         <fullName>My_Location</fullName>
@@ -344,6 +435,13 @@
         <value>Notifications</value>
     </labels>
     <labels>
+        <fullName>No_Payments_Yet</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>No Payments Yet</shortDescription>
+        <value>No payments yet...</value>
+    </labels>
+    <labels>
         <fullName>Password</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -379,6 +477,13 @@
         <value>Past</value>
     </labels>
     <labels>
+        <fullName>Payment_History</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Payment History</shortDescription>
+        <value>Payment History</value>
+    </labels>
+    <labels>
         <fullName>Per_Pt</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -386,11 +491,25 @@
         <value>per pt</value>
     </labels>
     <labels>
+        <fullName>Personal_Card</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Personal Card</shortDescription>
+        <value>Personal Card</value>
+    </labels>
+    <labels>
         <fullName>Personal_Information</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Personal Information</shortDescription>
         <value>Personal Information</value>
+    </labels>
+    <labels>
+        <fullName>Phone</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Phone</shortDescription>
+        <value>Phone</value>
     </labels>
     <labels>
         <fullName>Plasma_Donation_Saves_Lives</fullName>
@@ -435,11 +554,32 @@
         <value>Remove photo</value>
     </labels>
     <labels>
+        <fullName>Resend_Code</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Resend Code</shortDescription>
+        <value>Resend Code</value>
+    </labels>
+    <labels>
         <fullName>Results_For</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Results For</shortDescription>
         <value>Results for:</value>
+    </labels>
+    <labels>
+        <fullName>Rewards_Explained</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Rewards Explained</shortDescription>
+        <value>Rewards Explained</value>
+    </labels>
+    <labels>
+        <fullName>Rewards_Explanation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Rewards Explanation</shortDescription>
+        <value>Introducing the royalty program. Keep track of your annual donations using the app, and earn more rewards. Reach Gold Status and earn the most amount of points and receive the best time spots.</value>
     </labels>
     <labels>
         <fullName>Saturday</fullName>
@@ -454,6 +594,13 @@
         <protected>true</protected>
         <shortDescription>Saturday Abbreviation</shortDescription>
         <value>Sat</value>
+    </labels>
+    <labels>
+        <fullName>Saved</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Saved</shortDescription>
+        <value>Saved</value>
     </labels>
     <labels>
         <fullName>Schedule</fullName>
@@ -491,6 +638,13 @@
         <value>Select Time Slot</value>
     </labels>
     <labels>
+        <fullName>Set_Goal</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Set Goal</shortDescription>
+        <value>Set a Goal</value>
+    </labels>
+    <labels>
         <fullName>Set_Your_Password</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -503,6 +657,13 @@
         <protected>true</protected>
         <shortDescription>Sign_Up</shortDescription>
         <value>Sign up</value>
+    </labels>
+    <labels>
+        <fullName>Skip_For_Now</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Skip For Now</shortDescription>
+        <value>Skip for now</value>
     </labels>
     <labels>
         <fullName>Social_Photo</fullName>
@@ -540,11 +701,32 @@
         <value>Street Address 2</value>
     </labels>
     <labels>
+        <fullName>Submit</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Submit</shortDescription>
+        <value>Submit</value>
+    </labels>
+    <labels>
         <fullName>Suffix</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Suffix</shortDescription>
         <value>Suffix</value>
+    </labels>
+    <labels>
+        <fullName>Support</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Support</shortDescription>
+        <value>Support</value>
+    </labels>
+    <labels>
+        <fullName>Support_Information</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Support Information</shortDescription>
+        <value>If you're a new donor, current donor, job seeker, corporate partner, or are simply interested in learning more about our company, we want to hear from you. Send us a message using the form below, and we'll reply as soon as possible.</value>
     </labels>
     <labels>
         <fullName>Sunday</fullName>
@@ -589,6 +771,13 @@
         <value>Thu</value>
     </labels>
     <labels>
+        <fullName>Track_Your_Progress</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Track Your Progress</shortDescription>
+        <value>Track Your Progress</value>
+    </labels>
+    <labels>
         <fullName>Tuesday</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -617,11 +806,46 @@
         <value>Upload another photo</value>
     </labels>
     <labels>
+        <fullName>Verify_Email</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Verify Email</shortDescription>
+        <value>Verify Email</value>
+    </labels>
+    <labels>
+        <fullName>Verify_Email_Instructions</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Verify Email Instructions</shortDescription>
+        <value>We sent you a verification code to your email &lt;strong&gt;{0}&lt;/strong&gt;. Please check and enter the code below.</value>
+    </labels>
+    <labels>
+        <fullName>Verify_Phone</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Verify Phone</shortDescription>
+        <value>Verify Phone Number</value>
+    </labels>
+    <labels>
+        <fullName>Verify_Phone_Instructions</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Verify Phone Instructions</shortDescription>
+        <value>We sent you a verification code to your mobile phone &lt;strong&gt;{0}&lt;/strong&gt;. Please check and enter the code below.</value>
+    </labels>
+    <labels>
         <fullName>Walk</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Walk</shortDescription>
         <value>Walk</value>
+    </labels>
+    <labels>
+        <fullName>Watch_Video</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Watch Video</shortDescription>
+        <value>Watch Video</value>
     </labels>
     <labels>
         <fullName>Wednesday</fullName>

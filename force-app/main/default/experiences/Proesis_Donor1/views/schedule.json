@@ -1,6 +1,7 @@
 {
   "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
   "componentName" : "siteforce:sldsOneColLayout",
+  "dataProviders" : [ ],
   "id" : "742febe3-6d85-4567-9ae3-266c7e3b8ca6",
   "label" : "Schedule",
   "regions" : [ {

@@ -1,0 +1,46 @@
+{
+  "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
+  "componentName" : "siteforce:sldsOneColLayout",
+  "dataProviders" : [ ],
+  "id" : "cd4f52f0-af28-4326-8187-c891d3f76f2f",
+  "label" : "Loyalty Tiers",
+  "regions" : [ {
+    "id" : "f9fd2567-f881-418d-9c6b-992ebbf052e1",
+    "regionName" : "header",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : { },
+      "componentName" : "c:LoyaltyTiersWrapper",
+      "id" : "3b548457-aee4-4a15-8471-03d0b1b0adbb",
+      "renderPriority" : "NEUTRAL",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "34ed7631-cb04-4c26-a38d-66b1dc73e316",
+    "regionName" : "content",
+    "type" : "region"
+  }, {
+    "id" : "b84108cc-8607-447e-b48b-11f3690f4242",
+    "regionName" : "footer",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : {
+        "customHeadTags" : "",
+        "description" : "",
+        "title" : "Loyalty Tiers"
+      },
+      "componentName" : "forceCommunity:seoAssistant",
+      "id" : "5449b2d9-2c12-43be-afce-d89f85dd44b4",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "8b298b29-125a-498b-9315-518ccf1dd24a",
+    "regionName" : "sfdcHiddenRegion",
+    "type" : "region"
+  } ],
+  "themeLayoutType" : "KEg3kA3MunIOnpvEUYA8EXxeKjluzc",
+  "type" : "view",
+  "viewType" : "custom-loyalty-tiers"
+}

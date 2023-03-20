@@ -29,7 +29,7 @@ export default class MyRewards extends LightningElement {
         }
         ,
         {
-            name: 'Donor Tips',
+            name: labels.donorTips,
             articles: [
                 {
                     id: '5678',

@@ -1,0 +1,11 @@
+{
+  "activeViewId" : "641fd334-e7bf-461a-b477-9e7725f8a98f",
+  "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
+  "configurationTags" : [ ],
+  "id" : "3f7b1c7a-d700-42d3-b990-55ec90bc0171",
+  "label" : "Donor Tips",
+  "pageAccess" : "UseParent",
+  "routeType" : "custom-donor-tips",
+  "type" : "route",
+  "urlPrefix" : "donor-tips"
+}

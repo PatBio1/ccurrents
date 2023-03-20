@@ -8,6 +8,28 @@
     height: 50px;
 }
 
+:host .menu-option-button {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.logout {
+    position: absolute;
+    bottom: 70px;
+    width: 100%;
+}
+
+:host .logout-button {
+    --sds-c-button-text-color: white;
+    --sds-c-button-text-color-hover: white;
+}
+
+.logout-icon {
+    --lwc-colorTextIconDefault: white;
+    transform: rotate(-180deg);
+}
+
 .notification-badge {
     position: absolute;
     right: 15px;

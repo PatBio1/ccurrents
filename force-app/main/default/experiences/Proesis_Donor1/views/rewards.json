@@ -1,6 +1,7 @@
 {
   "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
   "componentName" : "siteforce:sldsOneColLayout",
+  "dataProviders" : [ ],
   "id" : "9c25e2e8-e4b7-4fc5-a1b2-0f20ede5d783",
   "label" : "Rewards",
   "regions" : [ {

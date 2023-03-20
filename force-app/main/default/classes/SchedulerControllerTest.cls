@@ -147,6 +147,9 @@ public with sharing class SchedulerControllerTest {
         system.assertEquals(1, tasks.size());
         system.assertEquals('First Visit Code', tasks[0].Subject);
         system.assertEquals(7, tasks[0].Description.length());
+
+        Appointment__c targetAppointment = [SELECT Id, Booked__c FROM Appointment__c WHERE Id = :appointment.Id LIMIT 1];
+        system.assertEquals(1, targetAppointment.Booked__c, 'Adding a visit should increment the booked value');
     }
 
 }

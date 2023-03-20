@@ -116,9 +116,16 @@ public without sharing class SchedulerController {
         try {
             User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
 
-            Contact contact = [SELECT ID, Account.First_Visit_Code__c FROM Contact WHERE  Id =: user.ContactId][0];
+            Contact contact = [SELECT ID, Account.First_Visit_Code__c, Loyalty_Level__c FROM Contact WHERE  Id =: user.ContactId][0];
+            Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(contact.Loyalty_Level__c);
 
-            Appointment__c appointment = [SELECT Schedule__r.Center__c FROM Appointment__c WHERE Id = :appointmentId];
+            Appointment__c appointment = [SELECT Schedule__r.Center__c, Booked__c, Booked_Loyalty__c FROM Appointment__c WHERE Id = :appointmentId];
+            if (loyaltyLevel > 0) {
+                appointment.Booked_Loyalty__c += 1;
+            } else {
+                appointment.Booked__c += 1;
+            }
+            update appointment;
 
             Center_Donation_Type__c centerDonationType = [
                 SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :appointment.Schedule__r.Center__c LIMIT 1

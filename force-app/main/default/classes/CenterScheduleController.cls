@@ -148,9 +148,24 @@ public with sharing class CenterScheduleController {
 
     @AuraEnabled
     public static void addVisit(Id donorId, Id appointmentSlotId, Id centerId) {
+        Account donor = [SELECT PersonContactId, Loyalty_Level__pc FROM Account WHERE Id = :donorId LIMIT 1];
+        Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__pc);
+
+        Appointment__c targetSlot = [SELECT Id, Booked__c, Booked_Loyalty__c FROM Appointment__c WHERE Id = :appointmentSlotId LIMIT 1];
+        if (loyaltyLevel > 0) {
+            if (targetSlot.Booked_Loyalty__c == null) {
+                targetSlot.Booked_Loyalty__c = 1;
+            } else {
+                targetSlot.Booked_Loyalty__c += 1;
+            }
+        } else {
+            targetSlot.Booked__c += 1;
+        }
+        update targetSlot;
+
         try {
             insert new Visit__c(
-                Donor__c = [SELECT PersonContactId FROM Account WHERE Id = :donorId LIMIT 1]?.PersonContactId,
+                Donor__c = donor.PersonContactId,
                 Center_Donation_Type__c = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :centerId LIMIT 1]?.Id,
                 Appointment__c = appointmentSlotId,
                 Status__c = 'Scheduled'
@@ -162,14 +177,35 @@ public with sharing class CenterScheduleController {
 
     @AuraEnabled
     public static void changeVisitAppointment(Id visitId, Id appointmentId){
-        try {
-            if(appointmentId != null){
-                Visit__c visit = new Visit__c(
-                    Appointment__c = appointmentId
-                );
-                visit.Id = visitId;
-                update visit;
+        if (appointmentId == null) {
+            return;
+        }
+
+        Visit__c visitDetails = [SELECT Id, Appointment__c, Donor__r.Loyalty_Level__c FROM Visit__c WHERE Id = :visitId LIMIT 1];
+        Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(visitDetails.Donor__r.Loyalty_Level__c);
+        
+        List<Appointment__c> targetAppointments = [SELECT Id, Booked__c, Booked_Loyalty__c FROM Appointment__c WHERE Id IN (:visitDetails.Appointment__c, :appointmentId)];
+        Appointment__c oldAppointment = (targetAppointments[0].Id == visitDetails.Appointment__c) ? targetAppointments[0] : targetAppointments[1];
+        Appointment__c newAppointment = (targetAppointments[0].Id == appointmentId) ? targetAppointments[0] : targetAppointments[1];
+
+        if (loyaltyLevel > 0) {
+            oldAppointment.Booked_Loyalty__c -= 1;
+
+            if (newAppointment.Booked_Loyalty__c == null) {
+                newAppointment.Booked_Loyalty__c = 1;
+            } else {
+                newAppointment.Booked_Loyalty__c += 1;
             }
+        } else {
+            oldAppointment.Booked__c -= 1;
+            newAppointment.Booked__c += 1;
+        }
+
+        update targetAppointments;
+
+        try {
+            visitDetails.Appointment__c = appointmentId;
+            update visitDetails;
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -177,14 +213,22 @@ public with sharing class CenterScheduleController {
 
     @AuraEnabled 
     public static void cancelVisit(Id visitId){
-        try {
+        Visit__c visitDetails = [SELECT Id, Appointment__c, Appointment__r.Booked__c, Appointment__r.Booked_Loyalty__c, Donor__r.Loyalty_Level__c FROM Visit__c WHERE Id = :visitId LIMIT 1];
+        Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(visitDetails.Donor__r.Loyalty_Level__c);
 
-            Visit__c visit = new Visit__c(
-                Status__c = 'Complete',
-                Outcome__c = 'Canceled'
-            );
-            visit.Id = visitId;
-            update visit;
+        Appointment__c appointmentToUpdate = new Appointment__c(Id = visitDetails.Appointment__c, Booked__c = visitDetails.Appointment__r.Booked__c, Booked_Loyalty__c = visitDetails.Appointment__r.Booked_Loyalty__c);
+        if (loyaltyLevel > 0) {
+            appointmentToUpdate.Booked_Loyalty__c -= 1;
+        } else {
+            appointmentToUpdate.Booked__c -= 1;
+        }
+        update appointmentToUpdate;
+
+        try {
+            visitDetails.Status__c = 'Complete';
+            visitDetails.Outcome__c = 'Canceled';
+
+            update visitDetails;
             
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());

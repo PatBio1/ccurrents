@@ -1,8 +1,8 @@
 <template>
     <div style="position: relative;">
-        <div class={loyaltyBadgeDisplayClass}>
-            <lightning-icon class="rounded-slds-icon" icon-name="utility:favorite" size="xx-small">
-            </lightning-icon>
+        <div class="loyalty-badge">
+            <c-loyalty-tier-badge width="48px" height="48px" loyalty-tier-name={donor.loyaltyTierName}>
+            </c-loyalty-tier-badge>
         </div>
 
         <div if:true={displaySpecialTasks} class="special-tasks-badge">

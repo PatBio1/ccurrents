@@ -124,6 +124,18 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
             this.initDefaultFilters = true;
         }
+
+        for(let filterButton of [
+            ...this.template.querySelectorAll(".legend-entry[data-status-api-name]"),
+            ...this.template.querySelectorAll(".legend-entry[data-outcome-api-name]") 
+        ]) {
+            if (
+                (filterButton.dataset.statusApiName && this.filters.status.includes(filterButton.dataset.statusApiName)) ||
+                (filterButton.dataset.outcomeApiName && this.filters.outcome.includes(filterButton.dataset.outcomeApiName)) 
+            ) {
+                filterButton.classList.add("slds-button_brand");
+            }
+        }
     }
 
     refresh() {
@@ -372,6 +384,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             console.log("generateUrlError", generateUrlPromises);
         } finally {
             this.appointments = queriedAppointments;
+            if (this.filters.hasActiveFilters()) {
+                this.applyFilters();
+            }
+
             this.loading = false;
         }
     }

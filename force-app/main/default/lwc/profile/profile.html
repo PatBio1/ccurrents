@@ -246,8 +246,8 @@
                     <lightning-button label={labels.skipForNow} stretch="true" class="secondary-button" onclick={onVerifyPhoneSkipButtonClick}></lightning-button>
                 </div>
                 <div class="slds-col slds-size_1-of-2">
-                    <lightning-button if:true={verifyPhoneValid} label={labels.verifyPhone} variant="brand" stretch="true" class="primary-button" onclick={onVerifyPhoneButtonClick}></lightning-button>
-                    <button if:false={verifyPhoneValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.verifyPhone}</button>
+                    <lightning-button if:true={verifySmsValid} label={labels.verifyPhone} variant="brand" stretch="true" class="primary-button" onclick={onVerifyPhoneButtonClick}></lightning-button>
+                    <button if:false={verifySmsValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.verifyPhone}</button>
                 </div>
             </div>
         </template>

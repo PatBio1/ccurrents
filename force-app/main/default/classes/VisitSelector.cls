@@ -15,4 +15,12 @@ public without sharing class VisitSelector {
         return results;
     }
 
+    public static List<Visit__c> getVisitsInDateRange(Date startDate, Date endDate){
+        Datetime scheduleStart = Datetime.newInstance(startDate, Time.newInstance(0,0,0,0));
+        Datetime scheduleEnd = Datetime.newInstance(endDate, Time.newInstance(23,59,59,0));
+        List<Visit__c> results = [SELECT Id, Donor__c, Status__c, Appointment__r.Datetime__c FROM Visit__c WHERE Appointment__r.Datetime__c >= :scheduleStart AND Appointment__r.Datetime__c <= :scheduleEnd];
+
+        return results;
+    }
+
 }

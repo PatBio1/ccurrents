@@ -1,0 +1,46 @@
+{
+  "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
+  "componentName" : "siteforce:sldsOneColLayout",
+  "dataProviders" : [ ],
+  "id" : "641fd334-e7bf-461a-b477-9e7725f8a98f",
+  "label" : "Donor Tips",
+  "regions" : [ {
+    "id" : "1ff96ebf-3b03-4535-8fcc-37dc032a1552",
+    "regionName" : "header",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : { },
+      "componentName" : "c:DonorTipsWrapper",
+      "id" : "e2a450e7-da01-45e5-98f6-5c17b306e36c",
+      "renderPriority" : "NEUTRAL",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "1fbd6bb3-36dd-4b19-a4fc-54e5ed7a6d4c",
+    "regionName" : "content",
+    "type" : "region"
+  }, {
+    "id" : "bbc0c1d0-72dc-432f-b48c-7e63e21f517e",
+    "regionName" : "footer",
+    "type" : "region"
+  }, {
+    "components" : [ {
+      "componentAttributes" : {
+        "customHeadTags" : "",
+        "description" : "",
+        "title" : "Donor Tips"
+      },
+      "componentName" : "forceCommunity:seoAssistant",
+      "id" : "af4ae502-0328-4ce6-b3a0-e698d5840d2b",
+      "renditionMap" : { },
+      "type" : "component"
+    } ],
+    "id" : "89e77128-9f29-4fd1-9d51-0404c2f3263d",
+    "regionName" : "sfdcHiddenRegion",
+    "type" : "region"
+  } ],
+  "themeLayoutType" : "KEg3kA3MunIOnpvEUYA8EXxeKjluzc",
+  "type" : "view",
+  "viewType" : "custom-donor-tips"
+}

@@ -180,6 +180,84 @@
         </div>
     </div>
 
+    <div if:true={showVerifyEmail} class="slds-var-p-around_medium">
+        <div class="title-medium slds-text-align_center slds-m-vertical_large">
+            {labels.verifyEmail}
+        </div>
+
+        <template if:false={emailVerificationsExhausted}>
+            <div class="slds-text-align_center slds-m-vertical_large">
+                <lightning-formatted-rich-text value={verifyEmailInstructionsLabel}></lightning-formatted-rich-text>
+            </div>
+
+            <c-progress-indicator steps="7" current-step="6"></c-progress-indicator>
+
+            <div class="slds-m-vertical_large">
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="text" label={labels.enterCode} value={profile.emailCode} max-length="6" data-field="emailCode" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small slds-text-align_right">
+                    <lightning-button if:true={resendEmailCodeEnabled} variant="base" label={labels.resendCode} class="tertiary-button" onclick={onResendEmailCodeButtonClick}></lightning-button>
+                    <lightning-button if:false={resendEmailCodeEnabled} variant="base" label={labels.resendCode} class="tertiary-button" disabled></lightning-button>
+                </div>
+            </div>
+
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-button label={labels.skipForNow} stretch="true" class="secondary-button" onclick={onVerifyEmailSkipButtonClick}></lightning-button>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-button if:true={verifyEmailValid} label={labels.verifyEmail} variant="brand" stretch="true" class="primary-button" onclick={onVerifyEmailButtonClick}></lightning-button>
+                    <button if:false={verifyEmailValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.verifyEmail}</button>
+                </div>
+            </div>
+        </template>
+        <div if:true={emailVerificationsExhausted} class="slds-text-align_center">
+            <div class="slds-m-bottom_large" style="color: red;">We cannot verify your email at this time. Please try again later.</div>
+
+            <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+        </div>
+    </div>
+
+    <div if:true={showVerifyPhone} class="slds-var-p-around_medium">
+        <div class="title-medium slds-text-align_center slds-m-vertical_large">
+            {labels.verifyPhone}
+        </div>
+
+        <template if:false={smsVerificationsExhausted}>
+            <div class="slds-text-align_center slds-m-vertical_large">
+                <lightning-formatted-rich-text value={verifyPhoneInstructionsLabel}></lightning-formatted-rich-text>
+            </div>
+
+            <c-progress-indicator steps="7" current-step="7"></c-progress-indicator>
+
+            <div class="slds-m-vertical_large">
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="text" label={labels.enterCode} value={profile.smsCode} max-length="6" data-field="smsCode" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small slds-text-align_right">
+                    <lightning-button if:true={resendSmsCodeEnabled} variant="base" label={labels.resendCode} class="tertiary-button" onclick={onResendSmsCodeButtonClick}></lightning-button>
+                    <lightning-button if:false={resendSmsCodeEnabled} variant="base" label={labels.resendCode} class="tertiary-button" disabled></lightning-button>
+                </div>
+            </div>
+
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-button label={labels.skipForNow} stretch="true" class="secondary-button" onclick={onVerifyPhoneSkipButtonClick}></lightning-button>
+                </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-button if:true={verifyPhoneValid} label={labels.verifyPhone} variant="brand" stretch="true" class="primary-button" onclick={onVerifyPhoneButtonClick}></lightning-button>
+                    <button if:false={verifyPhoneValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.verifyPhone}</button>
+                </div>
+            </div>
+        </template>
+        <div if:true={smsVerificationsExhausted} class="slds-text-align_center">
+            <div class="slds-m-bottom_large" style="color: red;">We cannot verify your phone number at this time. Please try again later.</div>
+
+            <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+        </div>
+    </div>
+
     <div if:true={showCongratulations} class="slds-var-p-around_medium">
         <div class="title-medium slds-text-align_center slds-m-vertical_large">
             {labels.congratulations}

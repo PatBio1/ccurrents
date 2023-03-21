@@ -3,6 +3,11 @@ public with sharing class TestUtil {
     public static Boolean throwException = false;
 
     public static User createAdminUser() {
+        UserRole userRole = new UserRole(
+            Name = 'AdminTest'
+        );
+        insert userRole;
+
         String userEmail = 'admin@' + UserInfo.getOrganizationId() + '.test.com';
 
         User user = new User(
@@ -16,7 +21,8 @@ public with sharing class TestUtil {
             TimeZoneSidKey = 'America/New_York',
             LocaleSidKey = 'en_US',
             EmailEncodingKey = 'ISO-8859-1',
-            LanguageLocaleKey = 'en_US'
+            LanguageLocaleKey = 'en_US',
+            UserRoleId = userRole.Id
         );
         insert user;
 
@@ -73,7 +79,7 @@ public with sharing class TestUtil {
                 FirstName = 'Experience',
                 LastName = 'User',
                 Email = experienceUserEmail,
-                Username = experienceUserEmail,
+                Username = experienceUserEmail + Constants.USERNAME_SUFFIX,
                 Alias = 'experien',
                 Phone = '800-555-1212',
                 ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id,
@@ -81,7 +87,7 @@ public with sharing class TestUtil {
                 LocaleSidKey = 'en_US',
                 EmailEncodingKey = 'ISO-8859-1',
                 LanguageLocaleKey = 'en_US',
-                contactId = [SELECT PersonContactId FROM Account WHERE Id = :account.Id LIMIT 1].PersonContactId
+                ContactId = [SELECT PersonContactId FROM Account WHERE Id = :account.Id LIMIT 1].PersonContactId
             );
             insert experienceUser;
         }
@@ -91,6 +97,26 @@ public with sharing class TestUtil {
 
     public static User createExperienceGuestUser() {
         return new User(Id = UserInfo.getUserId());
+    }
+
+    public static User createExperienceUserFromContactId(Id contactId) {
+        String experienceUserEmail = 'experience@' + UserInfo.getOrganizationId() + 'contactId.test.com';
+        User experienceUser = new User(
+            FirstName = 'Experience',
+            LastName = 'User2',
+            Email = experienceUserEmail,
+            Username = experienceUserEmail,
+            Alias = 'expe2',
+            Phone = '800-555-1212',
+            ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id,
+            TimeZoneSidKey = 'America/New_York',
+            LocaleSidKey = 'en_US',
+            EmailEncodingKey = 'ISO-8859-1',
+            LanguageLocaleKey = 'en_US',
+            ContactId = contactId
+        );
+        insert experienceUser;
+        return experienceUser;
     }
 
     public static Account createHQCenter() {
@@ -237,12 +263,71 @@ public with sharing class TestUtil {
         );
     }
 
+    public static AccountContactRelation createDonorCenterRelation(Id donorId, Id centerId) {
+        return new AccountContactRelation(
+            AccountId = centerId,
+            ContactId = donorId,
+            Roles = 'Donor',
+            IsActive = true
+        );
+    }
+
+    public static VisitTestSetup createFullTestVisitSetup(String donorExternalId, Datetime testDateTime, Boolean createExperienceUser) {
+        Id donorId;
+        Id donorContactId;
+        if (createExperienceUser) {
+            User donorUser = createExperienceUser();
+            donorContactId = donorUser.ContactId;
+            donorId = donorUser.AccountId;
+        } else {
+            Account donor = createTestDonor(donorExternalId);
+            insert donor;
+            donorContactId = [SELECT PersonContactId FROM Account WHERE Id = :donor.Id][0].PersonContactId;
+        }
+
+        Account center = createMiramarCenter();
+        insert center;
+        AccountContactRelation donorCenterRelation = createDonorCenterRelation(donorContactId, center.Id);
+        insert donorCenterRelation;
+        Schedule__c schedule = createTestSchedule(center.Id, testDateTime);
+        insert schedule;
+        Appointment__c appointment = createTestAppointment(schedule.Id, testDateTime);
+        insert appointment;
+        Center_Donation_Type__c centerDonationType = createCenterDonationType(center.Id);
+        insert centerDonationType;
+        Visit__c visit = createVisit(donorContactId, centerDonationType.Id, appointment.Id);
+        insert visit;
+
+        VisitTestSetup testSetup = new VisitTestSetup();
+        testSetup.DonorId = donorId;
+        testSetup.DonorContactId = donorContactId;
+        testSetup.CenterId = center.Id;
+        testSetup.DonorCenterRelationId = donorCenterRelation.Id;
+        testSetup.ScheduleId = schedule.Id;
+        testSetup.AppointmentId = appointment.Id;
+        testSetup.CenterDonationTypeId = centerDonationType.Id;
+        testSetup.VisitId = visit.Id;
+
+        return testSetup;
+    }
+
     public static ContentVersion createContentVersion() {
         return new ContentVersion(
             Title = 'Test',
             PathOnClient = 'test.txt',
             VersionData = Blob.valueOf('data')
         );
+    }
+
+    public class VisitTestSetup {
+        public Id DonorId;
+        public Id DonorContactId;
+        public Id CenterId;
+        public Id DonorCenterRelationId;
+        public Id ScheduleId;
+        public Id AppointmentId;
+        public Id CenterDonationTypeId;
+        public Id VisitId;
     }
 
     public class TestException extends Exception {

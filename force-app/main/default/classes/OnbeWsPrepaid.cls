@@ -9,13 +9,49 @@ public class OnbeWsPrepaid {
     private static final String uriAccountManagementPrepaidResponse = 'http://response.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidDomain = 'http://domain.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidCommon = 'http://common.accountmanagementapi.prepaid.citi.com';
-
+    private static final String PROGRAM_ID = '04011223';
+    private static final String PROMOTION_ID = '1';
 
     public class ArrayOf_tns2_keyValue {
+
         public OnbeCommonPrepaid.keyValue[] item;
         private String[] item_type_info = new String[]{'item',uriAccountManagementPrepaidWs,null,'0','-1','false'};
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidWs,'true','false'};
         private String[] field_order_type_info = new String[]{'item'};
+
+        public ArrayOf_tns2_keyValue(){
+		    }
+
+        public ArrayOf_tns2_keyValue(DOM.XmlNode responseNode){
+            Set<DOM.XmlNode> nodesParsed = new Set<DOM.XmlNode>();
+            Dom.XmlNode[] itemChildren = responseNode.getChildElements();
+            OnbeCommonPrepaid.keyValue[] itemList = new List<OnbeCommonPrepaid.keyValue>();
+            
+            if(itemChildren == null || itemChildren.size() == 0){
+                this.item = null;
+            } else{
+                for(DOM.XmlNode childNode : itemChildren){
+                    if(childNode.GetName() == 'item'){
+                      OnbeCommonPrepaid.keyValue Obj = new OnbeCommonPrepaid.keyValue(childNode);
+                      itemList.Add(Obj);
+                      nodesParsed.add(childNode);
+                    }
+                }
+                this.item = itemList;
+            }
+            //System.debug(this.item);
+        }
+
+        public void populateXmlNode(Dom.XmlNode outerNode){
+            OnbeCommonPrepaid.keyValue[] itemObj = this.item;
+
+            if(itemObj != null){
+                for(OnbeCommonPrepaid.keyValue element: itemObj){
+                  Dom.XmlNode itemNode = outerNode.addChildElement('item', uriAccountManagementPrepaidWs, '');
+                  element.populateXmlNode(itemNode);
+                }
+            }
+        }
     }
     
     public class AccountManagementApiWebServices {
@@ -36,62 +72,6 @@ public class OnbeWsPrepaid {
           'OnbeDomainPrepaid', 
           uriAccountManagementPrepaidCommon, 
           'OnbeCommonPrepaid'};
-
-        public OnbeResponsePrepaid.CreatePackageResponse createPackage(String accessLevel,
-          String package_type,
-          String express_mail,
-          OnbeDomainPrepaid.Registration registration_Primary,
-          OnbeDomainPrepaid.Registration registration_Secondary) {
-            OnbeRequestPrepaid.CreatePackageRequest request_x = new OnbeRequestPrepaid.CreatePackageRequest();
-            request_x.accessLevel = accessLevel;
-            request_x.package_type = package_type;
-            request_x.express_mail = express_mail;
-            request_x.registration_Primary = registration_Primary;
-            request_x.registration_Secondary = registration_Secondary;
-            OnbeResponsePrepaid.CreatePackageResponse response_x;
-            Map<String, OnbeResponsePrepaid.CreatePackageResponse> response_map_x = new Map<String, OnbeResponsePrepaid.CreatePackageResponse>();
-            response_map_x.put('response_x', response_x);
-            WebServiceCallout.invoke(
-              this,
-              request_x,
-              response_map_x,
-              new String[]{endpoint_x,
-              '',
-              uriAccountManagementPrepaidWs,
-              'createPackageRequest',
-              uriAccountManagementPrepaidWs,
-              'createPackageReturn',
-              'OnbeResponsePrepaid.CreatePackageResponse'}
-            );
-            response_x = response_map_x.get('response_x');
-            return response_x;
-        }
-
-        public String cvvInquiry(String program_id,
-          String partner_user_id,
-          String accountNumber) {
-            OnbeRequestPrepaid.CvvInquiryRequest request_x = new OnbeRequestPrepaid.CvvInquiryRequest();
-            request_x.program_id = program_id;
-            request_x.partner_user_id = partner_user_id;
-            request_x.accountNumber = accountNumber;
-            OnbeResponsePrepaid.CvvInquiryResponse response_x;
-            Map<String, OnbeResponsePrepaid.CvvInquiryResponse> response_map_x = new Map<String, OnbeResponsePrepaid.CvvInquiryResponse>();
-            response_map_x.put('response_x', response_x);
-            WebServiceCallout.invoke(
-              this,
-              request_x,
-              response_map_x,
-              new String[]{endpoint_x,
-              '',
-              uriAccountManagementPrepaidWs,
-              'cvvInquiryRequest',
-              uriAccountManagementPrepaidWs,
-              'cvvInquiryReturn',
-              'OnbeResponsePrepaid.CvvInquiryResponse'}
-            );
-            response_x = response_map_x.get('response_x');
-            return response_x.cvv;
-        }
 
         public String activateCard(String card_number,
           String cvv,
@@ -198,19 +178,25 @@ public class OnbeWsPrepaid {
             response_x = response_map_x.get('response_x');
         }
 
-        public OnbeResponsePrepaid.CreateAccountResponse createAccount(String accessLevel,
+        // First one to be called
+        // multiple operations
+        public OnbeResponsePrepaid.CreateAccountResponse createAccount(String program_id,
+          String promotion_id,
+          String accessLevel,
           Boolean accountPersonalized,
           OnbeDomainPrepaid.Card card,
           OnbeDomainPrepaid.Load load,
           OnbeDomainPrepaid.Link link,
-          OnbeDomainPrepaid.Registration registation) {
+          OnbeDomainPrepaid.Registration registration) {
             OnbeRequestPrepaid.CreateAccountRequest request_x = new OnbeRequestPrepaid.CreateAccountRequest();
+            request_x.program_id = program_id;
+            request_x.promotion_id = promotion_id;
             request_x.accessLevel = accessLevel;
             request_x.accountPersonalized = accountPersonalized;
             request_x.card = card;
             request_x.load = load;
             request_x.link = link;
-            request_x.registation = registation;
+            request_x.registration = registration;
             OnbeResponsePrepaid.CreateAccountResponse response_x;
             Map<String, OnbeResponsePrepaid.CreateAccountResponse> response_map_x = new Map<String, OnbeResponsePrepaid.CreateAccountResponse>();
             response_map_x.put('response_x', response_x);
@@ -418,12 +404,12 @@ public class OnbeWsPrepaid {
         public void updateRegistration(String accessLevel,
           Boolean accountPersonalized,
           String newPartnerUserID,
-          OnbeDomainPrepaid.Registration registation) {
+          OnbeDomainPrepaid.Registration registration) {
             OnbeRequestPrepaid.UpdateRegistrationRequest request_x = new OnbeRequestPrepaid.UpdateRegistrationRequest();
             request_x.accessLevel = accessLevel;
             request_x.accountPersonalized = accountPersonalized;
             request_x.newPartnerUserID = newPartnerUserID;
-            request_x.registation = registation;
+            request_x.registration = registration;
             OnbeResponsePrepaid.UpdateRegistrationResponse response_x;
             Map<String, OnbeResponsePrepaid.UpdateRegistrationResponse> response_map_x = new Map<String, OnbeResponsePrepaid.UpdateRegistrationResponse>();
             response_map_x.put('response_x', response_x);
@@ -441,5 +427,398 @@ public class OnbeWsPrepaid {
             );
             response_x = response_map_x.get('response_x');
         }
+    
+        private DOM.XmlNode populateDoc(DOM.Document doc){
+          String env = 'http://schemas.xmlsoap.org/soap/envelope/';
+          String xsi = 'http://www.w3.org/2001/XMLSchema-instance';
+          String xsd = 'http://www.w3.org/2001/XMLSchema';
+          
+          DOM.XmlNode envelope = doc.createRootElement('Envelope', env, 'env');
+          envelope.setNamespace('xsd', xsd);
+          envelope.setNamespace('xsi', xsi);
+          DOM.XmlNode header = envelope.addChildElement('Header', env, '');
+          AddHeader(header);
+          System.debug('populateDoc.envelope: ' + envelope.getText() );  // doc  .toXmlString()
+          DOM.XmlNode body = envelope.addChildElement('Body', env, '');
+          return body;
+      }
+
+      private void AddHeader(DOM.XmlNode header){
+      }
+
+      public String activateCard_Http(String card_number,
+        String cvv,
+        String postal_code,
+        String accountNumber) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('activateCard', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.ActivateCardRequest request_x = new OnbeRequestPrepaid.ActivateCardRequest(card_number,cvv,postal_code,accountNumber);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          //System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode activateCardReturnNode = bodyNode.getChildElement('activateCardReturn', uriAccountManagementPrepaidWs);
+          
+          OnbeResponsePrepaid.ActivationCardResponse response_x = new OnbeResponsePrepaid.ActivationCardResponse(activateCardReturnNode);
+          return response_x.activationStatus;
+      }
+  
+      public OnbeResponsePrepaid.activationStatusInquiryResponse activationStatusInquiry_Http(String card_number,
+        String cvv,
+        String postal_code,
+        String validate_postal) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('activationStatusInquiry', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.activationStatusInquiryRequest request_x = new OnbeRequestPrepaid.activationStatusInquiryRequest(card_number,cvv,postal_code,validate_postal);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          //System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode activationStatusInquiryReturnNode = bodyNode.getChildElement('activationStatusInquiryReturn', uriAccountManagementPrepaidWs);
+          
+          OnbeResponsePrepaid.activationStatusInquiryResponse response_x = new OnbeResponsePrepaid.activationStatusInquiryResponse(activationStatusInquiryReturnNode);
+          return response_x;
+      }
+  
+      public OnbeResponsePrepaid.AddFundsResponse addFunds_Http(OnbeDomainPrepaid.Load load) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('addFunds', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.AddFundsRequest request_x = new OnbeRequestPrepaid.AddFundsRequest(load);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          //System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode addFundsReturnNode = bodyNode.getChildElement('addFundsReturn', uriAccountManagementPrepaidWs);
+
+          OnbeResponsePrepaid.AddFundsResponse response_x = new OnbeResponsePrepaid.AddFundsResponse(addFundsReturnNode);
+          return response_x;
+      }
+  
+      public OnbeResponsePrepaid.AssignPackageResponse assignPackage_Http(String package_type,
+        String package_id,
+        OnbeDomainPrepaid.Registration registration_Primary,
+        OnbeDomainPrepaid.Registration registration_Secondary) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('assignPackage', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.AssignPackageRequest request_x = new OnbeRequestPrepaid.AssignPackageRequest(package_type,package_id,registration_Primary,registration_Secondary);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          //System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode assignPackageReturnNode = bodyNode.getChildElement('assignPackageReturn', uriAccountManagementPrepaidWs);
+          
+          OnbeResponsePrepaid.AssignPackageResponse response_x = new OnbeResponsePrepaid.AssignPackageResponse(assignPackageReturnNode);
+          return response_x;
+      }
+  
+      public OnbeResponsePrepaid.CardInquiryResponse cardInquiry_Http(String program_id,String partner_user_id,String accountNumber) {
+        DOM.Document doc = new DOM.Document();
+        DOM.XmlNode body = populateDoc(doc);
+        DOM.XmlNode methodNode = body.addChildElement('cardInquiry', uriAccountManagementPrepaidWs, '');			
+        OnbeRequestPrepaid.CardInquiryRequest request_x = new OnbeRequestPrepaid.CardInquiryRequest(program_id,partner_user_id,accountNumber);
+        request_x.populateXmlNode(methodNode);
+        
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint(endpoint_x);
+        req.setMethod('POST');
+        req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+        req.setHeader('SOAPAction', 'blank');
+        //System.debug(doc.toXmlString());
+        req.setBodyDocument(doc);
+        //System.debug(req.getBody());
+        Http http = new Http();
+        HTTPResponse res = http.send(req);
+        //System.debug(res.getBody());
+        Dom.Document responseDoc = res.getBodyDocument();
+        Dom.XmlNode rootNode = responseDoc.getRootElement();
+        Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+        Dom.XmlNode cardInquiryReturnNode = bodyNode.getChildElement('cardInquiryReturn', uriAccountManagementPrepaidWs);
+              
+        OnbeResponsePrepaid.CardInquiryResponse response_x = new OnbeResponsePrepaid.CardInquiryResponse(cardInquiryReturnNode);
+        return response_x;
+      }
+  
+      public OnbeResponsePrepaid.CreateAccountResponse createAccount_Http(String program_id,
+        String promotion_id,
+        String transaction_id,
+        String partner_user_id,
+        String accessLevel,
+        Boolean accountPersonalized,
+        OnbeDomainPrepaid.Card card,
+        OnbeDomainPrepaid.Load load,
+        OnbeDomainPrepaid.Link link,
+        OnbeDomainPrepaid.Registration registration) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('createAccount', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.CreateAccountRequest request_x = new OnbeRequestPrepaid.CreateAccountRequest( program_id, promotion_id, transaction_id, partner_user_id, accessLevel,accountPersonalized,card,load,link,registration);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode createAccountReturnNode = bodyNode.getChildElement('createAccountReturn', uriAccountManagementPrepaidWs);
+
+          OnbeResponsePrepaid.CreateAccountResponse response_x = new OnbeResponsePrepaid.CreateAccountResponse(createAccountReturnNode);
+          return response_x;
+      }
+  
+  /**
+      public Integer createBulkOrder_Http(String location_code,
+        Integer package_count,
+        String package_type,
+        OnbeDomainPrepaid.Address address) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('createBulkOrder', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.CreateBulkOrderRequest request_x = new OnbeRequestPrepaid.CreateBulkOrderRequest(location_code,package_count,package_type,address);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          //System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode createBulkOrderReturnNode = bodyNode.getChildElement('createBulkOrderReturn', uriAccountManagementPrepaidWs);
+
+          OnbeResponsePrepaid.CreateBulkOrderResponse response_x = new OnbeResponsePrepaid.CreateBulkOrderResponse(createBulkOrderReturnNode);
+          return response_x.package_count;
+      }
+  */
+    
+  public OnbeResponsePrepaid.ServiceResponse getRequestStatus_Http(OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue,
+        String partner_user_id,
+        String program_id,
+        String promotion_id,
+        String transaction_id) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('getRequestStatus', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.ServiceRequest request_x = new OnbeRequestPrepaid.ServiceRequest(keyValue,partner_user_id,program_id,promotion_id,transaction_id);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          //System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode serviceReturnNode = bodyNode.getChildElement('serviceReturn', uriAccountManagementPrepaidWs);
+
+          OnbeResponsePrepaid.ServiceResponse response_x = new OnbeResponsePrepaid.ServiceResponse(serviceReturnNode);
+          return response_x;
+      }
+
+      public void linkCard_Http(OnbeDomainPrepaid.Link link) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('linkCard', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.LinkCardRequest request_x = new OnbeRequestPrepaid.LinkCardRequest(link);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          //System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode linkCardReturnNode = bodyNode.getChildElement('linkCardReturn', uriAccountManagementPrepaidWs);
+      }
+  
+      public void setPin_Http(String new_pin) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('setPin', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.SetPinRequest request_x = new OnbeRequestPrepaid.SetPinRequest(new_pin);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          //System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode setPinReturnNode = bodyNode.getChildElement('setPinReturn', uriAccountManagementPrepaidWs);
+      }
+  
+      public void updateAccountStatus_Http(String accountStatus) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('updateAccountStatus', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.UpdateAccountStatusRequest request_x = new OnbeRequestPrepaid.UpdateAccountStatusRequest(accountStatus);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          //System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode updateAccountStatusReturnNode = bodyNode.getChildElement('updateAccountStatusReturn', uriAccountManagementPrepaidWs);
+      }
+  
+      public void updateRegistration_Http(String accessLevel,
+        Boolean accountPersonalized,
+        String newPartnerUserID,
+        OnbeDomainPrepaid.Registration registration) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('updateRegistration', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.UpdateRegistrationRequest request_x = new OnbeRequestPrepaid.UpdateRegistrationRequest(accessLevel,accountPersonalized,newPartnerUserID,registration);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          //System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode updateRegistrationReturnNode = bodyNode.getChildElement('updateRegistrationReturn', uriAccountManagementPrepaidWs);
+      }
+  
+      public void withdraw_Http(String withdraw_type,
+        Long amount,
+        String partner_withdraw_id,
+        String express_flag,
+        String comment,
+        OnbeDomainPrepaid.WithdrawACH ach,
+        OnbeDomainPrepaid.VoidACH achvoid,
+        OnbeDomainPrepaid.WithdrawCheck check,
+        OnbeDomainPrepaid.VoidCheck checkvoid) {
+          DOM.Document doc = new DOM.Document();
+          DOM.XmlNode body = populateDoc(doc);
+          DOM.XmlNode methodNode = body.addChildElement('withdraw', uriAccountManagementPrepaidWs, '');			
+          OnbeRequestPrepaid.withdrawRequest request_x = new OnbeRequestPrepaid.withdrawRequest(withdraw_type,amount,partner_withdraw_id,express_flag,comment,ach,achvoid,check,checkvoid);
+          request_x.populateXmlNode(methodNode);
+          
+          HttpRequest req = new HttpRequest();
+          req.setEndpoint(endpoint_x);
+          req.setMethod('POST');
+          req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          req.setHeader('SOAPAction', 'blank');
+          //System.debug(doc.toXmlString());
+          req.setBodyDocument(doc);
+          //System.debug(req.getBody());
+          Http http = new Http();
+          HTTPResponse res = http.send(req);
+          //System.debug(res.getBody());
+          Dom.Document responseDoc = res.getBodyDocument();
+          Dom.XmlNode rootNode = responseDoc.getRootElement();
+          Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+          Dom.XmlNode withdrawReturnNode = bodyNode.getChildElement('withdrawReturn', uriAccountManagementPrepaidWs);
+      }
+
     }
 }

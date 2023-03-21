@@ -1,6 +1,7 @@
 {
   "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
   "componentName" : "siteforce:sldsOneColLayout",
+  "dataProviders" : [ ],
   "id" : "7f4bc0b7-7225-450b-b5eb-107b673c8488",
   "label" : "Appointments",
   "regions" : [ {

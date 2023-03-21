@@ -17,11 +17,9 @@
 
 .loyalty-badge {
     position: absolute;
-    left: -6px;
-    top: -4px;
-    --sds-c-icon-color-foreground-default: white;
-    outline: 2px black solid;
-    border-radius: 100%;
+    left: -19px;
+    top: -16px;
+    pointer-events: none;
 }
 
 .first-visit-badge {

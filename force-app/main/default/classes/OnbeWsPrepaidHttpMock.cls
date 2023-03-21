@@ -3,7 +3,7 @@
 @isTest
 global class OnbeWsPrepaidHttpMock implements WebServiceMock{
 
-    // Constant
+    // Constants
     private static final String uriAccountManagementPrepaidWs = 'http://ws.accountmanagementapi.prepaid.citi.com';
     private static final String uriXmlSoapSchema = 'http://schemas.xmlsoap.org/soap/envelope/';
 

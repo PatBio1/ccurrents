@@ -1,0 +1,9 @@
+@import 'c/sharedCss';
+
+.bookmark-icon {
+    --lwc-colorTextIconDefault: #8979A9;
+}
+
+.bookmarked-icon {
+    --lwc-colorTextIconDefault: #983285;
+}

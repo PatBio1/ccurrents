@@ -1,0 +1,11 @@
+{
+  "activeViewId" : "cd4f52f0-af28-4326-8187-c891d3f76f2f",
+  "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
+  "configurationTags" : [ ],
+  "id" : "f7ff5d00-b4d3-4fa7-a84d-40fff7ad6d4d",
+  "label" : "Loyalty Tiers",
+  "pageAccess" : "UseParent",
+  "routeType" : "custom-loyalty-tiers",
+  "type" : "route",
+  "urlPrefix" : "loyalty-tiers"
+}

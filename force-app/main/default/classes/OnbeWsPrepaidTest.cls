@@ -4,7 +4,7 @@
 private class OnbeWsPrepaidTest {
 
     // Constant
-    // private static final String uriAccountManagementPrepaidRequest = 'http://request.accountmanagementapi.prepaid.citi.com';
+	private static final String uriAccountManagementPrepaidDomain = 'http://domain.accountmanagementapi.prepaid.citi.com';
     private static final String uriXmlSoapSchema = 'http://schemas.xmlsoap.org/soap/envelope/';
 
 	@isTest static void coverGeneratedCodeTypes() {
@@ -24,7 +24,7 @@ private class OnbeWsPrepaidTest {
 		OnbeDomainPrepaid.VoidCheck onbeDomainVoidCheck = new OnbeDomainPrepaid.VoidCheck();
 		OnbeDomainPrepaid.WithdrawACH onbeDomainWithdrawAch = new OnbeDomainPrepaid.WithdrawACH();
 		OnbeDomainPrepaid.WithdrawCheck onbeDomainWithdrawCheck = new OnbeDomainPrepaid.WithdrawCheck();
-		OnbeRequestPrepaid.ServiceRequestAccountNumber onbeRequestServiceRequest = new OnbeRequestPrepaid.ServiceRequestAccountNumber();
+		// OnbeRequestPrepaid.ServiceRequestAccountNumber onbeRequestServiceRequest = new OnbeRequestPrepaid.ServiceRequestAccountNumber();
 		OnbeResponsePrepaid.ActivationCardResponse onbeResponseActivationCard = new OnbeResponsePrepaid.ActivationCardResponse();
 		OnbeResponsePrepaid.activationStatusInquiryResponse onbeResponseActivationStatus = new OnbeResponsePrepaid.activationStatusInquiryResponse();
 		OnbeResponsePrepaid.AddFundsResponse onbeResponseAddFunds = new OnbeResponsePrepaid.AddFundsResponse();
@@ -32,8 +32,6 @@ private class OnbeWsPrepaidTest {
         OnbeResponsePrepaid.CardInquiryResponse onbeResponseCardInquiry = new OnbeResponsePrepaid.CardInquiryResponse();
 		OnbeResponsePrepaid.CreateAccountResponse onbeResponseCreateAccount = new OnbeResponsePrepaid.CreateAccountResponse();
         OnbeResponsePrepaid.CreateBulkOrderResponse onbeResponseCreateBulkOrder = new OnbeResponsePrepaid.CreateBulkOrderResponse();
-		OnbeResponsePrepaid.CreatePackageResponse onbeResponseCreatePackage = new OnbeResponsePrepaid.CreatePackageResponse();
-		OnbeResponsePrepaid.CvvInquiryResponse onbeResponseCvvInquiry = new OnbeResponsePrepaid.CvvInquiryResponse();
 		OnbeResponsePrepaid.LinkCardResponse onbeResponseLinkCard = new OnbeResponsePrepaid.LinkCardResponse();
 		OnbeResponsePrepaid.ServiceResponse onbResponseServiceResponse = new OnbeResponsePrepaid.ServiceResponse();
 		OnbeResponsePrepaid.UpdateAccountStatusResponse onbeResponseUpdateAccountStatus = new OnbeResponsePrepaid.UpdateAccountStatusResponse();
@@ -48,11 +46,11 @@ private class OnbeWsPrepaidTest {
 		OnbeDomainPrepaid.Address Obj3 = new OnbeDomainPrepaid.Address();
 		//Obj3.populateXmlNode(mockNode);
 		OnbeDomainPrepaid.Card Obj4 = new OnbeDomainPrepaid.Card();
-		//Obj4.populateXmlNode(mockNode);
+		Obj4.populateXmlNode(mockNode);
 		OnbeDomainPrepaid.Link Obj5 = new OnbeDomainPrepaid.Link();
 		//Obj5.populateXmlNode(mockNode);
 		OnbeDomainPrepaid.Load Obj6 = new OnbeDomainPrepaid.Load();
-		//Obj6.populateXmlNode(mockNode);
+		Obj6.populateXmlNode(mockNode);
 		OnbeDomainPrepaid.Registration Obj7 = new OnbeDomainPrepaid.Registration();
 		//Obj7.populateXmlNode(mockNode);
 		OnbeDomainPrepaid.VoidACH Obj8 = new OnbeDomainPrepaid.VoidACH();
@@ -79,14 +77,10 @@ private class OnbeWsPrepaidTest {
 		//Obj18.populateXmlNode(mockNode);
 		OnbeRequestPrepaid.CreatePackageRequest Obj19 = new OnbeRequestPrepaid.CreatePackageRequest();
 		//Obj19.populateXmlNode(mockNode);
-		OnbeRequestPrepaid.CvvInquiryRequest Obj20 = new OnbeRequestPrepaid.CvvInquiryRequest();
-		//Obj20.populateXmlNode(mockNode);
 		OnbeRequestPrepaid.LinkCardRequest Obj21 = new OnbeRequestPrepaid.LinkCardRequest();
 		//Obj21.populateXmlNode(mockNode);
 		OnbeRequestPrepaid.ServiceRequest Obj22 = new OnbeRequestPrepaid.ServiceRequest();
 		//Obj22.populateXmlNode(mockNode);
-		OnbeRequestPrepaid.ServiceRequestAccountNumber Obj23 = new OnbeRequestPrepaid.ServiceRequestAccountNumber();
-		//Obj23.populateXmlNode(mockNode);
 		OnbeRequestPrepaid.SetPinRequest Obj24 = new OnbeRequestPrepaid.SetPinRequest();
 		//Obj24.populateXmlNode(mockNode);
 		OnbeRequestPrepaid.UpdateAccountStatusRequest Obj25 = new OnbeRequestPrepaid.UpdateAccountStatusRequest();
@@ -95,6 +89,36 @@ private class OnbeWsPrepaidTest {
 		//Obj26.populateXmlNode(mockNode);
 		OnbeRequestPrepaid.withdrawRequest Obj27 = new OnbeRequestPrepaid.withdrawRequest();
 		//Obj27.populateXmlNode(mockNode);
+		// needed due to additional constructor overloads
+		OnbeDomainPrepaid.Card Obj28 = new OnbeDomainPrepaid.Card(mockNode);
+		Obj28.populateXmlNode(mockNode);
+		OnbeDomainPrepaid.Link Obj29 = new OnbeDomainPrepaid.Link(mockNode);
+		Obj29.populateXmlNode(mockNode);
+		OnbeDomainPrepaid.Addenda Obj30 = new OnbeDomainPrepaid.Addenda(mockNode);
+		Obj30.populateXmlNode(mockNode);
+
+/* 		// Load class requires an XmlNode element of data type Long
+		DOM.XmlNode amountNode = mockNode.addChildElement('amount', uriAccountManagementPrepaidDomain, 'null');
+		mocknode.setAttribute('amount', String.valueOf(Long.valueOf('30000')));
+		OnbeDomainPrepaid.Load Obj31 = new OnbeDomainPrepaid.Load(mockNode);
+		Obj31.populateXmlNode(mockNode);
+		// clean up
+		Boolean isRemoved = mockNode.removeAttribute('amount', uriAccountManagementPrepaidDomain);
+ */
+		OnbeDomainPrepaid.Registration Obj32 = new OnbeDomainPrepaid.Registration(mockNode);
+		Obj32.populateXmlNode(mockNode);
+		OnbeDomainPrepaid.VoidACH Obj33 = new OnbeDomainPrepaid.VoidACH(mockNode);
+		Obj33.populateXmlNode(mockNode);
+		OnbeDomainPrepaid.VoidCheck Obj34 = new OnbeDomainPrepaid.VoidCheck(mockNode);
+		Obj34.populateXmlNode(mockNode);
+		OnbeDomainPrepaid.WithdrawACH Obj35 = new OnbeDomainPrepaid.WithdrawACH(mockNode);
+		Obj35.populateXmlNode(mockNode);
+		OnbeDomainPrepaid.WithdrawCheck Obj36 = new OnbeDomainPrepaid.WithdrawCheck(mockNode);
+		Obj36.populateXmlNode(mockNode);
+
+		// needed due to additional constructor overload
+		OnbeCommonPrepaid.keyValue onbeCommonKeyValue2 = new OnbeCommonPrepaid.keyValue(mockNode);
+		onbeCommonKeyValue2.populateXmlNode(mockNode);
 
 		new OnbeResponsePrepaid.ActivationCardResponse();
 		new OnbeResponsePrepaid.activationStatusInquiryResponse();
@@ -103,8 +127,6 @@ private class OnbeWsPrepaidTest {
 		new OnbeResponsePrepaid.CardInquiryResponse();
 		new OnbeResponsePrepaid.CreateAccountResponse();
 		new OnbeResponsePrepaid.CreateBulkOrderResponse();
-		new OnbeResponsePrepaid.CreatePackageResponse();
-		new OnbeResponsePrepaid.CvvInquiryResponse();
 		new OnbeResponsePrepaid.LinkCardResponse();
 		new OnbeResponsePrepaid.ServiceResponse();
 		new OnbeResponsePrepaid.UpdateAccountStatusResponse();
@@ -147,25 +169,13 @@ private class OnbeWsPrepaidTest {
 	@isTest static void coverCodeForcreateAccount(){
 		Test.setMock(WebServiceMock.class, new OnBeWsPrepaidHttpMock());
 		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
-		System.assertEquals(null, testObject.createAccount(null, null, null, null, null, null));
+		System.assertEquals(null, testObject.createAccount(null, null, null, null, null, null, null, null));
 	}
 
 	@isTest static void coverCodeForcreateBulkOrder(){
 		Test.setMock(WebServiceMock.class, new OnBeWsPrepaidHttpMock());
 		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
 		// System.assertEquals(null, testObject.createBulkOrder(null, null, null, null));
-	}
-
-	@isTest static void coverCodeForcreatePackage(){
-		Test.setMock(WebServiceMock.class, new OnBeWsPrepaidHttpMock());
-		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
-		System.assertEquals(null, testObject.createPackage(null, null, null, null, null));
-	}
-
-	@isTest static void coverCodeForcvvInquiry(){
-		Test.setMock(WebServiceMock.class, new OnBeWsPrepaidHttpMock());
-		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
-		// System.assertEquals(null, testObject.cvvInquiry(null, null, null));
 	}
     
 	@isTest static void coverCodeForgetRequestStatus(){
@@ -209,5 +219,85 @@ private class OnbeWsPrepaidTest {
 		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
 		System.assertEquals(null, testObject.createAccount(null, null, null, null, null, null));		
 	} */
+
+	@isTest static void coverCodeForactivateCard_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		System.assertEquals(null, testObject.activateCard_Http(null, null, null, null));		
+	}
+
+	@isTest static void coverCodeForactivationStatusInquiry_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		System.assertNotEquals(null, testObject.activationStatusInquiry_Http(null, null, null, null));		
+	}
+
+	@isTest static void coverCodeForaddFunds_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		System.assertNotEquals(null, testObject.addFunds_Http(null));		
+	}
+
+	@isTest static void coverCodeForassignPackage_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		System.assertNotEquals(null, testObject.assignPackage_Http(null, null, null, null));		
+	}
+
+	@isTest static void coverCodeForcardInquiry_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		System.assertNotEquals(null, testObject.cardInquiry_Http(null, null, null));		
+	}
+
+	@isTest static void coverCodeForCreateAccount_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		System.assertNotEquals(null, testObject.createAccount_Http(null, null, null, null, null, null, null, null, null, null));		
+	}
+
+/**
+	@isTest static void coverCodeForCreateBulkOrder_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		System.assertEquals(null, testObject.createBulkOrder_Http(null, null, null, null));		
+	}
+
+	@isTest static void coverCodeForgetRequestStatus_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		System.assertEquals(null, testObject.getRequestStatus_Http(null, null, null, null, null));		
+	}
+*/
+
+	@isTest static void coverCodeForlinkCard_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		testObject.linkCard_Http(null);		
+	}
+
+	@isTest static void coverCodeForsetPin_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		testObject.setPin_Http(null);		
+	}
+
+	@isTest static void coverCodeForupdateAccountStatus_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		testObject.updateAccountStatus_Http(null);		
+	}
+
+	@isTest static void coverCodeForupdateRegistration_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		testObject.updateRegistration_Http(null, null, null, null);		
+	}
+
+	@isTest static void coverCodeForwithdraw_Http(){
+		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
+		testObject.withdraw_Http(null, null, null, null, null, null, null, null, null);		
+	}
 
 }

@@ -3,7 +3,7 @@
     <div class="slds-var-p-around_medium">
         <div class="slds-grid">
             <div class="slds-col slds-size_1-of-2">
-                <lightning-button variant="base" label={labels.back} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+                <lightning-button variant="base" label={backLabel} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
             </div>
             <div class="slds-col slds-size_1-of-2 slds-text-align_right">
                 <lightning-icon if:true={bookmarked} icon-name="utility:bookmark" size="x-small" class="bookmarked-icon" data-category={articleCategoryIndex} data-article={articleIndex} onclick={onBookmarkClick}></lightning-icon>

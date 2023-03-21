@@ -1,9 +1,121 @@
 <template>
 
     <div class="slds-var-p-around_medium">
-        <div class="title-medium">
+        <div class="title-medium slds-m-bottom_medium">
             {labels.myRewards}
         </div>
+
+        <lightning-tabset class="main-tabs">
+            <lightning-tab label={labels.myBalance}>
+                <div class="title-small slds-m-bottom_medium">
+                    My Proesis Wallet
+                </div>
+
+                <div class="slds-m-bottom_small">
+                    <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled>Redeem points</button>
+                </div>
+
+                <div class="slds-m-bottom_medium">
+                    <button class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>Withdraw to card</button>
+                </div>
+
+                <div class="slds-grid slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-2 title-small">
+                        My Status
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-text-align_right">
+                        <lightning-button variant="base" label="Learn More" icon-name="utility:chevronright" icon-position="right" class="tertiary-button"></lightning-button>
+                    </div>
+                </div>
+
+                <div>
+                    Left: <strong>10 appointments</strong> to get <strong><span style="color: #A18B76;">Bronze</span></strong> status
+                </div>
+            </lightning-tab>
+
+            <lightning-tab label={labels.paymentHistory}>
+                <div class="slds-grid slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-2 title-small">
+                        {labels.personalCard}
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-text-align_right">
+                        <lightning-button variant="base" label={labels.lostMyCard} icon-name="utility:inspector_panel" icon-position="left" class="tertiary-button" onclick={onLostCardButtonClick}></lightning-button>
+                    </div>
+                </div>
+
+                <article class="slds-card slds-card_boundary slds-m-bottom_medium" style="background-color: #f5f0ff; border-color: #D1C7E4;">
+                    <div class="slds-card__body slds-card__body_inner">
+                        Ending in <strong>0264</strong> expiring <strong>01/2023</strong>
+                    </div>
+                </article>
+
+                <div class="slds-m-bottom_small">
+                    Other payment methods coming soon...
+                </div>
+
+                <div class="slds-grid slds-gutters_x-small slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-3">
+                        <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled>Paypal</button>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled>VENMO</button>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled>ACH</button>
+                    </div>
+                </div>
+
+                <div class="slds-text-align_right slds-m-bottom_medium">
+                    <lightning-button variant="base" label={labels.watchVideo} icon-name="utility:video" icon-position="left" class="tertiary-button" onclick={onWatchVideoButtonClick}></lightning-button>
+                </div>
+
+                <div class="title-small slds-m-bottom_x-small">
+                    {labels.paymentHistory}
+                </div>
+                <div style="color: #8979A9;">
+                    {labels.noPaymentsYet}
+                </div>
+            </lightning-tab>
+
+            <lightning-tab label={labels.goalsTracker}>
+                <template if:true={noGoalSet}>
+                    <div class="slds-m-bottom_small">
+                        You haven't set any goals yet. To do so, press the "Set a Goal" button below.
+                    </div>
+
+                    <lightning-button  label={labels.setGoal} variant="brand" stretch="true" class="primary-button" onclick={onSetGoalButtonClick}></lightning-button>
+                </template>
+
+                <template if:true={settingGoal}>
+                    <div class="slds-m-bottom_small">
+                        Choose the amount of money you want to earn from your donations and we'll notify you about your achievements.
+                    </div>
+                    <div class="slds-m-bottom_small">
+                        <lightning-input type="currency" label="Enter amount" value={goalAmount} onchange={onGoalAmountChange}></lightning-input>
+                    </div>
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-button label={labels.cancel} stretch="true" class="secondary-button" onclick={onSetGoalCancelButtonClick}></lightning-button>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-button if:true={goalValid} label={labels.apply} variant="brand" stretch="true" class="primary-button" onclick={onSetGoalApplyButtonClick}></lightning-button>
+                            <button if:false={goalValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.apply}</button>
+                        </div>
+                    </div>
+                </template>
+
+                <template if:true={goalSet}>
+                    <div class="slds-grid slds-m-bottom_medium">
+                        <div class="slds-col slds-size_1-of-2 title-small">
+                            {labels.personalCard}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-text-align_right">
+                            <lightning-button variant="base" label={labels.lostMyCard} icon-name="utility:inspector_panel" icon-position="left" class="tertiary-button" onclick={onLostCardButtonClick}></lightning-button>
+                        </div>
+                    </div>
+                </template>
+            </lightning-tab>
+        </lightning-tabset>
     </div>
 
 </template>

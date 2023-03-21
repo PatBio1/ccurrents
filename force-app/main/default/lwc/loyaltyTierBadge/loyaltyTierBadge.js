@@ -1,12 +1,13 @@
 import { LightningElement, api } from 'lwc';
 import PROESIS_LOYALTY_BADGES from '@salesforce/resourceUrl/Proesis_Loyalty_Badges';
 
+// Seems like there was a mismatch on the order. The order provided to the UX team is different than the order configured in org data
 const loyaltyTierNameToBadgeFileName = new Map([
     ["Donor (Default)", "default"],
     ["Normal Donor +15", "normal"],
-    ["Signature", "signature"],
-    ["VIP", "VIP"],
-    ["Royal", "royal"]
+    ["Signature", "VIP"],
+    ["VIP", "royal"],
+    ["Royal", "signature"]
 ]);
 
 export default class LoyaltyTierBadge extends LightningElement {

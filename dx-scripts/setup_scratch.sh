@@ -54,7 +54,7 @@ sfdx force:community:publish --name 'Proesis Donor'
 if [ $# -eq 1 ]
 then
     # open new scratch org in browser to default page
-    sfdx force:org:open 
+    sfdx force:org:open
     # open new scratch org in browser to default page
     # unless there is an additional arg indicating this is in CI
     exit

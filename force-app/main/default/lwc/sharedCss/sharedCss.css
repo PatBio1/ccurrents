@@ -48,6 +48,12 @@
     --sds-c-button-text-color-hover: #99429C;
 }
 
+.secondary-button[disabled], .secondary-button:disabled {
+    background-color: var(--pro-background-color);
+    border-color: var(--pro-border-color);
+    color: var(--pro-border-color);
+}
+
 :host .tertiary-button {
     --sds-c-button-text-color: #5c3e99;
     --sds-c-button-text-color-hover: #99429C;

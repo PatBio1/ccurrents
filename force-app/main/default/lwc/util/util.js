@@ -1,3 +1,5 @@
+import { NavigationMixin } from 'lightning/navigation';
+
 /**
  * Checks if a given value is null or undefined.
  * @param {any} value The given value to check against null or undefined.
@@ -48,4 +50,13 @@ export function validateZipCode(event) {
             }
         }
     }
+}
+
+export function navigateToPage(component, name) {
+    component[NavigationMixin.Navigate]({
+        type: 'comm__namedPage',
+        attributes: {
+            name: name
+        }
+    });
 }

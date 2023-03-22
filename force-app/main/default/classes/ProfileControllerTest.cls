@@ -128,6 +128,298 @@ public with sharing class ProfileControllerTest {
     }
 
     @isTest
+    static void testSendVerificationEmail() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.Email = 'test@test.com';
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+
+            Boolean verificationSent = ProfileController.sendVerificationEmail(profile);
+
+            System.assertEquals(true, verificationSent);
+
+            Lead updatedLead = [SELECT Email_Verification_Codes_Sent__c, Email_Verification_Code__c, Email_Verification_Attempts__c FROM Lead WHERE Id = :lead.Id];
+
+            System.assertEquals(1, updatedLead.Email_Verification_Codes_Sent__c);
+            System.assert(String.isNotBlank(updatedLead.Email_Verification_Code__c));
+            System.assertEquals(0, updatedLead.Email_Verification_Attempts__c);
+        }
+    }
+
+    @isTest
+    static void testSendVerificationEmailCodesExhausted() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.Email = 'test@test.com';
+            lead.Email_Verification_Codes_Sent__c = ProfileController.MAX_EMAIL_VERIFICATION_CODES;
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+
+            Boolean verificationSent = ProfileController.sendVerificationEmail(profile);
+
+            System.assertEquals(false, verificationSent);
+        }
+    }
+
+    @isTest
+    static void testSendVerificationEmailException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.sendVerificationEmail(new ProfileController.Profile());
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
+    static void testVerifyEmailCode() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.Email_Verification_Code__c = '123456';
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+            profile.emailCode = '123456';
+
+            String result = ProfileController.verifyEmailCode(profile);
+
+            System.assertEquals(Constants.VERIFICATION_RESULT_SUCCESS, result);
+
+            Lead updatedLead = [SELECT isEmailVerified__c FROM Lead WHERE Id = :lead.Id];
+
+            System.assertEquals(true, updatedLead.isEmailVerified__c);
+        }
+    }
+
+    @isTest
+    static void testVerifyEmailCodeMismatch() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.Email_Verification_Code__c = '123456';
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+            profile.emailCode = '112333';
+
+            String result = ProfileController.verifyEmailCode(profile);
+
+            System.assertEquals(Constants.VERIFICATION_RESULT_INCORRECT, result);
+
+            Lead updatedLead = [SELECT isEmailVerified__c FROM Lead WHERE Id = :lead.Id];
+
+            System.assertEquals(false, updatedLead.isEmailVerified__c);
+        }
+    }
+
+    @isTest
+    static void testVerifyEmailCodeAttemptsExhausted() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.Email_Verification_Code__c = '123456';
+            lead.Email_Verification_Attempts__c = ProfileController.MAX_EMAIL_VERIFICATION_ATTEMPTS;
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+            profile.emailCode = '123456';
+
+            String result = ProfileController.verifyEmailCode(profile);
+
+            System.assertEquals(Constants.VERIFICATION_RESULT_TOO_MANY, result);
+
+            Lead updatedLead = [SELECT isEmailVerified__c FROM Lead WHERE Id = :lead.Id];
+
+            System.assertEquals(false, updatedLead.isEmailVerified__c);
+        }
+    }
+
+    @isTest
+    static void testVerifyEmailCodeException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.verifyEmailCode(new ProfileController.Profile());
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
+    static void testSendVerificationSms() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+
+            Boolean verificationSent = ProfileController.sendVerificationSms(profile);
+
+            System.assertEquals(true, verificationSent);
+
+            Lead updatedLead = [SELECT SMS_Verification_Codes_Sent__c, SMS_Verification_Code__c, SMS_Verification_Attempts__c FROM Lead WHERE Id = :lead.Id];
+
+            System.assertEquals(1, updatedLead.SMS_Verification_Codes_Sent__c);
+            System.assert(String.isNotBlank(updatedLead.SMS_Verification_Code__c));
+            System.assertEquals(0, updatedLead.SMS_Verification_Attempts__c);
+        }
+    }
+
+    @isTest
+    static void testSendVerificationSmsCodesExhausted() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.SMS_Verification_Codes_Sent__c = ProfileController.MAX_SMS_VERIFICATION_CODES;
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+
+            Boolean verificationSent = ProfileController.sendVerificationSms(profile);
+
+            System.assertEquals(false, verificationSent);
+        }
+    }
+
+    @isTest
+    static void testSendVerificationSmsException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.sendVerificationSms(new ProfileController.Profile());
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
+    static void testVerifySmsCode() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.SMS_Verification_Code__c = '123456';
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+            profile.smsCode = '123456';
+
+            String result = ProfileController.verifySmsCode(profile);
+
+            System.assertEquals(Constants.VERIFICATION_RESULT_SUCCESS, result);
+
+            Lead updatedLead = [SELECT isSMSVerified__c FROM Lead WHERE Id = :lead.Id];
+
+            System.assertEquals(true, updatedLead.isSMSVerified__c);
+        }
+    }
+
+    @isTest
+    static void testVerifySmsCodeMismatch() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.SMS_Verification_Code__c = '123456';
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+            profile.smsCode = '112333';
+
+            String result = ProfileController.verifySmsCode(profile);
+
+            System.assertEquals(Constants.VERIFICATION_RESULT_INCORRECT, result);
+
+            Lead updatedLead = [SELECT isSMSVerified__c FROM Lead WHERE Id = :lead.Id];
+
+            System.assertEquals(false, updatedLead.isSMSVerified__c);
+        }
+    }
+
+    @isTest
+    static void testVerifySmsCodeAttemptsExhausted() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.SMS_Verification_Code__c = '123456';
+            lead.SMS_Verification_Attempts__c = ProfileController.MAX_SMS_VERIFICATION_ATTEMPTS;
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+            profile.smsCode = '123456';
+
+            String result = ProfileController.verifySmsCode(profile);
+
+            System.assertEquals(Constants.VERIFICATION_RESULT_TOO_MANY, result);
+
+            Lead updatedLead = [SELECT isSMSVerified__c FROM Lead WHERE Id = :lead.Id];
+
+            System.assertEquals(false, updatedLead.isSMSVerified__c);
+        }
+    }
+
+    @isTest
+    static void testVerifySmsCodeException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.verifySmsCode(new ProfileController.Profile());
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
     static void testCreateUser() {
         System.runAs(TestUtil.createExperienceGuestUser()) {
             Account account = TestUtil.createMiramarCenter();

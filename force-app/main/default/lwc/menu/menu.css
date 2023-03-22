@@ -8,6 +8,28 @@
     height: 50px;
 }
 
+:host .menu-option-button {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.logout {
+    position: absolute;
+    bottom: 70px;
+    width: 100%;
+}
+
+:host .logout-button {
+    --sds-c-button-text-color: white;
+    --sds-c-button-text-color-hover: white;
+}
+
+.logout-icon {
+    --lwc-colorTextIconDefault: white;
+    transform: rotate(-180deg);
+}
+
 .notification-badge {
     position: absolute;
     right: 15px;
@@ -20,11 +42,8 @@
 
 .loyalty-badge {
     position: absolute;
-    right: -8px;
-    top: -6px;
-    --sds-c-icon-color-foreground-default: white;
-    --sds-c-icon-color-background: #8080e7;
-    border-radius: 100%;
-    padding: 2px;
-    outline: 1px solid black;
+    right: -6px;
+    top: -4px;
+    height: 16px;
+    width: 16px;
 }

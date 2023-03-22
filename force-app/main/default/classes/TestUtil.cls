@@ -79,7 +79,7 @@ public with sharing class TestUtil {
                 FirstName = 'Experience',
                 LastName = 'User',
                 Email = experienceUserEmail,
-                Username = experienceUserEmail,
+                Username = experienceUserEmail + Constants.USERNAME_SUFFIX,
                 Alias = 'experien',
                 Phone = '800-555-1212',
                 ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id,

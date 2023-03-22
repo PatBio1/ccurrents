@@ -17,12 +17,54 @@
                         </div>
                         
                         <div style="position: relative;">
-                            <lightning-icon class="loyalty-badge" icon-name="utility:favorite" size="xx-small"></lightning-icon>
+                            <!-- <lightning-icon class="loyalty-badge" icon-name="utility:favorite" size="xx-small"></lightning-icon> -->
+                            <span class="loyalty-badge slds-avatar slds-avatar_circle" style="background: rgb(218 196 255);">
+                                <c-loyalty-tier-badge loyalty-tier-name="Donor (Default)"></c-loyalty-tier-badge>
+                            </span>
                             <lightning-avatar variant="circle" src={photoUrl} fallback-icon-name="standard:user" onclick={onPhotoClick}></lightning-avatar>
                         </div>
                     </div> 
                 </template>
             </div>
+        </div>
+    </div>
+
+    <div if:true={showMenu} class="slds-backdrop fix-slds-backdrop slds-backdrop_open" style={menuStyle} role="presentation">
+        <div class="slds-var-p-horizontal_medium" style="padding-top: 10px; padding-bottom: 10px; background-color: #5c3e99;">
+            <div class="slds-grid slds-gutters slds-grid_vertical-align-center">
+                <div class="slds-col slds-size_1-of-3">
+                    <lightning-icon icon-name="utility:close" size="small" variant="inverse" onclick={onCloseClick}></lightning-icon>
+                </div>
+                <div class="slds-col slds-size_1-of-3 slds-text-align_center">
+                    <div class="logoContainer"></div>
+                </div>
+                <div class="slds-col slds-size_1-of-3 slds-text-align_right">
+                </div>
+            </div>
+        </div>
+
+        <div class="slds-align_absolute-center" style="height: calc(100% - 70px);">
+            <div>
+                <div class="slds-m-bottom_large slds-text-align_center">
+                    <button class="slds-button menu-option-button" onclick={onLoyaltyTiersButtonClick}>{labels.loyaltyTiers}</button>
+                </div>
+                <div class="slds-m-bottom_large slds-text-align_center">
+                    <button class="slds-button menu-option-button" onclick={onDonorTipsButtonClick}>{labels.donorTips}</button>
+                </div>
+                <div class="slds-m-bottom_large slds-text-align_center">
+                    <button class="slds-button menu-option-button" onclick={onBuddyRewardsButtonClick}>{labels.buddyRewards}</button>
+                </div>
+                <div class="slds-text-align_center">
+                    <button class="slds-button menu-option-button" onclick={onSupportButtonClick}>{labels.support}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="logout slds-text-align_center">
+            <button class="slds-button logout-button" onclick={onLogoutButtonClick}>
+                <lightning-icon icon-name="utility:outcome" size="x-small" class="slds-button__icon slds-button__icon_left logout-icon"></lightning-icon>
+                {labels.logout}
+            </button>
         </div>
     </div>
 

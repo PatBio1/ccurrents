@@ -4,6 +4,7 @@ public class OnbeRequestPrepaid {
 
     // Constant
     private static final String uriAccountManagementPrepaidRequest = 'http://request.accountmanagementapi.prepaid.citi.com';
+	//private static final String PROGRAM_ID = '04011223';
 
     public class UpdateRegistrationRequest {
 
@@ -695,17 +696,42 @@ public class OnbeRequestPrepaid {
         public CreateAccountRequest(){
 		}
 
-        public CreateAccountRequest(String accessLevel, Boolean accountPersonalized, 
+        public CreateAccountRequest(String accessLevel, 
+			Boolean accountPersonalized, 
             OnbeDomainPrepaid.Card card,
             OnbeDomainPrepaid.Load load,
             OnbeDomainPrepaid.Link link,
             OnbeDomainPrepaid.Registration registration){
+				this.accessLevel = accessLevel;
                 this.accountPersonalized = accountPersonalized;
                 this.card = card;
                 this.load = load;
                 this.link = link;
                 this.registration = registration;
-            }
+		}
+
+		// another constructor overload - doesn-t have keyValue
+		public CreateAccountRequest(String program_id,
+			String promotion_id,
+			String transaction_id,
+			String partner_user_id,
+			String accessLevel,
+			Boolean accountPersonalized, 
+            OnbeDomainPrepaid.Card card,
+            OnbeDomainPrepaid.Load load,
+            OnbeDomainPrepaid.Link link,
+            OnbeDomainPrepaid.Registration registration){
+				this.program_id = program_id;
+				this.promotion_id = promotion_id;
+				this.transaction_id = transaction_id;
+				this.partner_user_id = partner_user_id;
+				this.accessLevel = accessLevel;
+                this.accountPersonalized = accountPersonalized;
+                this.card = card;
+                this.load = load;
+                this.link = link;
+                this.registration = registration;
+		}
 
 		public CreateAccountRequest(OnbeWsPrepaid.ArrayOf_tns2_keyValue keyValue,
             String partner_user_id,
@@ -782,10 +808,10 @@ public class OnbeRequestPrepaid {
 				linkObj.populateXmlNode(linkNode);
 			}
 			
-			OnbeDomainPrepaid.Registration registationObj = this.registration;
+			OnbeDomainPrepaid.Registration registrationObj = this.registration;
 			Dom.XmlNode registrationNode = outerNode.addChildElement('registation', uriAccountManagementPrepaidRequest, '');
-			if(registationObj != null){
-				registationObj.populateXmlNode(registrationNode);
+			if(registrationObj != null){
+				registrationObj.populateXmlNode(registrationNode);
 			}
 		}
     }

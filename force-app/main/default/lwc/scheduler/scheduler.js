@@ -1,6 +1,7 @@
 import { track, LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import labels from 'c/labelService';
+import util from 'c/util';
 import getCenter from '@salesforce/apex/SchedulerController.getCenter';
 import getAppointments from '@salesforce/apex/SchedulerController.getAppointments';
 import scheduleVisit from '@salesforce/apex/SchedulerController.scheduleVisit';
@@ -95,12 +96,7 @@ geo;
         scheduleVisit(request).then(response => {
             console.log('response', response);
 
-            this[NavigationMixin.Navigate]({
-                type: 'comm__namedPage',
-                attributes: {
-                    name: 'Appointments__c'
-                }
-            });
+            util.navigateToPage(this, 'Appointments__c');
         }).catch((error) => {
             console.log(error);
         }).finally(() => {

@@ -17,8 +17,16 @@
         <name>Address</name>
     </customLabels>
     <customLabels>
+        <label>Todo</label>
+        <name>All</name>
+    </customLabels>
+    <customLabels>
         <label>Ya tengo una cuenta</label>
         <name>Already_Have_An_Account</name>
+    </customLabels>
+    <customLabels>
+        <label>Aplicar</label>
+        <name>Apply</name>
     </customLabels>
     <customLabels>
         <label>Atrás</label>
@@ -27,6 +35,10 @@
     <customLabels>
         <label>Volver a Centros</label>
         <name>Back_To_Centers</name>
+    </customLabels>
+    <customLabels>
+        <label>Volver a Consejos para donantes</label>
+        <name>Back_To_Donor_Tips</name>
     </customLabels>
     <customLabels>
         <label>Volver a la página de inicio</label>
@@ -39,6 +51,10 @@
     <customLabels>
         <label>Perfil básico</label>
         <name>Basic_Profile</name>
+    </customLabels>
+    <customLabels>
+        <label>Recompensas de amigos</label>
+        <name>Buddy_Rewards</name>
     </customLabels>
     <customLabels>
         <label>Autobús</label>
@@ -97,6 +113,14 @@
         <name>Congratulations</name>
     </customLabels>
     <customLabels>
+        <label>Soporte de contacto</label>
+        <name>Contact_And_Support</name>
+    </customLabels>
+    <customLabels>
+        <label>Consejos para donantes</label>
+        <name>Donor_Tips</name>
+    </customLabels>
+    <customLabels>
         <label>Correo electrónico</label>
         <name>Email</name>
     </customLabels>
@@ -107,6 +131,10 @@
     <customLabels>
         <label>Inglés</label>
         <name>English</name>
+    </customLabels>
+    <customLabels>
+        <label>Introduzca el código</label>
+        <name>Enter_Code</name>
     </customLabels>
     <customLabels>
         <label>Introducir la contraseña</label>
@@ -127,6 +155,10 @@
     <customLabels>
         <label>Vie</label>
         <name>Friday_Abbreviation</name>
+    </customLabels>
+    <customLabels>
+        <label>Seguimiento de objetivos</label>
+        <name>Goals_Tracker</name>
     </customLabels>
     <customLabels>
         <label>¿Cómo vas a llegar al centro?</label>
@@ -157,6 +189,22 @@
         <name>Logout_Confirmation</name>
     </customLabels>
     <customLabels>
+        <label>Perdí mi tarjeta</label>
+        <name>Lost_My_Card</name>
+    </customLabels>
+    <customLabels>
+        <label>¡Nos encantaría saber de usted!</label>
+        <name>Love_To_Hear_From_You</name>
+    </customLabels>
+    <customLabels>
+        <label>Niveles de lealtad</label>
+        <name>Loyalty_Tiers</name>
+    </customLabels>
+    <customLabels>
+        <label>Mensaje</label>
+        <name>Message</name>
+    </customLabels>
+    <customLabels>
         <label>Segundo nombre</label>
         <name>Middle_Name</name>
     </customLabels>
@@ -175,6 +223,10 @@
     <customLabels>
         <label>Mis citas</label>
         <name>My_Appointments</name>
+    </customLabels>
+    <customLabels>
+        <label>Mi balance</label>
+        <name>My_Balance</name>
     </customLabels>
     <customLabels>
         <label>Mi ubicacion</label>
@@ -197,6 +249,10 @@
         <name>Notifications</name>
     </customLabels>
     <customLabels>
+        <label>Aún no hay pagos...</label>
+        <name>No_Payments_Yet</name>
+    </customLabels>
+    <customLabels>
         <label>Contraseña</label>
         <name>Password</name>
     </customLabels>
@@ -217,12 +273,24 @@
         <name>Past</name>
     </customLabels>
     <customLabels>
+        <label>historial de pagos</label>
+        <name>Payment_History</name>
+    </customLabels>
+    <customLabels>
         <label>por pt</label>
         <name>Per_Pt</name>
     </customLabels>
     <customLabels>
+        <label>Tarjeta personal</label>
+        <name>Personal_Card</name>
+    </customLabels>
+    <customLabels>
         <label>Informacion personal</label>
         <name>Personal_Information</name>
+    </customLabels>
+    <customLabels>
+        <label>Teléfono</label>
+        <name>Phone</name>
     </customLabels>
     <customLabels>
         <label>La donación de plasma salva vidas y lo ayuda a alcanzar sus metas financieras más rápido.</label>
@@ -249,8 +317,20 @@
         <name>Remove_Photo</name>
     </customLabels>
     <customLabels>
+        <label>Reenviar codigo</label>
+        <name>Resend_Code</name>
+    </customLabels>
+    <customLabels>
         <label>Resultados para:</label>
         <name>Results_For</name>
+    </customLabels>
+    <customLabels>
+        <label>Explicación de las recompensas</label>
+        <name>Rewards_Explained</name>
+    </customLabels>
+    <customLabels>
+        <label>Presentamos el programa de regalías. Realice un seguimiento de sus donaciones anuales con la aplicación y gane más recompensas. Alcance el estado Gold y gane la mayor cantidad de puntos y reciba los mejores puntos de tiempo.</label>
+        <name>Rewards_Explanation</name>
     </customLabels>
     <customLabels>
         <label>Sábado</label>
@@ -259,6 +339,10 @@
     <customLabels>
         <label>Sáb</label>
         <name>Saturday_Abbreviation</name>
+    </customLabels>
+    <customLabels>
+        <label>Salvado</label>
+        <name>Saved</name>
     </customLabels>
     <customLabels>
         <label>Programar</label>
@@ -281,12 +365,20 @@
         <name>Select_Time_Slot</name>
     </customLabels>
     <customLabels>
+        <label>Pon una meta</label>
+        <name>Set_Goal</name>
+    </customLabels>
+    <customLabels>
         <label>Establece tu contraseña</label>
         <name>Set_Your_Password</name>
     </customLabels>
     <customLabels>
         <label>Inscribirse</label>
         <name>Sign_Up</name>
+    </customLabels>
+    <customLabels>
+        <label>Saltar por ahora</label>
+        <name>Skip_For_Now</name>
     </customLabels>
     <customLabels>
         <label>Foto social</label>
@@ -309,8 +401,20 @@
         <name>Street_Address_2</name>
     </customLabels>
     <customLabels>
+        <label>Entregar</label>
+        <name>Submit</name>
+    </customLabels>
+    <customLabels>
         <label>Sufijo</label>
         <name>Suffix</name>
+    </customLabels>
+    <customLabels>
+        <label>Apoyo</label>
+        <name>Support</name>
+    </customLabels>
+    <customLabels>
+        <label>Si es un donante nuevo, un donante actual, un solicitante de empleo, un socio corporativo o simplemente está interesado en obtener más información sobre nuestra empresa, queremos saber de usted. Envíenos un mensaje utilizando el siguiente formulario y le responderemos lo antes posible.</label>
+        <name>Support_Information</name>
     </customLabels>
     <customLabels>
         <label>Domingo</label>
@@ -337,6 +441,10 @@
         <name>Thursday_Abbreviation</name>
     </customLabels>
     <customLabels>
+        <label>Seguimiento de su progreso</label>
+        <name>Track_Your_Progress</name>
+    </customLabels>
+    <customLabels>
         <label>Martes</label>
         <name>Tuesday</name>
     </customLabels>
@@ -353,8 +461,28 @@
         <name>Upload_Another_Photo</name>
     </customLabels>
     <customLabels>
+        <label>Verificar correo electrónico</label>
+        <name>Verify_Email</name>
+    </customLabels>
+    <customLabels>
+        <label>Le enviamos un código de verificación a su correo electrónico &lt;strong&gt;{0}&lt;/strong&gt;. Por favor verifique e ingrese el código a continuación.</label>
+        <name>Verify_Email_Instructions</name>
+    </customLabels>
+    <customLabels>
+        <label>Verificar número de teléfono</label>
+        <name>Verify_Phone</name>
+    </customLabels>
+    <customLabels>
+        <label>Te enviamos un código de verificación a tu teléfono móvil &lt;strong&gt;{0}&lt;/strong&gt;. Por favor verifique e ingrese el código a continuación.</label>
+        <name>Verify_Phone_Instructions</name>
+    </customLabels>
+    <customLabels>
         <label>Caminando</label>
         <name>Walk</name>
+    </customLabels>
+    <customLabels>
+        <label>Ver video</label>
+        <name>Watch_Video</name>
     </customLabels>
     <customLabels>
         <label>Miércoles</label>

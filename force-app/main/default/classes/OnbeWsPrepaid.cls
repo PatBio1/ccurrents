@@ -9,7 +9,8 @@ public class OnbeWsPrepaid {
     private static final String uriAccountManagementPrepaidResponse = 'http://response.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidDomain = 'http://domain.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidCommon = 'http://common.accountmanagementapi.prepaid.citi.com';
-
+    private static final String PROGRAM_ID = '04011223';
+    private static final String PROMOTION_ID = '1';
 
     public class ArrayOf_tns2_keyValue {
 
@@ -179,13 +180,17 @@ public class OnbeWsPrepaid {
 
         // First one to be called
         // multiple operations
-        public OnbeResponsePrepaid.CreateAccountResponse createAccount(String accessLevel,
+        public OnbeResponsePrepaid.CreateAccountResponse createAccount(String program_id,
+          String promotion_id,
+          String accessLevel,
           Boolean accountPersonalized,
           OnbeDomainPrepaid.Card card,
           OnbeDomainPrepaid.Load load,
           OnbeDomainPrepaid.Link link,
           OnbeDomainPrepaid.Registration registration) {
             OnbeRequestPrepaid.CreateAccountRequest request_x = new OnbeRequestPrepaid.CreateAccountRequest();
+            request_x.program_id = program_id;
+            request_x.promotion_id = promotion_id;
             request_x.accessLevel = accessLevel;
             request_x.accountPersonalized = accountPersonalized;
             request_x.card = card;
@@ -433,7 +438,7 @@ public class OnbeWsPrepaid {
           envelope.setNamespace('xsi', xsi);
           DOM.XmlNode header = envelope.addChildElement('Header', env, '');
           AddHeader(header);
-          //System.debug(doc.toXmlString());
+          System.debug('populateDoc.envelope: ' + envelope.getText() );  // doc  .toXmlString()
           DOM.XmlNode body = envelope.addChildElement('Body', env, '');
           return body;
       }
@@ -585,7 +590,11 @@ public class OnbeWsPrepaid {
         return response_x;
       }
   
-      public OnbeResponsePrepaid.CreateAccountResponse createAccount_Http(String accessLevel,
+      public OnbeResponsePrepaid.CreateAccountResponse createAccount_Http(String program_id,
+        String promotion_id,
+        String transaction_id,
+        String partner_user_id,
+        String accessLevel,
         Boolean accountPersonalized,
         OnbeDomainPrepaid.Card card,
         OnbeDomainPrepaid.Load load,
@@ -594,7 +603,7 @@ public class OnbeWsPrepaid {
           DOM.Document doc = new DOM.Document();
           DOM.XmlNode body = populateDoc(doc);
           DOM.XmlNode methodNode = body.addChildElement('createAccount', uriAccountManagementPrepaidWs, '');			
-          OnbeRequestPrepaid.CreateAccountRequest request_x = new OnbeRequestPrepaid.CreateAccountRequest(accessLevel,accountPersonalized,card,load,link,registration);
+          OnbeRequestPrepaid.CreateAccountRequest request_x = new OnbeRequestPrepaid.CreateAccountRequest( program_id, promotion_id, transaction_id, partner_user_id, accessLevel,accountPersonalized,card,load,link,registration);
           request_x.populateXmlNode(methodNode);
           
           HttpRequest req = new HttpRequest();
@@ -604,7 +613,7 @@ public class OnbeWsPrepaid {
           req.setHeader('SOAPAction', 'blank');
           //System.debug(doc.toXmlString());
           req.setBodyDocument(doc);
-          //System.debug(req.getBody());
+          System.debug(req.getBody());
           Http http = new Http();
           HTTPResponse res = http.send(req);
           //System.debug(res.getBody());
@@ -612,7 +621,7 @@ public class OnbeWsPrepaid {
           Dom.XmlNode rootNode = responseDoc.getRootElement();
           Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
           Dom.XmlNode createAccountReturnNode = bodyNode.getChildElement('createAccountReturn', uriAccountManagementPrepaidWs);
-                
+
           OnbeResponsePrepaid.CreateAccountResponse response_x = new OnbeResponsePrepaid.CreateAccountResponse(createAccountReturnNode);
           return response_x;
       }

@@ -2,14 +2,60 @@
 global without sharing class DonorService {
  
     @HttpPatch
-    global static String echoDonorUpdate() {
+    global static DonorUpdateResponse updateDonor() {
         RestRequest request = RestContext.request;
         RestResponse response = RestContext.response;
-        return request.requestBody.toString();
-      // For the moment we are merely returning the values passed in
-      // A future version will check if entroll_id is not null in the call, and 1) if not null it will 
-      // be used to find the new donor and update with the payload values using the donor_number 
-      // otherwise 2) the donor_number will be used to update the existing Donor as an external_ID from the BECS/Nexlynk system
+		String responseBody = request.requestBody.toString();
+		DonorUpdate updateRequest = (DonorUpdate)JSON.deserialize(responseBody, DonorUpdate.class);
+
+		DonorUpdateResponse donorUpdateResponse = new DonorUpdateResponse();
+
+		if(String.isBlank(updateRequest.donor_number)){
+			donorUpdateResponse.status = 'error';
+			donorUpdateResponse.message = 'A donor_id was not provided for BECS/NL enroll_code: '  + updateRequest.enroll_code;
+			if(!Test.isRunningTest()){
+				RestContext.response.statusCode = 400;
+			}
+			return donorUpdateResponse;
+		}
+
+		Account donorAccount = new Account(
+			First_Visit_Code__c = updateRequest.enroll_code,
+			DonorId__c = updateRequest.donor_number
+		);
+		try{
+			upsert donorAccount First_Visit_Code__c;
+			donorUpdateResponse.status = 'success';
+			donorUpdateResponse.message = donorAccount.DonorId__c;
+			if(!Test.isRunningTest()){
+				RestContext.response.statusCode = 200;
+			}
+		}catch(DMLException dex){
+			if(!Test.isRunningTest()){
+				RestContext.response.statusCode = 400;
+			}
+			donorUpdateResponse.status = 'error';
+			donorUpdateResponse.message = 'A Donor could not be found with the BECS/NL enroll_code: ' + updateRequest.enroll_code; 
+		}catch (Exception e){
+			if(!Test.isRunningTest()){
+				RestContext.response.statusCode = 400;
+			}
+			donorUpdateResponse.status = 'error';
+			donorUpdateResponse.message = e.getMessage();
+		}
+        return donorUpdateResponse;
+
     }
 
+    global class DonorUpdate{
+        global String donor_number {get;set;}
+		global String enroll_code {get;set;}
+		global DonorUpdate(){}
+    }
+
+	global class DonorUpdateResponse{
+        global String status {get;set;}
+		global String message {get;set;}
+		global DonorUpdateResponse(){}
+    }
 }

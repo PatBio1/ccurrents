@@ -40,7 +40,7 @@
 		{
 			"name": "Donor Update",
 			"request": {
-				"method": "PATCH",
+				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",

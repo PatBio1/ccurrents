@@ -191,6 +191,14 @@
                 <behavior>Edit</behavior>
                 <field>Eligibility_Date__pc</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Last_Physical_Exam_Date__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Last_SPE_Sample_Date__pc</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>

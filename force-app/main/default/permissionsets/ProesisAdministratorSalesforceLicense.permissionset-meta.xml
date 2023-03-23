@@ -844,7 +844,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.Last_Physical_Exam_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.Last_Previous_Donation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Last_SPE_Sample_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

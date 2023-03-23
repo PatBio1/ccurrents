@@ -183,12 +183,6 @@ export default class Profile extends LightningElement {
         );
     }
 
-    get pictureValid() {
-        return (
-            util.isNotBlank(this.profile.nickname)
-        );
-    }
-
     get passwordValid() {
         return (
             util.isNotBlank(this.profile.password) &&

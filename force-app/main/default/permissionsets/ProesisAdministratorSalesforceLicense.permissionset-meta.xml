@@ -1144,6 +1144,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Lead.Preferred_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Lead.SMS_Verification_Attempts__c</field>
         <readable>true</readable>
     </fieldPermissions>

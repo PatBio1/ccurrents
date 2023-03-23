@@ -47,6 +47,10 @@
             <inputField>Enable_Mobile_Push__c</inputField>
             <outputField>Enable_Mobile_Push__c</outputField>
         </mappingFields>
+        <mappingFields>
+            <inputField>Preferred_Name__c</inputField>
+            <outputField>Preferred_Name__c</outputField>
+        </mappingFields>
         <outputObject>Contact</outputObject>
     </objectMapping>
     <opportunityCreationOptions>VisibleOptional</opportunityCreationOptions>

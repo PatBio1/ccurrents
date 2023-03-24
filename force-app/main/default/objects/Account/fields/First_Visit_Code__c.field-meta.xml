@@ -4,7 +4,7 @@
     <caseSensitive>false</caseSensitive>
     <externalId>true</externalId>
     <label>First Visit Code</label>
-    <length>9</length>
+    <length>7</length>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <type>Text</type>

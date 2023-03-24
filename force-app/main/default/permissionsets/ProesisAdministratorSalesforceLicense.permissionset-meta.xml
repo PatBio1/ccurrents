@@ -359,6 +359,21 @@
     <description>Full administrative access (including view &amp; modify all) to all Proesis applications, objects, components, etc, for Salesforce licensed users, to see tabs.</description>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.Apology_Campaign_Active__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Apology_Campaign_Payment_Amount__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Apology_Campaign_Time_Threshold__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.CenterId__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1435,6 +1450,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Visit__c.Collection_Number__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Visit__c.Cycle_Time__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

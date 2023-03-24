@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Apology_Campaign_Time_Threshold__c</fullName>
+    <description>(In minutes) Indicates the amount of minutes (threshold) where the apology campaign payments kick in for this center.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>(In minutes) Indicates the amount of minutes (threshold) where the apology campaign payments kick in for this center.</inlineHelpText>
+    <label>Apology Campaign Time Threshold</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

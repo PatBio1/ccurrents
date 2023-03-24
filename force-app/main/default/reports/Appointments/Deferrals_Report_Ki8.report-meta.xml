@@ -254,9 +254,6 @@
         <field>ACCOUNT.LAST_UPDATE</field>
     </columns>
     <columns>
-        <field>IS_PARTNER</field>
-    </columns>
-    <columns>
         <field>JIGSAW_KEY_A</field>
     </columns>
     <columns>

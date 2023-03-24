@@ -315,6 +315,10 @@
                 <behavior>Edit</behavior>
                 <field>PersonHasOptedOutOfEmail</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>et4ae5__HasOptedOutOfMobile__pc</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
@@ -482,6 +486,15 @@
         <fields>ACCOUNT.NAME</fields>
         <fields>ACCCONRELATION.ROLES</fields>
         <relatedList>RelatedContactAccountRelationList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>CAMPAIGN.NAME</fields>
+        <fields>CAMPAIGN.START_DATE</fields>
+        <fields>CAMPAIGN.CAMPAIGN_TYPE</fields>
+        <fields>CM.STATUS</fields>
+        <fields>CM.RESPONDED</fields>
+        <fields>CM.LAST_UPDATE</fields>
+        <relatedList>RelatedCampaignList</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>

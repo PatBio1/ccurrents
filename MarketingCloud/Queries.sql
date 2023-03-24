@@ -26,4 +26,31 @@ WHERE DATEDIFF(DAY, GETDATE(), DATEADD(YEAR, 1, c.Last_Physical_Exam_Date__c)) =
 vis.Donor__c IS NULL AND
 apr.SubscriberKey IS NULL
 
--- 
+-- Apology Campaign
+SELECT v.Donor__c AS SubscriberKey,
+c.Email AS Email,
+c.Firstname AS FirstName,
+v.Id AS VisitId,
+cdt.Center__c AS CenterId,
+cent.Apology_Campaign_Payment_Amount__c AS CompensationAmount
+
+FROM Visit__c_Salesforce AS v
+
+INNER JOIN Contact_Salesforce AS c
+ON c.Id = v.Donor__c
+
+INNER JOIN Account_Salesforce AS cent
+ON cent.Id = v.Center__c
+
+INNER JOIN Center_Donation_Type__c_Salesforce AS cdt
+ON cdt.Center__c = cent.Id
+
+LEFT JOIN
+(SELECT a.VisitId
+FROM "Apology Campaign" AS a)
+AS ac
+ON ac.VisitId = v.Id
+
+WHERE ac.VisitId IS NULL
+AND v.Cycle_Time__c > cent.Apology_Campaign_Time_Threshold__c
+AND cent.Apology_Campaign_Active__c = 1

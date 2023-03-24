@@ -2,6 +2,7 @@ import { LightningElement, track, api } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 
 import { visitStatusToDisplayClass, visitOutcomeToDisplayClass } from "c/constants";
+import RescheduleVisitModal from "c/rescheduleVisitModal";
 
 export default class DonorDot extends NavigationMixin(LightningElement)  {
     @track showpopover = false;
@@ -16,8 +17,16 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     isPopupConfigured = false;
     popUpDirection;
 
+    get donorLoyaltyLevel() {
+        return (this.donor.loyaltyTierName || "Normal Donor +15");
+    }
+
+    get cantReschedule() {
+        return !this.canReschedule;
+    }
+
     get canReschedule() {
-        return (!this.appointment.isInThePast);
+        return (!this.appointment.isInThePast && (this.donor.status !== "Complete" && this.donor.status !== "Checked-In"));
     }
 
     get displayStatus() {
@@ -25,7 +34,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     get cantCancelVisit() {
-        return (this.donor.status === "Complete" || this.donor.outcome === "Canceled");
+        return (this.appointment.isInThePast || this.donor.status === "Complete" || this.donor.outcome === "Canceled");
     }
 
     get popupContainerClasses() {
@@ -77,6 +86,8 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     connectedCallback() {
+        console.log(this.donor, this.appointment);
+
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
             attributes: {
@@ -152,5 +163,21 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         }
 
         this.isPopupConfigured = true;
+    }
+
+    handleInitReschedule(event) {
+        let originDate = new Date(this.appointment.appointmentDatetime);
+        originDate.setDate(originDate.getDate() + 1);
+
+        RescheduleVisitModal.open({
+            existingVisitAppointmentId: this.appointment.Id,
+            existingVisitId: this.donor.visitId,
+            donorId: this.donor.donorId,
+            originDate: originDate,
+
+            onvisitrescheduled: (event) => {
+                this.dispatchEvent(new CustomEvent("visitrescheduled", { detail: {...event.detail} }));
+            }
+        });
     }
 }

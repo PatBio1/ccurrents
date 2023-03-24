@@ -73,6 +73,10 @@
                 <field>Donation_Complete__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Cycle_Time__c</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Donation_Volume__c</field>
             </layoutItems>

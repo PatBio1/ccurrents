@@ -38,4 +38,44 @@ public with sharing class VisitTriggerHelper {
             }
         }
     }
+
+    public static void updateDonorVisitDates(List<Visit__c> visits) {
+        List<Id> donorIds = new List<Id>();
+        List<Id> appointmentIds = new List<Id>();
+    
+        for (Visit__c visit : visits) {
+            if (visit.Physical_Exam__c || visit.SPE_Analysis__c) {
+                if (visit.Donor__c == null || visit.Appointment__c == null) {
+                    continue;
+                }
+
+                donorIds.add(visit.Donor__c);
+                appointmentIds.add(visit.Appointment__c);
+            }
+        }
+        
+        if (!donorIds.isEmpty()) {
+            Map<Id, Contact> visitIdToDonorRecord = new Map<Id, Contact>([SELECT Id, Last_Physical_Exam_Date__c, Last_SPE_Sample_Date__c FROM Contact WHERE Id IN :donorIds]);
+            Map<Id, Appointment__c> visitIdToAppointmentRecord = new Map<Id, Appointment__c>([SELECT Id, DateTime__c FROM Appointment__c WHERE Id IN :appointmentIds]);
+            
+            for (Visit__c visit : visits) {
+                Contact donor = visitIdToDonorRecord.get(visit.Donor__c);
+                Appointment__c appointment = visitIdToAppointmentRecord.get(visit.Appointment__c);
+                
+                if (donor != null && appointment.DateTime__c != null) {
+                    if (visit.Physical_Exam__c) {
+                        donor.Last_Physical_Exam_Date__c = appointment.DateTime__c.date();
+                    }
+                    
+                    if (visit.SPE_Analysis__c) {
+                        donor.Last_SPE_Sample_Date__c = appointment.DateTime__c.date();
+                    }
+                    
+                    visitIdToDonorRecord.put(donor.Id, donor);
+                }
+            }
+            
+            update visitIdToDonorRecord.values();
+        }
+    }
 }

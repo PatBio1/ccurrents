@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cycle_Time__c</fullName>
+    <description>(Minutes) Indicates the Donation Complete time minus the Check in time, to show the end-to-end visit cycle time.</description>
+    <externalId>false</externalId>
+    <formula>IF(Donation_Complete__c &gt; Check_In__c, (DATETIMEVALUE(Donation_Complete__c) -  DATETIMEVALUE(Check_In__c)) * 24 * 60,0)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <inlineHelpText>DATETIMEVALUE(</inlineHelpText>
+    <label>Cycle Time</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

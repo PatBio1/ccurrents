@@ -359,6 +359,21 @@
     <description>Full administrative access (including view &amp; modify all) to all Proesis applications, objects, components, etc, for Salesforce licensed users, to see tabs.</description>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Account.Apology_Campaign_Active__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Apology_Campaign_Payment_Amount__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.Apology_Campaign_Time_Threshold__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Account.CenterId__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -844,7 +859,17 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.Last_Physical_Exam_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.Last_Previous_Donation__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Last_SPE_Sample_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1144,6 +1169,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Lead.Preferred_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Lead.SMS_Verification_Attempts__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1420,6 +1450,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Visit__c.Collection_Number__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Visit__c.Cycle_Time__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

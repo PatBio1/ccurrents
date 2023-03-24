@@ -1,7 +1,7 @@
 <template>
     <div style="position: relative;">
         <div class="loyalty-badge">
-            <c-loyalty-tier-badge width="48px" height="48px" loyalty-tier-name={donor.loyaltyTierName}>
+            <c-loyalty-tier-badge width="48px" height="48px" loyalty-tier-name={donorLoyaltyLevel}>
             </c-loyalty-tier-badge>
         </div>
 
@@ -44,7 +44,7 @@
                                 <p><b><a href={donorLink} target="_blank" >{donor.donorName}</a></b></p>
     
                                 <ul style="font-size: 14px;" class="slds-list_horizontal slds-has-dividers_left">
-                                    <li class="slds-item">{donor.loyaltyTierName}</li>
+                                    <li class="slds-item">{donorLoyaltyLevel}</li>
                                     <li class="slds-item">Card Issued</li>
                                 </ul>
                             </div>
@@ -73,7 +73,7 @@
                             <lightning-button-icon title="Exception Payment" icon-name="utility:money" variant="bare" size="large">
                             </lightning-button-icon>
     
-                            <lightning-button-icon title="Reschedule Visit" icon-name="utility:date_input" variant="bare" size="large">
+                            <lightning-button-icon title="Reschedule Visit" icon-name="utility:date_input" variant="bare" size="large" onclick={handleInitReschedule} disabled={cantReschedule}>
                             </lightning-button-icon>
     
                             <lightning-button-icon title="Cancel Visit" icon-name="utility:close" variant="bare" size="large" onclick={cancelVisit} disabled={cantCancelVisit}>

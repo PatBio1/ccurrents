@@ -32,7 +32,7 @@ export default class LoyaltyTierBadge extends LightningElement {
     renderedCallback() {
         let targetBadgeFileName = loyaltyTierNameToBadgeFileName.get(this.loyaltyTierName);
         if (!targetBadgeFileName) {
-            targetBadgeFileName = "Donor (Default)";
+            targetBadgeFileName = "default";
         }
 
         if (targetBadgeFileName !== this.currentBadgeFileName) {

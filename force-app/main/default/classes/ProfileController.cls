@@ -16,6 +16,7 @@ public without sharing class ProfileController {
             lead.MiddleName = profile.middleName;
             lead.LastName = profile.lastName;
             lead.Suffix = profile.suffix;
+            lead.Preferred_Name__c = profile.nickname;
             lead.Email = profile.email;
             lead.MobilePhone = profile.mobilePhone;
             lead.Street = profile.street;
@@ -254,15 +255,16 @@ public without sharing class ProfileController {
             accountContactRelation.Roles = 'Donor';
             insert accountContactRelation;
 
+            String alias = (account.FirstName.trim().replaceAll('[^a-zA-Z]', '') + account.LastName.trim().replaceAll('[^a-zA-Z]', '')).abbreviate(8);
             String username = account.PersonEmail + Constants.USERNAME_SUFFIX;
 
             User user = new user();
             user.FirstName = account.FirstName;
             user.LastName = account.LastName;
             user.Email = account.PersonEmail;
-            user.Alias = profile.nickname.abbreviate(8);
+            user.Alias = alias;
             user.Username = username;
-            user.CommunityNickname = profile.nickname;
+            user.CommunityNickname = 'proesis' + System.currentTimeMillis();
             user.LocaleSidKey = 'en_US';
             user.TimeZoneSidKey = 'America/New_York';
             user.ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id;

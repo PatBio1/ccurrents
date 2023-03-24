@@ -141,8 +141,7 @@
                 <lightning-button label={labels.previous} stretch="true" class="secondary-button" onclick={onPicturePreviousButtonClick}></lightning-button>
             </div>
             <div class="slds-col slds-size_1-of-2">
-                <lightning-button if:true={pictureValid} label={labels.next} variant="brand" stretch="true" class="primary-button" onclick={onPictureNextButtonClick}></lightning-button>
-                <button if:false={pictureValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.next}</button>
+                <lightning-button label={labels.next} variant="brand" stretch="true" class="primary-button" onclick={onPictureNextButtonClick}></lightning-button>
             </div>
         </div>
     </div>

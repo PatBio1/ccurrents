@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Apology_Campaign_Payment_Amount__c</fullName>
+    <description>The amount paid for the apology campaign for this Center.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>The amount paid for the apology campaign for this Center.</inlineHelpText>
+    <label>Apology Campaign Payment Amount</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Currency</type>
+</CustomField>

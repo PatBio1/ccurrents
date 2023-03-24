@@ -1,0 +1,59 @@
+<template>
+    <lightning-modal-header aria-label="Reschedule Visit" label="Reschedule Visit">
+    </lightning-modal-header>
+
+    <lightning-modal-body class="slds-is-relative">
+        <lightning-spinner if:true={isLoading}>
+        </lightning-spinner>
+
+        <div class="reschedule-modal-header">
+            <div style="font-size: 16px; align-self: flex-end;">
+                <p><b>Soonest Next Visit Date</b></p>
+
+                <lightning-formatted-date-time value={adjustedSoonestNextVisit}>
+                </lightning-formatted-date-time>
+            </div>
+
+            <div class="reschedule-date-range-selector">
+                <lightning-input style="flex: 0.5;" type="date" name="StartDate" label="Start Date" value={selectedStartDate} onchange={handleUpdateSearchDate} data-search-date="Start">
+                </lightning-input>
+
+                <lightning-input style="flex: 0.5;" type="date" name="EndDate" label="End Date" value={selectedEndDate} onchange={handleUpdateSearchDate} data-search-date="End">
+                </lightning-input>
+            </div>
+        </div>
+        
+        <div class="appointment-selector-container">
+            <div if:true={groupedAppointments}>
+                <div class="modal-container">
+                    <div class="day-selector">
+                        <template for:each={groupedAppointments} for:item="appointmentGroup" for:index="appointmentGroupIndex">
+                            <div key={appointmentGroup.dayMonthYearDisplay} class="group-header" onclick={handleSelectAppointmentGroup} data-group-index={appointmentGroupIndex}>
+                                <p><b>{appointmentGroup.weekDayDisplay}</b></p>
+                                <p>{appointmentGroup.dayMonthYearDisplay}</p>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+    
+                <div if:true={selectedAppointmentGroup} class="available-appointments">
+                    <template for:each={selectedAppointmentGroup.appointments} for:item="appointment">
+                        <div key={appointment.timeDisplay} class="appointment-cell" onclick={handleSelectNewAppointment} data-appointment-id={appointment.appointmentId}>
+                            <p><b>{appointment.timeDisplay}</b></p>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            
+            <div style="margin-top: 1rem;" if:false={groupedAppointments}>
+                <div class="slds-illustration slds-illustration_large" aria-hidden="true">
+                    <img src="/img/chatter/Desert.svg" class="slds-illustration__svg" alt=""/>
+                    <div class="slds-text-longform">
+                        <h3 class="slds-text-heading_medium">No Appointments</h3>
+                        <p class="slds-text-body_regular">Please select a start/end date to search for a new appointment slot.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </lightning-modal-body>
+</template>

@@ -87,4 +87,32 @@ public class VisitTriggerHandlerTest {
             Assert.areEqual(targetAppointment.Datetime__c, testVisit.Appointment_Datetime__c, 'The Appointment Datetime on the visit wasn\'t synced with the appointment Datetime');
         }
     }
+
+    @isTest static void testUpdateDonorDates() {
+        Appointment__c targetAppointment = [SELECT Id, Datetime__c FROM Appointment__c LIMIT 1];
+        Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        List<Account> targetDonors = [SELECT Id, PersonContactId FROM Account WHERE DonorId__c != NULL];
+        List<Visit__c> testVisits = new List<Visit__c>();
+
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            testVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = targetAppointment.Id,
+                Status__c = 'Scheduled',
+                Physical_Exam__c = true,
+                SPE_Analysis__c = true
+            ));
+        }
+
+        Test.startTest();
+        insert testVisits;
+        Test.stopTest();
+
+        for(Contact targetDonor : [SELECT Id, Last_Physical_Exam_Date__c, Last_SPE_Sample_Date__c FROM Contact WHERE Id IN (SELECT PersonContactId FROM Account WHERE Id IN :targetDonors)]) {
+            Assert.areEqual(targetAppointment.Datetime__c.date(), targetDonor.Last_Physical_Exam_Date__c, 'The Last Physical Exam Date on the donor wasn\'t synced with the appointment Datetime');
+            Assert.areEqual(targetAppointment.Datetime__c.date(), targetDonor.Last_SPE_Sample_Date__c, 'The Last SPE Sample Date on the donor wasn\'t synced with the appointment Datetime');
+        }
+    }
 }

@@ -363,7 +363,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         let generateUrlPromises = [];
         for(let appointment of queriedAppointments) {
             // Used to show/hide Add Visit on per row basis
-            appointment.cantAddVisit = !(appointment.availability > appointment.booked && !appointment.isInThePast);
+            appointment.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability > 0) && !appointment.isInThePast);
 
             generateUrlPromises.push(
                 this[NavigationMixin.GenerateUrl]({
@@ -465,7 +465,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appRow.visits = appointment.visits;
             appRow.booked = appointment.booked;
             appRow.availability = appointment.availability;
-            appRow.cantAddVisit = !(appointment.availability > appointment.booked && !appointment.isInThePast);
+            appRow.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability) && !appointment.isInThePast);
         }).catch(err => {
             console.log(err.message);
         })
@@ -521,5 +521,21 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appointmentId,
             this.appointments.find(appointment => appointment.Id === appointmentId)
         );
+    }
+
+    handleDifferentDayReschedule(event) {
+        let oldAppointmentId = event.detail.oldAppointmentId;
+        let newAppointmentId = event.detail.newAppointmentId;
+
+        let oldAppointment = this.appointments.find(appointment => appointment.Id === oldAppointmentId);
+        let newAppointment = this.appointments.find(appointment => appointment.Id === newAppointmentId);
+
+        if (oldAppointment) {
+            this.refreshAppointmentSlot(oldAppointmentId, oldAppointment);
+        }
+
+        if (newAppointment) {
+            this.refreshAppointmentSlot(newAppointmentId, newAppointment);
+        }
     }
 }

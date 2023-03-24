@@ -1,6 +1,12 @@
 @IsTest
 public with sharing class CenterSchedulerControllerTests {
 
+    static Date currentDate =  Date.newInstance(2023, 1, 10).addDays(-12);
+    static Date startDate =  Date.newInstance(2023, 1, 10).addDays(-10);
+    static Date endDate =  Date.newInstance(2023, 1, 10).addDays(30);
+    static Integer intervalsPerHour = 6;
+    static Integer slotsPerInterval = 1;
+
     @TestSetup
     static void makeData(){
         Id centerRecordTypeID =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Center').getRecordTypeId();
@@ -82,22 +88,11 @@ public with sharing class CenterSchedulerControllerTests {
         
         insert businessHours;
 
-        // insert schedules;
-
-        Date startDate =  Date.newInstance(2023, 1, 10).addDays(-10);
-        Date endDate =  Date.newInstance(2023, 1, 10).addDays(30);
-        Id loyaltyTier = null;
-        Integer intervalsPerHour = 6; //10 minutes apart
-        Integer slotsPerInterval = 1;
-
         //create the schedule record
         Schedule__c schedule = ScheduleUtils.createScheduleRecord(centers[0].Id, startDate, endDate);
         insert schedule;
 
-        Account center1 = [SELECT Id FROM Account WHERE Name = 'Proesis Miramar'];
-
-        Appointment__c[] appointments = ScheduleUtils.scheduleRange(centers[0].Id,schedule.Id,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
-
+        Appointment__c[] appointments = ScheduleUtils.scheduleRange(centers[0].Id,schedule.Id,startDate,endDate, null,intervalsPerHour,slotsPerInterval);
         insert appointments;
     }
 
@@ -221,14 +216,19 @@ public with sharing class CenterSchedulerControllerTests {
             
             Test.stopTest();
 
-            visit = [SELECT Id, Appointment__c, Appointment__r.Booked__c FROM Visit__c limit 1];
+            visit = [SELECT Id, Status__c, Outcome__c, Appointment__r.Booked__c FROM Visit__c WHERE Id = :visit.Id limit 1];
+            Visit__c newVisit = [SELECT Id, Status__c, Appointment__c, Appointment__r.Booked__c FROM Visit__c WHERE Id != :visit.Id LIMIT 1];
 
-            system.assertEquals(appointments[1].id, visit.Appointment__c);
-            system.assertEquals(1, visit.Appointment__r.Booked__c);
+            Assert.areEqual('Complete', visit.Status__c, 'Old Visit record should be complete');
+            Assert.areEqual('Rescheduled', visit.Outcome__c, 'Old Visit record should be marked as rescheduled');
+            Assert.areEqual(-1, visit.Appointment__r.Booked__c, 'Old Appointment should be marked as not booked'); // Since we are inserting the visit directly, the booked count is not updated to 1. Therefore we expect -1
+
+            Assert.isNotNull(newVisit, 'Should have found a new visit record');
+            Assert.areEqual('Scheduled', newVisit.Status__c, 'New Visit record should be scheduled');
+            Assert.areEqual(appointments[1].id, newVisit.Appointment__c, 'New Visit record should be scheduled for the new appointment');
+            Assert.areEqual(1, newVisit.Appointment__r.Booked__c, 'New Appointment should be marked as booked');
         }
-
     }
-
 
     @IsTest
     public static void testCancelVisit(){
@@ -288,7 +288,6 @@ public with sharing class CenterSchedulerControllerTests {
             system.assertEquals('Canceled', visit.Outcome__c);
             system.assertEquals(0, visit.Appointment__r.Booked__c);
         }
-
     }
     
     @IsTest
@@ -304,7 +303,6 @@ public with sharing class CenterSchedulerControllerTests {
             CenterScheduleController.createAppointmentSlots(center.Id,startDate,endDate,1,1,null);
             Test.stopTest();
         }
-
     }
 
     @IsTest
@@ -343,5 +341,43 @@ public with sharing class CenterSchedulerControllerTests {
         Assert.isNotNull(createdVisit, 'Couldn\'t find the desired visit record. Either it wasn\'t created or the data wasn\'t set correctly.');
         Assert.areEqual('Scheduled', createdVisit.Status__c, 'The status of the visit should default to \'Scheduled\'');
         Assert.areEqual(1, createdVisit.Appointment__r.Booked__c, 'Adding a visit should have incremented the appointment booked value');
+    }
+
+    @IsTest
+    static void testGetAvailableRescheduleAppointmentRange() {
+        List<CenterScheduleController.RescheduleSlot> rescheduleSlots;
+        DateTime currentDateTime = DateTime.newInstance(currentDate, Time.newInstance(0, 0, 0, 0));
+
+        Test.startTest();
+        rescheduleSlots = CenterScheduleController.getAvailableRescheduleAppointmentRange(
+            currentDateTime,
+            currentDateTime.addDays(1),
+            DateTime.newInstance(startDate, Time.newInstance(0, 0, 0, 0)),
+            DateTime.newInstance(endDate, Time.newInstance(0, 0, 0, 0)),
+            true
+        );
+        Test.stopTest();
+
+        Assert.isNotNull(rescheduleSlots, 'The reschedule slots should not be null');
+        Assert.isTrue(rescheduleSlots.size() > 0, 'There should only be one reschedule slot');
+    }
+
+    @IsTest
+    static void testNoAvailableRescheduleAppointmentRange() {
+        List<CenterScheduleController.RescheduleSlot> rescheduleSlots;
+        DateTime currentDateTime = DateTime.newInstance(currentDate, Time.newInstance(0, 0, 0, 0));
+
+        Test.startTest();
+        rescheduleSlots = CenterScheduleController.getAvailableRescheduleAppointmentRange(
+            currentDateTime,
+            currentDateTime.addDays(1),
+            DateTime.newInstance(endDate, Time.newInstance(0, 0, 0, 0)),
+            DateTime.newInstance(startDate, Time.newInstance(0, 0, 0, 0)),
+            true
+        );
+        Test.stopTest();
+
+        Assert.isNotNull(rescheduleSlots, 'The reschedule slots should not be null');
+        Assert.areEqual(0, rescheduleSlots.size(), 'No reschedule slots are returned for an invalid date range');
     }
 }

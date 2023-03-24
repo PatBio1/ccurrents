@@ -31,8 +31,11 @@ public with sharing class CenterScheduleController {
                         Name,
                         Datetime__c,
                         Availability__c,
+                        Availability_Loyalty__c,
                         Booked__c,
-                        Capacity__c
+                        Booked_Loyalty__c,
+                        Capacity__c,
+                        Capacity_Loyalty__c
 
                 FROM Appointment__c
                 WHERE Id =: appointmentId
@@ -94,8 +97,11 @@ public with sharing class CenterScheduleController {
                         Name,
                         Datetime__c,
                         Availability__c,
+                        Availability_Loyalty__c,
                         Booked__c,
-                        Capacity__c
+                        Booked_Loyalty__c,
+                        Capacity__c,
+                        Capacity_Loyalty__c
 
                 FROM Appointment__c
                 WHERE Schedule__r.Center__c =: centerId
@@ -151,8 +157,8 @@ public with sharing class CenterScheduleController {
         Account donor = [SELECT PersonContactId, Loyalty_Level__pc FROM Account WHERE Id = :donorId LIMIT 1];
         Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__pc);
 
-        Appointment__c targetSlot = [SELECT Id, Booked__c, Booked_Loyalty__c FROM Appointment__c WHERE Id = :appointmentSlotId LIMIT 1];
-        if (loyaltyLevel > 0) {
+        Appointment__c targetSlot = [SELECT Id, Booked__c, Booked_Loyalty__c, Capacity_Loyalty__c FROM Appointment__c WHERE Id = :appointmentSlotId LIMIT 1];
+        if (loyaltyLevel > 0 && (targetSlot.Booked_Loyalty__c == null || targetSlot.Booked_Loyalty__c < targetSlot.Capacity_Loyalty__c)) {
             if (targetSlot.Booked_Loyalty__c == null) {
                 targetSlot.Booked_Loyalty__c = 1;
             } else {
@@ -181,31 +187,50 @@ public with sharing class CenterScheduleController {
             return;
         }
 
-        Visit__c visitDetails = [SELECT Id, Appointment__c, Donor__r.Loyalty_Level__c FROM Visit__c WHERE Id = :visitId LIMIT 1];
+        Visit__c visitDetails = [SELECT Id, Status__c, Center_Donation_Type__c, Appointment__c, Donor__r.Loyalty_Level__c FROM Visit__c WHERE Id = :visitId LIMIT 1];
         Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(visitDetails.Donor__r.Loyalty_Level__c);
         
-        List<Appointment__c> targetAppointments = [SELECT Id, Booked__c, Booked_Loyalty__c FROM Appointment__c WHERE Id IN (:visitDetails.Appointment__c, :appointmentId)];
+        List<Appointment__c> targetAppointments = [SELECT Id, Booked__c, Booked_Loyalty__c, Capacity_Loyalty__c FROM Appointment__c WHERE Id IN (:visitDetails.Appointment__c, :appointmentId)];
         Appointment__c oldAppointment = (targetAppointments[0].Id == visitDetails.Appointment__c) ? targetAppointments[0] : targetAppointments[1];
         Appointment__c newAppointment = (targetAppointments[0].Id == appointmentId) ? targetAppointments[0] : targetAppointments[1];
 
+        // Updating Slot Booked/Capacity
         if (loyaltyLevel > 0) {
             oldAppointment.Booked_Loyalty__c -= 1;
+        } else {
+            oldAppointment.Booked__c -= 1;
+        }
 
+        if (loyaltyLevel > 0 && (newAppointment.Booked_Loyalty__c == null || newAppointment.Booked_Loyalty__c < newAppointment.Capacity_Loyalty__c)) {
             if (newAppointment.Booked_Loyalty__c == null) {
                 newAppointment.Booked_Loyalty__c = 1;
             } else {
                 newAppointment.Booked_Loyalty__c += 1;
             }
         } else {
-            oldAppointment.Booked__c -= 1;
             newAppointment.Booked__c += 1;
         }
-
         update targetAppointments;
 
+        // Create New Visit By Cloning Old Visit
+        Visit__c newVisit = visitDetails.clone(false, true, false, false);
+        newVisit.Appointment__c = appointmentId;
+        newVisit.Status__c = 'Scheduled';
+
+        insert newVisit;
+
+        // Query any Tasks associated with the old Visit, reassign them to the new Visit
+        List<Task> tasks = [SELECT Id FROM Task WHERE WhatId = :visitId];
+        if (tasks != null && tasks.size() > 0) {
+            for (Task task : tasks) {
+                task.WhatId = newVisit.Id;
+            }
+            update tasks;
+        }
+
+        // Change Old Visit to Complete/Rescheduled
         try {
-            visitDetails.Appointment__c = appointmentId;
-            update visitDetails;
+            update new Visit__c(Id = visitId, Outcome__c = 'Rescheduled', Status__c = 'Complete');
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -256,6 +281,68 @@ public with sharing class CenterScheduleController {
         }
     }
 
+    @AuraEnabled
+    public static DateTime getSoonestNextRescheduleVisitDate(Id originalVisitId) {
+        // Temporarily cancel the appointment to correctly calculate Soonest Next Visit
+        // Use the save point to restore once the DateTime is saved
+        Savepoint beforeReschedulePoint = Database.setSavepoint();
+        DateTime targetDateTime;
+
+        update new Visit__c(
+            Id = originalVisitId,
+            Status__c = 'Complete',
+            Outcome__c = 'Rescheduled'
+        );
+
+        Visit__c targetVisit = [SELECT Id, Outcome__c, Donor__c, Donor__r.Soonest_Next_Visit__c FROM Visit__c WHERE Id = :originalVisitId LIMIT 1];
+        targetDateTime = targetVisit.Donor__r.Soonest_Next_Visit__c;
+
+        Database.rollback(beforeReschedulePoint);
+        return targetDateTime;
+    }
+
+    @AuraEnabled
+    public static List<RescheduleSlot> getAvailableRescheduleAppointmentRange(DateTime currentDateTime, DateTime soonestNextVisit, DateTime searchStartDateTime, DateTime searchEndDateTime, Boolean isLoyaltyDonor) {
+        String appointmentQuery = 'SELECT Id, DateTime__c FROM Appointment__c WHERE DateTime__c >= :currentDateTime AND DateTime__c >= :soonestNextVisit AND DateTime__c >= :targetStartTime AND DateTime__c <= :targetEndTime';
+        if (isLoyaltyDonor) {
+            appointmentQuery += ' AND (Availability__c > 0 OR Availability_Loyalty__c > 0)';
+        } else {
+            appointmentQuery += ' AND Availability__c > 0';
+        }
+        appointmentQuery += ' ORDER BY DateTime__c ASC';
+
+        List<Appointment__c> queriedAppointments = (List<Appointment__c>)Database.queryWithBinds(
+            appointmentQuery,
+            new Map<String, Object> {
+                'currentDateTime' => currentDateTime, 
+                'soonestNextVisit' => soonestNextVisit,
+                'targetStartTime' => searchStartDateTime, 
+                'targetEndTime' => searchEndDateTime
+            }, 
+            AccessLevel.USER_MODE
+        );
+
+        List<RescheduleSlot> rescheduleSlots = new List<RescheduleSlot>();
+        for(Appointment__c appointment : queriedAppointments) {
+            rescheduleSlots.add(new RescheduleSlot(appointment));
+        }
+
+        return rescheduleSlots;
+    }
+
+    public class RescheduleSlot {
+        @AuraEnabled
+        public Id appointmentId;
+
+        @AuraEnabled
+        public DateTime appointmentDateTime;
+
+        public RescheduleSlot(Appointment__c source) {
+            appointmentId = source.Id;
+            appointmentDateTime = source.DateTime__c;
+        }
+    }
+
     public class Center {
 
         @AuraEnabled
@@ -288,12 +375,18 @@ public with sharing class CenterScheduleController {
 
         @AuraEnabled
         public Decimal availability {get;set;}
+        @AuraEnabled
+        public Decimal loyaltyAvailability {get;set;}
         
         @AuraEnabled
         public Decimal booked {get;set;}
+        @AuraEnabled
+        public Decimal loyaltyBooked {get;set;}
         
         @AuraEnabled
         public Decimal capacity {get;set;}
+        @AuraEnabled
+        public Decimal loyaltyCapacity {get;set;}
 
         @AuraEnabled
         public Boolean isInThePast {get;set;}
@@ -307,9 +400,14 @@ public with sharing class CenterScheduleController {
             TimeZone tz =  UserInfo.getTimeZone();
             this.timeString =  this.appointmentDatetime.format('h:mm a');
             this.visits = new Visit[]{};
+
             this.availability = app.Availability__c;
+            this.loyaltyAvailability = app.Availability_Loyalty__c;
             this.booked = app.Booked__c;
+            this.loyaltyBooked = app.Booked_Loyalty__c;
             this.capacity = app.Capacity__c;
+            this.loyaltyCapacity = app.Capacity_Loyalty__c;
+
             this.filtered = false;
             this.isInThePast = this.appointmentDatetime < DateTime.now();
         }

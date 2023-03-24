@@ -166,7 +166,7 @@
               draggable="false"
             >
                 <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
-                    <c-donor-dot if:false={donor.filtered} pop-flip-y-point={popYFlipPoint} oncancelvisit={handleCancelVisit} key={donorId} icon={donor.icon} donor={donor} appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString}>
+                    <c-donor-dot if:false={donor.filtered} pop-flip-y-point={popYFlipPoint} oncancelvisit={handleCancelVisit} key={donorId} icon={donor.icon} donor={donor} appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString} onvisitrescheduled={handleDifferentDayReschedule}>
                     </c-donor-dot>
                 </template>
 

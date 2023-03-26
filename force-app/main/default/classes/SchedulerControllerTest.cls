@@ -52,11 +52,12 @@ public with sharing class SchedulerControllerTest {
         }
 
         System.runAs(experienceUser) {
-            SchedulerController.AppointmentGroups appointmentGroups = SchedulerController.getAppointments(center.Id, Date.newInstance(2023, 1, 10));
+            List<SchedulerController.AppointmentGroup> appointmentGroups = SchedulerController.getAppointments(center.Id, Date.newInstance(2023, 1, 10));
 
-            System.assertEquals(1, appointmentGroups.morningAppointments.size());
-            System.assertEquals(0, appointmentGroups.afternoonAppointments.size());
-            System.assertEquals(0, appointmentGroups.eveningAppointments.size());
+            System.assertEquals(3, appointmentGroups.size());
+            System.assertEquals(1, appointmentGroups[0].appointments.size());
+            System.assertEquals(0, appointmentGroups[1].appointments.size());
+            System.assertEquals(0, appointmentGroups[2].appointments.size());
         }
     }
 

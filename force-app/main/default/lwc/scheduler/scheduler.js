@@ -10,13 +10,10 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
 
     labels = labels;
     currentPage = 'Scheduler';
-geo;
     loading = true;
     appointmentDate;
     center = {};
-    showTabs = false;
-    @track appointments = [];
-    @track appointmentGroups = {};
+    @track appointmentGroups = [];
 
     appointmentSelected = false;
 
@@ -45,10 +42,6 @@ geo;
         this.loadAppointments();
     }
 
-    onToggleTabsClick() {
-        this.showTabs = !this.showTabs;
-    }
-
     onViewCenterClick() {
         this.currentPage = 'Center';
     }
@@ -63,13 +56,17 @@ geo;
 
     onAppointmentButtonClick(event) {
         let index = event.target.dataset.index;
-        let appointment = this.appointments[index];
+        let groupIndex = event.target.dataset.groupIndex;
+        let appointmentGroup = this.appointmentGroups[groupIndex];
+        let appointment = appointmentGroup.appointments[index];
 
         const previouslySelected = appointment.selected;
 
-        this.appointments.forEach((appointment) => {
-            appointment.selected = false;
-            appointment.classes = 'appointment-button';
+        this.appointmentGroups.forEach((appointmentGroup) => {
+            appointmentGroup.appointments.forEach((appointment) => {
+                appointment.selected = false;
+                appointment.classes = 'appointment-button';
+            });
         });
 
         appointment.selected = !previouslySelected;
@@ -85,7 +82,15 @@ geo;
     onScheduleButtonClick() {
         this.loading = true;
 
-        const selectedAppointment = this.appointments.find((appointment) => appointment.selected);
+        let selectedAppointment;
+
+        this.appointmentGroups.forEach((appointmentGroup) => {
+            appointmentGroup.appointments.forEach((appointment) => {
+                if (appointment.selected) {
+                    selectedAppointment = appointment;
+                }
+            });
+        });
 
         const request = {
             appointmentId: selectedAppointment.id
@@ -135,18 +140,14 @@ geo;
 
         getAppointments(request).then(response => {
             console.log('response', response);
-            //this.appointments = response;
-            this.appointments = [];
 
             this.appointmentGroups = response;
 
-            this.appointments.push.apply(this.appointments, this.appointmentGroups.morningAppointments);
-            this.appointments.push.apply(this.appointments, this.appointmentGroups.afternoonAppointments);
-            this.appointments.push.apply(this.appointments, this.appointmentGroups.eveningAppointments);
-
-            this.appointments.forEach((appointment) => {
-                appointment.classes = 'appointment-button';
-                appointment.available = (appointment.availability > 0);
+            this.appointmentGroups.forEach((appointmentGroup) => {
+                appointmentGroup.appointments.forEach((appointment) => {
+                    appointment.classes = 'appointment-button';
+                    appointment.available = (appointment.availability > 0);
+                });
             });
         }).catch((error) => {
             console.log(error);

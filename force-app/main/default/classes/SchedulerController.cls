@@ -29,10 +29,9 @@ public without sharing class SchedulerController {
     }
 
     @AuraEnabled
-    //public static List<Appointment> getAppointments(Id centerId, Date appointmentDate) {
-    public static AppointmentGroups getAppointments(Id centerId, Date appointmentDate) {
+    public static List<AppointmentGroup> getAppointments(Id centerId, Date appointmentDate) {
         try {
-            DateTime startTime = DateTime.newInstance(appointmentDate, Time.newInstance(0, 0, 0, 0));
+            DateTime startTime = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 0, 0, 0);
             DateTime endTime = startTime.addDays(1).addSeconds(-1);
 
             List<Appointment__c> appointmentRecords = [
@@ -50,25 +49,30 @@ public without sharing class SchedulerController {
                     Datetime__c ASC
             ];
 
-            AppointmentGroups appointmentGroups = new AppointmentGroups();
-            //List<Appointment> appointments = new List<Appointment>();
+            DateTime elevenAM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 11, 0, 0);
+            DateTime twoPM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 14, 0, 0);
+
+            List<AppointmentGroup> appointmentGroups = new List<AppointmentGroup>{
+                new AppointmentGroup('AM'),
+                new AppointmentGroup('Midday'),
+                new AppointmentGroup('PM')
+            };
 
             for (Appointment__c appointmentRecord : appointmentRecords) {
                 Appointment appointment = new Appointment();
                 appointment.id = appointmentRecord.Id;
                 appointment.name = appointmentRecord.Datetime__c.format('h:mm');
                 appointment.availability = (appointmentRecord.Availability__c == null ? 0 : appointmentRecord.Availability__c.intValue());
-                //appointments.add(appointment);
-                if (appointmentRecord.Datetime__c.time() < Time.newInstance(12, 0, 0, 0)) {
-                    appointmentGroups.morningAppointments.add(appointment);
-                } else if (appointmentRecord.Datetime__c.time() < Time.newInstance(18, 0, 0, 0)) {
-                    appointmentGroups.afternoonAppointments.add(appointment);
+
+                if (appointmentRecord.Datetime__c < elevenAM) {
+                    appointmentGroups[0].appointments.add(appointment);
+                } else if (appointmentRecord.Datetime__c < twoPM) {
+                    appointmentGroups[1].appointments.add(appointment);
                 } else {
-                    appointmentGroups.eveningAppointments.add(appointment);
+                    appointmentGroups[2].appointments.add(appointment);
                 }
             }
 
-            //return appointments;
             return appointmentGroups;
         } catch (Exception e) {
             throw Util.createAuraHandledException(e);
@@ -156,21 +160,17 @@ public without sharing class SchedulerController {
         }
     }
 
-    public class AppointmentGroups {
+    public class AppointmentGroup {
 
         @AuraEnabled
-        public List<Appointment> morningAppointments {get; set;}
+        public String name {get; set;}
 
         @AuraEnabled
-        public List<Appointment> afternoonAppointments {get; set;}
+        public List<Appointment> appointments {get; set;}
 
-        @AuraEnabled
-        public List<Appointment> eveningAppointments {get; set;}
-
-        public AppointmentGroups() {
-            morningAppointments = new List<Appointment>();
-            afternoonAppointments = new List<Appointment>();
-            eveningAppointments = new List<Appointment>();
+        public AppointmentGroup(String name) {
+            this.name = name;
+            appointments = new List<Appointment>();
         }
 
     }

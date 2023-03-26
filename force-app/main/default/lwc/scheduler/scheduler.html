@@ -12,7 +12,7 @@
                             <div class="slds-page-header__col-title">
                                 <div class="slds-media">
                                     <div class="slds-media__figure">
-                                        <lightning-icon icon-name="utility:company" size="small" class="center-icon" onclick={onToggleTabsClick}></lightning-icon>
+                                        <lightning-icon icon-name="utility:company" size="small" class="center-icon"></lightning-icon>
                                     </div>
                                     <div class="slds-media__body">
                                         <div class="slds-page-header__name">
@@ -40,47 +40,20 @@
 
             <div class="title-small slds-m-top_medium">{labels.selectTimeSlot}</div>
 
-            <lightning-tabset if:true={showTabs}>
-                <lightning-tab label="Morning">
-                    <div class="slds-grid slds-wrap slds-gutters_xxx-small">
-                        <template for:each={appointmentGroups.morningAppointments} for:item="appointment" for:index="appointmentIndex">
-                            <div key={appointment.id} class="slds-col slds-size_1-of-4 slds-m-bottom_xx-small">
-                                <lightning-button if:true={appointment.available} label={appointment.name} stretch="true" class={appointment.classes} data-index={appointmentIndex} onclick={onAppointmentButtonClick}></lightning-button>
-                                <button if:false={appointment.available} class="slds-button slds-button_neutral slds-button_stretch appointment-button" disabled>{appointment.name}</button>
-                            </div>
-                        </template>
-                    </div>
-                </lightning-tab>
-                <lightning-tab label="Afternoon">
-                    <div class="slds-grid slds-wrap slds-gutters_xxx-small">
-                        <template for:each={appointmentGroups.afternoonAppointments} for:item="appointment" for:index="appointmentIndex">
-                            <div key={appointment.id} class="slds-col slds-size_1-of-4 slds-m-bottom_xx-small">
-                                <lightning-button if:true={appointment.available} label={appointment.name} stretch="true" class={appointment.classes} data-index={appointmentIndex} onclick={onAppointmentButtonClick}></lightning-button>
-                                <button if:false={appointment.available} class="slds-button slds-button_neutral slds-button_stretch appointment-button" disabled>{appointment.name}</button>
-                            </div>
-                        </template>
-                    </div>
-                </lightning-tab>
-                <lightning-tab label="Evening">
-                    <div class="slds-grid slds-wrap slds-gutters_xxx-small">
-                        <template for:each={appointmentGroups.eveningAppointments} for:item="appointment" for:index="appointmentIndex">
-                            <div key={appointment.id} class="slds-col slds-size_1-of-4 slds-m-bottom_xx-small">
-                                <lightning-button if:true={appointment.available} label={appointment.name} stretch="true" class={appointment.classes} data-index={appointmentIndex} onclick={onAppointmentButtonClick}></lightning-button>
-                                <button if:false={appointment.available} class="slds-button slds-button_neutral slds-button_stretch appointment-button" disabled>{appointment.name}</button>
-                            </div>
-                        </template>
-                    </div>
-                </lightning-tab>
-            </lightning-tabset>
-
-            <div if:false={showTabs} class="slds-grid slds-wrap slds-gutters_xxx-small slds-m-top_small">
-                <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
-                    <div key={appointment.id} class="slds-col slds-size_1-of-4 slds-m-bottom_xx-small">
-                        <lightning-button if:true={appointment.available} label={appointment.name} stretch="true" class={appointment.classes} data-index={appointmentIndex} onclick={onAppointmentButtonClick}></lightning-button>
-                        <button if:false={appointment.available} class="slds-button slds-button_neutral slds-button_stretch appointment-button" disabled>{appointment.name}</button>
-                    </div>
+            <lightning-tabset>
+                <template for:each={appointmentGroups} for:item="appointmentGroup" for:index="appointmentGroupIndex">
+                    <lightning-tab key={appointmentGroup.name} label={appointmentGroup.name}>
+                        <div class="slds-grid slds-wrap slds-gutters_xxx-small">
+                            <template for:each={appointmentGroup.appointments} for:item="appointment" for:index="appointmentIndex">
+                                <div key={appointment.id} class="slds-col slds-size_1-of-4 slds-m-bottom_xx-small">
+                                    <lightning-button if:true={appointment.available} label={appointment.name} stretch="true" class={appointment.classes} data-group-index={appointmentGroupIndex} data-index={appointmentIndex} onclick={onAppointmentButtonClick}></lightning-button>
+                                    <button if:false={appointment.available} class="slds-button slds-button_neutral slds-button_stretch appointment-button" disabled>{appointment.name}</button>
+                                </div>
+                            </template>
+                        </div>
+                    </lightning-tab>
                 </template>
-            </div>
+            </lightning-tabset>
 
             <div class="slds-grid slds-gutters slds-m-top_medium">
                 <div class="slds-col slds-size_1-of-2">

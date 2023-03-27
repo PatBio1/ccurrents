@@ -258,6 +258,30 @@ public with sharing class ProfileControllerTest {
     }
 
     @isTest
+    static void testVerifyEmailCodeAttemptsExhaustedOnFinalAttempt() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.Email_Verification_Code__c = '123456';
+            lead.Email_Verification_Attempts__c = (ProfileController.MAX_EMAIL_VERIFICATION_ATTEMPTS - 1);
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+            profile.emailCode = '112333';
+
+            String result = ProfileController.verifyEmailCode(profile);
+
+            System.assertEquals(Constants.VERIFICATION_RESULT_TOO_MANY, result);
+
+            Lead updatedLead = [SELECT isEmailVerified__c FROM Lead WHERE Id = :lead.Id];
+
+            System.assertEquals(false, updatedLead.isEmailVerified__c);
+        }
+    }
+
+    @isTest
     static void testVerifyEmailCodeException() {
         TestUtil.throwException = true;
 
@@ -391,6 +415,30 @@ public with sharing class ProfileControllerTest {
             ProfileController.Profile profile = new ProfileController.Profile();
             profile.id = lead.Id;
             profile.smsCode = '123456';
+
+            String result = ProfileController.verifySmsCode(profile);
+
+            System.assertEquals(Constants.VERIFICATION_RESULT_TOO_MANY, result);
+
+            Lead updatedLead = [SELECT isSMSVerified__c FROM Lead WHERE Id = :lead.Id];
+
+            System.assertEquals(false, updatedLead.isSMSVerified__c);
+        }
+    }
+
+    @isTest
+    static void testVerifySmsCodeAttemptsExhaustedOnFinalAttempt() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.SMS_Verification_Code__c = '123456';
+            lead.SMS_Verification_Attempts__c = ProfileController.MAX_SMS_VERIFICATION_ATTEMPTS - 1;
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+            profile.emailCode = '112333';
 
             String result = ProfileController.verifySmsCode(profile);
 

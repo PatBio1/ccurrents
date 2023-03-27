@@ -54,3 +54,85 @@ ON ac.VisitId = v.Id
 WHERE ac.VisitId IS NULL
 AND v.Cycle_Time__c > cent.Apology_Campaign_Time_Threshold__c
 AND cent.Apology_Campaign_Active__c = 1
+
+-- Donor Visit Metrics (Large query failing in SFMC - retaining in case support fixes Case #44344859
+SELECT c.Id AS SubscriberKey,
+s.VisitCount AS CountScheduled,
+s.NextScheduleDate AS NextScheduleDate,
+s.LatestScheduledDate AS LatestScheduledDate,
+d.TotalDonations AS CountTotalDonations,
+d.FirstDonationDate AS FirstDonationDate,
+d.LastDonationDate AS LastDonationDate,
+d2.TotalDonations AS CountDonationsLast365Days
+
+FROM Contact_Salesforce AS c
+
+INNER JOIN
+(SELECT v.Donor__c AS DonorId
+FROM Visit__c_Salesforce AS v
+)
+AS allv
+ON c.Id = allv.DonorId
+
+-- Lifetime Metrics
+LEFT JOIN
+(SELECT v2.Donor__c AS DonorId,
+COUNT(Id) AS VisitCount,
+MIN(Appointment_Datetime__c) AS NextScheduleDate,
+MAX(Appointment_Datetime__c) AS LatestScheduledDate
+FROM Visit__c_Salesforce AS v2
+WHERE v2.Status__c = 'Scheduled'
+GROUP BY v2.Donor__c
+)
+AS s
+ON c.Id = s.DonorId
+
+LEFT JOIN
+(SELECT v3.Donor__c AS DonorId,
+Count(Id) AS TotalDonations,
+MIN(Appointment_Datetime__c) AS FirstDonationDate,
+MAX(Appointment_Datetime__c) AS LastDonationDate
+FROM Visit__c_Salesforce AS v3
+WHERE v3.Outcome__c = 'Donation'
+GROUP BY v3.Donor__c
+)
+AS d
+ON c.Id = d.DonorId
+
+-- Last 365 Days
+LEFT JOIN
+(SELECT v4.Donor__c AS DonorId,
+Count(Id) AS TotalDonations
+FROM Visit__c_Salesforce AS v4
+WHERE v4.Outcome__c = 'Donation' AND
+v4.Appointment_Datetime__c >= DATEADD(DAY, -365, GETUTCDATE())
+GROUP BY v4.Donor__c
+)
+AS d2
+ON c.Id = d2.DonorId
+
+-- Standalone Donations Last 365 Days
+SELECT v4.Donor__c AS SubscriberKey,
+Count(Id) AS CountDonationsLast365Days
+FROM Visit__c_Salesforce AS v4
+WHERE v4.Outcome__c = 'Donation' AND
+v4.Appointment_Datetime__c >= DATEADD(DAY, -365, GETUTCDATE())
+GROUP BY v4.Donor__c
+
+-- Standalone Lifetime Donations
+SELECT v3.Donor__c AS SubscriberKey,
+Count(Id) AS CountTotalDonations,
+MIN(Appointment_Datetime__c) AS FirstDonationDate,
+MAX(Appointment_Datetime__c) AS LastDonationDate
+FROM Visit__c_Salesforce AS v3
+WHERE v3.Outcome__c = 'Donation'
+GROUP BY v3.Donor__c
+
+-- Standalone Scheduled Visits
+SELECT v2.Donor__c AS SubscriberKey,
+COUNT(Id) AS CountScheduled,
+MIN(Appointment_Datetime__c) AS NextScheduledDate,
+MAX(Appointment_Datetime__c) AS LatestScheduledDate
+FROM Visit__c_Salesforce AS v2
+WHERE v2.Status__c = 'Scheduled'
+GROUP BY v2.Donor__c

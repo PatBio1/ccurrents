@@ -1,1 +1,73 @@
 @import 'c/sharedCss';
+
+.my-wallet-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+
+    border: 1px solid #D1C7E4;
+    border-radius: 8px;
+
+    padding: 1rem;
+}
+
+.wallet-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    font-size: 14px;
+}
+
+.my-status-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.my-status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.loyalty-tiers {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+
+    max-width: 100%;
+    overflow-x: auto;
+    padding-bottom: 12px;
+}
+
+.loyalty-tier {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 14px;
+    text-align: center;
+    flex: 1;
+
+    padding: 8px;
+    border-radius: 1rem;
+}
+
+.loyalty-tier[data-is-current="true"] {
+    background-color: #E5DDF4;
+}
+
+.loyalty-tier-badge {
+    display: flex;
+    width: 64px;
+    height: 64px;
+}
+
+c-loyalty-tier-badge {
+    flex: 1;
+    align-self: center;
+}

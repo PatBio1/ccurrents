@@ -1,4 +1,6 @@
 <template>
+    <lightning-spinner if:true={isLoading}>
+    </lightning-spinner>
 
     <div class="slds-var-p-around_medium">
         <div class="title-medium slds-m-bottom_medium">
@@ -11,25 +13,64 @@
                     My Proesis Wallet
                 </div>
 
+                <div if:true={donorRewardsInfo} class="my-wallet-container slds-m-bottom_small">
+                    <div class="wallet-field">
+                        <p><b>$ Balance</b></p>
+                        <p>
+                            <lightning-formatted-number format-style="currency" currency-code={userCurrency} value={donorRewardsInfo.donorBalance}>
+                            </lightning-formatted-number>
+                        </p>
+                    </div>
+
+                    <div class="wallet-field">
+                        <p><b>Points</b></p>
+                        <p><lightning-formatted-number value={donorRewardsInfo.donorPoints}></lightning-formatted-number> P</p>
+                    </div>
+
+                    <!-- Instructed to remove this according to #267, leaving it here in case we need it -->
+                    <!-- <div class="wallet-field">
+                        <p><b>Allowed to Withdraw</b></p>
+                        <p>
+                            <lightning-formatted-number format-style="currency" currency-code={userCurrency} value="65">
+                            </lightning-formatted-number>
+                        </p>
+                    </div> -->
+                </div>
+
+                <p if:true={donorRewardsInfo} class="slds-m-bottom_small">
+                    *minimum withdrawal is <lightning-formatted-number value={donorRewardsInfo.minimumWithdrawalAmount}></lightning-formatted-number> P
+                </p>
+
                 <div class="slds-m-bottom_small">
-                    <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled>Redeem points</button>
+                    <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled={cantRedeemPoints}>Redeem points</button>
                 </div>
 
-                <div class="slds-m-bottom_medium">
-                    <button class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>Withdraw to card</button>
-                </div>
-
-                <div class="slds-grid slds-m-bottom_medium">
-                    <div class="slds-col slds-size_1-of-2 title-small">
-                        My Status
+                <div class="slds-m-bottom_medium my-status-container">
+                    <div class="my-status-header">
+                        <div class="title-small">My Status</div>
+                        <lightning-button variant="base" label="Learn More" icon-name="utility:chevronright" icon-position="right" class="tertiary-button" onclick={navigateToLoyaltyTiers}>
+                        </lightning-button>
                     </div>
-                    <div class="slds-col slds-size_1-of-2 slds-text-align_right">
-                        <lightning-button variant="base" label="Learn More" icon-name="utility:chevronright" icon-position="right" class="tertiary-button"></lightning-button>
+                    
+                    <div if:true={loyaltyLevelsInfo} class="loyalty-tiers">
+                        <template for:each={loyaltyLevelsInfo} for:item="loyaltyTier">
+                            <div key={loyaltyTier.displayName} class="loyalty-tier" data-is-current={loyaltyTier.isCurrentTier}>
+                                <span class="loyalty-tier-badge slds-avatar slds-avatar_circle" style={loyaltyTier.style}>
+                                    <c-loyalty-tier-badge width="48" height="48" loyalty-tier-name={loyaltyTier.levelName}>
+                                    </c-loyalty-tier-badge>
+                                </span>
+    
+                                <div>
+                                    <p><b>{loyaltyTier.displayName}</b></p>
+                                    <p>{loyaltyTier.levelThreshold} Aps</p>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
 
-                <div>
-                    Left: <strong>10 appointments</strong> to get <strong><span style="color: #A18B76;">Bronze</span></strong> status
+                <div if:true={hasRewardsInfo}>
+                    Left: <strong>{donorRewardsInfo.remainingVisitsForNextTier} appointments</strong> to get <strong><span style="color: #A18B76;">{donorRewardsInfo.nextLoyaltyLevel}</span></strong> status
                 </div>
             </lightning-tab>
 

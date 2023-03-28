@@ -1,6 +1,7 @@
 import { track, LightningElement } from 'lwc';
 import changeLocationModal from 'c/changeLocationModal';
 import labels from 'c/labelService';
+import util from 'c/util';
 import getCenters from '@salesforce/apex/CenterController.getCenters';
 
 // Center of the United States.
@@ -64,16 +65,15 @@ export default class CenterChooser extends LightningElement {
             longitude: this.location.longitude
         };
 
-        console.log('request', JSON.stringify(request));
+        console.log('getCenters request', JSON.stringify(request));
 
         getCenters(request).then(response => {
-            console.log('response', response);
+            console.log('getCenters response', response);
             this.centers = response;
 
             this.centersLoaded = true;
         }).catch((error) => {
-            // TODO - add error handling
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -88,8 +88,6 @@ export default class CenterChooser extends LightningElement {
             size: 'small',
             postalCode: this.location.postalCode
         }).then((location) => {
-            console.log('modal',location);
-
             // Reload centers if a new location was selected.
             if (location !== undefined && (this.location.isCurrent || this.location.postalCode != location.postalCode)) {
                 this.location.isCurrent = false;

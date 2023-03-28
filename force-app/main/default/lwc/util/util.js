@@ -60,3 +60,38 @@ export function navigateToPage(component, name) {
         }
     });
 }
+
+export function showToast(component, variant = 'info', title = '', message = '', mode = 'dismissable') {
+    console.log('toast', message);
+
+    const event = new ShowToastEvent({
+        title,
+        message: this.getFilteredErrorMessage(message),
+        variant,
+        mode
+    });
+
+    component.dispatchEvent(event);
+}
+
+export function showGuestToast(component, variant = 'info', title = '', message = '', mode = 'dismissable') {
+    console.log('toast', message);
+
+    component?.template?.querySelector('c-guest-toast')?.show(variant, title, this.getFilteredErrorMessage(message), mode);
+}
+
+export function getFilteredErrorMessage(msg = '') {
+    if (msg.hasOwnProperty && msg.hasOwnProperty('message')) {
+        return msg.message;
+    }
+
+    if (msg.hasOwnProperty && msg.hasOwnProperty('body') && msg.body.hasOwnProperty('message')) {
+        return msg.body.message;
+    }
+
+    if (msg.detail && msg.detail.detail) {
+        return `${msg.detail.message} ${msg.detail.detail}`;
+    }
+
+    return msg;
+}

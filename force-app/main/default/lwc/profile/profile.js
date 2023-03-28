@@ -276,7 +276,7 @@ export default class Profile extends LightningElement {
 
             this.currentPage = PAGE_ADDRESS;
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -296,7 +296,7 @@ export default class Profile extends LightningElement {
 
             this.currentPage = PAGE_BASIC_PROFILE;
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -316,7 +316,7 @@ export default class Profile extends LightningElement {
 
             this.currentPage = PAGE_PICTURE;
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -337,7 +337,7 @@ export default class Profile extends LightningElement {
             console.log('setupPhoto response', response);
             this.profile.photoUrl = response.replaceAll('"', '');
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -356,7 +356,7 @@ export default class Profile extends LightningElement {
             this.profile.photoContentVersionId = undefined;
             this.profile.photoUrl = undefined;
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -388,7 +388,7 @@ export default class Profile extends LightningElement {
 
             this.currentPage = PAGE_VERIFY_EMAIL;
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -410,7 +410,7 @@ export default class Profile extends LightningElement {
                 console.log('out of attempts');
             }
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -431,7 +431,7 @@ export default class Profile extends LightningElement {
             console.log('sendVerificationSms response', response);
             this.currentPage = PAGE_VERIFY_PHONE;
         }).catch((error) => {
-            console.log('sendVerificationSms error', error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -455,27 +455,22 @@ export default class Profile extends LightningElement {
                     console.log('sendVerificationSms response', response);
                     this.currentPage = PAGE_VERIFY_PHONE;
                 }).catch((error) => {
-                    console.log('sendVerificationSms error', error);
+                    util.showGuestToast(this, 'error', labels.error, error);
                 }).finally(() => {
                     this.loading = false;
                 });
             } else if (result === 'Incorrect') {
                 this.loading = false;
 
-                const event = new ShowToastEvent({
-                    variant: 'error',
-                    title: 'Incorrect Code',
-                    message: 'The code you entered is incorrect, please try again.'
-                });
-
-                this.dispatchEvent(event);
+                util.showGuestToast(this, 'error', labels.incorrectCode, labels.incorrectCodeMessage);
             } else {
                 this.emailVerificationsExhausted = true;
                 this.loading = false;
             }
         }).catch((error) => {
-            console.log(error);
             this.loading = false;
+
+            util.showGuestToast(this, 'error', labels.error, error);
         });
     }
 
@@ -494,7 +489,7 @@ export default class Profile extends LightningElement {
                 console.log('out of attempts');
             }
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -524,20 +519,15 @@ export default class Profile extends LightningElement {
             } else if (result === 'Incorrect') {
                 this.loading = false;
 
-                const event = new ShowToastEvent({
-                    variant: 'error',
-                    title: 'Incorrect Code',
-                    message: 'The code you entered is incorrect, please try again.'
-                });
-
-                this.dispatchEvent(event);
+                util.showGuestToast(this, 'error', labels.incorrectCode, labels.incorrectCodeMessage);
             } else {
                 this.smsVerificationsExhausted = true;
                 this.loading = false;
             }
         }).catch((error) => {
-            console.log(error);
             this.loading = false;
+
+            util.showGuestToast(this, 'error', labels.error, error);
         });
     }
 
@@ -559,9 +549,9 @@ export default class Profile extends LightningElement {
 
             this.assignPermissions();
         }).catch((error) => {
-            console.log(error);
-
             this.loading = false;
+
+            util.showGuestToast(this, 'error', labels.error, error);
         });
     }
 
@@ -579,7 +569,7 @@ export default class Profile extends LightningElement {
         login(request).then(response => {
             window.location.href = response;
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -595,7 +585,7 @@ export default class Profile extends LightningElement {
         setupUser(request).then(response => {
             this.currentPage = PAGE_CONGRATULATIONS;
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });

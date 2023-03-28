@@ -102,7 +102,7 @@ export default class Menu extends LightningElement {
             console.log('login response', response);
             window.location.href = response;
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -128,7 +128,7 @@ export default class Menu extends LightningElement {
         sendVerificationEmail(request).then(response => {
             console.log('sendVerificationEmail response', response);
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
 this.currentPage = PAGE_VERIFY_EMAIL;
             this.loading = false;

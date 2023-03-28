@@ -78,4 +78,19 @@ public with sharing class VisitTriggerHelper {
             update visitIdToDonorRecord.values();
         }
     }
+
+    public static void setIsFirstVisitFlag(List<Visit__c> visits) {
+        Map<Id, Visit__c> donorIdToNewVisit = new Map<Id, Visit__c>();
+        for (Visit__c visit : visits) {
+            if (visit.Donor__c != null) {
+                donorIdToNewVisit.put(visit.Donor__c, visit);
+            }
+        }
+
+        if (donorIdToNewVisit.size() != 0) {
+            for(Contact donor : [SELECT Id, (SELECT Id, Appointment_Datetime__c, isFirstVisit__c FROM Visits__r) FROM Contact WHERE Id IN :donorIdToNewVisit.keyset()]) {
+                donorIdToNewVisit.get(donor.Id).isFirstVisit__c = (donor.Visits__r == null || donor.Visits__r.size() == 0);
+            }
+        }
+    }
 }

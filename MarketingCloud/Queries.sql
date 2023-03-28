@@ -136,3 +136,48 @@ MAX(Appointment_Datetime__c) AS LatestScheduledDate
 FROM Visit__c_Salesforce AS v2
 WHERE v2.Status__c = 'Scheduled'
 GROUP BY v2.Donor__c
+
+-- Post Visit Satisfaction Email
+SELECT v.Id AS VisitId,
+v.Donor__c AS SubscriberKey,
+c.FirstName AS FirstName,
+c.Email AS Email
+
+FROM Visit__c_Salesforce AS v
+
+INNER JOIN Contact_Salesforce AS c
+ON v.Id = c.Id
+
+LEFT JOIN
+(SELECT VisitId
+FROM "Post Visit Satisfaction Email"
+)
+AS pvse
+ON v.Id = pvse.VisitId
+
+WHERE v.Status__c = 'Complete' AND
+v.Outcome__c = 'Donation' AND
+pvse.VisitId IS NULL
+
+-- Welcome New Donor
+SELECT c.Id AS SubscriberKey,
+v.Id AS VisitId,
+c.FirstName AS FirstName,
+c.Email AS Email
+
+FROM Visit__c_Salesforce AS v
+
+INNER JOIN Contact_Salesforce AS c
+ON v.Donor__c = c.Id
+
+LEFT JOIN
+(SELECT SubscriberKey
+FROM "Welcome New Donor"
+)
+AS wnd
+ON v.Donor__c = wnd.SubscriberKey
+
+WHERE
+v.Status__c = 'Scheduled' AND
+v.isFirstVisit__c = 1 AND
+wnd.SubscriberKey IS NULL

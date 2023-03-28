@@ -4,18 +4,18 @@
             {labels.loyaltyTiers}
         </div>
 
-        <div class="box slds-text-align_center slds-p-around_small slds-m-bottom_medium">
+        <div if:true={rewardsInfo} class="box slds-text-align_center slds-p-around_small slds-m-bottom_medium">
             <div class="main-avatar-container">
                 <span class="loyalty-badge slds-avatar slds-avatar_circle" style="background: rgb(218 196 255);">
-                    <c-loyalty-tier-badge loyalty-tier-name="Donor (Default)"></c-loyalty-tier-badge>
+                    <c-loyalty-tier-badge width="24px" height="24px" loyalty-tier-name={rewardsInfo.currentLoyaltyLevel}></c-loyalty-tier-badge>
                 </span>
                 <lightning-avatar variant="circle" src={photoUrl} fallback-icon-name="standard:user" size="large"></lightning-avatar>
             </div>
 
-            <div class="slds-m-bottom_x-small"><strong>Tim Richard Williams</strong></div>
-            <div style="font-size: 1.33rem; font-weight: 600; color: #983285;">Regular</div>
-            <div class="slds-m-bottom_x-small" style="font-weight: 700; color: #8979A9;">0/60</div>
-            <div><strong>60 Appointments</strong> to get <strong><span style="color: #A18B76;">Bronze</span></strong> status</div>
+            <div class="slds-m-bottom_x-small"><strong>{rewardsInfo.donorName}</strong></div>
+            <div style="font-size: 1.33rem; font-weight: 600; color: #983285;">{rewardsInfo.currentLoyaltyLevel}</div>
+            <div class="slds-m-bottom_x-small" style="font-weight: 700; color: #8979A9;">{rewardsInfo.donorVisitCount}/{rewardsInfo.nextTierDonationThreshold}</div>
+            <div><strong>{rewardsInfo.remainingVisitsForNextTier} Appointments</strong> to get <strong><span style="color: #A18B76;">{rewardsInfo.nextLoyaltyLevel}</span></strong> status</div>
         </div>
 
         <div class="title-small slds-m-bottom_small">
@@ -43,23 +43,25 @@
             {labels.rewardsExplanation}
         </div>
 
-        <template for:each={LOYALTY_TIER_CONFIGURATION} for:item="loyaltyTier">
-            <div key={loyaltyTier.loyaltyTierName}>
-                <div class="tier slds-m-bottom_xx-small">
-                    <div class="tier-icon">
-                        <span class="slds-avatar slds-avatar_circle" style={loyaltyTier.iconBackgroundStyle}>
-                            <c-loyalty-tier-badge loyalty-tier-name={loyaltyTier.loyaltyTierName}></c-loyalty-tier-badge>
-                        </span>
+        <template if:true={loyaltyLevels}>
+            <template for:each={loyaltyLevels} for:item="loyaltyTier">
+                <div key={loyaltyTier.levelName}>
+                    <div class="tier slds-m-bottom_xx-small">
+                        <div class="tier-icon">
+                            <span class="slds-avatar slds-avatar_circle" style={loyaltyTier.iconBackgroundStyle}>
+                                <c-loyalty-tier-badge loyalty-tier-name={loyaltyTier.levelName}></c-loyalty-tier-badge>
+                            </span>
+                        </div>
+                        <div class="tier-name slds-m-left_x-small" style="color: #8979A9;">
+                            <strong>{loyaltyTier.levelName}</strong>
+                        </div>
                     </div>
-                    <div class="tier-name slds-m-left_x-small" style="color: #8979A9;">
-                        <strong>{loyaltyTier.displayName}</strong>
+        
+                    <div class="slds-m-bottom_small">
+                        {loyaltyTier.levelDescription}
                     </div>
                 </div>
-    
-                <div class="slds-m-bottom_small">
-                    {loyaltyTier.description}
-                </div>
-            </div>
+            </template>
         </template>
     </div>
 </template>

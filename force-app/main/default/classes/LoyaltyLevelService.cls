@@ -24,12 +24,13 @@ public without sharing class LoyaltyLevelService {
         List<LoyaltyLevel> loyaltyLevels = new List<LoyaltyLevel>();
         
         // The hard coded filter on the name is a temporary workaround, this'll need to be reworked once the level records have been updated
-        for(Level__c queriedLevel : [SELECT Id, Name, Donation_Threshold__c FROM Level__c WHERE Name NOT IN ('Normal Donor +15') ORDER BY Donation_Threshold__c ASC]) {
+        for(Level__c queriedLevel : [SELECT Id, Name, Donation_Threshold__c, Description__c FROM Level__c WHERE Name NOT IN ('Normal Donor +15') ORDER BY Donation_Threshold__c ASC]) {
             LoyaltyLevel loyaltyLevel = new LoyaltyLevel();
 
             loyaltyLevel.levelId = queriedLevel.Id;
             loyaltyLevel.levelName = queriedLevel.Name;
             loyaltyLevel.levelThreshold = queriedLevel.Donation_Threshold__c;
+            loyaltyLevel.levelDescription = queriedLevel.Description__c;
 
             loyaltyLevels.add(loyaltyLevel);
         }
@@ -43,6 +44,9 @@ public without sharing class LoyaltyLevelService {
 
         @AuraEnabled
         public String levelName;
+
+        @AuraEnabled
+        public String levelDescription;
 
         @AuraEnabled
         public Decimal levelThreshold;

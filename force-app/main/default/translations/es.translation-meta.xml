@@ -461,6 +461,10 @@
         <name>Upload_Another_Photo</name>
     </customLabels>
     <customLabels>
+        <label>Código de verificación</label>
+        <name>Verify_Code</name>
+    </customLabels>
+    <customLabels>
         <label>Verificar correo electrónico</label>
         <name>Verify_Email</name>
     </customLabels>

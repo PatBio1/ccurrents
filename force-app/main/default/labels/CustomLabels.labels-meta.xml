@@ -806,6 +806,13 @@
         <value>Upload another photo</value>
     </labels>
     <labels>
+        <fullName>Verify_Code</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Verify Code</shortDescription>
+        <value>Verify Code</value>
+    </labels>
+    <labels>
         <fullName>Verify_Email</fullName>
         <language>en_US</language>
         <protected>true</protected>

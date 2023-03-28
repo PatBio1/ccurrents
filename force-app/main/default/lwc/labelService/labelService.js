@@ -107,6 +107,7 @@ import trackYourProgress from '@salesforce/label/c.Track_Your_Progress';
 import tuesdayAbbreviation from '@salesforce/label/c.Tuesday_Abbreviation';
 import updatesAndAppointments from '@salesforce/label/c.Updates_And_Appointments';
 import uploadAnotherPhoto from '@salesforce/label/c.Upload_Another_Photo';
+import verifyCode from '@salesforce/label/c.Verify_Code';
 import verifyEmail from '@salesforce/label/c.Verify_Email';
 import verifyEmailInstructions from '@salesforce/label/c.Verify_Email_Instructions';
 import verifyPhone from '@salesforce/label/c.Verify_Phone';
@@ -235,6 +236,7 @@ const labels = {
     tuesdayAbbreviation,
     updatesAndAppointments,
     uploadAnotherPhoto,
+    verifyCode,
     verifyEmail,
     verifyEmailInstructions,
     verifyPhone,

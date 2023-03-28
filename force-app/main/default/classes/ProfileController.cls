@@ -273,10 +273,10 @@ public without sharing class ProfileController {
             user.Alias = alias;
             user.Username = username;
             user.CommunityNickname = 'proesis' + System.currentTimeMillis();
-            user.LocaleSidKey = 'en_US';
+            user.LocaleSidKey = profile.language;
             user.TimeZoneSidKey = 'America/New_York';
             user.ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id;
-            user.LanguageLocaleKey = 'en_US';
+            user.LanguageLocaleKey = (profile.language.startsWith('es') ? 'es' : 'en');
             user.EmailEncodingKey = 'UTF-8';
             user.ContactId = account.PersonContactId;
             user.IsActive = true;
@@ -335,6 +335,9 @@ public without sharing class ProfileController {
 
         @AuraEnabled
         public Id photoContentVersionId {get; set;}
+
+        @AuraEnabled
+        public String language {get; set;}
 
         @AuraEnabled
         public String firstName {get; set;}

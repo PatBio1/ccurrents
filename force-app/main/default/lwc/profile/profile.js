@@ -14,6 +14,7 @@ import sendVerificationSms from '@salesforce/apex/ProfileController.sendVerifica
 import verifySmsCode from '@salesforce/apex/ProfileController.verifySmsCode';
 import login from '@salesforce/apex/LoginController.login';
 import fileUploadStyles from '@salesforce/resourceUrl/fileUploadStyles';
+import language from '@salesforce/i18n/lang';
 
 const PAGE_BASIC_PROFILE = 'Basic Profile';
 const PAGE_ADDRESS = 'Address';
@@ -35,7 +36,8 @@ export default class Profile extends LightningElement {
     loading = false;
     currentPage = PAGE_BASIC_PROFILE;
     @track profile = {
-        howGetToCenter: ''
+        howGetToCenter: '',
+        language: language.replace('-', '_')
     };
     resendEmailCodeEnabled = true;
     emailVerificationsExhausted = false;

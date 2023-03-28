@@ -33,11 +33,14 @@ import emailOrPrimaryPhone from '@salesforce/label/c.Email_Or_Primary_Phone';
 import english from '@salesforce/label/c.English';
 import enterCode from '@salesforce/label/c.Enter_Code';
 import enterPassword from '@salesforce/label/c.Enter_Password';
+import error from '@salesforce/label/c.Error';
 import firstName from '@salesforce/label/c.First_Name';
 import forgotPassword from '@salesforce/label/c.Forgot_Password';
 import fridayAbbreviation from '@salesforce/label/c.Friday_Abbreviation';
 import goalsTracker from '@salesforce/label/c.Goals_Tracker';
 import howWillYouGetToCenter from '@salesforce/label/c.How_Will_You_Get_To_Center';
+import incorrectCode from '@salesforce/label/c.Incorrect_Code';
+import incorrectCodeMessage from '@salesforce/label/c.Incorrect_Code_Message';
 import invalidZipCode from '@salesforce/label/c.Invalid_Zip_Code';
 import joinUs from '@salesforce/label/c.Join_Us';
 import lastName from '@salesforce/label/c.Last_Name';
@@ -107,6 +110,7 @@ import trackYourProgress from '@salesforce/label/c.Track_Your_Progress';
 import tuesdayAbbreviation from '@salesforce/label/c.Tuesday_Abbreviation';
 import updatesAndAppointments from '@salesforce/label/c.Updates_And_Appointments';
 import uploadAnotherPhoto from '@salesforce/label/c.Upload_Another_Photo';
+import verifyCode from '@salesforce/label/c.Verify_Code';
 import verifyEmail from '@salesforce/label/c.Verify_Email';
 import verifyEmailInstructions from '@salesforce/label/c.Verify_Email_Instructions';
 import verifyPhone from '@salesforce/label/c.Verify_Phone';
@@ -161,11 +165,14 @@ const labels = {
     english,
     enterCode,
     enterPassword,
+    error,
     firstName,
     forgotPassword,
     fridayAbbreviation,
     goalsTracker,
     howWillYouGetToCenter,
+    incorrectCode,
+    incorrectCodeMessage,
     invalidZipCode,
     joinUs,
     lastName,
@@ -235,6 +242,7 @@ const labels = {
     tuesdayAbbreviation,
     updatesAndAppointments,
     uploadAnotherPhoto,
+    verifyCode,
     verifyEmail,
     verifyEmailInstructions,
     verifyPhone,

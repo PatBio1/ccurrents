@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CSAT_Feedback__c</fullName>
+    <description>Written text from the donor about their experience.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Written text from the donor about their experience.</inlineHelpText>
+    <label>CSAT Feedback</label>
+    <length>32768</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

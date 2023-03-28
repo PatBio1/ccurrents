@@ -24,14 +24,6 @@ export default class Menu extends NavigationMixin(LightningElement) {
         return true;
     }
 
-    connectedCallback() {
-        if (this.isGuest) {
-            setTimeout(() => {
-                this.template.querySelector('c-guest-toast').showToast('success', 'I\'m seeing a toast message as a guest!!!');
-            }, 5000);
-        }
-    }
-
     @wire(getRecord, { recordId: userId, fields: [userSmallPhotoUrl]}) 
     userDetails({error, data}) {
         if (data) {

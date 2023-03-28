@@ -141,6 +141,10 @@
         <name>Enter_Password</name>
     </customLabels>
     <customLabels>
+        <label>Error</label>
+        <name>Error</name>
+    </customLabels>
+    <customLabels>
         <label>Primer nombre</label>
         <name>First_Name</name>
     </customLabels>
@@ -163,6 +167,14 @@
     <customLabels>
         <label>¿Cómo vas a llegar al centro?</label>
         <name>How_Will_You_Get_To_Center</name>
+    </customLabels>
+    <customLabels>
+        <label>Código incorrecto</label>
+        <name>Incorrect_Code</name>
+    </customLabels>
+    <customLabels>
+        <label>El código que ingresaste es incorrecto, inténtalo de nuevo.</label>
+        <name>Incorrect_Code_Message</name>
     </customLabels>
     <customLabels>
         <label>Código postal no válido.</label>
@@ -459,6 +471,10 @@
     <customLabels>
         <label>Sube otra foto</label>
         <name>Upload_Another_Photo</name>
+    </customLabels>
+    <customLabels>
+        <label>Código de verificación</label>
+        <name>Verify_Code</name>
     </customLabels>
     <customLabels>
         <label>Verificar correo electrónico</label>

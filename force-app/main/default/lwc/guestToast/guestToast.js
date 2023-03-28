@@ -1,45 +1,59 @@
-/* Code by CafeForce || www.cafeforce.com || support@cafeforce.com || Mandatory Header */
- 
-import { LightningElement, api, track } from 'lwc';
- 
-export default class CustomToast extends LightningElement {
- 
-    @track type;
-    @track message;
-    @track showToastBar = false;
-    @api autoCloseTime = 5000;
- 
-    @api
-    showToast(type, message) {
-        this.type = type;
+import { api, LightningElement } from 'lwc';
+import util from 'c/util';
+
+const MODE_DISMISSABLE = 'dismissable';
+const MODE_PESTER = 'pester';
+const MODE_STICKY = 'sticky';
+
+export default class GuestToast extends LightningElement {
+
+    variant;
+    title;
+    message;
+    mode;
+    showToast = false;
+
+    @api show(variant = 'info', title = '', message = '', mode = MODE_DISMISSABLE) {
+        this.variant = variant;
+        this.title = title;
         this.message = message;
-        this.showToastBar = true;
-        setTimeout(() => {
-            this.closeModel();
-        }, this.autoCloseTime);
+        this.mode = mode;
+
+        this.showToast = true;
+
+        if (mode !== MODE_STICKY) {
+            setTimeout(() => {
+                this.hide();
+            }, 3000);
+        }
     }
- 
-    closeModel() {
-        this.showToastBar = false;
-        this.type = '';
-        this.message = '';
-	}
- 
-    get getIconName() {
-        return 'utility:' + this.type;
+
+    get isPesterMode() {
+        return (this.mode === MODE_PESTER);
     }
- 
-    get innerClass() {
-        return 'slds-icon_container slds-icon-utility-' + this.type + ' slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top';
+
+    get hasMessage() {
+        return util.isNotBlank(this.message);
     }
- 
-    get outerClass() {
-        return 'slds-notify slds-notify_toast slds-theme_' + this.type;
+
+    get themeClass() {
+        return 'slds-notify slds-notify_toast slds-theme_' + this.variant;
     }
+
+    get iconContainerClass() {
+        return 'slds-icon_container slds-icon-utility-' + this.variant + ' slds-m-right_small slds-no-flex slds-align-top';
+    }
+
+    get iconName() {
+        return 'utility:' + this.variant;
+    }
+
+    onCloseClick() {
+        this.hide();
+    }
+
+    hide() {
+        this.showToast = false;
+    }
+
 }
- 
-/* 
-    Code by CafeForce 
-    Website: http://www.cafeforce.com 
-    DO NOT REMOVE THIS HEADER/FOOTER FOR FREE CODE USAGE 
-*/

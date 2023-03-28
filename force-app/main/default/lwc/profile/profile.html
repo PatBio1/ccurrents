@@ -206,8 +206,8 @@
                     <lightning-button label={labels.skipForNow} stretch="true" class="secondary-button" onclick={onVerifyEmailSkipButtonClick}></lightning-button>
                 </div>
                 <div class="slds-col slds-size_1-of-2">
-                    <lightning-button if:true={verifyEmailValid} label={labels.verifyEmail} variant="brand" stretch="true" class="primary-button" onclick={onVerifyEmailButtonClick}></lightning-button>
-                    <button if:false={verifyEmailValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.verifyEmail}</button>
+                    <lightning-button if:true={verifyEmailValid} label={labels.verifyCode} variant="brand" stretch="true" class="primary-button" onclick={onVerifyEmailButtonClick}></lightning-button>
+                    <button if:false={verifyEmailValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.verifyCode}</button>
                 </div>
             </div>
         </template>
@@ -245,8 +245,8 @@
                     <lightning-button label={labels.skipForNow} stretch="true" class="secondary-button" onclick={onVerifyPhoneSkipButtonClick}></lightning-button>
                 </div>
                 <div class="slds-col slds-size_1-of-2">
-                    <lightning-button if:true={verifySmsValid} label={labels.verifyPhone} variant="brand" stretch="true" class="primary-button" onclick={onVerifyPhoneButtonClick}></lightning-button>
-                    <button if:false={verifySmsValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.verifyPhone}</button>
+                    <lightning-button if:true={verifySmsValid} label={labels.verifyCode} variant="brand" stretch="true" class="primary-button" onclick={onVerifyPhoneButtonClick}></lightning-button>
+                    <button if:false={verifySmsValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.verifyCode}</button>
                 </div>
             </div>
         </template>
@@ -268,5 +268,7 @@
 
         <button class="slds-button slds-button_brand slds-button_stretch primary-button slds-m-bottom_medium" onclick={onScheduleButtonClick}>{labels.scheduleAppointment}</button>
     </div>
+
+    <c-guest-toast></c-guest-toast>
 
 </template>

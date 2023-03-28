@@ -1,4 +1,5 @@
-import { LightningElement } from 'lwc';
+import { wire, LightningElement } from 'lwc';
+import { CurrentPageReference } from 'lightning/navigation';
 import login from '@salesforce/apex/LoginController.login';
 import sendVerificationEmail from '@salesforce/apex/LoginController.sendVerificationEmail';
 import util from 'c/util';
@@ -21,6 +22,14 @@ export default class Menu extends LightningElement {
     password;
     email;
     emailCode;
+    startURL;
+
+    @wire(CurrentPageReference)
+    getStateParameters(currentPageReference) {
+        if (currentPageReference) {
+            this.startURL = currentPageReference.state?.startURL;
+        }
+    }
 
     get showLogin() {
         return (this.currentPage === PAGE_LOGIN);
@@ -84,7 +93,7 @@ export default class Menu extends LightningElement {
         const request = {
             username: this.username,
             password: this.password,
-            startUrl: '/'
+            startUrl: this.startURL
         };
 
         console.log('login request', JSON.stringify(request));
@@ -92,9 +101,8 @@ export default class Menu extends LightningElement {
         login(request).then(response => {
             console.log('login response', response);
             window.location.href = response;
-            //window.location.href = '/ProesisDonor/s/';
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -120,7 +128,7 @@ export default class Menu extends LightningElement {
         sendVerificationEmail(request).then(response => {
             console.log('sendVerificationEmail response', response);
         }).catch((error) => {
-            console.log(error);
+            util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
 this.currentPage = PAGE_VERIFY_EMAIL;
             this.loading = false;

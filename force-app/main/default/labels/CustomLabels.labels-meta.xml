@@ -246,6 +246,13 @@
         <value>Enter Password</value>
     </labels>
     <labels>
+        <fullName>Error</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Error</shortDescription>
+        <value>Error</value>
+    </labels>
+    <labels>
         <fullName>First_Name</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -286,6 +293,20 @@
         <protected>true</protected>
         <shortDescription>How Will You Get To Center</shortDescription>
         <value>How will you get to the center?</value>
+    </labels>
+    <labels>
+        <fullName>Incorrect_Code</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Incorrect Code</shortDescription>
+        <value>Incorrect Code</value>
+    </labels>
+    <labels>
+        <fullName>Incorrect_Code_Message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Incorrect Code Message</shortDescription>
+        <value>The code you entered is incorrect, please try again.</value>
     </labels>
     <labels>
         <fullName>Invalid_Zip_Code</fullName>
@@ -804,6 +825,13 @@
         <protected>true</protected>
         <shortDescription>Upload Another Photo</shortDescription>
         <value>Upload another photo</value>
+    </labels>
+    <labels>
+        <fullName>Verify_Code</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Verify Code</shortDescription>
+        <value>Verify Code</value>
     </labels>
     <labels>
         <fullName>Verify_Email</fullName>

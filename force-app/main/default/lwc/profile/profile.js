@@ -419,7 +419,22 @@ export default class Profile extends LightningElement {
     }
 
     onVerifyEmailSkipButtonClick() {
-        this.currentPage = PAGE_VERIFY_PHONE;
+        this.loading = true;
+
+        const request = {
+            profile: this.profile
+        };
+
+        console.log('sendVerificationSms request', JSON.stringify(request));
+
+        sendVerificationSms(request).then(response => {
+            console.log('sendVerificationSms response', response);
+            this.currentPage = PAGE_VERIFY_PHONE;
+        }).catch((error) => {
+            console.log('sendVerificationSms error', error);
+        }).finally(() => {
+            this.loading = false;
+        });
     }
 
     onVerifyEmailButtonClick() {

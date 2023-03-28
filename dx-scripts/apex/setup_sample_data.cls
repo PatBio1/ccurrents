@@ -235,7 +235,15 @@ List<Campaign> testCampaigns = new List<Campaign>{
                 Status = 'In Progress',
                 StartDate = Date.newInstance(2023, 05, 01),
                 Description = 'Proesis Dallas center updates.'
-        )
+        ),
+    new Campaign(
+        Name = 'Welcome New Donor',
+        IsActive = true,
+        Type = 'Email',
+        Status = 'In Progress',
+        StartDate = Date.newInstance(2023, 05, 01),
+        Description = 'Welcome New Donor Campaign.'
+    )
 };
 
 upsert testCampaigns Name;

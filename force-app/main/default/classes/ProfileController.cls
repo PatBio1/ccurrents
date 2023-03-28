@@ -156,7 +156,11 @@ public without sharing class ProfileController {
                     lead.Email_Verification_Attempts__c = emailVerificationAttempts + 1;
                     update lead;
 
-                    return Constants.VERIFICATION_RESULT_INCORRECT;
+                    if (lead.Email_Verification_Attempts__c < MAX_EMAIL_VERIFICATION_ATTEMPTS) {
+                        return Constants.VERIFICATION_RESULT_INCORRECT;
+                    } else {
+                        return Constants.VERIFICATION_RESULT_TOO_MANY;
+                    }
                 }
             } else {
                 return Constants.VERIFICATION_RESULT_TOO_MANY;
@@ -211,7 +215,11 @@ public without sharing class ProfileController {
                     lead.SMS_Verification_Attempts__c = smsVerificationAttempts + 1;
                     update lead;
 
-                    return Constants.VERIFICATION_RESULT_INCORRECT;
+                    if (lead.SMS_Verification_Attempts__c < MAX_SMS_VERIFICATION_ATTEMPTS) {
+                        return Constants.VERIFICATION_RESULT_INCORRECT;
+                    } else {
+                        return Constants.VERIFICATION_RESULT_TOO_MANY;
+                    }
                 }
             } else {
                 return Constants.VERIFICATION_RESULT_TOO_MANY;

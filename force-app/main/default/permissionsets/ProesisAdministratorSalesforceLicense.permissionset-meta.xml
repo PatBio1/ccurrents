@@ -818,11 +818,6 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>true</editable>
-        <field>Contact.Ethnicity__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
         <editable>false</editable>
         <field>Contact.First_Donation__c</field>
         <readable>true</readable>
@@ -935,6 +930,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Contact.Preferred_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Race__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

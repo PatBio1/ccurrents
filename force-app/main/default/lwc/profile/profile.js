@@ -1,6 +1,5 @@
 import { api, track, LightningElement } from 'lwc';
 import { loadStyle } from 'lightning/platformResourceLoader';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import labels from 'c/labelService';
 import util from 'c/util';
 import upsertLead from '@salesforce/apex/ProfileController.upsertLead';

@@ -34,6 +34,7 @@ public without sharing class DonorCompInvocable {
                 visitUpdate.Outcome__c = Constants.VISIT_OUTCOME_DONATION;
                 visitUpdate.Collection_Number__c = comp.Collection_Number__c;
                 visitUpdate.Donation_Volume__c = comp.Collection_Volume__c;
+                visitUpdate.Collection_Device_ID__c = comp.BECS_Device__c;
                 visitsToUpdate.add(visitUpdate);
                 donorNumberToVisit.put(comp.Donor_Number__c, visitUpdate);
             }

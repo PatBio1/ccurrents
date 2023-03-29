@@ -154,7 +154,7 @@ public with sharing class EndOfDayVisitBatchableTest {
                     system.assertEquals('No Show', v.Outcome__c);
                 }
 
-                if(v.Status__c == 'Checked-In'){
+                if(v.Status__c == 'Complete'){
                     system.assertEquals('No Donation', v.Outcome__c);
                 }
             }else{

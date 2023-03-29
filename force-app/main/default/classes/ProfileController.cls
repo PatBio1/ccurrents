@@ -276,7 +276,7 @@ public without sharing class ProfileController {
             user.LocaleSidKey = profile.language;
             user.TimeZoneSidKey = 'America/New_York';
             user.ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id;
-            user.LanguageLocaleKey = (profile.language.startsWith('es') ? 'es' : 'en');
+            user.LanguageLocaleKey = (profile.language.startsWith('es') ? 'es' : 'en_US');
             user.EmailEncodingKey = 'UTF-8';
             user.ContactId = account.PersonContactId;
             user.IsActive = true;

@@ -1289,6 +1289,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Message__c.Message_Handler_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Message__c.Scheduled_Send_Time__c</field>
         <readable>true</readable>
     </fieldPermissions>

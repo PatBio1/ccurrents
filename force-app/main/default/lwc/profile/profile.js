@@ -263,64 +263,15 @@ export default class Profile extends LightningElement {
     }
 
     onBasicProfileNextButtonClick() {
-        this.loading = true;
-
-        const request = {
-            profile: this.profile
-        };
-
-        console.log('upsertLead request', JSON.stringify(request));
-
-        upsertLead(request).then(response => {
-            console.log('upsertLead response', response);
-            this.profile.id = response;
-
-            this.currentPage = PAGE_ADDRESS;
-        }).catch((error) => {
-            util.showGuestToast(this, 'error', labels.error, error);
-        }).finally(() => {
-            this.loading = false;
-        });
+        this.saveProfile(PAGE_ADDRESS);
     }
 
     onAddressPreviousButtonClick() {
-        this.loading = true;
-
-        const request = {
-            profile: this.profile
-        };
-
-        console.log('upsertLead request', JSON.stringify(request));
-
-        upsertLead(request).then(response => {
-            console.log('upsertLead response', response);
-
-            this.currentPage = PAGE_BASIC_PROFILE;
-        }).catch((error) => {
-            util.showGuestToast(this, 'error', labels.error, error);
-        }).finally(() => {
-            this.loading = false;
-        });
+        this.saveProfile(PAGE_BASIC_PROFILE);
     }
 
     onAddressNextButtonClick() {
-        this.loading = true;
-
-        const request = {
-            profile: this.profile
-        };
-
-        console.log('upsertLead request', JSON.stringify(request));
-
-        upsertLead(request).then(response => {
-            console.log('upsertLead response', response);
-
-            this.currentPage = PAGE_PICTURE;
-        }).catch((error) => {
-            util.showGuestToast(this, 'error', labels.error, error);
-        }).finally(() => {
-            this.loading = false;
-        });
+        this.saveProfile(PAGE_PICTURE);
     }
 
     onPhotoUploaded(event) {
@@ -364,11 +315,11 @@ export default class Profile extends LightningElement {
     }
 
     onPicturePreviousButtonClick() {
-        this.currentPage = PAGE_ADDRESS;
+        this.saveProfile(PAGE_ADDRESS);
     }
 
     onPictureNextButtonClick() {
-        this.currentPage = PAGE_PASSWORD;
+        this.saveProfile(PAGE_PASSWORD);
     }
 
     onPasswordPreviousButtonClick() {
@@ -585,6 +536,28 @@ export default class Profile extends LightningElement {
 
         setupUser(request).then(response => {
             this.currentPage = PAGE_CONGRATULATIONS;
+        }).catch((error) => {
+            util.showGuestToast(this, 'error', labels.error, error);
+        }).finally(() => {
+            this.loading = false;
+        });
+    }
+
+    saveProfile(nextPage) {
+        this.loading = true;
+
+        const request = {
+            profile: this.profile
+        };
+
+        console.log('upsertLead request', JSON.stringify(request));
+
+        upsertLead(request).then(response => {
+            console.log('upsertLead response', response);
+
+            this.profile.id = response;
+
+            this.currentPage = nextPage;
         }).catch((error) => {
             util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {

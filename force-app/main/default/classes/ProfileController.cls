@@ -254,6 +254,7 @@ public without sharing class ProfileController {
                     Id = :accountId
             ];
 
+            account.Loyalty_Level__pc = LoyaltyLevelService.getDefault().Id;
             account.First_Visit_Code__c = ScheduleUtils.createFirstVisitCode();
             update account;
 

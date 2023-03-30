@@ -1314,6 +1314,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Payment_Method__c.Expiration__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Payment_Method__c.isDefault__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Rate__c.Base_Payment__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1691,6 +1701,15 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>true</modifyAllRecords>
+        <object>Payment_Method__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
         <object>Rate__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
@@ -1811,6 +1830,10 @@
     </tabSettings>
     <tabSettings>
         <tab>Message__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>Payment_Method__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>

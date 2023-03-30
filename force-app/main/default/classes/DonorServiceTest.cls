@@ -147,7 +147,7 @@ public with sharing class DonorServiceTest {
         FirstName,
         MiddleName,
         PersonMailingStreet,
-        MobilePhone,
+        PersonMobilePhone,
         PersonOtherPhone,
         PersonMailingCity,
         PersonMailingState,
@@ -171,7 +171,10 @@ public with sharing class DonorServiceTest {
       donorAccount.PersonMailingStreet
     );
 
-    system.assertEquals(updateRequest.primary_phone, donorAccount.Phone);
+    system.assertEquals(
+      updateRequest.primary_phone,
+      donorAccount.PersonMobilePhone
+    );
     system.assertEquals(null, donorAccount.PersonOtherPhone);
     system.assertEquals(updateRequest.city, donorAccount.PersonMailingCity);
     system.assertEquals(updateRequest.state, donorAccount.PersonMailingState);

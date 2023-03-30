@@ -88,7 +88,7 @@ global without sharing class DonorService {
         }
         // primary_phone
         if (donorUpdateRequest.primary_phone != null) {
-          donorAccount.MobilePhone = nullOrBlank(
+          donorAccount.PersonMobilePhone = nullOrBlank(
             donorUpdateRequest.primary_phone
           );
         }

@@ -120,7 +120,7 @@ public without sharing class SchedulerController {
         try {
             User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
 
-            Contact contact = [SELECT ID, Account.First_Visit_Code__c, Loyalty_Level__c FROM Contact WHERE  Id =: user.ContactId][0];
+            Contact contact = [SELECT Account.First_Visit_Code__c, Loyalty_Level__c FROM Contact WHERE  Id = :user.ContactId][0];
             Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(contact.Loyalty_Level__c);
 
             Appointment__c appointment = [SELECT Schedule__r.Center__c, Booked__c, Booked_Loyalty__c FROM Appointment__c WHERE Id = :appointmentId];
@@ -142,16 +142,14 @@ public without sharing class SchedulerController {
             visit.Status__c = 'Scheduled';
             insert visit;
 
-            Integer numberOfVisits = [SELECT COUNT() FROM Visit__c WHERE Donor__c =: user.ContactId];
-
-            if(numberOfVisits == 1){
-                //this is user's first visit, add First Visit Code as a Task
-                Task taskRecord = new Task();
-                taskRecord.Subject = 'First Visit Code';
-                taskRecord.Description = contact.Account.First_Visit_Code__c;
-                //Add your field mappings
-                taskRecord.whatid = visit.id;
-                insert taskRecord;
+            // Create a First Visit Code task if this is the first visit.
+            Integer visitCount = [SELECT COUNT() FROM Visit__c WHERE Donor__c = :user.ContactId];
+            if (visitCount == 1) {
+                Task task = new Task();
+                task.Subject = 'First Visit Code';
+                task.Description = contact.Account.First_Visit_Code__c;
+                task.whatId = visit.id;
+                insert task;
             }
 
             return visit.Id;

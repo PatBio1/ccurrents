@@ -470,6 +470,10 @@ public with sharing class ProfileControllerTest {
     @isTest
     static void testCreateUser() {
         System.runAs(TestUtil.createExperienceGuestUser()) {
+            Level__c level = new Level__c();
+            level.Donation_Threshold__c = 0;
+            insert level;
+
             Account account = TestUtil.createMiramarCenter();
             insert account;
 

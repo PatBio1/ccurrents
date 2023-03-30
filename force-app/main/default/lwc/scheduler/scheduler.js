@@ -76,7 +76,7 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
     }
 
     onCancelButtonClick() {
-        // TODO - what should happen here?
+        util.navigateToPage(this, 'Appointments__c');
     }
 
     onScheduleButtonClick() {

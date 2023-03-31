@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSetGroup xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Set of permissions for the marketing stff.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Proesis Marketing Staff Permissions</label>
+    <permissionSets>Proesis_Center_Staff_Platform</permissionSets>
+    <permissionSets>Proesis_Marketing_Staff_Salesforce</permissionSets>
+    <status>Updated</status>
+</PermissionSetGroup>

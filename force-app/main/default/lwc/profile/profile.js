@@ -1,4 +1,5 @@
-import { api, track, LightningElement } from 'lwc';
+import { api, track, wire, LightningElement } from 'lwc';
+import { CurrentPageReference } from 'lightning/navigation';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import labels from 'c/labelService';
 import util from 'c/util';
@@ -42,8 +43,16 @@ export default class Profile extends LightningElement {
     emailVerificationsExhausted = false;
     resendSmsCodeEnabled = true;
     smsVerificationsExhausted = false;
+    startURL;
 
     @api center;
+
+    @wire(CurrentPageReference)
+    getStateParameters(currentPageReference) {
+        if (currentPageReference) {
+            this.startURL = currentPageReference.state?.startURL;
+        }
+    }
 
     get verifyEmailInstructionsLabel() {
         return labels.formatLabel(labels.verifyEmailInstructions, [this.profile.email]);
@@ -513,7 +522,7 @@ export default class Profile extends LightningElement {
         const request = {
             username: this.profile.email,
             password: this.profile.password,
-            startUrl: '/s/schedule'
+            startUrl: this.startURL
         };
 
         console.log('login request', JSON.stringify(request));

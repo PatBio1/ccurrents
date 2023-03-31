@@ -57,7 +57,14 @@
                     <div style="border-top: 1px solid #DDDBDA; border-bottom: 1px solid #DDDBDA; padding: 0.5rem; height: 96px; overflow-y: auto;">
                         <ul if:true={donor.visitNotes.length} style="font-size: 14px;" class="slds-list_dotted">
                             <template for:each={donor.visitNotes} for:item="visitNote">
-                                <li key={visitNote.visitNoteId}>{visitNote.visitNoteSubject}</li>
+                                <li key={visitNote.visitNoteId}>
+                                    {visitNote.visitNoteSubject}                                    
+                                </li>
+                                <li if:true={visitNote.visitNoteDescription} style="list-style: none;" key={visitNote.visitNoteId}>
+                                    <ul class="slds-is-nested slds-list_dotted">
+                                        <li>{visitNote.visitNoteDescription}</li>
+                                    </ul>
+                                </li>
                             </template>
                         </ul>
     

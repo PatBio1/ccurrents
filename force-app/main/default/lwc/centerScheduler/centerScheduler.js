@@ -364,6 +364,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         for(let appointment of queriedAppointments) {
             // Used to show/hide Add Visit on per row basis
             appointment.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability > 0) && !appointment.isInThePast);
+            console.log(`${appointment.timeString}: ${appointment.booked}`);
 
             generateUrlPromises.push(
                 this[NavigationMixin.GenerateUrl]({

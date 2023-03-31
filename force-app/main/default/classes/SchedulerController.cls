@@ -86,7 +86,7 @@ public without sharing class SchedulerController {
 
             List<Visit__c> visitRecords = [
                 SELECT
-                    Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name, Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.First_Visit_Code__c
+                    isFirstVisit__c, Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name, Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.First_Visit_Code__c
                 FROM
                     Visit__c
                 WHERE
@@ -106,6 +106,7 @@ public without sharing class SchedulerController {
                 visit.centerAddress = visitRecord.Appointment__r.Schedule__r.Center__r.BillingStreet;
                 visit.status = visitRecord.Status__c;
                 visit.firstVisitCode = visitRecord.Donor__r.Account.First_Visit_Code__c;
+                visit.isFirstVisit = visitRecord.isFirstVisit__c;
                 visits.add(visit);
             }
 
@@ -143,12 +144,13 @@ public without sharing class SchedulerController {
             insert visit;
 
             // Create a First Visit Code task if this is the first visit.
-            Integer visitCount = [SELECT COUNT() FROM Visit__c WHERE Donor__c = :user.ContactId];
-            if (visitCount == 1) {
+            List<Visit__c> calculatedVisit = [SELECT isFirstVisit__c FROM Visit__c WHERE Id = :visit.Id];
+            if (calculatedVisit[0].isFirstVisit__c) {
                 Task task = new Task();
                 task.Subject = 'First Visit Code';
                 task.Description = contact.Account.First_Visit_Code__c;
                 task.whatId = visit.id;
+                
                 insert task;
             }
 
@@ -208,6 +210,9 @@ public without sharing class SchedulerController {
 
         @AuraEnabled 
         public String firstVisitCode {get; set;}
+
+        @AuraEnabled
+        public Boolean isFirstVisit {get; set;}
     }
 
 }

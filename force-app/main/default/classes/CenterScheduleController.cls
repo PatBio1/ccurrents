@@ -47,6 +47,7 @@ public with sharing class CenterScheduleController {
                 SELECT Id,
                         Name,
                         Appointment__c,
+                        isFirstVisit__c,
                         Donor__c,
                         Donor__r.Name,
                         Donor__r.FirstName,
@@ -57,7 +58,7 @@ public with sharing class CenterScheduleController {
                         Status__c,
                         Outcome__c,
                         (
-                            SELECT Id, Subject
+                            SELECT Id, Subject, Description
                             FROM Tasks
                         )
                 FROM Visit__c
@@ -65,8 +66,6 @@ public with sharing class CenterScheduleController {
                 ORDER BY lastmodifieddate
             ]){
                 appt.visits.add(new Visit(visit));
-
-                appt.booked = appt.visits.size();
             }
             
         } catch (Exception e) {
@@ -119,6 +118,7 @@ public with sharing class CenterScheduleController {
                 SELECT Id,
                         Name,
                         Appointment__c,
+                        isFirstVisit__c,
                         Donor__c,
                         Donor__r.Name,
                         Donor__r.FirstName,
@@ -129,7 +129,7 @@ public with sharing class CenterScheduleController {
                         Status__c,
                         Outcome__c,
                         (
-                            SELECT Id, Subject
+                            SELECT Id, Subject, Description
                             FROM Tasks
                         )
                 FROM Visit__c
@@ -138,8 +138,6 @@ public with sharing class CenterScheduleController {
             ]){
                 AppointmentSlot appt = appMap.get(visit.Appointment__c);
                 appt.visits.add(new Visit(visit));
-
-                appt.booked = appt.visits.size();
             }
             
             system.debug(appMap);
@@ -169,15 +167,27 @@ public with sharing class CenterScheduleController {
         }
         update targetSlot;
 
+        Visit__c newVisit;
         try {
-            insert new Visit__c(
+            newVisit = new Visit__c(
                 Donor__c = donor.PersonContactId,
                 Center_Donation_Type__c = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :centerId LIMIT 1]?.Id,
                 Appointment__c = appointmentSlotId,
                 Status__c = 'Scheduled'
             );
+            insert newVisit;
         } catch(Exception addVisitException) {
             throw Util.createAuraHandledException(addVisitException);
+        }
+
+        List<Visit__c> calculatedVisit = [SELECT isFirstVisit__c, Donor__r.Account.First_Visit_Code__c FROM Visit__c WHERE Id = :newVisit.Id];
+        if (calculatedVisit[0].isFirstVisit__c) {
+            Task task = new Task();
+            task.Subject = 'First Visit Code';
+            task.Description = calculatedVisit[0].Donor__r.Account.First_Visit_Code__c;
+            task.whatId = newVisit.id;
+            
+            insert task;
         }
     }
 
@@ -195,7 +205,7 @@ public with sharing class CenterScheduleController {
         Appointment__c newAppointment = (targetAppointments[0].Id == appointmentId) ? targetAppointments[0] : targetAppointments[1];
 
         // Updating Slot Booked/Capacity
-        if (loyaltyLevel > 0) {
+        if (loyaltyLevel > 0 && oldAppointment.Booked_Loyalty__c != null && oldAppointment.Booked_Loyalty__c > 0) {
             oldAppointment.Booked_Loyalty__c -= 1;
         } else {
             oldAppointment.Booked__c -= 1;
@@ -473,7 +483,7 @@ public with sharing class CenterScheduleController {
             this.filtered = false;
 
             this.loyaltyTierName = visit.Donor__r.Account.Loyalty_Level__pr.Name;
-            this.isFirstVisit = (visit.Donor__r.Account.First_Visit__pc == null);
+            this.isFirstVisit = visit.isFirstVisit__c;
 
             this.visitNotes = new VisitNote[] {};
             if (visit.Tasks != null) {
@@ -491,9 +501,13 @@ public with sharing class CenterScheduleController {
         @AuraEnabled
         public String visitNoteSubject {get;set;}
 
+        @AuraEnabled
+        public String visitNoteDescription {get;set;}
+
         public VisitNote(Task taskRecord) {
             this.visitNoteId = taskRecord.Id;
             this.visitNoteSubject = taskRecord.Subject;
+            this.visitNoteDescription = taskRecord.Description;
         }
     }
 }    

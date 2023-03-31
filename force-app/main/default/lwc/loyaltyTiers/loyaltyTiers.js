@@ -9,43 +9,24 @@ import labels from 'c/labelService';
 import userId from '@salesforce/user/Id';
 import userSmallPhotoUrl from '@salesforce/schema/User.SmallPhotoUrl';
 
+import getLoyaltyLevelDisplayInfo from '@salesforce/apex/LoyaltyLevelService.getLoyaltyLevelDisplayInfo';
+import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsInfo';
+
+const LEVEL_NAME_TO_BACKGROUND_STYLE = new Map([
+    ["Donor (Default)", "rgba(43, 130, 51, 0.2)"],
+    ["Normal Donor +15", "rgba(152, 50, 133, 0.2)"],
+    ["Signature", "rgba(212, 195, 179, 0.6)"],
+    ["VIP", "#E3E3F1"],
+    ["Royal", "rgba(219, 202, 160, 0.57)"]
+]);
+
 export default class LoyaltyTiers extends LightningElement {
     labels = labels;
 
-    LOYALTY_TIER_CONFIGURATION = [
-        {
-            displayName: "Default",
-            loyaltyTierName: "Donor (Default)", // Passed into the loyalty tier badge comp, should map to a level record name
-            description: "Reach Gold Status and earn the most amount of points and receive the best time spots.",
-            iconBackgroundStyle: "background: rgba(43, 130, 51, 0.2);" 
-        },
-        {
-            displayName: "Normal",
-            loyaltyTierName: "Normal Donor +15", // Passed into the loyalty tier badge comp, should map to a level record name
-            description: "Reach Gold Status and earn the most amount of points and receive the best time spots.",
-            iconBackgroundStyle: "background: rgba(152, 50, 133, 0.2);" 
-        },
-        {
-            displayName: "Signature",
-            loyaltyTierName: "Signature", // Passed into the loyalty tier badge comp, should map to a level record name
-            description: "Reach Gold Status and earn the most amount of points and receive the best time spots.",
-            iconBackgroundStyle: "background: rgba(212, 195, 179, 0.6);" 
-        },
-        {
-            displayName: "VIP",
-            loyaltyTierName: "VIP", // Passed into the loyalty tier badge comp, should map to a level record name
-            description: "Reach Gold Status and earn the most amount of points and receive the best time spots.",
-            iconBackgroundStyle: "background: #E3E3F1;" 
-        },
-        {
-            displayName: "Royal",
-            loyaltyTierName: "Royal", // Passed into the loyalty tier badge comp, should map to a level record name
-            description: "Reach Gold Status and earn the most amount of points and receive the best time spots.",
-            iconBackgroundStyle: "background: rgba(219, 202, 160, 0.57);" 
-        }
-    ];
-
     photoUrl;
+    loyaltyLevels;
+    rewardsInfo;
+    areLevelsInitialized = false;
     isChartJsInitialized;
 
     @wire(getRecord, { recordId: userId, fields: [userSmallPhotoUrl]}) 
@@ -55,8 +36,21 @@ export default class LoyaltyTiers extends LightningElement {
         }
     }
 
+    async connectedCallback() {
+        try {
+            [this.loyaltyLevels, this.rewardsInfo] = await Promise.all([getLoyaltyLevelDisplayInfo(), getDonorRewardsInfo()]);
+            for(let loyaltyLevel of this.loyaltyLevels) {
+                loyaltyLevel.iconBackgroundStyle = `background: ${LEVEL_NAME_TO_BACKGROUND_STYLE.get(loyaltyLevel.levelName)};`;
+            }
+
+            this.areLevelsInitialized = true;
+        } catch(e) {
+            console.error(e);
+        }
+    }
+
     renderedCallback() {
-        if (!this.isChartJsInitialized) {
+        if (!this.isChartJsInitialized && this.areLevelsInitialized) {
             this.initLoyaltyTierChart();
         }
     }
@@ -65,23 +59,18 @@ export default class LoyaltyTiers extends LightningElement {
         await loadScript(this, chartJs);
         await loadScript(this, chartJsDatalabels);
 
+        let reverseOrderLevels = [...this.loyaltyLevels].reverse();
         new Chart(this.template.querySelector("canvas[data-loyalty-tier-chart]"), {
             plugins: [ChartDataLabels],
             type: 'bar',
             data: {
-                labels: ['My Aps', 'Royal', 'VIP', 'Signature', 'Normal'],
+                labels: ['My Aps', ...reverseOrderLevels.map((level) => level.levelName)],
                 datasets: [{
                     label: '# of Appointments',
-                    data: [0, 90, 60, 30, 14], // Need to fetch these from the backend
+                    data: [this.rewardsInfo.donorVisitCount, ...reverseOrderLevels.map((level) => level.levelThreshold)], // Need to fetch these from the backend
                     borderWidth: 0,
                     minBarLength: 5,
-                    backgroundColor: [
-                        '#88D3FF',
-                        '#E6DAC9',
-                        '#E3E3F1',
-                        '#E1D5D1',
-                        '#D6BBDE'
-                    ],
+                    backgroundColor: reverseOrderLevels.map((level) => LEVEL_NAME_TO_BACKGROUND_STYLE.get(level.levelName)),
                     datalabels: {
                         anchor: "end",
                         align: "end"

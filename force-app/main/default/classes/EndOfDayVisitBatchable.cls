@@ -47,6 +47,7 @@ public without sharing class EndOfDayVisitBatchable implements Database.Batchabl
             if(visit.Status__c == 'Scheduled'){
                 visit.Outcome__c = 'No Show';
             }else if(visit.Status__c == 'Checked-In'){
+                visit.Status__c = 'Complete';
                 visit.Outcome__c = 'No Donation';
             }
         }

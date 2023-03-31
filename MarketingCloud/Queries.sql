@@ -181,3 +181,117 @@ WHERE
 v.Status__c = 'Scheduled' AND
 v.isFirstVisit__c = 1 AND
 wnd.SubscriberKey IS NULL
+
+-- 7 Day Appointment Reminder
+SELECT v.Donor__c AS SubscriberKey,
+v.Id AS VisitId,
+v.Appointment_Datetime__c AS AppointmentDateTime,
+c.Email AS Email,
+c.FirstName AS FirstName,
+cent.Name AS CenterName
+
+FROM Visit__c_Salesforce as v
+
+INNER JOIN
+(SELECT Id,
+Email,
+FirstName
+FROM Contact_Salesforce
+WHERE Enable_Appointment_Reminders__c = 1
+)
+AS c
+ON v.Donor__c = c.Id
+
+INNER JOIN
+(SELECT Id,
+Name
+FROM Account_Salesforce)
+AS cent
+ON v.Center__c = cent.Id
+
+LEFT JOIN
+(SELECT VisitId
+FROM "Appointment Reminder 7 Days"
+)
+AS ar7
+ON v.Id = ar7.VisitId
+
+WHERE ar7.VisitId IS NULL AND
+v.Status__c = 'Scheduled' AND
+DATEDIFF(DAY, v.Appointment_Datetime__c, GETUTCDATE()) = 7
+
+-- 72 Hour Appointment Reminder
+SELECT v.Donor__c AS SubscriberKey,
+v.Id AS VisitId,
+v.Appointment_Datetime__c AS AppointmentDateTime,
+c.Email AS Email,
+c.FirstName AS FirstName,
+cent.Name AS CenterName
+
+FROM Visit__c_Salesforce as v
+
+INNER JOIN
+(SELECT Id,
+Email,
+FirstName
+FROM Contact_Salesforce
+WHERE Enable_Appointment_Reminders__c = 1
+)
+AS c
+ON v.Donor__c = c.Id
+
+INNER JOIN
+(SELECT Id,
+Name
+FROM Account_Salesforce)
+AS cent
+ON v.Center__c = cent.Id
+
+LEFT JOIN
+(SELECT VisitId
+FROM "Appointment Reminder 72 Hours"
+)
+AS ar72
+ON v.Id = ar72.VisitId
+
+WHERE ar72.VisitId IS NULL AND
+v.Status__c = 'Scheduled' AND
+DATEDIFF(DAY, v.Appointment_Datetime__c, GETUTCDATE()) = 3
+
+-- 24 Hour Appointment Reminder
+SELECT v.Donor__c AS SubscriberKey,
+v.Id AS VisitId,
+v.Appointment_Datetime__c AS AppointmentDateTime,
+c.Email AS Email,
+c.FirstName AS FirstName,
+cent.Name AS CenterName
+
+FROM Visit__c_Salesforce as v
+
+INNER JOIN
+(SELECT Id,
+Email,
+FirstName
+FROM Contact_Salesforce
+WHERE Enable_Appointment_Reminders__c = 1
+)
+AS c
+ON v.Donor__c = c.Id
+
+INNER JOIN
+(SELECT Id,
+Name
+FROM Account_Salesforce)
+AS cent
+ON v.Center__c = cent.Id
+
+LEFT JOIN
+(SELECT VisitId
+FROM "Appointment Reminder 24 Hours"
+)
+AS ar24
+ON v.Id = ar24.VisitId
+
+WHERE ar24.VisitId IS NULL AND
+v.Status__c = 'Scheduled' AND
+DATEDIFF(DAY, v.Appointment_Datetime__c, GETUTCDATE()) = 3

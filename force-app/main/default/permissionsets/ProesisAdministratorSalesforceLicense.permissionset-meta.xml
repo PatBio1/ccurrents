@@ -818,11 +818,6 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>true</editable>
-        <field>Contact.Ethnicity__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
         <editable>false</editable>
         <field>Contact.First_Donation__c</field>
         <readable>true</readable>
@@ -935,6 +930,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Contact.Preferred_Name__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Race__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1289,6 +1289,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Message__c.Message_Handler_Type__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Message__c.Scheduled_Send_Time__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1455,6 +1460,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Visit__c.Check_In__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Visit__c.Collection_Device_ID__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

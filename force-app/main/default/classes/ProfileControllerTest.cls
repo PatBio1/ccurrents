@@ -482,6 +482,7 @@ public with sharing class ProfileControllerTest {
             profile.id = lead.Id;
             profile.centerId = account.Id;
             profile.nickname = 'testnick';
+            profile.language = 'en_US';
 
             Id userId = ProfileController.createUser(profile);
 

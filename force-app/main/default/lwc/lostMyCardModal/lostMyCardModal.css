@@ -1,0 +1,13 @@
+.lost-my-card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+
+.action-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}

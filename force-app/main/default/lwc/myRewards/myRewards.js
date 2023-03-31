@@ -1,10 +1,16 @@
-import { LightningElement } from 'lwc';
+import { LightningElement, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
+
+import LostMyCardModal from 'c/lostMyCardModal';
 import labels from 'c/labelService';
 
+import PAYMENT_METHOD_LOGOS from '@salesforce/resourceUrl/Payment_Method_Logos';
+
 import userCurrency from '@salesforce/i18n/currency';
+import userTimezone from '@salesforce/i18n/timezone';
 import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsInfo';
 import getLoyaltyLevelDisplayInfo from '@salesforce/apex/LoyaltyLevelService.getLoyaltyLevelDisplayInfo';
+import getUserTransactions from '@salesforce/apex/TransactionSelector.getUserTransactions';
 
 const LOYALTY_TIER_NAME_TO_DISPLAY_PROPS = new Map([
     ['Donor (Default)', { displayName: 'Default', style: 'background: rgba(43, 130, 51, 0.2);'}],
@@ -16,7 +22,8 @@ const LOYALTY_TIER_NAME_TO_DISPLAY_PROPS = new Map([
 
 export default class MyRewards extends NavigationMixin(LightningElement) {
 
-    userCurrency = userCurrency
+    userCurrency = userCurrency;
+    userTimezone = userTimezone;
     labels = labels;
 
     noGoalSet = true;
@@ -26,8 +33,16 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
 
     donorRewardsInfo;
     loyaltyLevelsInfo;
-    isInitialized = false;
+    @track paymentHistory;
     isLoading = false;
+
+    get userHasCard() {
+        return true;
+    }
+
+    get visaLogo() {
+        return PAYMENT_METHOD_LOGOS + '/VISA-Logo.svg#visa-logo';
+    }
 
     get cantRedeemPoints() {
         return (this.donorRewardsInfo == undefined || this.donorRewardsInfo.donorPoints < this.donorRewardsInfo.minimumWithdrawalAmount);
@@ -41,10 +56,8 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
         return (!!this.donorRewardsInfo);
     }
 
-    renderedCallback() {
-        if (!this.isInitialized) {
-            this.initMyRewards();
-        }
+    async initMyBalanceTab(event) {
+        this.initMyRewards();
     }
 
     async initMyRewards() {
@@ -67,7 +80,27 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
         console.log(this.donorRewardsInfo, this.loyaltyLevelsInfo);
 
         this.isLoading = false;
-        this.isInitialized = true;
+    }
+
+    async initPaymentHistoryTab(event) {
+        this.initPaymentHistoryTab();
+    }
+
+    async initPaymentHistoryTab() {
+        this.isLoading = true;
+
+        try {
+            this.paymentHistory = await getUserTransactions();
+            for(let transaction of this.paymentHistory) {
+                transaction.displayDetails = false;
+                transaction.displayIcon = "utility:right";
+            }
+        } catch(e) {
+            console.error(e);
+        }
+        
+        console.log(this.paymentHistory);
+        this.isLoading = false;
     }
 
     onSetGoalButtonClick() {
@@ -97,7 +130,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     onLostCardButtonClick() {
-
+        LostMyCardModal.open();
     }
 
     onWatchVideoButtonClick() {
@@ -105,11 +138,29 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     navigateToLoyaltyTiers(event) {
+        this.navigateToCommunityPage('loyalty-tiers');
+    }
+
+    navigateToScheduleAppointment(event) {
+        this.navigateToCommunityPage('schedule');
+    }
+
+    navigateToCommunityPage(pageName) {
         this[NavigationMixin.Navigate]({
             type: 'comm__namedPage',
             attributes: {
-                pageName: 'loyalty-tiers'
+                pageName: pageName
             }
         });
+    }
+
+    togglePaymentDetails(event) {
+        let transactionId = event.currentTarget.dataset.transactionId;
+        let transaction = this.paymentHistory.find(transaction => transaction.transactionId === transactionId);
+
+        if (transaction) {
+            transaction.displayDetails = !transaction.displayDetails;
+            transaction.displayIcon = transaction.displayDetails ? "utility:down" : "utility:right";
+        }
     }
 }

@@ -125,10 +125,6 @@
         <name>Email</name>
     </customLabels>
     <customLabels>
-        <label>Correo electrónico o teléfono principal</label>
-        <name>Email_Or_Primary_Phone</name>
-    </customLabels>
-    <customLabels>
         <label>Inglés</label>
         <name>English</name>
     </customLabels>

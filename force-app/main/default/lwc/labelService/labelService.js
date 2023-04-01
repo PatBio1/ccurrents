@@ -29,7 +29,6 @@ import congratulations from '@salesforce/label/c.Congratulations';
 import contactAndSupport from '@salesforce/label/c.Contact_And_Support';
 import donorTips from '@salesforce/label/c.Donor_Tips';
 import email from '@salesforce/label/c.Email';
-import emailOrPrimaryPhone from '@salesforce/label/c.Email_Or_Primary_Phone';
 import english from '@salesforce/label/c.English';
 import enterCode from '@salesforce/label/c.Enter_Code';
 import enterPassword from '@salesforce/label/c.Enter_Password';
@@ -161,7 +160,6 @@ const labels = {
     contactAndSupport,
     donorTips,
     email,
-    emailOrPrimaryPhone,
     english,
     enterCode,
     enterPassword,

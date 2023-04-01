@@ -218,13 +218,6 @@
         <value>Email</value>
     </labels>
     <labels>
-        <fullName>Email_Or_Primary_Phone</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Email Or Primary Phone</shortDescription>
-        <value>Email Or Primary Phone</value>
-    </labels>
-    <labels>
         <fullName>English</fullName>
         <language>en_US</language>
         <protected>true</protected>

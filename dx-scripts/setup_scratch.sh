@@ -43,6 +43,9 @@ sfdx force:user:permset:assign -n ProesisAdministratorSalesforceLicense
 ## run any anymous apex scripts to setup data, batches, etc...
 sfdx force:apex:execute -f dx-scripts/apex/setup_users.cls
 
+# add Sample Donor records
+sfdx force:data:bulk:upsert -s Account -f ./data/AccountDataBulk.csv -i Id -w 1
+
 sfdx force:apex:execute -f dx-scripts/apex/setup_sample_data.cls
 
 # add Postal Code records

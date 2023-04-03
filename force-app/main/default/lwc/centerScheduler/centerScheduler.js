@@ -15,8 +15,7 @@ import cancelVisit from '@salesforce/apex/CenterScheduleController.cancelVisit';
 import { visitStatusToDisplayClass, visitOutcomeToDisplayClass } from "c/constants";
 import CreateScheduleModal from "c/createScheduleModal";
 import AddVisitModal from "c/addVisitModal";
-import Confirm_Password from '@salesforce/label/c.Confirm_Password';
-import RecurrenceStartDateOnly from '@salesforce/schema/Task.RecurrenceStartDateOnly';
+import CreateDonorModal from 'c/createDonorModal';
 
 export default class CenterScheduler extends NavigationMixin(LightningElement) {
     statusOptions;
@@ -73,6 +72,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     dateDisabled = true;
     loading = true;
     popYFlipPoint;
+
+    get createDonorDisabled() {
+        return (!this.selectedCenterId);
+    }
 
     get hasAppointmentsToDisplay() {
         return (this.appointments && this.appointments.length);
@@ -538,5 +541,23 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         if (newAppointment) {
             this.refreshAppointmentSlot(newAppointmentId, newAppointment);
         }
+    }
+
+    handleInitCreateDonor(event) {
+        CreateDonorModal.open({
+            selectedCenter: this.selectedCenterId,
+
+            ondonorcreated: (event) => {
+                if (!this.selectedDate) {
+                    this.selectedDate = new Date(Date.now()).toISOString();
+                }
+
+                event.stopPropagation();
+                
+                if (event.detail.wasVisitScheduled) {
+                    this.fetchAppointments();
+                }
+            }
+        });
     }
 }

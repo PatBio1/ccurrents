@@ -1,5 +1,9 @@
 @import 'c/sharedCss';
 
+:host {
+    --progress-indicator-background: #F5F0FF;
+}
+
 .slds-progress {
     max-width: unset;
 }
@@ -12,7 +16,7 @@
 }
 
 .progress-item-wrapper {
-    background-color: #F5F0FF;
+    background-color: var(--progress-indicator-background);
     width: 32px;
 
     display: flex;

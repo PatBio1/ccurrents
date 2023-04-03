@@ -1,0 +1,12 @@
+.card-enroll-text {
+    width: 50%;
+    text-align: center;
+    font-size: 18px;
+}
+
+.card-id-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}

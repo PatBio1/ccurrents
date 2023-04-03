@@ -3,13 +3,14 @@
     <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
 
     <div if:true={showBasicProfile} class="slds-var-p-around_medium">
-        <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+        <lightning-button if:false={isSchedulerView} variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
 
-        <div class="title-medium slds-text-align_center slds-m-vertical_large">
+        <div if:false={isSchedulerView} class="title-medium slds-text-align_center slds-m-vertical_large">
             {labels.tellUsAboutYou}
         </div>
 
-        <c-progress-indicator steps="7" current-step="2"></c-progress-indicator>
+        <c-progress-indicator if:false={isSchedulerView} steps="7" current-step="2"></c-progress-indicator>
+        <c-progress-indicator if:true={isSchedulerView} steps="2" current-step="1"></c-progress-indicator>
 
         <div class=" slds-m-vertical_large">
             <div class="title-small slds-text-align_center">
@@ -41,13 +42,14 @@
     </div>
 
     <div if:true={showAddress} class="slds-var-p-around_medium">
-        <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+        <lightning-button if:false={isSchedulerView} variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
 
-        <div class="title-medium slds-text-align_center slds-m-vertical_large">
+        <div if:false={isSchedulerView} class="title-medium slds-text-align_center slds-m-vertical_large">
             {labels.tellUsAboutYou}
         </div>
 
-        <c-progress-indicator steps="7" current-step="3"></c-progress-indicator>
+        <c-progress-indicator if:false={isSchedulerView} steps="7" current-step="3"></c-progress-indicator>
+        <c-progress-indicator if:true={isSchedulerView} steps="2" current-step="2"></c-progress-indicator>
 
         <div class=" slds-m-vertical_large">
             <div class="title-small slds-text-align_center">
@@ -102,13 +104,13 @@
     </div>
 
     <div if:true={showPicture} class="slds-var-p-around_medium">
-        <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+        <lightning-button if:false={isSchedulerView} variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
 
-        <div class="title-medium slds-text-align_center slds-m-vertical_large">
+        <div if:false={isSchedulerView} class="title-medium slds-text-align_center slds-m-vertical_large">
             {labels.tellUsAboutYou}
         </div>
 
-        <c-progress-indicator steps="7" current-step="4"></c-progress-indicator>
+        <c-progress-indicator if:false={isSchedulerView} steps="7" current-step="4"></c-progress-indicator>
 
         <div class=" slds-m-vertical_large">
             <div class="title-small slds-text-align_center">
@@ -147,7 +149,7 @@
     </div>
 
     <div if:true={showPassword} class="slds-var-p-around_medium">
-        <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+        <lightning-button if:false={isSchedulerView} variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
 
         <div class="title-medium slds-text-align_center slds-m-vertical_large">
             {labels.setYourPassword}
@@ -157,7 +159,7 @@
             {labels.passwordRequirements}
         </div>
 
-        <c-progress-indicator steps="7" current-step="5"></c-progress-indicator>
+        <c-progress-indicator if:false={isSchedulerView} steps="7" current-step="5"></c-progress-indicator>
 
         <div class="slds-m-vertical_large">
             <div class="slds-m-bottom_small">
@@ -189,7 +191,7 @@
                 <lightning-formatted-rich-text value={verifyEmailInstructionsLabel}></lightning-formatted-rich-text>
             </div>
 
-            <c-progress-indicator steps="7" current-step="6"></c-progress-indicator>
+            <c-progress-indicator if:false={isSchedulerView} steps="7" current-step="6"></c-progress-indicator>
 
             <div class="slds-m-vertical_large">
                 <div class="slds-m-bottom_small">
@@ -214,7 +216,7 @@
         <div if:true={emailVerificationsExhausted} class="slds-text-align_center">
             <div class="slds-m-bottom_large" style="color: red;">We cannot verify your email at this time. Please try again later.</div>
 
-            <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+            <lightning-button if:false={isSchedulerView} variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
         </div>
     </div>
 
@@ -228,7 +230,7 @@
                 <lightning-formatted-rich-text value={verifyPhoneInstructionsLabel}></lightning-formatted-rich-text>
             </div>
 
-            <c-progress-indicator steps="7" current-step="7"></c-progress-indicator>
+            <c-progress-indicator if:false={isSchedulerView} steps="7" current-step="7"></c-progress-indicator>
 
             <div class="slds-m-vertical_large">
                 <div class="slds-m-bottom_small">
@@ -253,7 +255,7 @@
         <div if:true={smsVerificationsExhausted} class="slds-text-align_center">
             <div class="slds-m-bottom_large" style="color: red;">We cannot verify your phone number at this time. Please try again later.</div>
 
-            <lightning-button variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
+            <lightning-button if:false={isSchedulerView} variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
         </div>
     </div>
 

@@ -234,43 +234,18 @@ public without sharing class ProfileController {
         try {
             Util.testExceptionHandling();
 
-            LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
-
-            Database.LeadConvert leadConvert = new Database.LeadConvert();
-            leadConvert.setLeadId(profile.id);
-            leadConvert.setConvertedStatus(leadStatus.MasterLabel);
-            leadConvert.setDoNotCreateOpportunity(true);
-
-            Database.LeadConvertResult lcr = Database.convertLead(leadConvert);
-
+            Database.LeadConvertResult lcr = convertAndCommitLead(profile);
             Id accountId = lcr.getAccountId();
 
-            Account account = [
-                SELECT
-                    FirstName, LastName, PersonEmail, PersonContactId
-                FROM
-                    Account
-                WHERE
-                    Id = :accountId
-            ];
+            Account targetAccount = [SELECT Id, FirstName, LastName, PersonEmail, PersonContactId FROM Account WHERE Id = :accountId LIMIT 1];
 
-            account.Loyalty_Level__pc = LoyaltyLevelService.getDefault().Id;
-            account.First_Visit_Code__c = ScheduleUtils.createFirstVisitCode();
-            update account;
-
-            AccountContactRelation accountContactRelation = new AccountContactRelation();
-            accountContactRelation.AccountId = profile.centerId;
-            accountContactRelation.ContactId = lcr.getContactId();
-            accountContactRelation.Roles = 'Donor';
-            insert accountContactRelation;
-
-            String alias = (account.FirstName.trim().replaceAll('[^a-zA-Z]', '') + account.LastName.trim().replaceAll('[^a-zA-Z]', '')).abbreviate(8);
-            String username = account.PersonEmail + Constants.USERNAME_SUFFIX;
+            String alias = (targetAccount.FirstName.trim().replaceAll('[^a-zA-Z]', '') + targetAccount.LastName.trim().replaceAll('[^a-zA-Z]', '')).abbreviate(8);
+            String username = targetAccount.PersonEmail + Constants.USERNAME_SUFFIX;
 
             User user = new user();
-            user.FirstName = account.FirstName;
-            user.LastName = account.LastName;
-            user.Email = account.PersonEmail;
+            user.FirstName = targetAccount.FirstName;
+            user.LastName = targetAccount.LastName;
+            user.Email = targetAccount.PersonEmail;
             user.Alias = alias;
             user.Username = username;
             user.CommunityNickname = 'proesis' + System.currentTimeMillis();
@@ -279,14 +254,26 @@ public without sharing class ProfileController {
             user.ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id;
             user.LanguageLocaleKey = (profile.language.startsWith('es') ? 'es' : 'en_US');
             user.EmailEncodingKey = 'UTF-8';
-            user.ContactId = account.PersonContactId;
+            user.ContactId = targetAccount.PersonContactId;
             user.IsActive = true;
 
-            Id userId = Site.createExternalUser(user, account.Id, profile.password, false);
-
+            Id userId = Site.createExternalUser(user, targetAccount.Id, profile.password, false);
             return userId;
         } catch (Exception e) {
             throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
+    public static Id createUserFromScheduler(Profile profile) {
+        try {
+            Database.LeadConvertResult lcr = convertAndCommitLead(profile);
+            Id createdAccountId = lcr.getAccountId();
+
+            commitUserFromScheduler(createdAccountId, profile.language);
+            return createdAccountId;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
         }
     }
 
@@ -312,19 +299,81 @@ public without sharing class ProfileController {
                 HttpResponse httpResponse = new Http().send(httpRequest);
             }
 
-            PermissionSet permissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.EXPERIENCE_PERMISSION_SET_NAME];
-
-            PermissionSetAssignment psa = new PermissionSetAssignment();
-            psa.PermissionSetId = permissionSet.Id;
-            psa.AssigneeId = profile.userId;
-            insert psa;
+            assignUserPermissionSet(profile.userId);
         } catch (Exception e) {
             throw Util.createAuraHandledException(e);
         }
     }
 
-    public class Profile {
+    private static Database.LeadConvertResult convertAndCommitLead(Profile profile) {
+        LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
 
+        Database.LeadConvert leadConvert = new Database.LeadConvert();
+        leadConvert.setLeadId(profile.id);
+        leadConvert.setConvertedStatus(leadStatus.MasterLabel);
+        leadConvert.setDoNotCreateOpportunity(true);
+
+        Database.LeadConvertResult lcr = Database.convertLead(leadConvert);
+        Id accountId = lcr.getAccountId();
+
+        update new Account(
+            Id = accountId,
+            Loyalty_Level__pc = LoyaltyLevelService.getDefault().Id,
+            First_Visit_Code__c = ScheduleUtils.createFirstVisitCode()
+        );
+
+        AccountContactRelation accountContactRelation = new AccountContactRelation();
+        accountContactRelation.AccountId = profile.centerId;
+        accountContactRelation.ContactId = lcr.getContactId();
+        accountContactRelation.Roles = 'Donor';
+        insert accountContactRelation;
+
+        return lcr;
+    }
+
+    private static void assignUserPermissionSet(Id userId) {
+        PermissionSet permissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.EXPERIENCE_PERMISSION_SET_NAME];
+        PermissionSetAssignment psa = new PermissionSetAssignment();
+
+        psa.PermissionSetId = permissionSet.Id;
+        psa.AssigneeId = userId;
+        insert psa;
+    }
+
+    @future
+    private static void commitUserFromScheduler(Id accountId, String language) {
+        Account targetAccount = [SELECT Id, FirstName, LastName, PersonEmail, PersonContactId FROM Account WHERE Id = :accountId LIMIT 1];
+
+        String alias = (targetAccount.FirstName.trim().replaceAll('[^a-zA-Z]', '') + targetAccount.LastName.trim().replaceAll('[^a-zA-Z]', '')).abbreviate(8);
+        String username = targetAccount.PersonEmail + Constants.USERNAME_SUFFIX;
+
+        User user = new user();
+        user.FirstName = targetAccount.FirstName;
+        user.LastName = targetAccount.LastName;
+        user.Email = targetAccount.PersonEmail;
+        user.Alias = alias;
+        user.Username = username;
+        user.CommunityNickname = 'proesis' + System.currentTimeMillis();
+        user.LocaleSidKey = language;
+        user.TimeZoneSidKey = 'America/New_York';
+        user.ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id;
+        user.LanguageLocaleKey = (language.startsWith('es') ? 'es' : 'en_US');
+        user.EmailEncodingKey = 'UTF-8';
+        user.ContactId = targetAccount.PersonContactId;
+        user.IsActive = true;
+
+        Database.DMLOptions userEmailOptions = new Database.DMLOptions();
+        userEmailOptions.EmailHeader.triggerUserEmail = true;       
+        userEmailOptions.EmailHeader.triggerOtherEmail = true;
+        userEmailOptions.EmailHeader.triggerAutoResponseEmail = true;
+        user.setOptions(userEmailOptions);
+
+        insert user;
+
+        assignUserPermissionSet(user.Id);
+    }
+
+    public class Profile {
         @AuraEnabled
         public Id id {get; set;}
 
@@ -387,7 +436,5 @@ public without sharing class ProfileController {
 
         @AuraEnabled
         public String smsCode {get; set;}
-
     }
-
 }

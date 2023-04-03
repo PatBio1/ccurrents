@@ -1,0 +1,17 @@
+<template>
+    <lightning-modal-header label="Create Donor">
+    </lightning-modal-header>
+
+    <lightning-modal-body class="slds-is-relative">
+        <lightning-spinner if:true={isLoading}>
+        </lightning-spinner>
+
+        <c-profile center={profileCenterObject} is-scheduler-view onbegindonorcreate={handleBeginDonorCreate} onschedulerdonorcreate={handleDonorCreationComplete}>
+        </c-profile>
+    </lightning-modal-body>
+
+    <lightning-modal-footer>
+        <lightning-input type="checkbox" label="Create new Visit upon save?" checked={createNewVisit} onchange={handleCreateNewVisitChange}>
+        </lightning-input>
+    </lightning-modal-footer>
+</template>

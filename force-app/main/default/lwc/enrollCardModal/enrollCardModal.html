@@ -1,0 +1,20 @@
+<template>
+    <lightning-modal-header label="Enroll Donor Card">
+    </lightning-modal-header>
+
+    <lightning-modal-body class="slds-is-relative">
+        <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
+        
+        <div class="card-id-container">
+            <p class="card-enroll-text">Please enter the donor's card package id below to enroll their card</p>
+
+            <lightning-input style="width: 33%;" label="Card Package Id" value={cardPackageId} onchange={handleCardPackageIdChange}>
+            </lightning-input>
+        </div>
+    </lightning-modal-body>
+
+    <lightning-modal-footer>
+        <lightning-button label="Enroll Card" variant="brand" onclick={handleSubmitCardEnrollment} disabled={isInputInvalid}>
+        </lightning-button>
+    </lightning-modal-footer>
+</template>

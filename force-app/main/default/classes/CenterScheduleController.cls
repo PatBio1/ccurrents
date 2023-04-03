@@ -292,23 +292,8 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
-    public static DateTime getSoonestNextRescheduleVisitDate(Id originalVisitId) {
-        // Temporarily cancel the appointment to correctly calculate Soonest Next Visit
-        // Use the save point to restore once the DateTime is saved
-        Savepoint beforeReschedulePoint = Database.setSavepoint();
-        DateTime targetDateTime;
-
-        update new Visit__c(
-            Id = originalVisitId,
-            Status__c = 'Complete',
-            Outcome__c = 'Rescheduled'
-        );
-
-        Visit__c targetVisit = [SELECT Id, Outcome__c, Donor__c, Donor__r.Soonest_Next_Visit__c FROM Visit__c WHERE Id = :originalVisitId LIMIT 1];
-        targetDateTime = targetVisit.Donor__r.Soonest_Next_Visit__c;
-
-        Database.rollback(beforeReschedulePoint);
-        return targetDateTime;
+    public static DateTime getSoonestNextRescheduleVisitDate(Id donorId) {
+        return [SELECT Id, Soonest_Next_Visit__pc FROM Account WHERE Id = :donorId LIMIT 1]?.Soonest_Next_Visit__pc;
     }
 
     @AuraEnabled
@@ -338,6 +323,25 @@ public with sharing class CenterScheduleController {
         }
 
         return rescheduleSlots;
+    }
+
+    @AuraEnabled
+    public static void createSoonestNextVisitForDonor(Id donorId, Id centerId) {
+        List<Appointment__c> soonestNextAvailableAppointment = [
+            SELECT Id
+            FROM Appointment__c
+            WHERE Schedule__r.Center__c = :centerId AND
+                Datetime__c >= :System.now() AND 
+                Availability__c > 0
+            ORDER BY Datetime__c ASC
+            LIMIT 1
+        ];
+
+        if (soonestNextAvailableAppointment == null || soonestNextAvailableAppointment.size() == 0) {
+            return;
+        }
+
+        addVisit(donorId, soonestNextAvailableAppointment[0].Id, centerId);
     }
 
     public class RescheduleSlot {

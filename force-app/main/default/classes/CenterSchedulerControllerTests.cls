@@ -1,9 +1,10 @@
 @IsTest
 public with sharing class CenterSchedulerControllerTests {
 
-    static Date currentDate =  Date.newInstance(2023, 1, 10).addDays(-12);
-    static Date startDate =  Date.newInstance(2023, 1, 10).addDays(-10);
-    static Date endDate =  Date.newInstance(2023, 1, 10).addDays(30);
+    static Date baseDate = Date.today();
+    static Date currentDate =  baseDate.addDays(-12);
+    static Date startDate =  baseDate.addDays(-10);
+    static Date endDate =  baseDate.addDays(30);
     static Integer intervalsPerHour = 6;
     static Integer slotsPerInterval = 1;
 
@@ -52,18 +53,18 @@ public with sharing class CenterSchedulerControllerTests {
         Schedule__c[] schedules = new Schedule__c[]{
             new Schedule__c(
                 Center__c = centers[0].Id, 
-                Begin_Date__c =  Date.newInstance(2022, 1, 10).addDays(-10),
-                End_Date__c =  Date.newInstance(2024, 1, 10).addDays(30)
+                Begin_Date__c =  baseDate.addDays(-10),
+                End_Date__c =  baseDate.addYears(2).addDays(30)
             ),
             new Schedule__c(
                 Center__c = centers[1].Id,
-                Begin_Date__c =  Date.newInstance(2022, 1, 10).addDays(-10),
-                End_Date__c =  Date.newInstance(2024, 1, 10).addDays(30)
+                Begin_Date__c =  baseDate.addDays(-10),
+                End_Date__c =  baseDate.addYears(2).addDays(30)
             ),
             new Schedule__c(
                 Center__c = centers[2].Id,
-                Begin_Date__c =  Date.newInstance(2024, 1, 10).addDays(-10),
-                End_Date__c =  Date.newInstance(2024, 1, 10).addDays(30)
+                Begin_Date__c =  baseDate.addYears(2).addDays(-10),
+                End_Date__c =  baseDate.addYears(2).addDays(30)
             )
         };
 
@@ -116,20 +117,20 @@ public with sharing class CenterSchedulerControllerTests {
 
             Schedule__c schedule = new Schedule__c(
                 Center__c = center.Id,
-                Begin_Date__c = Date.newInstance(2023, 1, 10).addDays(-10),
-                End_Date__c = Date.newInstance(2023, 1, 10).addDays(30)
+                Begin_Date__c = baseDate.addDays(-10),
+                End_Date__c = baseDate.addDays(30)
             );
             insert schedule;
             Appointment__c[] appointments = new Appointment__c[]{
                 new Appointment__c(
                         Schedule__c = schedule.Id,
-                    Datetime__c = DateTime.newInstance(2023, 1, 10, 10, 0, 0),
+                    Datetime__c = DateTime.newInstance(baseDate, Time.newInstance(10, 0, 0, 0)),
                     Duration__c = 10,
                     Capacity__c = 5
                 ),
                 new Appointment__c(
                         Schedule__c = schedule.Id,
-                    Datetime__c = DateTime.newInstance(2023, 1, 10, 11, 0, 0),
+                    Datetime__c = DateTime.newInstance(baseDate, Time.newInstance(11, 0, 0, 0)),
                     Duration__c = 10,
                     Capacity__c = 5
                 )
@@ -157,7 +158,7 @@ public with sharing class CenterSchedulerControllerTests {
             Id centerId = [SELECT Id FROM Account WHERE NAME = 'Proesis Miramar'].Id;
             Test.startTest();
             
-                slots = CenterScheduleController.getAppointments(centerId,Date.newInstance(2023, 1, 10),'','');
+                slots = CenterScheduleController.getAppointments(centerId,baseDate,'','');
                 CenterScheduleController.AppointmentSlot slot = CenterScheduleController.getAppointmentSlot(slots[0].Id);
             Test.stopTest();
             system.assertEquals(62, slots.size());
@@ -174,20 +175,20 @@ public with sharing class CenterSchedulerControllerTests {
 
             Schedule__c schedule = new Schedule__c(
                 Center__c = center.Id,
-                Begin_Date__c = Date.newInstance(2023, 1, 10).addDays(-10),
-                End_Date__c = Date.newInstance(2023, 1, 10).addDays(30)
+                Begin_Date__c = baseDate.addDays(-10),
+                End_Date__c = baseDate.addDays(30)
             );
             insert schedule;
             Appointment__c[] appointments = new Appointment__c[]{
                 new Appointment__c(
                         Schedule__c = schedule.Id,
-                    Datetime__c = DateTime.newInstance(2023, 1, 10, 10, 0, 0),
+                    Datetime__c = DateTime.newInstance(baseDate, Time.newInstance(0, 0, 0, 0)),
                     Duration__c = 10,
                     Capacity__c = 5
                 ),
                 new Appointment__c(
                         Schedule__c = schedule.Id,
-                    Datetime__c = DateTime.newInstance(2023, 1, 10, 11, 0, 0),
+                    Datetime__c = DateTime.newInstance(baseDate, Time.newInstance(0, 0, 0, 0)),
                     Duration__c = 10,
                     Capacity__c = 5
                 )
@@ -238,21 +239,21 @@ public with sharing class CenterSchedulerControllerTests {
 
             Schedule__c schedule = new Schedule__c(
                 Center__c = center.Id,
-                Begin_Date__c = Date.newInstance(2023, 1, 10).addDays(-10),
-                End_Date__c = Date.newInstance(2023, 1, 10).addDays(30)
+                Begin_Date__c = baseDate.addDays(-10),
+                End_Date__c = baseDate.addDays(30)
             );
             insert schedule;
             Appointment__c[] appointments = new Appointment__c[]{
                 new Appointment__c(
                         Schedule__c = schedule.Id,
-                    Datetime__c = DateTime.newInstance(2023, 1, 10, 10, 0, 0),
+                    Datetime__c = DateTime.newInstance(baseDate, Time.newInstance(0, 0, 0, 0)),
                     Duration__c = 10,
                     Capacity__c = 5,
                     Booked__c = 1 // A visit is added later in the test
                 ),
                 new Appointment__c(
                         Schedule__c = schedule.Id,
-                    Datetime__c = DateTime.newInstance(2023, 1, 10, 11, 0, 0),
+                    Datetime__c = DateTime.newInstance(baseDate, Time.newInstance(0, 0, 0, 0)),
                     Duration__c = 10,
                     Capacity__c = 5
                 )
@@ -295,7 +296,7 @@ public with sharing class CenterSchedulerControllerTests {
         user adminUser = TestUtil.createAdminUser();
         Appointment__c[] appointments;
         Schedule__c schedule;
-        Date startDate =  Date.newInstance(2022, 1, 10);
+        Date startDate =  baseDate.addYears(-1);
         Date endDate = startDate.addDays(-10);
         System.runAs(adminUser) {
             Account center = [Select ID FROM Account WHERE Name ='Proesis Miramar' ];
@@ -379,5 +380,50 @@ public with sharing class CenterSchedulerControllerTests {
 
         Assert.isNotNull(rescheduleSlots, 'The reschedule slots should not be null');
         Assert.areEqual(0, rescheduleSlots.size(), 'No reschedule slots are returned for an invalid date range');
+    }
+
+    @IsTest
+    static void testCreateSoonestNextVisitForDonor() {
+        Account targetCenter = [SELECT Id FROM Account WHERE RecordType.DeveloperName = 'Center' LIMIT 1];
+        insert new Center_Donation_Type__c(Center__c = targetCenter.id);
+
+        Account targetDonor = [SELECT Id, PersonContactId, Loyalty_Level__pc FROM Account WHERE RecordType.DeveloperName = 'Donor' LIMIT 1];
+
+        Test.startTest();
+        CenterScheduleController.createSoonestNextVisitForDonor(targetDonor.Id, targetCenter.Id);
+        Test.stopTest();
+
+        Visit__c createdVisit = [
+            SELECT Id, Status__c, Appointment__r.Booked__c, Appointment__r.Booked_Loyalty__c, Appointment__r.Availability__c, Appointment__r.Availability_Loyalty__c 
+            FROM Visit__c 
+            WHERE Center_Donation_Type__r.Center__c = :targetCenter.Id AND
+                Donor__c = :targetDonor.PersonContactId
+            LIMIT 1
+        ];
+
+        Assert.isNotNull(createdVisit, 'Couldn\'t find the desired visit record. Either it wasn\'t created or the data wasn\'t set correctly.');
+        Assert.areEqual('Scheduled', createdVisit.Status__c, 'The status of the visit should default to \'Scheduled\'');
+
+        // If they are a loyalty donor, check the loyalty fields otherwise check the non-loyalty fields
+        // we don't really care whether we test against a loyalty or non-loyalty donor for this test. Just future proofing.
+        if (LoyaltyLevelService.getLoyaltyLevel(targetDonor.Loyalty_Level__pc) > 0) {
+            Assert.areEqual(1, createdVisit.Appointment__r.Booked_Loyalty__c, 'Adding a visit should have incremented the appointment booked value');
+            Assert.isTrue(createdVisit.Appointment__r.Availability_Loyalty__c >= 0, 'The visit shouldn\'t have been added to an appointment slot with no availability');
+        } else {
+            Assert.areEqual(1, createdVisit.Appointment__r.Booked__c, 'Adding a visit should have incremented the appointment booked value');
+            Assert.isTrue(createdVisit.Appointment__r.Availability__c >= 0, 'The visit shouldn\'t have been added to an appointment slot with no availability');
+        }
+    }
+
+    @IsTest
+    static void testGetSoonestNextRescheduleVisitDate() {
+        Account targetDonor = [SELECT Id, Soonest_Next_Visit__pc FROM Account WHERE RecordType.DeveloperName = 'Donor' LIMIT 1];
+        Datetime returnedSoonestNextVisitDate;
+
+        Test.startTest();
+        returnedSoonestNextVisitDate = CenterScheduleController.getSoonestNextRescheduleVisitDate(targetDonor.Id);
+        Test.stopTest();
+
+        Assert.areEqual(targetDonor.Soonest_Next_Visit__pc, returnedSoonestNextVisitDate, 'The soonest next visit date should be returned');
     }
 }

@@ -69,6 +69,15 @@
           <div class="scheduler-header-actions" style="justify-content: flex-end;">
             <lightning-button
               variant="brand"
+              label="Create Donor"
+              title="Create Donor"
+              class="primary-button"
+              disabled={createDonorDisabled}
+              onclick={handleInitCreateDonor}>
+            </lightning-button>
+            
+            <lightning-button
+              variant="brand"
               label="New Schedule"
               title="New Schedule"
               class="primary-button"

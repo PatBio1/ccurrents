@@ -262,6 +262,7 @@ Account[] donors = new Account[]{
     
     //Level__c levelNormal = [SELECT Id, Name FROM Level__c WHERE Name = 'Donor (Default)'][0];
     
+    // This method call will create both a Schedule and Appointments
     List<Appointment__c> appts = CenterScheduleController.createAppointmentSlots(centers[1].Id, 
         startDt, endDt, 4, 10, levelNormal.Id);
     
@@ -274,15 +275,15 @@ Account[] donors = new Account[]{
     ];
     
     // method to encapsulate population of Map variable
-    void addVisitToMap(Map<String, Visit__c> visitMap, Integer indexVariable, Integer FirstSecondThirdVisit, Integer apptIndexFactor, Account donor, List<Appointment__c> appointmentList, Center_Donation_Type__c donationType){
+    void addVisitToMap(Map<String, Visit__c> visitMap, Integer indexVariable, 
+            Integer FirstSecondThirdVisit, Integer apptIndexFactor, Account donor, 
+            List<Appointment__c> appointmentList, Center_Donation_Type__c donationType){
         visitMap.put(donor.LastName + indexVariable + FirstSecondThirdVisit, new Visit__c(Donor__c= donor.PersonContactId,
         Appointment__c = appointmentList[(indexVariable + apptIndexFactor)].Id,
         Center_Donation_Type__c = donationType.Id,
         Status__c = 'Scheduled'));
     }
-    
-    //  how many visits per Donor?  1,2, and 3 ( once w/ 4 donors, twice w/ 3 donors , threee w/ 3 donors) = 19 total visits
-    
+        
     Map<String, Visit__c> donorToVisit = new Map<String, Visit__c>{};
     
     List<Account> donorList = [SELECT Id, PersonContactId, LastName FROM Account
@@ -299,6 +300,7 @@ Account[] donors = new Account[]{
     
     for(Account donor : donorList) {
     
+        //  how many visits per Donor?  1,2, and 3 ( once w/ 4 donors, twice w/ 3 donors , threee w/ 3 donors) = 19 total visits
         System.debug('row and multiplier: ' + v + ', ' + multi);
         if( v <4 && multi ==1) {  // ONE visit per donor 4 times
             addVisitToMap(donorToVisit, v, 5, 3, donor, apptList, centerDonationType);
@@ -315,14 +317,6 @@ Account[] donors = new Account[]{
         if(v >= 4 && v <7 && multi == 2) { // TWO visits per donor 3 times
             addVisitToMap(donorToVisit, v, 7, 3, donor, apptList, centerDonationType);
             addVisitToMap(donorToVisit, v, 8, 320, donor, apptList, centerDonationType);
-            // donorToVisit.put(donor.LastName + v, new Visit__c(Donor__c= donor.PersonContactId,
-            //     Appointment__c = appts[v+3].Id,
-            //     Center_Donation_Type__c = centerDonationType.Id,
-            //     Status__c = 'Scheduled'));
-            // donorToVisit.put(donor.LastName + v+1, new Visit__c(Donor__c= donor.PersonContactId,
-            //     Appointment__c = appts[(v+320)].Id,
-            //     Center_Donation_Type__c = centerDonationType.Id,
-            //     Status__c = 'Scheduled'));
             if(v==6) {
                 multi ++;
             }
@@ -332,18 +326,6 @@ Account[] donors = new Account[]{
             addVisitToMap(donorToVisit, v, 9, 3, donor, apptList, centerDonationType);
             addVisitToMap(donorToVisit, v, 10, 340, donor, apptList, centerDonationType);
             addVisitToMap(donorToVisit, v, 11, 670, donor, apptList, centerDonationType);
-            // donorToVisit.put(donor.LastName + v, new Visit__c(Donor__c= donor.PersonContactId,
-            //     Appointment__c = appts[(v+3)].Id,
-            //     Center_Donation_Type__c = centerDonationType.Id,
-            //     Status__c = 'Scheduled'));
-            // donorToVisit.put(donor.LastName + (v+1), new Visit__c(Donor__c= donor.PersonContactId,
-            //     Appointment__c = appts[(v+340)].Id,
-            //     Center_Donation_Type__c = centerDonationType.Id,
-            //     Status__c = 'Scheduled'));
-            // donorToVisit.put(donor.LastName + (v+2), new Visit__c(Donor__c= donor.PersonContactId,
-            //     Appointment__c = appts[(v+680)].Id,
-            //     Center_Donation_Type__c = centerDonationType.Id,
-            //     Status__c = 'Scheduled'));
         }
         v++;
     }
@@ -353,9 +335,63 @@ Account[] donors = new Account[]{
     for(Visit__c vis: donorToVisit.values()) {
         visitList.add(vis);
     }
-    
+
     insert visitList;
-    
+
     System.debug('Count of generated visits: ' + visitList.size());
-    System.debug('Visit__c list: ' + JSON.serializePretty(visitList));
+    // System.debug('Visit__c list: ' + JSON.serializePretty(visitList));
+
+    // modify visit records
+    List<Visit__c> visits = [SELECT Id, Status__c, Check_In__c, Outcome__c, Donor__c,
+                          Collection_Number__c, Donation_Complete__c, Visit_Date_Time__c
+                          FROM Visit__c ORDER BY Visit_Date_Time__c LIMIT 6];
+
+    // 1 Complete/Donation
+    visits[0].Status__c =  'Complete';
+    visits[0].Outcome__c = 'Donation';
+    visits[0].Donation_Volume__c = 1000;
+    visits[0].Collection_Number__c = 'c9293893939';
+    visits[0].Check_In__c = visits[0].Visit_Date_Time__c.addMinutes(3);
+    visits[0].Donation_Complete__c = visits[0].Visit_Date_Time__c.addMinutes(55);
+    // 1 Complete/Canceled
+    visits[1].Status__c =  'Complete';
+    visits[1].Outcome__c = 'Canceled';
+    visits[1].Donation_Complete__c = visits[1].Visit_Date_Time__c;
+    // 1 Sched/No-Show
+    visits[2].Status__c =  'Complete';
+    visits[2].Outcome__c = 'No Show';
+    visits[2].Donation_Complete__c = visits[2].Visit_Date_Time__c;
+    // 1 Status Checked-In
+    visits[3].Status__c = 'Checked-In';
+    // 1 Sched/No Donation
+    visits[4].Outcome__c = 'No Donation';
+    visits[4].Donation_Complete__c = visits[4].Visit_Date_Time__c.addMinutes(15);
+    // 1 Complete/Rescheduled
+    visits[5].Outcome__c = 'Rescheduled';
+
+    update visits;
     
+    // insert Transaction and Txn Line Item
+    Transaction__c donationCreditTxn = new Transaction__c(
+        Amount_Currency__c = 50.00,
+        Amount_Points__c = 0,
+        Donor__c = visits[0].Donor__c,
+        Service__c = 'Proesis Bio',
+        Status__c = 'Complete',
+        Type__c = 'Credit',
+        Visit__c = visits[0].Id
+    );
+    insert donationCreditTxn;
+
+    List<Txn_Line_Item__c> paymentTxnLIs = new List<Txn_Line_Item__c>{
+        new Txn_Line_Item__c(
+        Item__c = 'Proesis Bio Card',
+        Quantity__c = 150.00,
+        Type__c = 'Currency',
+        Unit_Cost__c = 1.00,
+        Unit_of_Measure__c = 'USD',
+        Transaction__c = donationCreditTxn.Id
+        )
+    };
+    insert paymentTxnLIs;
+            

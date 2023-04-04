@@ -204,6 +204,27 @@
         <value>Contact &amp; Support</value>
     </labels>
     <labels>
+        <fullName>Delete</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delete</shortDescription>
+        <value>Delete</value>
+    </labels>
+    <labels>
+        <fullName>Delete_Profile</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delete Profile</shortDescription>
+        <value>Delete my Profile</value>
+    </labels>
+    <labels>
+        <fullName>Delete_Profile_Confirmation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delete Profile Confirmation</shortDescription>
+        <value>Please confirm you want to delete your profile by typing your last name {0} below.</value>
+    </labels>
+    <labels>
         <fullName>Donor_Tips</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -419,6 +440,13 @@
         <protected>true</protected>
         <shortDescription>My Location</shortDescription>
         <value>My Location</value>
+    </labels>
+    <labels>
+        <fullName>My_Profile</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>My Profile</shortDescription>
+        <value>My Profile</value>
     </labels>
     <labels>
         <fullName>My_Rewards</fullName>
@@ -895,6 +923,13 @@
         <protected>true</protected>
         <shortDescription>Working Hours</shortDescription>
         <value>Working Hours</value>
+    </labels>
+    <labels>
+        <fullName>Your_Health</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Your Health</shortDescription>
+        <value>Your Health</value>
     </labels>
     <labels>
         <fullName>Zip_Code</fullName>

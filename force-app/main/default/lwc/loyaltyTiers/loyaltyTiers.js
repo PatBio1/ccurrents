@@ -39,7 +39,7 @@ export default class LoyaltyTiers extends LightningElement {
     async connectedCallback() {
         try {
             [this.loyaltyLevels, this.rewardsInfo] = await Promise.all([getLoyaltyLevelDisplayInfo(), getDonorRewardsInfo()]);
-            for(let loyaltyLevel of this.loyaltyLevels) {
+            for (let loyaltyLevel of this.loyaltyLevels) {
                 loyaltyLevel.iconBackgroundStyle = `background: ${LEVEL_NAME_TO_BACKGROUND_STYLE.get(loyaltyLevel.levelName)};`;
             }
 

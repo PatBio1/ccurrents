@@ -1,0 +1,19 @@
+<template>
+
+    <div class="slds-var-p-around_medium">
+        <div class="title-medium">
+            {labels.myProfile}
+        </div>
+    </div>
+
+    <lightning-tabset>
+        <lightning-tab label={labels.personalInformation}>
+            <div class="slds-var-p-horizontal_medium">
+                <lightning-button label={labels.deleteProfile} variant="brand" stretch="true" class="primary-button" onclick={onDeleteProfileButtonClick}></lightning-button>
+            </div>
+        </lightning-tab>
+        <lightning-tab label={labels.yourHealth}>
+        </lightning-tab>
+    </lightning-tabset>
+
+</template>

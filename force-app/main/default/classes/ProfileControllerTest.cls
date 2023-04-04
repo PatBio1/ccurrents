@@ -583,6 +583,36 @@ public with sharing class ProfileControllerTest {
     }
 
     @isTest
+    static void testDeactivateUser() {
+        System.runAs(TestUtil.createAdminUser()) {
+            User experienceUser = TestUtil.createExperienceUser();
+
+            System.assertEquals(true, [SELECT IsActive FROM User WHERE Id = :experienceUser.Id].IsActive);
+
+            ProfileController.deactivateUser(experienceUser.Id);
+
+            System.assertEquals(false, [SELECT IsActive FROM User WHERE Id = :experienceUser.Id].IsActive);
+        }
+    }
+
+    @isTest
+    static void testDeactivateUserException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.deactivateUser(UserInfo.getUserId());
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
     static void testCreateUserFromScheduler() {
         Id accountId;
 
@@ -633,4 +663,5 @@ public with sharing class ProfileControllerTest {
 
         Assert.isTrue(exceptionThrown, 'An exception should have been thrown');
     }
+
 }

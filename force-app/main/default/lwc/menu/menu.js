@@ -72,6 +72,7 @@ export default class Menu extends NavigationMixin(LightningElement) {
     }
 
     onPhotoClick() {
+        util.navigateToPage(this, 'Profile__c');
     }
 
 }

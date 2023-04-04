@@ -27,6 +27,9 @@ import closed from '@salesforce/label/c.Closed';
 import confirmPassword from '@salesforce/label/c.Confirm_Password';
 import congratulations from '@salesforce/label/c.Congratulations';
 import contactAndSupport from '@salesforce/label/c.Contact_And_Support';
+import deleteLabel from '@salesforce/label/c.Delete';
+import deleteProfile from '@salesforce/label/c.Delete_Profile';
+import deleteProfileConfirmation from '@salesforce/label/c.Delete_Profile_Confirmation';
 import donorTips from '@salesforce/label/c.Donor_Tips';
 import email from '@salesforce/label/c.Email';
 import english from '@salesforce/label/c.English';
@@ -56,6 +59,7 @@ import mondayAbbreviation from '@salesforce/label/c.Monday_Abbreviation';
 import myAppointments from '@salesforce/label/c.My_Appointments';
 import myBalance from '@salesforce/label/c.My_Balance';
 import myLocation from '@salesforce/label/c.My_Location';
+import myProfile from '@salesforce/label/c.My_Profile';
 import myRewards from '@salesforce/label/c.My_Rewards';
 import next from '@salesforce/label/c.Next';
 import nickname from '@salesforce/label/c.Nickname';
@@ -119,6 +123,7 @@ import watchVideo from '@salesforce/label/c.Watch_Video';
 import wednesdayAbbreviation from '@salesforce/label/c.Wednesday_Abbreviation';
 import welcomeToProesis from '@salesforce/label/c.Welcome_To_Proesis';
 import workingHours from '@salesforce/label/c.Working_Hours';
+import yourHealth from '@salesforce/label/c.Your_Health';
 import zipCode from '@salesforce/label/c.Zip_Code';
 
 const labels = {
@@ -158,6 +163,9 @@ const labels = {
     confirmPassword,
     congratulations,
     contactAndSupport,
+    deleteLabel,
+    deleteProfile,
+    deleteProfileConfirmation,
     donorTips,
     email,
     english,
@@ -187,6 +195,7 @@ const labels = {
     myAppointments,
     myBalance,
     myLocation,
+    myProfile,
     myRewards,
     next,
     nickname,
@@ -250,6 +259,7 @@ const labels = {
     wednesdayAbbreviation,
     welcomeToProesis,
     workingHours,
+    yourHealth,
     zipCode
 };
 

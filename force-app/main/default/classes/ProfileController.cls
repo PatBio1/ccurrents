@@ -305,6 +305,20 @@ public without sharing class ProfileController {
         }
     }
 
+    @AuraEnabled
+    public static void deactivateUser(Id userId) {
+        try {
+            Util.testExceptionHandling();
+
+            User user = new User();
+            user.Id = userId;
+            user.IsActive = false;
+            update user;
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
     private static Database.LeadConvertResult convertAndCommitLead(Profile profile) {
         LeadStatus leadStatus = [SELECT MasterLabel FROM LeadStatus WHERE IsConverted = true LIMIT 1];
 

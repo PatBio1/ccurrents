@@ -143,17 +143,6 @@ public without sharing class SchedulerController {
             visit.Status__c = 'Scheduled';
             insert visit;
 
-            // Create a First Visit Code task if this is the first visit.
-            List<Visit__c> calculatedVisit = [SELECT isFirstVisit__c FROM Visit__c WHERE Id = :visit.Id];
-            if (calculatedVisit[0].isFirstVisit__c) {
-                Task task = new Task();
-                task.Subject = 'First Visit Code';
-                task.Description = contact.Account.First_Visit_Code__c;
-                task.whatId = visit.id;
-                
-                insert task;
-            }
-
             return visit.Id;
         } catch (Exception e) {
             throw Util.createAuraHandledException(e);

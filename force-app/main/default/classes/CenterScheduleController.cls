@@ -179,16 +179,6 @@ public with sharing class CenterScheduleController {
         } catch(Exception addVisitException) {
             throw Util.createAuraHandledException(addVisitException);
         }
-
-        List<Visit__c> calculatedVisit = [SELECT isFirstVisit__c, Donor__r.Account.First_Visit_Code__c FROM Visit__c WHERE Id = :newVisit.Id];
-        if (calculatedVisit[0].isFirstVisit__c) {
-            Task task = new Task();
-            task.Subject = 'First Visit Code';
-            task.Description = calculatedVisit[0].Donor__r.Account.First_Visit_Code__c;
-            task.whatId = newVisit.id;
-            
-            insert task;
-        }
     }
 
     @AuraEnabled

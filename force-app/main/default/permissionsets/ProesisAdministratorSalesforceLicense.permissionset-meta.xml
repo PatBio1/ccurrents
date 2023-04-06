@@ -1274,6 +1274,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Level__c.isVisible__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Message__c.Body__c</field>
         <readable>true</readable>
     </fieldPermissions>

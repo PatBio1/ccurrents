@@ -278,11 +278,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>FirstNameLocal</field>
-            <table>Campaign.ContactCampaignMembers</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>FirstRespondedDate</field>
             <table>Campaign.ContactCampaignMembers</table>
         </columns>
@@ -378,11 +373,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>LastNameLocal</field>
-            <table>Campaign.ContactCampaignMembers</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>Last_Physical_Exam_Date__c</field>
             <table>Campaign.ContactCampaignMembers</table>
         </columns>
@@ -454,11 +444,6 @@
         <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>MiddleName</field>
-            <table>Campaign.ContactCampaignMembers</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>MiddleNameLocal</field>
             <table>Campaign.ContactCampaignMembers</table>
         </columns>
         <columns>

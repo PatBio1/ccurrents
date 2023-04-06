@@ -70,7 +70,7 @@
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <subflows>
         <name>Fire_Payment_Complete_Push_Notification</name>
         <label>Fire Payment Complete Push Notification</label>

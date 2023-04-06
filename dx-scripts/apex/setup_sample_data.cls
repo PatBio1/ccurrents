@@ -126,22 +126,52 @@ Account[] donors = new Account[]{
     
     Rate__c[] centerRates = new Rate__c[]{
         new Rate__c(
-                Center__c = centers[0].Id,
-                Donation_Type__c = donationType.Id,
-                Base_Payment__c = 100.00, 
-                UOM__c = 'visit'
+            Description__c = 'Base',
+            Center__c = centers[0].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 100.00, 
+            UOM__c = 'visit',
+            Type__c = 'Base'
         ),
         new Rate__c(
-                Center__c = centers[1].Id,
-                Donation_Type__c = donationType.Id,
-                Base_Payment__c = 50.00, 
-                UOM__c = 'visit'
+            Description__c = 'Base',
+            Center__c = centers[1].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 50.00, 
+            UOM__c = 'visit',
+            Type__c = 'Base'
         ),
         new Rate__c(
-                Center__c = centers[2].Id,
-                Donation_Type__c = donationType.Id,
-                Base_Payment__c = 45.00, 
-                UOM__c = 'visit'
+            Description__c = 'Base',
+            Center__c = centers[2].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 45.00, 
+            UOM__c = 'visit',
+            Type__c = 'Base'
+        ),
+        new Rate__c(
+            Description__c = 'Inconvenience',
+            Center__c = centers[2].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 5.00, 
+            UOM__c = 'visit',
+            Type__c = 'Exception'
+        ),
+        new Rate__c(
+            Description__c = 'Inadvertent deferral',
+            Center__c = centers[2].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 15.00, 
+            UOM__c = 'visit',
+            Type__c = 'Exception'
+        ),
+        new Rate__c(
+            Description__c = 'Blood loss deferral',
+            Center__c = centers[2].Id,
+            Donation_Type__c = donationType.Id,
+            Base_Payment__c = 25.00, 
+            UOM__c = 'visit',
+            Type__c = 'Exception'
         )
     };
     insert centerRates;

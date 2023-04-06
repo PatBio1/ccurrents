@@ -86,11 +86,11 @@ public without sharing class SchedulerController {
 
             List<Visit__c> visitRecords = [
                 SELECT
-                    isFirstVisit__c, Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name, Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.First_Visit_Code__c
+                    isFirstVisit__c, Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name, Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.First_Visit_Code__c, Outcome__c
                 FROM
                     Visit__c
                 WHERE
-                    Donor__c = :user.ContactId
+                    Donor__c = :user.ContactId AND (Status__c = 'Scheduled' OR Status__c = 'Complete')
                 ORDER BY
                     Appointment__r.Datetime__c ASC
             ];
@@ -105,6 +105,7 @@ public without sharing class SchedulerController {
                 visit.centerName = visitRecord.Appointment__r.Schedule__r.Center__r.Name;
                 visit.centerAddress = visitRecord.Appointment__r.Schedule__r.Center__r.BillingStreet;
                 visit.status = visitRecord.Status__c;
+                visit.outcome = visitRecord.Outcome__c;
                 visit.firstVisitCode = visitRecord.Donor__r.Account.First_Visit_Code__c;
                 visit.isFirstVisit = visitRecord.isFirstVisit__c;
                 visits.add(visit);
@@ -126,7 +127,11 @@ public without sharing class SchedulerController {
 
             Appointment__c appointment = [SELECT Schedule__r.Center__c, Booked__c, Booked_Loyalty__c FROM Appointment__c WHERE Id = :appointmentId];
             if (loyaltyLevel > 0) {
-                appointment.Booked_Loyalty__c += 1;
+                if (appointment.Booked_Loyalty__c == null) {
+                    appointment.Booked_Loyalty__c = 1;
+                } else {
+                    appointment.Booked_Loyalty__c += 1;
+                }
             } else {
                 appointment.Booked__c += 1;
             }
@@ -202,6 +207,9 @@ public without sharing class SchedulerController {
 
         @AuraEnabled
         public Boolean isFirstVisit {get; set;}
+
+        @AuraEnabled
+        public String outcome {get; set;}
     }
 
 }

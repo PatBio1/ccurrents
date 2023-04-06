@@ -73,6 +73,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     loading = true;
     popYFlipPoint;
 
+    get cantRefresh() {
+        return (this.dateDisabled || !this.selectedDate)
+    }
+
     get createDonorDisabled() {
         return (!this.selectedCenterId);
     }
@@ -402,6 +406,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     }
 
     changeDate(event){
+        if (!event.detail.value) {
+            return;
+        }
+
         this.selectedDate = event.detail.value;
         this.fetchAppointments();
     }   
@@ -468,7 +476,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         await getAppointmentSlot({appointmentId }).then(appointment => {
             appRow.visits = appointment.visits;
             appRow.booked = appointment.booked;
+            appRow.loyaltyBooked = appointment.loyaltyBooked;
+            appRow.totalBooked = appointment.totalBooked;
             appRow.availability = appointment.availability;
+            appRow.loyaltyAvailability = appointment.loyaltyAvailability;
             appRow.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability) && !appointment.isInThePast);
         }).catch(err => {
             console.log(err.message);
@@ -506,12 +517,15 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
     handleInitAddVisit(event) {
         let targetAppointmentId = event.currentTarget.dataset.appointment;
+        let appointmentRecord = this.appointments.find(appointment => appointment.Id === targetAppointmentId);
 
         AddVisitModal.open({
             appointmentSlotId: targetAppointmentId,
             appointmentSlotDate: this.selectedDate,
             appointmentSlotTime: event.currentTarget.dataset.appointmenttime,
             centerId: this.selectedCenterId,
+            hasLoyaltyAvailability: appointmentRecord.loyaltyAvailability > 0,
+            hasAvailability: appointmentRecord.availability > 0,
 
             onvisitcreated: (event) => {
                 event.stopPropagation();

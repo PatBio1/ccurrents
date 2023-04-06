@@ -386,6 +386,8 @@ public with sharing class CenterScheduleController {
         public Decimal booked {get;set;}
         @AuraEnabled
         public Decimal loyaltyBooked {get;set;}
+        @AuraEnabled
+        public Decimal totalBooked {get; set;}
         
         @AuraEnabled
         public Decimal capacity {get;set;}
@@ -405,12 +407,15 @@ public with sharing class CenterScheduleController {
             this.timeString =  this.appointmentDatetime.format('h:mm a');
             this.visits = new Visit[]{};
 
-            this.availability = app.Availability__c;
-            this.loyaltyAvailability = app.Availability_Loyalty__c;
-            this.booked = app.Booked__c;
-            this.loyaltyBooked = app.Booked_Loyalty__c;
-            this.capacity = app.Capacity__c;
-            this.loyaltyCapacity = app.Capacity_Loyalty__c;
+            this.availability = (app.Availability__c == null) ? 0 : app.Availability__c;
+            this.loyaltyAvailability = (app.Availability_Loyalty__c == null) ? 0 : app.Availability_Loyalty__c;
+
+            this.booked = (app.Booked__c == null) ? 0 : app.Booked__c;
+            this.loyaltyBooked = (app.Booked_Loyalty__c == null) ? 0 : app.Booked_Loyalty__c;
+            this.totalBooked = this.booked + this.loyaltyBooked;
+
+            this.capacity = (app.Capacity__c == null) ? 0 : app.Capacity__c;
+            this.loyaltyCapacity = (app.Capacity_Loyalty__c == null) ? 0 : app.Capacity_Loyalty__c;
 
             this.filtered = false;
             this.isInThePast = this.appointmentDatetime < DateTime.now();

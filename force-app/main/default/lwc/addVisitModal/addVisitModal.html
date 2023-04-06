@@ -27,6 +27,9 @@
                           <div class="slds-truncate">Soonest Available Visit</div>
                         </th>
                         <th scope="col">
+                          <div class="slds-truncate">Loyalty Level</div>
+                        </th>
+                        <th scope="col">
                           <div class="slds-truncate"></div>
                         </th>
                       </tr>
@@ -34,36 +37,40 @@
 
                     <tbody>
                         <template for:each={foundDonors} for:item="donor">
-                            <tr key={donor.Id}>
+                            <tr key={donor.donorId}>
                                 <th scope="row">
                                     <div class="donor-result-header-cell slds-truncate">
                                         <lightning-icon icon-name="standard:person_account" size="small">
                                         </lightning-icon>
                                         
-                                        <span>{donor.Name}</span>
+                                        <span>{donor.donorName}</span>
                                     </div>
                                 </th>
 
                                 <td>
-                                    <div class="slds-truncate">{donor.PersonEmail}</div>
+                                    <div class="slds-truncate">{donor.donorEmail}</div>
                                 </td>
 
                                 <td>
                                     <div class="slds-truncate">
-                                        <lightning-formatted-phone value={donor.PersonMobilePhone}>
+                                        <lightning-formatted-phone value={donor.donorPhone}>
                                         </lightning-formatted-phone>
                                     </div>
                                 </td>
 
                                 <td>
                                     <div class="slds-truncate">
-                                        <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={donor.Soonest_Next_Visit__pc} time-zone="UTC">
+                                        <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={donor.donorSoonestNextVisit} time-zone="UTC">
                                         </lightning-formatted-date-time>
                                     </div>
                                 </td>
 
+                                <td>
+                                    <div class="slds-truncate">{donor.donorLoyaltyLevel}</div>
+                                </td>
+
                                 <td style="text-align: end;">
-                                    <lightning-button variant="brand" label="Select" onclick={handleSelectDonor} data-donor-id={donor.Id}>
+                                    <lightning-button variant="brand" label="Select" onclick={handleSelectDonor} data-donor-id={donor.donorId}>
                                     </lightning-button>
                                 </td>
                             </tr>

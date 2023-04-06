@@ -18,8 +18,8 @@
                         
                         <div style="position: relative;">
                             <!-- <lightning-icon class="loyalty-badge" icon-name="utility:favorite" size="xx-small"></lightning-icon> -->
-                            <span class="loyalty-badge slds-avatar slds-avatar_circle" style="background: rgb(218 196 255);">
-                                <c-loyalty-tier-badge loyalty-tier-name="Donor (Default)"></c-loyalty-tier-badge>
+                            <span class="loyalty-badge slds-avatar slds-avatar_circle">
+                                <c-loyalty-tier-badge width="64px" height="64px" loyalty-tier-name={displayLoyaltyLevel}></c-loyalty-tier-badge>
                             </span>
                             <lightning-avatar variant="circle" src={photoUrl} fallback-icon-name="standard:user" onclick={onPhotoClick}></lightning-avatar>
                         </div>

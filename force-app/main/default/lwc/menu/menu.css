@@ -42,8 +42,8 @@
 
 .loyalty-badge {
     position: absolute;
-    right: -6px;
-    top: -4px;
-    height: 16px;
-    width: 16px;
+    right: -20px;
+    top: -15px;
+    height: 40px;
+    width: 40px;
 }

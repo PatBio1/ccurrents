@@ -1,12 +1,27 @@
 @IsTest
 public with sharing class DonorSelectorTest {
     static final String SEARCH_TERM = 'FoundDonor';
-    static final Integer EXPECTED_SEARCH_RESULT_COUNT = 3;
+    static final Integer EXPECTED_SEARCH_RESULT_COUNT = 6;
     static final Integer EXPECTED_MISSING_SEARCH_RESULT_COUNT = 3;
     
     @TestSetup
     static void createTestData() {
         System.runAs(TestUtil.createAdminUser()) {
+            Level__c testLevel2 = new Level__c(
+                Name = 'Level 2',
+                Description__c = 'This is test level 2',
+                Donation_Threshold__c = 20
+            );
+            insert testLevel2;
+
+            Level__c testLevel1 = new Level__c(
+                Name = 'Level 1',
+                Description__c = 'This is test level 1',
+                Donation_Threshold__c = 10,
+                Next_Level__c = testLevel2.Id
+            );
+            insert testLevel1;
+            
             String targetDonorRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId();
             String targetCenterRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Center').getRecordTypeId();
 
@@ -19,12 +34,22 @@ public with sharing class DonorSelectorTest {
                 )
             };
 
-            for(Integer i = 0; i < EXPECTED_SEARCH_RESULT_COUNT; i++) {
+            for(Integer i = 0; i < EXPECTED_SEARCH_RESULT_COUNT / 2; i++) {
                 donorsAndCenter.add(
                     new Account(
                         FirstName = SEARCH_TERM + 'Test' + (i + 1),
                         LastName = 'Tester',
                         RecordTypeId = targetDonorRecordTypeId
+                    )
+                );
+            }
+            for(Integer i = 3; i < EXPECTED_SEARCH_RESULT_COUNT; i++) {
+                donorsAndCenter.add(
+                    new Account(
+                        FirstName = SEARCH_TERM + 'Test' + (i + 1),
+                        LastName = 'Tester',
+                        RecordTypeId = targetDonorRecordTypeId,
+                        Loyalty_Level__pc = testLevel2.Id
                     )
                 );
             }
@@ -51,21 +76,6 @@ public with sharing class DonorSelectorTest {
                 isActive__c = true
             );
             insert centerDonationType1;
-
-            Level__c testLevel2 = new Level__c(
-                Name = 'Level 2',
-                Description__c = 'This is test level 2',
-                Donation_Threshold__c = 20
-            );
-            insert testLevel2;
-
-            Level__c testLevel1 = new Level__c(
-                Name = 'Level 1',
-                Description__c = 'This is test level 1',
-                Donation_Threshold__c = 10,
-                Next_Level__c = testLevel2.Id
-            );
-            insert testLevel1;
 
             Account donorWithRewards = new Account(
                 RecordTypeId = targetDonorRecordTypeId,
@@ -103,10 +113,10 @@ public with sharing class DonorSelectorTest {
 
     @IsTest
     static void searchVisitElgibleDonorByNameSuccessTest() {
-        List<Account> foundDonors;
+        List<DonorSelector.DonorSearchResult> foundDonors;
 
         Test.startTest();
-        foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now());
+        foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now(), true, true);
         Test.stopTest();
 
         Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT, foundDonors.size(), 'Expected to find ' + EXPECTED_SEARCH_RESULT_COUNT + ' donors.');
@@ -114,10 +124,10 @@ public with sharing class DonorSelectorTest {
 
     @IsTest
     static void searchVisitElgibleDonorByNameNoResultsTest() {
-        List<Account> foundDonors;
+        List<DonorSelector.DonorSearchResult> foundDonors;
 
         Test.startTest();
-        foundDonors = DonorSelector.searchVisitElgibleDonorByName('RandomTermThatHasNoResultsHere', DateTime.now());
+        foundDonors = DonorSelector.searchVisitElgibleDonorByName('RandomTermThatHasNoResultsHere', DateTime.now(), true, true);
         Test.stopTest();
 
         Assert.areEqual(0, foundDonors.size(), 'Expected No Results when a nonsense string is provided');
@@ -125,14 +135,36 @@ public with sharing class DonorSelectorTest {
 
     @IsTest
     static void searchVisitElgibleDonorByNameNoSearchTermTest() {
-        List<Account> foundDonors;
+        List<DonorSelector.DonorSearchResult> foundDonors;
 
         Test.startTest();
-        foundDonors = DonorSelector.searchVisitElgibleDonorByName(null, DateTime.now());
+        foundDonors = DonorSelector.searchVisitElgibleDonorByName(null, DateTime.now(), true, true);
         Assert.areEqual(0, Limits.getQueries(), 'If nothing is passed, no queries should be executed');
         Test.stopTest();
 
         Assert.areEqual(null, foundDonors, 'If nothing is passed, nothing is returned');
+    }
+
+    @IsTest
+    static void searchVisitElgibleDonorByNameLoyaltyOnlySearch() {
+        List<DonorSelector.DonorSearchResult> foundDonors;
+
+        Test.startTest();
+        foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now(), true, false);
+        Test.stopTest();
+
+        Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT / 2, foundDonors.size(), 'Expected to only find ' + EXPECTED_SEARCH_RESULT_COUNT / 2 + ' loyalty donors.');
+    }
+
+    @IsTest
+    static void searchVisitElgibleDonorByNameRegularOnlySearch() {
+        List<DonorSelector.DonorSearchResult> foundDonors;
+
+        Test.startTest();
+        foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now(), false, true);
+        Test.stopTest();
+
+        Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT / 2, foundDonors.size(), 'Expected to only find ' + EXPECTED_SEARCH_RESULT_COUNT / 2 + ' regular donors.');
     }
 
     @IsTest

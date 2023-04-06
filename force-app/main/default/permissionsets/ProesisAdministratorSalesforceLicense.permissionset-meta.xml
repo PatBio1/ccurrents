@@ -944,6 +944,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Contact.Total_Donations__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Contact.Total_Future_Visits__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1310,6 +1315,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Message__c.isViewed__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Payment_Method__c.Expiration__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Payment_Method__c.isDefault__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1691,6 +1706,15 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>true</modifyAllRecords>
+        <object>Payment_Method__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
         <object>Rate__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
@@ -1757,14 +1781,6 @@
         <object>Visit__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
-    <pageAccesses>
-        <apexPage>Center</apexPage>
-        <enabled>true</enabled>
-    </pageAccesses>
-    <pageAccesses>
-        <apexPage>Scheduler</apexPage>
-        <enabled>true</enabled>
-    </pageAccesses>
     <recordTypeVisibilities>
         <recordType>Account.Center</recordType>
         <visible>true</visible>
@@ -1811,6 +1827,10 @@
     </tabSettings>
     <tabSettings>
         <tab>Message__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>Payment_Method__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>

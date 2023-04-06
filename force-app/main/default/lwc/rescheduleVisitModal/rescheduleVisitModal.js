@@ -82,7 +82,7 @@ export default class RescheduleVisitModal extends LightningModal {
     async initSoonestNextVisitDate() {
         this.isLoading = true;
 
-        let serverSoonestNextVisitDateTime = await getSoonestNextRescheduleVisitDate({ originalVisitId: this.existingVisitId });
+        let serverSoonestNextVisitDateTime = await getSoonestNextRescheduleVisitDate({ donorId: this.donorId });
         this.soonestNextVisit = new Date(serverSoonestNextVisitDateTime);
 
         this.isLoading = false;

@@ -5,8 +5,10 @@ import labels from 'c/labelService';
 export default class Welcome extends NavigationMixin(LightningElement) {
 
     labels = labels;
+    loading = false;
     currentPage = 'Home';
     language = 'en_US';
+    startURL;
     center;
 
     get showHome() {
@@ -40,6 +42,7 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     getStateParameters(currentPageReference) {
         if (currentPageReference) {
             this.language = currentPageReference.state?.language;
+            this.startURL = currentPageReference.state?.startURL;
         }
     }
 
@@ -59,7 +62,15 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     onLanguageChange(event) {
         this.language = event.detail.value;
 
-        location.href = '/ProesisDonor/s/?language=' + this.language;
+        this.loading = true;
+
+        if (this.startURL) {
+            this.startURL += '&language=' + this.language;
+        } else {
+            this.startURL = '/ProesisDonor/s/?language=' + this.language;
+        }
+
+        location.href = '/ProesisDonor/s/login?language=' + this.language + '&startURL=' + encodeURIComponent(this.startURL);
     }
 
     onJoinUsButtonClick() {

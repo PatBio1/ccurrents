@@ -10,6 +10,8 @@ export default class AddVisitModal extends LightningModal {
     @api appointmentSlotDate;
     @api appointmentSlotTime;
     @api centerId;
+    @api hasLoyaltyAvailability;
+    @api hasAvailability;
 
     foundDonors;
     updateSearchTimeout;
@@ -42,7 +44,9 @@ export default class AddVisitModal extends LightningModal {
         this.isSearching = true;
         this.foundDonors = await searchVisitElgibleDonorByName({ 
             nameSearchString: this.template.querySelector("lightning-input[data-donor-name-search]").value,
-            targetVisitDateString: this.appointmentSlotDate
+            targetVisitDateString: this.appointmentSlotDate,
+            allowLoyaltyDonors: this.hasLoyaltyAvailability,
+            allowDonors: this.hasAvailability
         });
         
         this.updateSearchTimeout = null;

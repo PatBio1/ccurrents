@@ -1,9 +1,12 @@
-import { api, track, LightningElement } from 'lwc';
+import { api, track, wire, LightningElement } from 'lwc';
+import { CurrentPageReference } from 'lightning/navigation';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import labels from 'c/labelService';
 import util from 'c/util';
 import upsertLead from '@salesforce/apex/ProfileController.upsertLead';
 import createUser from '@salesforce/apex/ProfileController.createUser';
+import createUserFromScheduler from '@salesforce/apex/ProfileController.createUserFromScheduler';
 import setupUser from '@salesforce/apex/ProfileController.setupUser';
 import setupPhoto from '@salesforce/apex/ProfileController.setupPhoto';
 import removePhoto from '@salesforce/apex/ProfileController.removePhoto';
@@ -25,6 +28,8 @@ const PAGE_CONGRATULATIONS = 'Congratulations';
 
 export default class Profile extends LightningElement {
 
+    @api isSchedulerView = false;
+
     minPasswordCharacters = 8;
     maxPasswordCharacters = 16;
 
@@ -42,8 +47,16 @@ export default class Profile extends LightningElement {
     emailVerificationsExhausted = false;
     resendSmsCodeEnabled = true;
     smsVerificationsExhausted = false;
+    startURL;
 
     @api center;
+
+    @wire(CurrentPageReference)
+    getStateParameters(currentPageReference) {
+        if (currentPageReference) {
+            this.startURL = currentPageReference.state?.startURL;
+        }
+    }
 
     get verifyEmailInstructionsLabel() {
         return labels.formatLabel(labels.verifyEmailInstructions, [this.profile.email]);
@@ -62,19 +75,19 @@ export default class Profile extends LightningElement {
     }
 
     get showPicture() {
-        return (this.currentPage === PAGE_PICTURE);
+        return (this.currentPage === PAGE_PICTURE && !this.isSchedulerView);
     }
 
     get showPassword() {
-        return (this.currentPage === PAGE_PASSWORD);
+        return (this.currentPage === PAGE_PASSWORD && !this.isSchedulerView);
     }
 
     get showVerifyEmail() {
-        return (this.currentPage === PAGE_VERIFY_EMAIL);
+        return (this.currentPage === PAGE_VERIFY_EMAIL && !this.isSchedulerView);
     }
 
     get showVerifyPhone() {
-        return (this.currentPage === PAGE_VERIFY_PHONE);
+        return (this.currentPage === PAGE_VERIFY_PHONE && !this.isSchedulerView);
     }
 
     get showCongratulations() {
@@ -271,6 +284,31 @@ export default class Profile extends LightningElement {
     }
 
     onAddressNextButtonClick() {
+        if (this.isSchedulerView) {
+            // Toggles the loading screen on the scheduler view
+            this.dispatchEvent(new CustomEvent('begindonorcreate'));
+
+            this.profile.centerId = this.center.id;
+            createUserFromScheduler({ profile: this.profile }).then(response => {
+                console.log('createUserFromScheduler Response', response);
+
+                this.dispatchEvent(new CustomEvent('schedulerdonorcreate', {
+                    detail: {
+                        donorId: response
+                    }
+                }));
+            }).catch((error) => {
+                this.dispatchEvent(new ShowToastEvent({
+                    title: 'Create Donor Error',
+                    message: error.body.message,
+                    variant: 'error'
+                }))
+                this.loading = false;
+            });
+
+            return;
+        }
+
         this.saveProfile(PAGE_PICTURE);
     }
 
@@ -513,7 +551,7 @@ export default class Profile extends LightningElement {
         const request = {
             username: this.profile.email,
             password: this.profile.password,
-            startUrl: '/s/schedule'
+            startUrl: this.startURL
         };
 
         console.log('login request', JSON.stringify(request));

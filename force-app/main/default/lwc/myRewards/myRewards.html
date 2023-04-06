@@ -1,14 +1,14 @@
 <template>
-    <lightning-spinner if:true={isLoading}>
-    </lightning-spinner>
-
     <div class="slds-var-p-around_medium">
         <div class="title-medium slds-m-bottom_medium">
             {labels.myRewards}
         </div>
 
         <lightning-tabset class="main-tabs">
-            <lightning-tab label={labels.myBalance}>
+            <lightning-tab onactive={initMyBalanceTab} label={labels.myBalance}>
+                <lightning-spinner if:true={isLoading}>
+                </lightning-spinner>
+
                 <div class="title-small slds-m-bottom_medium">
                     My Proesis Wallet
                 </div>
@@ -74,19 +74,36 @@
                 </div>
             </lightning-tab>
 
-            <lightning-tab label={labels.paymentHistory}>
-                <div class="slds-grid slds-m-bottom_medium">
+            <lightning-tab onactive={initPaymentHistoryTab} label={labels.paymentHistory}>
+                <lightning-spinner if:true={isLoading}>
+                </lightning-spinner>
+
+                <div if:true={userHasCard} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_medium">
                     <div class="slds-col slds-size_1-of-2 title-small">
                         {labels.personalCard}
                     </div>
+
                     <div class="slds-col slds-size_1-of-2 slds-text-align_right">
                         <lightning-button variant="base" label={labels.lostMyCard} icon-name="utility:inspector_panel" icon-position="left" class="tertiary-button" onclick={onLostCardButtonClick}></lightning-button>
                     </div>
                 </div>
 
-                <article class="slds-card slds-card_boundary slds-m-bottom_medium" style="background-color: #f5f0ff; border-color: #D1C7E4;">
+                <article if:true={userHasCard} class="card-info-container slds-card slds-card_boundary slds-m-bottom_medium">
+                    <svg class="visa-card" xmlns="http://www.w3.org/2000/svg">;
+                        <use xlink:href={visaLogo}></use>
+                    </svg>
+                    
                     <div class="slds-card__body slds-card__body_inner">
                         Ending in <strong>0264</strong> expiring <strong>01/2023</strong>
+                    </div>
+                </article>
+
+                <article if:false={userHasCard} class="no-card-info-container slds-card slds-card_boundary slds-m-bottom_medium">
+                    <p>No card has been set up for your account. Please schedule a visit to a Center to get a payment card.</p>
+
+                    <div>
+                        <lightning-button label="Schedule Visit" variant="brand" onclick={navigateToScheduleAppointment}>
+                        </lightning-button>
                     </div>
                 </article>
 
@@ -113,12 +130,66 @@
                 <div class="title-small slds-m-bottom_x-small">
                     {labels.paymentHistory}
                 </div>
+
                 <div style="color: #8979A9;">
-                    {labels.noPaymentsYet}
+                    <p if:false={paymentHistory}>{labels.noPaymentsYet}</p>
+
+                    <template if:true={paymentHistory} for:each={paymentHistory} for:item="payment">
+                        <div class="transaction-card slds-card slds-card_boundary" key={payment.transactionDate}>
+                            <div class="transaction-info">
+                                <div class="transaction-name-header">
+                                    <lightning-icon icon-name="utility:payment_gateway" size="medium" variant="success">
+                                    </lightning-icon>
+    
+                                    <div class="transaction-rollup-info">
+                                        <p><b>{payment.name}</b></p>
+    
+                                        <lightning-formatted-date-time value={payment.transactionDate} time-zone={userTimezone}>
+                                        </lightning-formatted-date-time>
+                                    </div>
+                                </div>
+    
+                                <div class="transaction-rollup-info">
+                                    <lightning-formatted-number if:true={payment.currencyTotal} format-style="currency" currency-code={userCurrency} value={payment.currencyTotal}>
+                                    </lightning-formatted-number>
+    
+                                    <p>
+                                        <lightning-formatted-number if:true={payment.pointTotal} value={payment.pointTotal}>
+                                        </lightning-formatted-number> P
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div if:true={payment.transactionLineItems} class="transaction-line-item-container">
+                                <a style="display: flex; align-items: center; gap: 2px;" onclick={togglePaymentDetails} data-transaction-id={payment.transactionId}>
+                                    <span><lightning-button-icon variant="bare" icon-name={payment.displayIcon}></lightning-button-icon></span> View Details
+                                </a>
+
+                                <div class="line-item-grid" if:true={payment.displayDetails}>
+                                    <p><b>Name</b></p>
+                                    <p><b>Currency</b></p>
+                                    <p><b>Points</b></p>
+
+                                    <template for:each={payment.transactionLineItems} for:item="lineItem">
+                                        <p key={lineItem.itemName}>{lineItem.itemName}</p>
+                                        
+                                        <lightning-formatted-number key={lineItem.currencyTotal} format-style="currency" currency-code={userCurrency} value={lineItem.currencyTotal}>
+                                        </lightning-formatted-number>
+
+                                        <lightning-formatted-number key={lineItem.pointTotal} value={lineItem.pointTotal}>
+                                        </lightning-formatted-number>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </lightning-tab>
 
             <lightning-tab label={labels.goalsTracker}>
+                <lightning-spinner if:true={isLoading}>
+                </lightning-spinner>
+
                 <template if:true={noGoalSet}>
                     <div class="slds-m-bottom_small">
                         You haven't set any goals yet. To do so, press the "Set a Goal" button below.

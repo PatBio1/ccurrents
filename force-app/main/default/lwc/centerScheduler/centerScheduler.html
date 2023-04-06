@@ -69,6 +69,15 @@
           <div class="scheduler-header-actions" style="justify-content: flex-end;">
             <lightning-button
               variant="brand"
+              label="Create Donor"
+              title="Create Donor"
+              class="primary-button"
+              disabled={createDonorDisabled}
+              onclick={handleInitCreateDonor}>
+            </lightning-button>
+            
+            <lightning-button
+              variant="brand"
               label="New Schedule"
               title="New Schedule"
               class="primary-button"
@@ -81,7 +90,7 @@
               label="Refresh"
               title="Refresh"
               onclick={refresh}
-              disabled={dateDisabled}
+              disabled={cantRefresh}
               icon-name="utility:refresh"
               class="slds-p-around_xxx-small">
             </lightning-button>
@@ -141,14 +150,14 @@
               <lightning-button-icon icon-name="utility:dash" size="x-small" variant="brand" onclick={minusAvailable}>
               </lightning-button-icon>
               
-              <p>{appointment.availability}</p>
+              <p>{appointment.availability} / {appointment.loyaltyAvailability}</p>
 
               <lightning-button-icon icon-name="utility:add" size="x-small" variant="brand" onclick={plusAvailable}>
               </lightning-button-icon>          
             </div>
 
             <div key={appointment.key} if:false={appointment.filtered} class="appointment-data-cell">
-              {appointment.booked}
+              {appointment.totalBooked}
             </div>
 
             <div 

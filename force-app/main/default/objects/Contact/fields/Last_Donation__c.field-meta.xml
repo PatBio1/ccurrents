@@ -11,9 +11,9 @@
         <value>Complete</value>
     </summaryFilterItems>
     <summaryFilterItems>
-        <field>Visit__c.Donation_Volume__c</field>
-        <operation>greaterThan</operation>
-        <value>0</value>
+        <field>Visit__c.Outcome__c</field>
+        <operation>equals</operation>
+        <value>Donation</value>
     </summaryFilterItems>
     <summaryForeignKey>Visit__c.Donor__c</summaryForeignKey>
     <summaryOperation>max</summaryOperation>

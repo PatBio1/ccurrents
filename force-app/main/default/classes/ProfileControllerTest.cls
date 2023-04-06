@@ -470,6 +470,10 @@ public with sharing class ProfileControllerTest {
     @isTest
     static void testCreateUser() {
         System.runAs(TestUtil.createExperienceGuestUser()) {
+            Level__c level = new Level__c();
+            level.Donation_Threshold__c = 0;
+            insert level;
+
             Account account = TestUtil.createMiramarCenter();
             insert account;
 
@@ -497,19 +501,19 @@ public with sharing class ProfileControllerTest {
 
             // Site.createExternalUser() doesn't work in unit tests so the user isn't
             // actually created and the following assertions won't work.
-/*
-            User user = [
-                SELECT
-                    FirstName, LastName
-                FROM
-                    User
-                WHERE
-                    Name = 'Test First Test Last'
-            ];
+            /*
+                User user = [
+                    SELECT
+                        FirstName, LastName
+                    FROM
+                        User
+                    WHERE
+                        Name = 'Test First Test Last'
+                ];
 
-            System.assertEquals('First', user.FirstName);
-            System.assertEquals('Last', user.LastName);
-*/
+                System.assertEquals('First', user.FirstName);
+                System.assertEquals('Last', user.LastName);
+            */
         }
     }
 
@@ -576,6 +580,88 @@ public with sharing class ProfileControllerTest {
 
             System.assert(exceptionThrown);
         }
+    }
+
+    @isTest
+    static void testDeactivateUser() {
+        System.runAs(TestUtil.createAdminUser()) {
+            User experienceUser = TestUtil.createExperienceUser();
+
+            System.assertEquals(true, [SELECT IsActive FROM User WHERE Id = :experienceUser.Id].IsActive);
+
+            ProfileController.deactivateUser(experienceUser.Id);
+
+            System.assertEquals(false, [SELECT IsActive FROM User WHERE Id = :experienceUser.Id].IsActive);
+        }
+    }
+
+    @isTest
+    static void testDeactivateUserException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.deactivateUser(UserInfo.getUserId());
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
+    static void testCreateUserFromScheduler() {
+        Id accountId;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            Level__c level = new Level__c();
+            level.Donation_Threshold__c = 0;
+            insert level;
+
+            Account account = TestUtil.createMiramarCenter();
+            insert account;
+
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.Email = 'ctester@ccurrents.com.testing';
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+            profile.centerId = account.Id;
+            profile.nickname = 'testnick';
+            profile.language = 'en_US';
+
+            Test.startTest();
+            accountId = ProfileController.createUserFromScheduler(profile);
+            Test.stopTest();
+        }
+
+        Assert.areEqual(1, [SELECT count() FROM Account WHERE Id = :accountId], 'A Valid account id should have been created and returned');
+
+        User targetUserRecord = [SELECT Id, Email, FirstName, LastName FROM User WHERE AccountId = :accountId LIMIT 1];
+        Assert.isNotNull(targetUserRecord, 'A user record linked to the returned account should have been created');
+        Assert.areEqual('ctester@ccurrents.com.testing', targetUserRecord.Email, 'The user\'s email should have be set to ctester@ccurrents.com.testing');
+        Assert.areEqual('Test First', targetUserRecord.FirstName, 'The user\'s first name should have be set to Test First');
+        Assert.areEqual('Test Last', targetUserRecord.LastName, 'The user\'s last name should have be set to Test Last');
+    }
+
+    @isTest 
+    static void testCreateUserFromSchedulerException() {
+        TestUtil.throwException = true;
+        Boolean exceptionThrown = false;
+
+        try {
+            ProfileController.createUserFromScheduler(new ProfileController.Profile());
+        } catch (Exception e) {
+            exceptionThrown = true;
+        }
+
+        Assert.isTrue(exceptionThrown, 'An exception should have been thrown');
     }
 
 }

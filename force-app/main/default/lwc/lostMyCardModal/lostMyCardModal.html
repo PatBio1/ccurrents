@@ -1,0 +1,17 @@
+<template>
+    <lightning-modal-header label="Lost My Card">
+    </lightning-modal-header>
+
+    <lightning-modal-body>
+        <div class="lost-my-card-container">
+            <p>You must schedule an appointment and come to a Proesis Center to get a new card.</p>
+
+            <div class="action-container">
+                <p class="slds-m-bottom--x-small">Please Select an Option for your Lost Card.</p>
+                <lightning-button label="Schedule Appointment" stretch="true" variant="brand" onclick={navigateToScheduleAppointment}></lightning-button>
+                <lightning-button label="Cancel Card Immediately" stretch="true" variant="brand" onclick={handleCancelCardImmediately}></lightning-button>
+            </div>
+        </div>
+        
+    </lightning-modal-body>
+</template>

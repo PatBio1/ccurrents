@@ -145,9 +145,17 @@ public with sharing class SchedulerControllerTest {
             Id visitId = SchedulerController.scheduleVisit(appointment.Id);   
         }
         Task[] tasks = [SELECT ID, Subject, Description  FROM Task];
-        system.assertEquals(1, tasks.size());
-        system.assertEquals('First Visit Code', tasks[0].Subject);
-        system.assertEquals(7, tasks[0].Description.length());
+        system.assertEquals(3, tasks.size()); // Expecting First Visit Code, SPE Exam, and Physcial Exam tasks
+
+        Set<String> expectedTasks = new Set<String> { Constants.SPE_ANALYSIS_TASK_SUBJECT, Constants.PHYSICAL_EXAM_TASK_SUBJECT, Constants.FIRST_VISIT_CODE_TASK_SUBJECT };
+        for(Task task : tasks) {
+            Assert.isTrue(expectedTasks.contains(task.Subject));
+            expectedTasks.remove(task.Subject);
+
+            if (task.Subject == Constants.FIRST_VISIT_CODE_TASK_SUBJECT) {
+                system.assertEquals(7, task.Description.length(), 'First Visit Code should be 7 characters long');
+            }
+        }
 
         Appointment__c targetAppointment = [SELECT Id, Booked__c FROM Appointment__c WHERE Id = :appointment.Id LIMIT 1];
         system.assertEquals(1, targetAppointment.Booked__c, 'Adding a visit should increment the booked value');

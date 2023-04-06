@@ -71,3 +71,79 @@ c-loyalty-tier-badge {
     flex: 1;
     align-self: center;
 }
+
+.no-card-info-container,
+.card-info-container,
+.transaction-card {
+    padding: 10px;
+    background-color: #f5f0ff;
+    border-color: #D1C7E4;
+}
+
+.no-card-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.card-info-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.visa-card {
+    width: 84px;
+    background: #e6def4;
+    height: 48px;
+    border-radius: 4px;
+}
+
+.transaction-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: black;
+}
+
+.transaction-name-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+}
+
+.transaction-rollup-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 4px;
+}
+
+.transaction-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.transaction-line-item-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 3px 6px;
+    background: #ece3fb;
+    border-radius: 4px;
+}
+
+.line-item-grid {
+    display: grid;
+    grid-template-columns: 2fr repeat(2, 1fr);
+    place-content: center;
+    gap: 4px;
+}

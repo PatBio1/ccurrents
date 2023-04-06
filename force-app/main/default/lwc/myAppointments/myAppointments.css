@@ -33,3 +33,8 @@
 .no-appointments .slds-illustration__fill-secondary {
     fill: #E7DCED;
 }
+
+.appointment-tab {
+    overflow-y: auto;
+    max-height: 80dvh;
+}

@@ -95,3 +95,12 @@ export function getFilteredErrorMessage(msg = '') {
 
     return msg;
 }
+
+export function logout(component) {
+    component[NavigationMixin.Navigate]({
+        type: 'comm__loginPage',
+        attributes: {
+            actionName: 'logout'
+        }
+    });
+}

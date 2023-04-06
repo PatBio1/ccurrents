@@ -1,17 +1,32 @@
 public without sharing class DonorSelector {
     @AuraEnabled
-    public static List<Account> searchVisitElgibleDonorByName(String nameSearchString, DateTime targetVisitDateString) {
+    public static List<DonorSearchResult> searchVisitElgibleDonorByName(String nameSearchString, DateTime targetVisitDateString, Boolean allowLoyaltyDonors, Boolean allowDonors) {
         if (String.isEmpty(nameSearchString)) {
             return null;
         }
 
-        return [
-            SELECT Id, Name, PersonEmail, PersonMobilePhone, Soonest_Next_Visit__pc
+        List<DonorSearchResult> donorSearchResults = new List<DonorSearchResult>();
+
+        for(Account donor : [
+            SELECT Id, Name, PersonEmail, PersonMobilePhone, Soonest_Next_Visit__pc, Loyalty_Level__pc, Loyalty_Level__pr.Name
             FROM Account
             WHERE Name LIKE :(nameSearchString + '%') AND
-            RecordTypeId = :Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId() AND
-            Soonest_Next_Visit__pc <= :targetVisitDateString
-        ];
+                RecordTypeId = :Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId() AND
+                Soonest_Next_Visit__pc <= :targetVisitDateString
+        ]) {
+            Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__pc);
+
+            if (
+                (loyaltyLevel > 0 && !allowLoyaltyDonors) ||
+                ((loyaltyLevel == 0 || String.isEmpty(donor.Loyalty_Level__pc)) && !allowDonors)
+            ) {
+                continue;
+            }
+
+            donorSearchResults.add(new DonorSearchResult(donor));
+        }
+
+        return donorSearchResults;
     }
 
     public static List<AccountContactRelation> getDonorsForCenter(Id centerId) {
@@ -31,6 +46,30 @@ public without sharing class DonorSelector {
             FROM Contact 
             WHERE Id IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()) LIMIT 1
         ]);
+    }
+
+    public class DonorSearchResult {
+        @AuraEnabled
+        public String donorId;
+        @AuraEnabled
+        public String donorName;
+        @AuraEnabled
+        public String donorEmail;
+        @AuraEnabled
+        public String donorPhone;
+        @AuraEnabled
+        public DateTime donorSoonestNextVisit;
+        @AuraEnabled
+        public String donorLoyaltyLevel;
+
+        public DonorSearchResult(Account donor) {
+            this.donorId = donor.Id;
+            this.donorName = donor.Name;
+            this.donorEmail = donor.PersonEmail;
+            this.donorPhone = donor.PersonMobilePhone;
+            this.donorSoonestNextVisit = donor.Soonest_Next_Visit__pc;
+            this.donorLoyaltyLevel = (!String.isEmpty(donor.Loyalty_Level__pr.Name)) ? donor.Loyalty_Level__pr.Name : 'Donor (Default)';
+        }
     }
 
     public class DonorRewardsInfo {

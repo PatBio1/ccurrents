@@ -15,8 +15,7 @@ import cancelVisit from '@salesforce/apex/CenterScheduleController.cancelVisit';
 import { visitStatusToDisplayClass, visitOutcomeToDisplayClass } from "c/constants";
 import CreateScheduleModal from "c/createScheduleModal";
 import AddVisitModal from "c/addVisitModal";
-import Confirm_Password from '@salesforce/label/c.Confirm_Password';
-import RecurrenceStartDateOnly from '@salesforce/schema/Task.RecurrenceStartDateOnly';
+import CreateDonorModal from 'c/createDonorModal';
 
 export default class CenterScheduler extends NavigationMixin(LightningElement) {
     statusOptions;
@@ -73,6 +72,14 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     dateDisabled = true;
     loading = true;
     popYFlipPoint;
+
+    get cantRefresh() {
+        return (this.dateDisabled || !this.selectedDate)
+    }
+
+    get createDonorDisabled() {
+        return (!this.selectedCenterId);
+    }
 
     get hasAppointmentsToDisplay() {
         return (this.appointments && this.appointments.length);
@@ -364,6 +371,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         for(let appointment of queriedAppointments) {
             // Used to show/hide Add Visit on per row basis
             appointment.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability > 0) && !appointment.isInThePast);
+            console.log(`${appointment.timeString}: ${appointment.booked}`);
 
             generateUrlPromises.push(
                 this[NavigationMixin.GenerateUrl]({
@@ -398,6 +406,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     }
 
     changeDate(event){
+        if (!event.detail.value) {
+            return;
+        }
+
         this.selectedDate = event.detail.value;
         this.fetchAppointments();
     }   
@@ -464,7 +476,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         await getAppointmentSlot({appointmentId }).then(appointment => {
             appRow.visits = appointment.visits;
             appRow.booked = appointment.booked;
+            appRow.loyaltyBooked = appointment.loyaltyBooked;
+            appRow.totalBooked = appointment.totalBooked;
             appRow.availability = appointment.availability;
+            appRow.loyaltyAvailability = appointment.loyaltyAvailability;
             appRow.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability) && !appointment.isInThePast);
         }).catch(err => {
             console.log(err.message);
@@ -502,12 +517,15 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
     handleInitAddVisit(event) {
         let targetAppointmentId = event.currentTarget.dataset.appointment;
+        let appointmentRecord = this.appointments.find(appointment => appointment.Id === targetAppointmentId);
 
         AddVisitModal.open({
             appointmentSlotId: targetAppointmentId,
             appointmentSlotDate: this.selectedDate,
             appointmentSlotTime: event.currentTarget.dataset.appointmenttime,
             centerId: this.selectedCenterId,
+            hasLoyaltyAvailability: appointmentRecord.loyaltyAvailability > 0,
+            hasAvailability: appointmentRecord.availability > 0,
 
             onvisitcreated: (event) => {
                 event.stopPropagation();
@@ -537,5 +555,23 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         if (newAppointment) {
             this.refreshAppointmentSlot(newAppointmentId, newAppointment);
         }
+    }
+
+    handleInitCreateDonor(event) {
+        CreateDonorModal.open({
+            selectedCenter: this.selectedCenterId,
+
+            ondonorcreated: (event) => {
+                if (!this.selectedDate) {
+                    this.selectedDate = new Date(Date.now()).toISOString();
+                }
+
+                event.stopPropagation();
+                
+                if (event.detail.wasVisitScheduled) {
+                    this.fetchAppointments();
+                }
+            }
+        });
     }
 }

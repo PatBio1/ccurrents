@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 
 import { visitStatusToDisplayClass, visitOutcomeToDisplayClass } from "c/constants";
 import RescheduleVisitModal from "c/rescheduleVisitModal";
+import EnrollCardModal from "c/enrollCardModal";
 
 export default class DonorDot extends NavigationMixin(LightningElement)  {
     @track showpopover = false;
@@ -179,5 +180,9 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
                 this.dispatchEvent(new CustomEvent("visitrescheduled", { detail: {...event.detail} }));
             }
         });
+    }
+
+    handleInitEnrollCard(event) {
+        EnrollCardModal.open();
     }
 }

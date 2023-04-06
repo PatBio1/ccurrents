@@ -47,6 +47,7 @@ public with sharing class CenterScheduleController {
                 SELECT Id,
                         Name,
                         Appointment__c,
+                        isFirstVisit__c,
                         Donor__c,
                         Donor__r.Name,
                         Donor__r.FirstName,
@@ -57,7 +58,7 @@ public with sharing class CenterScheduleController {
                         Status__c,
                         Outcome__c,
                         (
-                            SELECT Id, Subject
+                            SELECT Id, Subject, Description
                             FROM Tasks
                         )
                 FROM Visit__c
@@ -65,8 +66,6 @@ public with sharing class CenterScheduleController {
                 ORDER BY lastmodifieddate
             ]){
                 appt.visits.add(new Visit(visit));
-
-                appt.booked = appt.visits.size();
             }
             
         } catch (Exception e) {
@@ -119,6 +118,7 @@ public with sharing class CenterScheduleController {
                 SELECT Id,
                         Name,
                         Appointment__c,
+                        isFirstVisit__c,
                         Donor__c,
                         Donor__r.Name,
                         Donor__r.FirstName,
@@ -129,7 +129,7 @@ public with sharing class CenterScheduleController {
                         Status__c,
                         Outcome__c,
                         (
-                            SELECT Id, Subject
+                            SELECT Id, Subject, Description
                             FROM Tasks
                         )
                 FROM Visit__c
@@ -138,8 +138,6 @@ public with sharing class CenterScheduleController {
             ]){
                 AppointmentSlot appt = appMap.get(visit.Appointment__c);
                 appt.visits.add(new Visit(visit));
-
-                appt.booked = appt.visits.size();
             }
             
             system.debug(appMap);
@@ -169,13 +167,15 @@ public with sharing class CenterScheduleController {
         }
         update targetSlot;
 
+        Visit__c newVisit;
         try {
-            insert new Visit__c(
+            newVisit = new Visit__c(
                 Donor__c = donor.PersonContactId,
                 Center_Donation_Type__c = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :centerId LIMIT 1]?.Id,
                 Appointment__c = appointmentSlotId,
                 Status__c = 'Scheduled'
             );
+            insert newVisit;
         } catch(Exception addVisitException) {
             throw Util.createAuraHandledException(addVisitException);
         }
@@ -195,7 +195,7 @@ public with sharing class CenterScheduleController {
         Appointment__c newAppointment = (targetAppointments[0].Id == appointmentId) ? targetAppointments[0] : targetAppointments[1];
 
         // Updating Slot Booked/Capacity
-        if (loyaltyLevel > 0) {
+        if (loyaltyLevel > 0 && oldAppointment.Booked_Loyalty__c != null && oldAppointment.Booked_Loyalty__c > 0) {
             oldAppointment.Booked_Loyalty__c -= 1;
         } else {
             oldAppointment.Booked__c -= 1;
@@ -282,23 +282,8 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
-    public static DateTime getSoonestNextRescheduleVisitDate(Id originalVisitId) {
-        // Temporarily cancel the appointment to correctly calculate Soonest Next Visit
-        // Use the save point to restore once the DateTime is saved
-        Savepoint beforeReschedulePoint = Database.setSavepoint();
-        DateTime targetDateTime;
-
-        update new Visit__c(
-            Id = originalVisitId,
-            Status__c = 'Complete',
-            Outcome__c = 'Rescheduled'
-        );
-
-        Visit__c targetVisit = [SELECT Id, Outcome__c, Donor__c, Donor__r.Soonest_Next_Visit__c FROM Visit__c WHERE Id = :originalVisitId LIMIT 1];
-        targetDateTime = targetVisit.Donor__r.Soonest_Next_Visit__c;
-
-        Database.rollback(beforeReschedulePoint);
-        return targetDateTime;
+    public static DateTime getSoonestNextRescheduleVisitDate(Id donorId) {
+        return [SELECT Id, Soonest_Next_Visit__pc FROM Account WHERE Id = :donorId LIMIT 1]?.Soonest_Next_Visit__pc;
     }
 
     @AuraEnabled
@@ -328,6 +313,25 @@ public with sharing class CenterScheduleController {
         }
 
         return rescheduleSlots;
+    }
+
+    @AuraEnabled
+    public static void createSoonestNextVisitForDonor(Id donorId, Id centerId) {
+        List<Appointment__c> soonestNextAvailableAppointment = [
+            SELECT Id
+            FROM Appointment__c
+            WHERE Schedule__r.Center__c = :centerId AND
+                Datetime__c >= :System.now() AND 
+                Availability__c > 0
+            ORDER BY Datetime__c ASC
+            LIMIT 1
+        ];
+
+        if (soonestNextAvailableAppointment == null || soonestNextAvailableAppointment.size() == 0) {
+            return;
+        }
+
+        addVisit(donorId, soonestNextAvailableAppointment[0].Id, centerId);
     }
 
     public class RescheduleSlot {
@@ -382,6 +386,8 @@ public with sharing class CenterScheduleController {
         public Decimal booked {get;set;}
         @AuraEnabled
         public Decimal loyaltyBooked {get;set;}
+        @AuraEnabled
+        public Decimal totalBooked {get; set;}
         
         @AuraEnabled
         public Decimal capacity {get;set;}
@@ -401,12 +407,15 @@ public with sharing class CenterScheduleController {
             this.timeString =  this.appointmentDatetime.format('h:mm a');
             this.visits = new Visit[]{};
 
-            this.availability = app.Availability__c;
-            this.loyaltyAvailability = app.Availability_Loyalty__c;
-            this.booked = app.Booked__c;
-            this.loyaltyBooked = app.Booked_Loyalty__c;
-            this.capacity = app.Capacity__c;
-            this.loyaltyCapacity = app.Capacity_Loyalty__c;
+            this.availability = (app.Availability__c == null) ? 0 : app.Availability__c;
+            this.loyaltyAvailability = (app.Availability_Loyalty__c == null) ? 0 : app.Availability_Loyalty__c;
+
+            this.booked = (app.Booked__c == null) ? 0 : app.Booked__c;
+            this.loyaltyBooked = (app.Booked_Loyalty__c == null) ? 0 : app.Booked_Loyalty__c;
+            this.totalBooked = this.booked + this.loyaltyBooked;
+
+            this.capacity = (app.Capacity__c == null) ? 0 : app.Capacity__c;
+            this.loyaltyCapacity = (app.Capacity_Loyalty__c == null) ? 0 : app.Capacity_Loyalty__c;
 
             this.filtered = false;
             this.isInThePast = this.appointmentDatetime < DateTime.now();
@@ -473,7 +482,7 @@ public with sharing class CenterScheduleController {
             this.filtered = false;
 
             this.loyaltyTierName = visit.Donor__r.Account.Loyalty_Level__pr.Name;
-            this.isFirstVisit = (visit.Donor__r.Account.First_Visit__pc == null);
+            this.isFirstVisit = visit.isFirstVisit__c;
 
             this.visitNotes = new VisitNote[] {};
             if (visit.Tasks != null) {
@@ -491,9 +500,13 @@ public with sharing class CenterScheduleController {
         @AuraEnabled
         public String visitNoteSubject {get;set;}
 
+        @AuraEnabled
+        public String visitNoteDescription {get;set;}
+
         public VisitNote(Task taskRecord) {
             this.visitNoteId = taskRecord.Id;
             this.visitNoteSubject = taskRecord.Subject;
+            this.visitNoteDescription = taskRecord.Description;
         }
     }
 }    

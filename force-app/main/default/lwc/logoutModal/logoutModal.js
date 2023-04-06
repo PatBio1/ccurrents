@@ -1,6 +1,7 @@
 import LightningModal from 'lightning/modal';
 import { NavigationMixin } from 'lightning/navigation';
 import labels from 'c/labelService';
+import util from 'c/util';
 
 export default class LogoutModal extends NavigationMixin(LightningModal) {
 
@@ -12,12 +13,8 @@ export default class LogoutModal extends NavigationMixin(LightningModal) {
 
     onLogoutButtonClick() {
         this.close();
-        this[NavigationMixin.Navigate]({
-            type: 'comm__loginPage',
-            attributes: {
-                actionName: 'logout'
-            }
-        });
+
+        util.logout(this);
     }
 
 }

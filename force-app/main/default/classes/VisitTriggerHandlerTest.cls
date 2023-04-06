@@ -22,7 +22,7 @@ public class VisitTriggerHandlerTest {
         insert businessHours;
 
         Date startDate = Date.today();
-        Date endDate = Date.today().addMonths(1);
+        Date endDate = Date.today().addYears(2);
 
         Schedule__c schedule = ScheduleUtils.createScheduleRecord(testCenters[0].Id, startDate, endDate);
         insert schedule;
@@ -36,6 +36,16 @@ public class VisitTriggerHandlerTest {
             new Appointment__c(
                 Schedule__c = schedule.Id,
                 Datetime__c = Datetime.now().addDays(4),
+                Capacity__c = AMOUNT_OF_VISITS
+            ),
+            new Appointment__c(
+                Schedule__c = schedule.Id,
+                Datetime__c = Datetime.now().addDays(3).addYears(1),
+                Capacity__c = AMOUNT_OF_VISITS
+            ),
+            new Appointment__c(
+                Schedule__c = schedule.Id,
+                Datetime__c = Datetime.now().addDays(3).addYears(2),
                 Capacity__c = AMOUNT_OF_VISITS
             )
         };
@@ -148,6 +158,50 @@ public class VisitTriggerHandlerTest {
         }
     }
 
+    @isTest static void testSetSecondIsFirstVisitFlag() {
+        List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c ORDER BY Datetime__c DESC LIMIT 2];
+        Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        List<Account> targetDonors = [SELECT Id, PersonContactId FROM Account WHERE DonorId__c != NULL];
+        List<Visit__c> testVisits = new List<Visit__c>();
+
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            testVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = targetAppointments[0].Id,
+                Status__c = 'Scheduled'
+            ));
+        }
+        insert testVisits;
+
+        for(Visit__c firstVisit : [SELECT Id, isFirstVisit__c FROM Visit__c WHERE Id IN :testVisits]) {
+            Assert.isTrue(firstVisit.isFirstVisit__c, 'The Is First Visit flag on the visit wasn\'t set to true');
+        }
+
+        List<Visit__c> testSecondVisits = new List<Visit__c>();
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            testSecondVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = targetAppointments[1].Id,
+                Status__c = 'Scheduled'
+            ));
+        }
+
+        Test.startTest();
+        insert testSecondVisits;
+        Test.stopTest();
+
+        for(Visit__c firstVisit : [SELECT Id, isFirstVisit__c FROM Visit__c WHERE Id IN :testVisits]) {
+            Assert.isFalse(firstVisit.isFirstVisit__c, 'The Is First Visit flag on the visit wasn\'t set to false');
+        }
+
+        for(Visit__c secondVisit : [SELECT Id, isFirstVisit__c FROM Visit__c WHERE Id IN :testSecondVisits]) {
+            Assert.isTrue(secondVisit.isFirstVisit__c, 'The Is First Visit flag on the visit wasn\'t set to true');
+        }
+    }
+
     @isTest static void testNotSetIsFirstFlag() {
         List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c LIMIT 2];
         Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
@@ -181,6 +235,147 @@ public class VisitTriggerHandlerTest {
 
         for(Visit__c testVisit : [SELECT Id, isFirstVisit__c FROM Visit__c WHERE Id IN :secondSetOfVisits]) {
             Assert.isFalse(testVisit.isFirstVisit__c, 'The First Visit Flag shouldn\'t have been set to true');
+        }
+    }
+
+    @isTest static void testAnnualExamAndSPETasks() {
+        // Create an inital appointment for each donor to set the Days_Until... fields
+        Appointment__c targetAppointment = [SELECT Id, Datetime__c FROM Appointment__c ORDER BY Datetime__c ASC LIMIT 1];
+        Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        List<Account> targetDonors = [SELECT Id, PersonContactId FROM Account WHERE DonorId__c != NULL];
+        List<Visit__c> testVisits = new List<Visit__c>();
+
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            testVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = targetAppointment.Id,
+                Status__c = 'Complete',
+                Outcome__c = 'Donation'
+            ));
+        }
+        insert testVisits;
+
+        // Create the appointment that actually triggers the Annual Exam / SPE Analysis tasks
+        List<Account> donorsWithAnnualExamDates = [SELECT Id, Days_Until_Annum__pc, Days_until_Triannum__pc FROM Account WHERE Id IN :targetDonors];
+        DateTime targetDateTime = Datetime.now().date().addDays((Integer)Math.max(donorsWithAnnualExamDates[0].Days_Until_Annum__pc, donorsWithAnnualExamDates[0].Days_until_Triannum__pc));
+
+        Appointment__c annualExamsAppointment = [
+            SELECT Id, Datetime__c 
+            FROM Appointment__c 
+            WHERE Datetime__c >= :targetDateTime
+            LIMIT 1
+        ];
+
+        List<Visit__c> annualExams = new List<Visit__c>();
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            annualExams.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = annualExamsAppointment.Id,
+                Status__c = 'Scheduled'
+            ));
+        }
+
+        Test.startTest();
+        insert annualExams;
+        Test.stopTest();
+
+        // Check to make sure two tasks where created for each annual exam
+        for(Visit__c annualExamVisit : [SELECT Id, (SELECT Id, Subject FROM Tasks) FROM Visit__c WHERE Id IN :annualExams]) {
+            Set<String> expectedTasks = new Set<String>{ Constants.SPE_ANALYSIS_TASK_SUBJECT, Constants.PHYSICAL_EXAM_TASK_SUBJECT };
+            Assert.areEqual(expectedTasks.size(), annualExamVisit.Tasks.size(), 'There should be ' + expectedTasks.size() + ' tasks created for each annual exam visit');
+
+            for(Task annualExamVisitTask : annualExamVisit.Tasks) {
+                Assert.isTrue(expectedTasks.contains(annualExamVisitTask.Subject), 'The task subject was not one of the expected values');
+                expectedTasks.remove(annualExamVisitTask.Subject);
+            }
+        }
+    }
+
+    @isTest static void testRescheuleAnnualExamAndSPETasks() {
+        // Create an inital appointment for each donor to set the Days_Until... fields
+        Appointment__c targetAppointment = [SELECT Id, Datetime__c FROM Appointment__c ORDER BY Datetime__c ASC LIMIT 1];
+        Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        List<Account> targetDonors = [SELECT Id, PersonContactId FROM Account WHERE DonorId__c != NULL];
+        List<Visit__c> testVisits = new List<Visit__c>();
+
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            testVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = targetAppointment.Id,
+                Status__c = 'Complete',
+                Outcome__c = 'Donation'
+            ));
+        }
+        insert testVisits;
+
+        // Create the appointment that actually triggers the Annual Exam / SPE Analysis tasks
+        List<Account> donorsWithAnnualExamDates = [SELECT Id, Days_Until_Annum__pc, Days_until_Triannum__pc FROM Account WHERE Id IN :targetDonors];
+        DateTime targetDateTime = Datetime.now().date().addDays((Integer)Math.max(donorsWithAnnualExamDates[0].Days_Until_Annum__pc, donorsWithAnnualExamDates[0].Days_until_Triannum__pc));
+
+        List<Appointment__c> annualExamsAppointments = [
+            SELECT Id, Datetime__c 
+            FROM Appointment__c 
+            WHERE Datetime__c >= :targetDateTime
+            ORDER BY DateTime__c DESC
+            LIMIT 2
+        ];
+
+        List<Visit__c> annualExams = new List<Visit__c>();
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            annualExams.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = annualExamsAppointments[0].Id, // Using the first index ensures we use the furthest out appointment, allowing an earlier reschedule
+                Status__c = 'Scheduled'
+            ));
+        }
+        insert annualExams;
+
+        // Check to make sure the tasks were created in the first place
+        for(Visit__c annualExamVisit : [SELECT Id, (SELECT Id, Subject FROM Tasks) FROM Visit__c WHERE Id IN :annualExams]) {
+            Set<String> expectedTasks = new Set<String>{ Constants.SPE_ANALYSIS_TASK_SUBJECT, Constants.PHYSICAL_EXAM_TASK_SUBJECT };
+            Assert.areEqual(expectedTasks.size(), annualExamVisit.Tasks.size(), 'There should be ' + expectedTasks.size() + ' tasks created for each annual exam visit');
+
+            for(Task annualExamVisitTask : annualExamVisit.Tasks) {
+                Assert.isTrue(expectedTasks.contains(annualExamVisitTask.Subject), 'The task subject was not one of the expected values');
+                expectedTasks.remove(annualExamVisitTask.Subject);
+            }
+        }
+
+        // Reschedule the annual exams to the second appointment
+        List<Visit__c> rescheduledAnnualExams = new List<Visit__c>();
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            rescheduledAnnualExams.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = annualExamsAppointments[1].Id, // Using the second index ensures we use the closest appointment, this should trigger the reparenting of the tasks
+                Status__c = 'Scheduled'
+            ));
+        }
+
+        Test.startTest();
+        insert rescheduledAnnualExams;
+        Test.stopTest();
+
+        // Check to make sure the initial tasks are now not related to the first visits
+        for(Visit__c annualExamVisit : [SELECT Id, (SELECT Id, Subject FROM Tasks) FROM Visit__c WHERE Id IN :annualExams]) {
+            Assert.areEqual(0, annualExamVisit.Tasks.size(), 'There should be no tasks related to the initial annual exam visits');
+        }
+
+        // Check to make sure two tasks where created for each annual exam
+        for(Visit__c annualExamVisit : [SELECT Id, (SELECT Id, Subject FROM Tasks) FROM Visit__c WHERE Id IN :rescheduledAnnualExams]) {
+            Set<String> expectedTasks = new Set<String>{ Constants.SPE_ANALYSIS_TASK_SUBJECT, Constants.PHYSICAL_EXAM_TASK_SUBJECT };
+            Assert.areEqual(expectedTasks.size(), annualExamVisit.Tasks.size(), 'There should be ' + expectedTasks.size() + ' tasks created for each annual exam visit');
+
+            for(Task annualExamVisitTask : annualExamVisit.Tasks) {
+                Assert.isTrue(expectedTasks.contains(annualExamVisitTask.Subject), 'The task subject was not one of the expected values');
+                expectedTasks.remove(annualExamVisitTask.Subject);
+            }
         }
     }
 }

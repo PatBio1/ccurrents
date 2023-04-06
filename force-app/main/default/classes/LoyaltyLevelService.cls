@@ -1,12 +1,26 @@
 public without sharing class LoyaltyLevelService {
+
     private static Map<Id, Integer> loyaltyLevelIdToIndex;
+
+    public static Level__c getDefault() {
+        return [
+            SELECT
+                Id
+            FROM
+                Level__c
+            WHERE
+                Donation_Threshold__c = 0
+            LIMIT
+                1
+        ];
+    }
 
     public static Integer getLoyaltyLevel(Id loyaltyLevelId) {
         if (loyaltyLevelIdToIndex == null) {
             loyaltyLevelIdToIndex = new Map<Id, Integer>();
 
             Integer loyaltyLevelIndex = 0;
-            for(Level__c loyaltyLevelRecord : [
+            for (Level__c loyaltyLevelRecord : [
                 SELECT Id
                 FROM Level__c
                 ORDER BY Donation_Threshold__c ASC
@@ -18,20 +32,19 @@ public without sharing class LoyaltyLevelService {
 
         return loyaltyLevelIdToIndex.get(loyaltyLevelId);
     }
-    
+
     @AuraEnabled
     public static List<LoyaltyLevel> getLoyaltyLevelDisplayInfo() {
         List<LoyaltyLevel> loyaltyLevels = new List<LoyaltyLevel>();
-        
-        // The hard coded filter on the name is a temporary workaround, this'll need to be reworked once the level records have been updated
-        for(Level__c queriedLevel : [SELECT Id, Name, Donation_Threshold__c, Description__c FROM Level__c WHERE Name NOT IN ('Normal Donor +15') ORDER BY Donation_Threshold__c ASC]) {
+
+        // The hard coded filter on the name is a temporary workaround.
+        // This will need to be reworked once the level records have been updated.
+        for (Level__c level : [SELECT Name, Donation_Threshold__c, Description__c FROM Level__c WHERE Name NOT IN ('Normal Donor +15') ORDER BY Donation_Threshold__c ASC]) {
             LoyaltyLevel loyaltyLevel = new LoyaltyLevel();
-
-            loyaltyLevel.levelId = queriedLevel.Id;
-            loyaltyLevel.levelName = queriedLevel.Name;
-            loyaltyLevel.levelThreshold = queriedLevel.Donation_Threshold__c;
-            loyaltyLevel.levelDescription = queriedLevel.Description__c;
-
+            loyaltyLevel.levelId = level.Id;
+            loyaltyLevel.levelName = level.Name;
+            loyaltyLevel.levelThreshold = level.Donation_Threshold__c;
+            loyaltyLevel.levelDescription = level.Description__c;
             loyaltyLevels.add(loyaltyLevel);
         }
 
@@ -51,4 +64,5 @@ public without sharing class LoyaltyLevelService {
         @AuraEnabled
         public Decimal levelThreshold;
     }
+
 }

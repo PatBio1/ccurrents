@@ -4,7 +4,7 @@
     <assignments>
         <name>Assign_User_Id_to_Recipient_Collection</name>
         <label>Assign User Id to Recipient Collection</label>
-        <locationX>534</locationX>
+        <locationX>798</locationX>
         <locationY>935</locationY>
         <assignmentItems>
             <assignToReference>Recipient_Id_Collection</assignToReference>
@@ -20,7 +20,7 @@
     <decisions>
         <name>Donor_Has_User_Record_Decision</name>
         <label>Donor Has User Record Decision</label>
-        <locationX>864</locationX>
+        <locationX>1304</locationX>
         <locationY>575</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -40,9 +40,31 @@
         </rules>
     </decisions>
     <decisions>
+        <name>Gets_Appointment_Reminders_Decision</name>
+        <label>Gets Appointment Reminders Decision</label>
+        <locationX>1238</locationX>
+        <locationY>1175</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Receives_Appointment_Reminders</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Donor_Record_Comm_Prefs.Enable_Appointment_Reminders__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Appointment_Reminder_Notification</targetReference>
+            </connector>
+            <label>Receives Appointment Reminders</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Has_Message_Type_Value_Decision</name>
         <label>Has Message Type Value Decision</label>
-        <locationX>1117</locationX>
+        <locationX>1689</locationX>
         <locationY>335</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -64,7 +86,7 @@
     <decisions>
         <name>Message_Handler_Type_Decision</name>
         <label>Message Handler Type Decision</label>
-        <locationX>534</locationX>
+        <locationX>798</locationX>
         <locationY>1055</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -128,6 +150,9 @@
                     <stringValue>Appointment Reminder</stringValue>
                 </rightValue>
             </conditions>
+            <connector>
+                <targetReference>Gets_Appointment_Reminders_Decision</targetReference>
+            </connector>
             <label>Appointment Reminder</label>
         </rules>
     </decisions>
@@ -157,7 +182,7 @@
     <recordLookups>
         <name>Get_Custom_Notification_Id</name>
         <label>Get Custom Notification Id</label>
-        <locationX>534</locationX>
+        <locationX>798</locationX>
         <locationY>695</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -178,7 +203,7 @@
     <recordLookups>
         <name>Get_Donor_Record_Comm_Prefs</name>
         <label>Get Donor Record Comm Prefs</label>
-        <locationX>534</locationX>
+        <locationX>798</locationX>
         <locationY>815</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -199,7 +224,7 @@
     <recordLookups>
         <name>Get_Donor_User_Id</name>
         <label>Get Donor User Id</label>
-        <locationX>864</locationX>
+        <locationX>1304</locationX>
         <locationY>455</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -218,7 +243,7 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
-        <locationX>991</locationX>
+        <locationX>1563</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Has_Message_Type_Value_Decision</targetReference>
@@ -228,6 +253,43 @@
         <triggerType>RecordAfterSave</triggerType>
     </start>
     <status>Draft</status>
+    <subflows>
+        <name>Appointment_Reminder_Notification</name>
+        <label>Appointment Reminder Notification</label>
+        <locationX>1106</locationX>
+        <locationY>1295</locationY>
+        <flowName>Appointment_Reminder</flowName>
+        <inputAssignments>
+            <name>Custom_Notification_Id_Input</name>
+            <value>
+                <elementReference>Get_Custom_Notification_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_Record_Input</name>
+            <value>
+                <elementReference>Get_Donor_Record_Comm_Prefs</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_User_Record_Input</name>
+            <value>
+                <elementReference>Get_Donor_User_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Message_Record_Input</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Recipient_Id_Collection_Input</name>
+            <value>
+                <elementReference>Recipient_Id_Collection</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
     <subflows>
         <name>Welcome_New_Donor_Notification</name>
         <label>Welcome New Donor Notification</label>

@@ -30,11 +30,6 @@
         </columns>
         <columns>
             <checkedByDefault>false</checkedByDefault>
-            <field>CampaignImage</field>
-            <table>Campaign</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
             <field>CampaignMemberRecordType</field>
             <table>Campaign</table>
         </columns>

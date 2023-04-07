@@ -36,4 +36,8 @@ public with sharing class Constants {
     public static final String SPE_ANALYSIS_TASK_SUBJECT = 'SPE Analysis';
     public static final String PHYSICAL_EXAM_TASK_SUBJECT = 'Physical Exam';
     public static final String FIRST_VISIT_CODE_TASK_SUBJECT = 'First Visit Code';
+
+    public static final String DEFAULT_CUSTOMER_SUPPORT_CASE_SUBJECT = 'Donor Mobile App Support Request';
+    public static final String DEFAULT_CUSTOMER_SUPPORT_CASE_ORIGIN = 'Donor Mobile App Submission';
+    public static final String DEFAULT_CUSTOMER_SUPPORT_CASE_REASON = 'Support Request';
 }

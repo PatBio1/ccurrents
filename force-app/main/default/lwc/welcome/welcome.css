@@ -1,1 +1,5 @@
 @import 'c/sharedCss';
+
+.legal-link {
+    display: block;
+}

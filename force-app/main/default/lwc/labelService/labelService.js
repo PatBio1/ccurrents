@@ -127,6 +127,10 @@ import welcomeToProesis from '@salesforce/label/c.Welcome_To_Proesis';
 import workingHours from '@salesforce/label/c.Working_Hours';
 import yourHealth from '@salesforce/label/c.Your_Health';
 import zipCode from '@salesforce/label/c.Zip_Code';
+import privacyPolicy from '@salesforce/label/c.Privacy_Policy';
+import privacyPolicyLink from '@salesforce/label/c.Privacy_Policy_Link';
+import termsOfService from '@salesforce/label/c.Terms_of_Service';
+import termsOfServiceLink from '@salesforce/label/c.Terms_of_Service_Link';
 
 const labels = {
     formatLabel: function (label, args) {
@@ -264,7 +268,11 @@ const labels = {
     welcomeToProesis,
     workingHours,
     yourHealth,
-    zipCode
+    zipCode,
+    privacyPolicy,
+    privacyPolicyLink,
+    termsOfService,
+    termsOfServiceLink
 };
 
 export default labels;

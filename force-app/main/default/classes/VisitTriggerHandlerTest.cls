@@ -378,4 +378,70 @@ public class VisitTriggerHandlerTest {
             }
         }
     }
+
+    @isTest static void testUpdateLastPreviousDonation() {
+        List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c ORDER BY Datetime__c DESC LIMIT 2];
+        Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        List<Account> targetDonors = [SELECT Id, PersonContactId FROM Account WHERE DonorId__c != NULL];
+        List<Visit__c> testVisits = new List<Visit__c>();
+
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            testVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = targetAppointments[0].Id,
+                Status__c = 'Complete',
+                Outcome__c = 'Donation'
+            ));
+        }
+        insert testVisits;
+
+        List<Visit__c> lastPreviousDonationVisits = new List<Visit__c>();
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            lastPreviousDonationVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = targetAppointments[1].Id,
+                Status__c = 'Complete',
+                Outcome__c = 'Donation'
+            ));
+        }
+
+        Test.startTest();
+        insert lastPreviousDonationVisits;
+        Test.stopTest();
+
+        // Check to make sure the last previous donation was updated on the visit's donor
+        for(Visit__c lastPreviousDonationVisit : [SELECT Id, Donor__c, Donor__r.Last_Previous_Donation__c FROM Visit__c WHERE Id IN :lastPreviousDonationVisits]) {
+            Assert.areEqual(lastPreviousDonationVisit.Id, lastPreviousDonationVisit.Donor__r.Last_Previous_Donation__c, 'The donor\'s last previous donation was not updated');
+        }
+    }
+
+    @isTest static void testNoUpdateLastPreviousDonation() {
+        List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c ORDER BY Datetime__c DESC LIMIT 2];
+        Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        List<Account> targetDonors = [SELECT Id, PersonContactId FROM Account WHERE DonorId__c != NULL];
+        List<Visit__c> testVisits = new List<Visit__c>();
+
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            testVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = targetAppointments[0].Id,
+                Status__c = 'Complete',
+                Outcome__c = 'Donation'
+            ));
+        }
+
+        Test.startTest();
+        insert testVisits;
+        Test.stopTest();
+
+        // Check to make sure Last Previous donation was not updated on the visit's donor
+        for(Visit__c testVisit : [SELECT Id, Donor__c, Donor__r.Last_Previous_Donation__c FROM Visit__c WHERE Id IN :testVisits]) {
+            Assert.isNull(testVisit.Donor__r.Last_Previous_Donation__c, 'The donor\'s last previous donation was updated');
+        }
+    }
 }

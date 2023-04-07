@@ -349,14 +349,19 @@ public with sharing class CenterSchedulerControllerTests {
         List<CenterScheduleController.RescheduleSlot> rescheduleSlots;
         DateTime currentDateTime = DateTime.newInstance(currentDate, Time.newInstance(0, 0, 0, 0));
 
+        User contextuser = TestUtil.createAdminUser();
+        
+
         Test.startTest();
-        rescheduleSlots = CenterScheduleController.getAvailableRescheduleAppointmentRange(
-            currentDateTime,
-            currentDateTime.addDays(1),
-            DateTime.newInstance(startDate, Time.newInstance(0, 0, 0, 0)),
-            DateTime.newInstance(endDate, Time.newInstance(0, 0, 0, 0)),
-            true
-        );
+        System.runAs(contextuser){
+            rescheduleSlots = CenterScheduleController.getAvailableRescheduleAppointmentRange(
+                currentDateTime,
+                currentDateTime.addDays(1),
+                DateTime.newInstance(startDate, Time.newInstance(0, 0, 0, 0)),
+                DateTime.newInstance(endDate, Time.newInstance(0, 0, 0, 0)),
+                true
+            );
+        }
         Test.stopTest();
 
         Assert.isNotNull(rescheduleSlots, 'The reschedule slots should not be null');
@@ -368,14 +373,18 @@ public with sharing class CenterSchedulerControllerTests {
         List<CenterScheduleController.RescheduleSlot> rescheduleSlots;
         DateTime currentDateTime = DateTime.newInstance(currentDate, Time.newInstance(0, 0, 0, 0));
 
+        User contextuser = TestUtil.createAdminUser();
+        
         Test.startTest();
-        rescheduleSlots = CenterScheduleController.getAvailableRescheduleAppointmentRange(
-            currentDateTime,
-            currentDateTime.addDays(1),
-            DateTime.newInstance(endDate, Time.newInstance(0, 0, 0, 0)),
-            DateTime.newInstance(startDate, Time.newInstance(0, 0, 0, 0)),
-            true
-        );
+        System.runAs(contextuser){
+            rescheduleSlots = CenterScheduleController.getAvailableRescheduleAppointmentRange(
+                currentDateTime,
+                currentDateTime.addDays(1),
+                DateTime.newInstance(endDate, Time.newInstance(0, 0, 0, 0)),
+                DateTime.newInstance(startDate, Time.newInstance(0, 0, 0, 0)),
+                true
+            );
+        }
         Test.stopTest();
 
         Assert.isNotNull(rescheduleSlots, 'The reschedule slots should not be null');

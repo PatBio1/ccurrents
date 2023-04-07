@@ -36,10 +36,10 @@ public with sharing class LoginControllerTest {
 
             System.assertEquals(true, verificationSent);
 
-            User updatedExperienceUser = [SELECT Verification_Code__c, Verification_Attempts__c FROM User WHERE Id = :experienceUser.Id];
+            Contact contact = [SELECT Verification_Code__c, Verification_Attempts__c FROM Contact WHERE Id = :experienceUser.ContactId];
 
-            System.assert(String.isNotBlank(updatedExperienceUser.Verification_Code__c));
-            System.assertEquals(0, updatedExperienceUser.Verification_Attempts__c);
+            System.assert(String.isNotBlank(contact.Verification_Code__c));
+            System.assertEquals(0, contact.Verification_Attempts__c);
         }
     }
 
@@ -76,12 +76,32 @@ public with sharing class LoginControllerTest {
         User experienceUser = TestUtil.createExperienceUser();
 
         System.runAs(TestUtil.createExperienceGuestUser()) {
-            experienceUser.Verification_Code__c = '123456';
-            update experienceUser;
+            Contact contact = new Contact();
+            contact.Id = experienceUser.ContactId;
+            contact.Verification_Code__c = '123456';
+            contact.Verification_Code_Time__c = DateTime.now();
+            update contact;
 
             String result = LoginController.verifyEmailCode(experienceUser.Email, '123456');
 
             System.assertEquals(Constants.VERIFICATION_RESULT_SUCCESS, result);
+        }
+    }
+
+    @isTest
+    static void testVerifyEmailCodeTimedOut() {
+        User experienceUser = TestUtil.createExperienceUser();
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Contact contact = new Contact();
+            contact.Id = experienceUser.ContactId;
+            contact.Verification_Code__c = '123456';
+            contact.Verification_Code_Time__c = DateTime.now().addMinutes(-LoginController.DEFAULT_VERIFICATION_TIMEOUT_MINUTES).addMinutes(-1);
+            update contact;
+
+            String result = LoginController.verifyEmailCode(experienceUser.Email, '123456');
+
+            System.assertEquals(Constants.VERIFICATION_RESULT_TIMED_OUT, result);
         }
     }
 
@@ -101,8 +121,10 @@ public with sharing class LoginControllerTest {
         User experienceUser = TestUtil.createExperienceUser();
 
         System.runAs(TestUtil.createExperienceGuestUser()) {
-            experienceUser.Verification_Code__c = '123456';
-            update experienceUser;
+            Contact contact = new Contact();
+            contact.Id = experienceUser.ContactId;
+            contact.Verification_Code__c = '123456';
+            update contact;
 
             String result = LoginController.verifyEmailCode(experienceUser.Email, '112333');
 
@@ -111,13 +133,32 @@ public with sharing class LoginControllerTest {
     }
 
     @isTest
+    static void testVerifyEmailCodeMismatchTooMany() {
+        User experienceUser = TestUtil.createExperienceUser();
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Contact contact = new Contact();
+            contact.Id = experienceUser.ContactId;
+            contact.Verification_Code__c = '123456';
+            contact.Verification_Attempts__c = (LoginController.MAX_VERIFICATION_ATTEMPTS - 1);
+            update contact;
+
+            String result = LoginController.verifyEmailCode(experienceUser.Email, '112333');
+
+            System.assertEquals(Constants.VERIFICATION_RESULT_TOO_MANY, result);
+        }
+    }
+
+    @isTest
     static void testVerifyEmailCodeAttemptsExhausted() {
         User experienceUser = TestUtil.createExperienceUser();
 
         System.runAs(TestUtil.createExperienceGuestUser()) {
-            experienceUser.Verification_Code__c = '123456';
-            experienceUser.Verification_Attempts__c = LoginController.MAX_VERIFICATION_ATTEMPTS;
-            update experienceUser;
+            Contact contact = new Contact();
+            contact.Id = experienceUser.ContactId;
+            contact.Verification_Code__c = '123456';
+            contact.Verification_Attempts__c = LoginController.MAX_VERIFICATION_ATTEMPTS;
+            update contact;
 
             String result = LoginController.verifyEmailCode(experienceUser.Email, '123456');
 
@@ -134,6 +175,43 @@ public with sharing class LoginControllerTest {
 
             try {
                 LoginController.verifyEmailCode('test@test.com', '123456');
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
+    static void testSetPassword() {
+        User experienceUser = TestUtil.createExperienceUser();
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean success = LoginController.setPassword(experienceUser.Username.substringBeforeLast(Constants.USERNAME_SUFFIX), 'Password1!');
+
+            System.assertEquals(true, success);
+        }
+    }
+
+    @isTest
+    static void testSetPasswordUsernameNotFound() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean success = LoginController.setPassword('test@test.com', 'Password1!');
+
+            System.assertEquals(false, success);
+        }
+    }
+
+    @isTest
+    static void testSetPasswordException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                LoginController.setPassword('test@test.com', 'password');
             } catch (Exception e) {
                 exceptionThrown = true;
             }

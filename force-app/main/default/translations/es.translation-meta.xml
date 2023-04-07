@@ -393,6 +393,10 @@
         <name>Set_Goal</name>
     </customLabels>
     <customLabels>
+        <label>Establecer nueva contraseña</label>
+        <name>Set_New_Password</name>
+    </customLabels>
+    <customLabels>
         <label>Establece tu contraseña</label>
         <name>Set_Your_Password</name>
     </customLabels>
@@ -491,6 +495,10 @@
     <customLabels>
         <label>Verificar correo electrónico</label>
         <name>Verify_Email</name>
+    </customLabels>
+    <customLabels>
+        <label>No podemos verificar su correo electrónico en este momento. Por favor, inténtelo de nuevo más tarde.</label>
+        <name>Verify_Email_Failed</name>
     </customLabels>
     <customLabels>
         <label>Le enviamos un código de verificación a su correo electrónico &lt;strong&gt;{0}&lt;/strong&gt;. Por favor verifique e ingrese el código a continuación.</label>

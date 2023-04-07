@@ -2,8 +2,12 @@ import { wire, LightningElement } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
 import login from '@salesforce/apex/LoginController.login';
 import sendVerificationEmail from '@salesforce/apex/LoginController.sendVerificationEmail';
-import util from 'c/util';
+import verifyEmailCode from '@salesforce/apex/LoginController.verifyEmailCode';
+import setPassword from '@salesforce/apex/LoginController.setPassword';
+import constants from 'c/constants';
 import labels from 'c/labelService';
+import util from 'c/util';
+
 
 const PAGE_LOGIN = 'Login';
 const PAGE_FORGOT_PASSWORD = 'Forgot Password';
@@ -12,16 +16,18 @@ const PAGE_SET_PASSWORD = 'Set Password';
 
 export default class Menu extends LightningElement {
 
-    minPasswordCharacters = 8;
-    maxPasswordCharacters = 16;
+    minPasswordCharacters = constants.minPasswordCharacters;
+    maxPasswordCharacters = constants.maxPasswordCharacters;
 
     labels = labels;
     loading = false;
     currentPage = PAGE_LOGIN;
     username;
-    password;
     email;
     emailCode;
+    emailVerificationsExhausted = false;
+    password;
+    passwordConfirm;
     startURL;
 
     @wire(CurrentPageReference)
@@ -67,12 +73,47 @@ export default class Menu extends LightningElement {
         );
     }
 
+    get passwordValid() {
+        return (
+            util.isNotBlank(this.password) &&
+            this.password.length >= this.minPasswordCharacters &&
+            util.isValidPassword(this.password) &&
+            this.password.trim() === this.passwordConfirm?.trim()
+        );
+    }
+
     onUsernameChange(event) {
         this.username = event.detail?.value;
     }
 
     onPasswordChange(event) {
         this.password = event.detail?.value;
+
+        this.onPasswordConfirmChange(event);
+
+        let passwordInput = this.template.querySelector('lightning-input[data-field="password"]');
+
+        if (!util.isValidPassword(this.password)) {
+            passwordInput.setCustomValidity(labels.passwordRequirements);
+        } else {
+            passwordInput.setCustomValidity('');
+        }
+
+        passwordInput.reportValidity();
+    }
+
+    onPasswordConfirmChange(event) {
+        this.passwordConfirm = event.detail?.value;
+
+        let passwordConfirmInput = this.template.querySelector('lightning-input[data-field="passwordConfirm"]');
+
+        if (this.password?.trim() !== this.passwordConfirm?.trim()) {
+            passwordConfirmInput.setCustomValidity(labels.passwordsDontMatch);
+        } else {
+            passwordConfirmInput.setCustomValidity('');
+        }
+
+        passwordConfirmInput.reportValidity();
     }
 
     onEmailChange(event) {
@@ -127,20 +168,63 @@ export default class Menu extends LightningElement {
 
         sendVerificationEmail(request).then(response => {
             console.log('sendVerificationEmail response', response);
+
+            this.currentPage = PAGE_VERIFY_EMAIL;
         }).catch((error) => {
             util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {
-this.currentPage = PAGE_VERIFY_EMAIL;
             this.loading = false;
         });
     }
 
     onVerifyEmailButtonClick() {
-        this.currentPage = PAGE_SET_PASSWORD;
+        this.loading = true;
+
+        const request = {
+            username: this.email,
+            code: this.emailCode
+        };
+
+        console.log('verifyEmailCode request', JSON.stringify(request));
+
+        verifyEmailCode(request).then(response => {
+            console.log('verifyEmailCode response', response);
+            const result = response.replaceAll('"', '');
+
+            if (result === 'Success') {
+                this.currentPage = PAGE_SET_PASSWORD;
+            } else if (result === 'Incorrect') {
+
+                util.showGuestToast(this, 'error', labels.incorrectCode, labels.incorrectCodeMessage);
+            } else {
+                this.emailVerificationsExhausted = true;
+            }
+        }).catch((error) => {
+            util.showGuestToast(this, 'error', labels.error, error);
+        }).finally(() => {
+            this.loading = false;
+        });
     }
 
     onSetPasswordButtonClick() {
-        this.currentPage = PAGE_LOGIN;
+        this.loading = true;
+
+        const request = {
+            username: this.email,
+            password: this.password
+        };
+
+        console.log('setPassword request', JSON.stringify(request));
+
+        setPassword(request).then(response => {
+            console.log('setPassword response', response);
+
+            this.currentPage = PAGE_LOGIN;
+        }).catch((error) => {
+            util.showGuestToast(this, 'error', labels.error, error);
+        }).finally(() => {
+            this.loading = false;
+        });
     }
 
 }

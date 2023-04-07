@@ -214,7 +214,7 @@
             </div>
         </template>
         <div if:true={emailVerificationsExhausted} class="slds-text-align_center">
-            <div class="slds-m-bottom_large" style="color: red;">We cannot verify your email at this time. Please try again later.</div>
+            <div class="slds-m-bottom_large" style="color: red;">{labels.verifyEmailFailed}</div>
 
             <lightning-button if:false={isSchedulerView} variant="base" label={labels.backToHomepage} icon-name="utility:chevronleft" icon-position="left" class="tertiary-button" onclick={onBackButtonClick}></lightning-button>
         </div>

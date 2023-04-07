@@ -65,15 +65,16 @@ public with sharing class TestUtil {
         User experienceUser;
 
         System.runAs(userWithRole) {
+            String experienceUserEmail = 'experience@' + UserInfo.getOrganizationId() + '.test.com';
+
             Account = new Account(
                 FirstName = 'Test',
                 LastName = 'Last',
+                PersonEmail = experienceUserEmail,
                 First_Visit_Code__c = ScheduleUtils.createFirstVisitCode(),
                 RecordTypeId = Constants.DONOR_RECORD_TYPE_ID
             );
             insert account;
-
-            String experienceUserEmail = 'experience@' + UserInfo.getOrganizationId() + '.test.com';
 
             experienceUser = new User(
                 FirstName = 'Experience',

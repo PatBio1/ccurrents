@@ -1,8 +1,8 @@
 public without sharing class VisitTriggerHelper {
-    public static void updateAppointmentDateTime(List<Visit__c> visitRecordsToUpdate) {
+    public static void updateAppointmentDateTime(List<Visit__c> visits) {
         Map<Id, List<Visit__c>> appointmentIdToVisitRecord = new Map<Id, List<Visit__c>>(); 
         
-        for(Visit__c targetVisit : visitRecordsToUpdate) {
+        for(Visit__c targetVisit : visits) {
             if (targetVisit.Appointment__c != null) {
                 List<Visit__c> existingVisits = appointmentIdToVisitRecord.get(targetVisit.Appointment__c);
                 if (existingVisits == null) {
@@ -272,6 +272,30 @@ public without sharing class VisitTriggerHelper {
 
                 update targetTasks;
             }
+        }
+    }
+
+    public static void updateLastPreviousDonation(List<Visit__c> visits) {
+        Set<Id> donorIds = new Set<Id>();
+        for(Visit__c visit : visits) {
+            donorIds.add(visit.Donor__c);
+        }
+
+        List<Contact> donorsToUpdate = new List<Contact>();
+        for(Contact donor : [SELECT Id, Last_Previous_Donation__c, (SELECT Id FROM Visits__r WHERE Status__c = 'Complete' AND Outcome__c = 'Donation' ORDER BY Appointment_Datetime__c DESC) FROM Contact WHERE Id IN :donorIds]) {
+            if (donor.Visits__r == null || donor.Visits__r.size() < 2) {
+                continue;
+            }
+
+            Visit__c lastPreviousDonationVisit = donor.Visits__r[1];
+            if (donor.Last_Previous_Donation__c == null || donor.Last_Previous_Donation__c != lastPreviousDonationVisit.Id) {
+                donor.Last_Previous_Donation__c = lastPreviousDonationVisit.Id;
+                donorsToUpdate.add(donor);
+            }
+        }
+
+        if (donorsToUpdate.size() > 0) {
+            update donorsToUpdate;
         }
     }
 }

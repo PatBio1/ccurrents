@@ -44,6 +44,29 @@
     </actionCalls>
     <apiVersion>57.0</apiVersion>
     <assignments>
+        <name>Assign_Message_Record_Updates</name>
+        <label>Assign Message Record Updates</label>
+        <locationX>176</locationX>
+        <locationY>878</locationY>
+        <assignmentItems>
+            <assignToReference>Message_Record_Update.Id</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Message_Record_Input.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message_Record_Update.Body__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Notification_Body</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Message_Record_Body</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
         <name>Build_Transaction_Line_Item</name>
         <label>Build Transaction Line Item</label>
         <locationX>176</locationX>
@@ -168,6 +191,9 @@
         <label>Create Txn Line Item</label>
         <locationX>176</locationX>
         <locationY>758</locationY>
+        <connector>
+            <targetReference>Assign_Message_Record_Updates</targetReference>
+        </connector>
         <inputReference>Transaction_Line_Item</inputReference>
     </recordCreates>
     <recordLookups>
@@ -191,6 +217,13 @@
         <object>Visit__c</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
+    <recordUpdates>
+        <name>Update_Message_Record_Body</name>
+        <label>Update Message Record Body</label>
+        <locationX>176</locationX>
+        <locationY>998</locationY>
+        <inputReference>Message_Record_Update</inputReference>
+    </recordUpdates>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
@@ -244,6 +277,14 @@ You will be receiving an extra {!Get_Visit_Record.Center_Donation_Type__r.Center
         <dataType>SObject</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Message__c</objectType>
+    </variables>
+    <variables>
+        <name>Message_Record_Update</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
         <isOutput>false</isOutput>
         <objectType>Message__c</objectType>
     </variables>

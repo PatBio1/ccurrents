@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Used_Center__c</fullName>
+    <description>Formula field to display the last used center from the person account.</description>
+    <externalId>false</externalId>
+    <formula>Contact.Last_Used_Center__r.Name</formula>
+    <label>Last Used Center</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

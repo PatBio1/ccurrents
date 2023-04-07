@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Device_Id__c</fullName>
+    <description>Unique device id for device type</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Unique device id for device type</inlineHelpText>
+    <label>Device Id</label>
+    <length>50</length>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

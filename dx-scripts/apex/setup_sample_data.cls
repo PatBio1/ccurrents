@@ -105,6 +105,27 @@ Account[] donors = new Account[]{
     
     insert businessHours;
     
+    // create BECS devices
+    Device__c[] devices = new Device__c[]{
+        new Device__c(
+            Type__c = 'BECS',
+            Device_Id__c = 'br549',
+            Center__c = centers[0].Id
+        ),
+        new Device__c(
+            Type__c = 'BECS',
+            Device_Id__c = '9876543210',
+            Center__c = centers[1].Id
+        ),
+        new Device__c(
+            Type__c = 'BECS',
+            Device_Id__c = '1234567890',
+            Center__c = centers[2].Id
+        )
+    };
+
+    insert devices;
+    
     Donation_Type__c donationType = new Donation_Type__c(
             Name = 'Normal Source Plasma'
     );

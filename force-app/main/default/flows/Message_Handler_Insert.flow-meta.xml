@@ -4,7 +4,7 @@
     <assignments>
         <name>Assign_User_Id_to_Recipient_Collection</name>
         <label>Assign User Id to Recipient Collection</label>
-        <locationX>798</locationX>
+        <locationX>842</locationX>
         <locationY>935</locationY>
         <assignmentItems>
             <assignToReference>Recipient_Id_Collection</assignToReference>
@@ -20,7 +20,7 @@
     <decisions>
         <name>Donor_Has_User_Record_Decision</name>
         <label>Donor Has User Record Decision</label>
-        <locationX>1304</locationX>
+        <locationX>1370</locationX>
         <locationY>575</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -64,7 +64,7 @@
     <decisions>
         <name>Has_Message_Type_Value_Decision</name>
         <label>Has Message Type Value Decision</label>
-        <locationX>1689</locationX>
+        <locationX>1766</locationX>
         <locationY>335</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -86,7 +86,7 @@
     <decisions>
         <name>Message_Handler_Type_Decision</name>
         <label>Message Handler Type Decision</label>
-        <locationX>798</locationX>
+        <locationX>842</locationX>
         <locationY>1055</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -114,6 +114,9 @@
                     <stringValue>Apology</stringValue>
                 </rightValue>
             </conditions>
+            <connector>
+                <targetReference>Apology_Notification_Transaction_Records</targetReference>
+            </connector>
             <label>Apology</label>
         </rules>
         <rules>
@@ -182,7 +185,7 @@
     <recordLookups>
         <name>Get_Custom_Notification_Id</name>
         <label>Get Custom Notification Id</label>
-        <locationX>798</locationX>
+        <locationX>842</locationX>
         <locationY>695</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -203,7 +206,7 @@
     <recordLookups>
         <name>Get_Donor_Record_Comm_Prefs</name>
         <label>Get Donor Record Comm Prefs</label>
-        <locationX>798</locationX>
+        <locationX>842</locationX>
         <locationY>815</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -224,7 +227,7 @@
     <recordLookups>
         <name>Get_Donor_User_Id</name>
         <label>Get Donor User Id</label>
-        <locationX>1304</locationX>
+        <locationX>1370</locationX>
         <locationY>455</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -243,7 +246,7 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
-        <locationX>1563</locationX>
+        <locationX>1640</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Has_Message_Type_Value_Decision</targetReference>
@@ -253,6 +256,43 @@
         <triggerType>RecordAfterSave</triggerType>
     </start>
     <status>Draft</status>
+    <subflows>
+        <name>Apology_Notification_Transaction_Records</name>
+        <label>Apology Notification and Transaction Records</label>
+        <locationX>314</locationX>
+        <locationY>1175</locationY>
+        <flowName>Apology_Notification_Transaction_Records</flowName>
+        <inputAssignments>
+            <name>Custom_Notification_Id_Input</name>
+            <value>
+                <elementReference>Get_Custom_Notification_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_Record_Input</name>
+            <value>
+                <elementReference>Get_Donor_Record_Comm_Prefs</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_User_Record_Input</name>
+            <value>
+                <elementReference>Get_Donor_User_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Message_Record_Input</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Recipient_Id_Collection_Input</name>
+            <value>
+                <elementReference>Recipient_Id_Collection</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
     <subflows>
         <name>Appointment_Reminder_Notification</name>
         <label>Appointment Reminder Notification</label>

@@ -125,6 +125,7 @@ export default class Menu extends LightningElement {
     }
 
     onForgotButtonClick() {
+        this.password = undefined;
         this.currentPage = PAGE_FORGOT_PASSWORD;
     }
 
@@ -154,6 +155,9 @@ export default class Menu extends LightningElement {
     }
 
     onBackButtonClick() {
+        this.password = undefined;
+        this.passwordConfirm = undefined;
+
         this.currentPage = PAGE_LOGIN;
     }
 
@@ -218,6 +222,9 @@ export default class Menu extends LightningElement {
 
         setPassword(request).then(response => {
             console.log('setPassword response', response);
+
+            this.password = undefined;
+            this.passwordConfirm = undefined;
 
             this.currentPage = PAGE_LOGIN;
         }).catch((error) => {

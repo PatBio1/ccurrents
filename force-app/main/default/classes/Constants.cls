@@ -19,6 +19,7 @@ public with sharing class Constants {
     public static final String VERIFICATION_RESULT_SUCCESS = 'Success';
     public static final String VERIFICATION_RESULT_INCORRECT = 'Incorrect';
     public static final String VERIFICATION_RESULT_TOO_MANY = 'Too Many';
+    public static final String VERIFICATION_RESULT_TIMED_OUT = 'Timed Out';
 
     public static final String VISIT_STATUS_CHECKEDIN = 'Checked-In';
 

@@ -687,6 +687,13 @@
         <value>Set a Goal</value>
     </labels>
     <labels>
+        <fullName>Set_New_Password</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Set New Password</shortDescription>
+        <value>Set New Password</value>
+    </labels>
+    <labels>
         <fullName>Set_Your_Password</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -860,6 +867,13 @@
         <protected>true</protected>
         <shortDescription>Verify Email</shortDescription>
         <value>Verify Email</value>
+    </labels>
+    <labels>
+        <fullName>Verify_Email_Failed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Verify Email Failed</shortDescription>
+        <value>We cannot verify your email at this time. Please try again later.</value>
     </labels>
     <labels>
         <fullName>Verify_Email_Instructions</fullName>

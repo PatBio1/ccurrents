@@ -93,6 +93,7 @@ import scheduled from '@salesforce/label/c.Scheduled';
 import scheduleYour1stAppointment from '@salesforce/label/c.Schedule_Your_1st_Appointment';
 import selectTimeSlot from '@salesforce/label/c.Select_Time_Slot';
 import setGoal from '@salesforce/label/c.Set_Goal';
+import setNewPassword from '@salesforce/label/c.Set_New_Password';
 import setYourPassword from '@salesforce/label/c.Set_Your_Password';
 import signUp from '@salesforce/label/c.Sign_Up';
 import skipForNow from '@salesforce/label/c.Skip_For_Now';
@@ -115,6 +116,7 @@ import updatesAndAppointments from '@salesforce/label/c.Updates_And_Appointments
 import uploadAnotherPhoto from '@salesforce/label/c.Upload_Another_Photo';
 import verifyCode from '@salesforce/label/c.Verify_Code';
 import verifyEmail from '@salesforce/label/c.Verify_Email';
+import verifyEmailFailed from '@salesforce/label/c.Verify_Email_Failed';
 import verifyEmailInstructions from '@salesforce/label/c.Verify_Email_Instructions';
 import verifyPhone from '@salesforce/label/c.Verify_Phone';
 import verifyPhoneInstructions from '@salesforce/label/c.Verify_Phone_Instructions';
@@ -229,6 +231,7 @@ const labels = {
     scheduleYour1stAppointment,
     selectTimeSlot,
     setGoal,
+    setNewPassword,
     setYourPassword,
     signUp,
     skipForNow,
@@ -251,6 +254,7 @@ const labels = {
     uploadAnotherPhoto,
     verifyCode,
     verifyEmail,
+    verifyEmailFailed,
     verifyEmailInstructions,
     verifyPhone,
     verifyPhoneInstructions,

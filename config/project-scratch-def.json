@@ -43,6 +43,9 @@
         "notificationsSettings": {
             "enableNotifications": true,
             "enableMobileAppPushNotifications": true
+        },
+        "userManagementSettings": {
+            "enableUserSelfDeactivate": true
         }
     }
 }

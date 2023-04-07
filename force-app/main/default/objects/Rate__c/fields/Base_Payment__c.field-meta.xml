@@ -4,7 +4,7 @@
     <description>The base amount per unit donation collected</description>
     <externalId>false</externalId>
     <inlineHelpText>The base amount per unit donation collected</inlineHelpText>
-    <label>Base Payment</label>
+    <label>Amount</label>
     <precision>18</precision>
     <required>false</required>
     <scale>0</scale>

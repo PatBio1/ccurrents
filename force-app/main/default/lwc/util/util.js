@@ -1,5 +1,8 @@
 import { NavigationMixin } from 'lightning/navigation';
 
+// At least 1 lowercase, 1 uppercase, 1 number and 1 special character.
+const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])");
+
 /**
  * Checks if a given value is null or undefined.
  * @param {any} value The given value to check against null or undefined.
@@ -103,4 +106,8 @@ export function logout(component) {
             actionName: 'logout'
         }
     });
+}
+
+export function isValidPassword(password) {
+    return passwordRegex.test(password);
 }

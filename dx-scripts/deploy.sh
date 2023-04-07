@@ -15,6 +15,7 @@ ALIAS=$1
 CHECKONLY=$2
 DEPLOYDIR=$3
 TESTLEVEL='RunLocalTests'
+# TESTLEVEL='NoTestRun'
 SPECIFIED_TESTS='ScheduleUtils_Test'
 
 if [ -z "$CHECKONLY" ]
@@ -38,5 +39,5 @@ sfdx force:mdapi:deploy $CHECKONLY -w -1 --deploydir $DEPLOYDIR -u $ALIAS --test
 
 
 sleep 5s
-
-sfdx force:mdapi:deploy:report -u $1
+# is this causing failures?
+# sfdx force:mdapi:deploy:report -u $1

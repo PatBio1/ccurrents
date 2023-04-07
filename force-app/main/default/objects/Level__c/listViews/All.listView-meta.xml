@@ -2,6 +2,7 @@
 <ListView xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>All</fullName>
     <columns>NAME</columns>
+    <columns>isVisible__c</columns>
     <columns>Donation_Threshold__c</columns>
     <columns>Threshold_Payment__c</columns>
     <columns>Threshold_Points__c</columns>

@@ -186,7 +186,9 @@ Account[] donors = new Account[]{
             Donation_Type__c = donationType.Id,
             Schedule_Rights__c = '2',
             Threshold_Payment__c = 200.00,
-            Threshold_Points__c = 0
+            Threshold_Points__c = 0,
+            isVisible__c = true,
+            isActive__c = true
     );
     upsert levelRoyal Name;
     
@@ -199,7 +201,9 @@ Account[] donors = new Account[]{
             Schedule_Rights__c = '1',
             Threshold_Payment__c = 100.00,
             Threshold_Points__c = 0,
-            Next_Level__c = levelRoyal.Id
+            Next_Level__c = levelRoyal.Id,
+            isVisible__c = true,
+            isActive__c = true
     );
     upsert levelVIP Name;
     
@@ -212,7 +216,9 @@ Account[] donors = new Account[]{
             Schedule_Rights__c = '1',
             Threshold_Payment__c = 50.00,
             Threshold_Points__c = 0,
-            Next_Level__c = levelVIP.Id
+            Next_Level__c = levelVIP.Id,
+            isVisible__c = true,
+            isActive__c = true
     );
     upsert levelSignature Name;
     
@@ -225,7 +231,8 @@ Account[] donors = new Account[]{
             Schedule_Rights__c = '0',
             Threshold_Payment__c = 15.00,
             Threshold_Points__c = 0,
-            Next_Level__c = levelSignature.Id
+            isVisible__c = false,
+            isActive__c = true
     );
     upsert levelNormal15 Name;
     
@@ -238,12 +245,14 @@ Account[] donors = new Account[]{
             Schedule_Rights__c = '0',
             Threshold_Payment__c = 0,
             Threshold_Points__c = 0,
-            Next_Level__c = levelNormal15.Id
+            Next_Level__c = levelSignature.Id,
+            isVisible__c = true,
+            isActive__c = true
     );
     upsert levelNormal Name;
     
     // Update Donors Loyalty Level
-    Level__c[] loyaltylevels = [select Id from Level__c where Donation_Type__c = :donationType.Id];
+    Level__c[] loyaltylevels = [select Id from Level__c where Donation_Type__c = :donationType.Id and isActive__c=true and isVisible__c=true];
     System.debug('loyaltylevels: ' + loyaltylevels.size());
     
     

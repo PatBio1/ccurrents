@@ -229,6 +229,11 @@
     <platformActionList>
         <actionListContext>Record</actionListContext>
         <platformActionListItems>
+            <actionName>Edit</actionName>
+            <actionType>StandardButton</actionType>
+            <sortOrder>0</sortOrder>
+        </platformActionListItems>
+        <platformActionListItems>
             <actionName>Account.Send_Broadcast_Action</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>1</sortOrder>
@@ -278,11 +283,6 @@
             <actionType>StandardButton</actionType>
             <sortOrder>10</sortOrder>
         </platformActionListItems>
-        <platformActionListItems>
-            <actionName>Edit</actionName>
-            <actionType>StandardButton</actionType>
-            <sortOrder>0</sortOrder>
-        </platformActionListItems>
     </platformActionList>
     <relatedLists>
         <fields>CONTACT.FULL_NAME</fields>
@@ -331,6 +331,15 @@
         <sortOrder>Desc</sortOrder>
     </relatedLists>
     <relatedLists>
+        <fields>NAME</fields>
+        <fields>Type__c</fields>
+        <fields>Device_Id__c</fields>
+        <fields>CREATED_DATE</fields>
+        <relatedList>Device__c.Center__c</relatedList>
+        <sortField>Device_Id__c</sortField>
+        <sortOrder>Asc</sortOrder>
+    </relatedLists>
+    <relatedLists>
         <relatedList>RelatedFileList</relatedList>
     </relatedLists>
     <relatedObjects>ParentId</relatedObjects>
@@ -340,7 +349,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h8N000001A9tz</masterLabel>
+        <masterLabel>00h8D000002Uuz4</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

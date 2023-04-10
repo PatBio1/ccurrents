@@ -196,7 +196,7 @@
             <targetReference>Get_Proesis_Mobile_Custom_Notification_Id</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <textTemplates>
         <name>Body_Text</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>

@@ -94,4 +94,11 @@ export default class Menu extends NavigationMixin(LightningElement) {
         util.navigateToPage(this, 'Profile__c');
     }
 
+    onPrivacyPolicySelect() {
+        window.open(this.labels.privacyPolicyLink);
+    }
+
+    onTermsOfServiceSelect() {
+        window.open(this.labels.termsOfServiceLink);
+    }
 }

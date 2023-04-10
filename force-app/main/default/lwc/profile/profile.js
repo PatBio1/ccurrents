@@ -2,6 +2,7 @@ import { api, track, wire, LightningElement } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { loadStyle } from 'lightning/platformResourceLoader';
+import constants from 'c/constants';
 import labels from 'c/labelService';
 import util from 'c/util';
 import upsertLead from '@salesforce/apex/ProfileController.upsertLead';
@@ -30,11 +31,8 @@ export default class Profile extends LightningElement {
 
     @api isSchedulerView = false;
 
-    minPasswordCharacters = 8;
-    maxPasswordCharacters = 16;
-
-    // At least 1 lowercase, 1 uppercase, 1 number and 1 special character.
-    passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])");
+    minPasswordCharacters = constants.minPasswordCharacters;
+    maxPasswordCharacters = constants.maxPasswordCharacters;
 
     labels = labels;
     loading = false;
@@ -201,7 +199,7 @@ export default class Profile extends LightningElement {
         return (
             util.isNotBlank(this.profile.password) &&
             this.profile.password.length >= this.minPasswordCharacters &&
-            this.passwordRegex.test(this.profile.password) &&
+            util.isValidPassword(this.profile.password) &&
             this.profile.password.trim() === this.profile.passwordConfirm?.trim()
         );
     }
@@ -237,7 +235,7 @@ export default class Profile extends LightningElement {
 
         let passwordInput = this.template.querySelector('lightning-input[data-field="password"]');
 
-        if (!this.passwordRegex.test(this.profile.password)) {
+        if (!util.isValidPassword(this.profile.password)) {
             passwordInput.setCustomValidity(labels.passwordRequirements);
         } else {
             passwordInput.setCustomValidity('');
@@ -397,7 +395,6 @@ export default class Profile extends LightningElement {
             console.log('sendVerificationEmail response', response);
             if (response !== true) {
                 this.resendEmailCodeEnabled = false;
-                console.log('out of attempts');
             }
         }).catch((error) => {
             util.showGuestToast(this, 'error', labels.error, error);

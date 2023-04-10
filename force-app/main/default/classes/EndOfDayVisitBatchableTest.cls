@@ -135,33 +135,31 @@ public with sharing class EndOfDayVisitBatchableTest {
 
     @IsTest
 	static void testEndOfDayVisitBatchable() {
+        Map<Id, String> visitIdToExpectedOutcome = new Map<Id, String>();
 
-		Test.startTest();
-
-		EndOfDayVisitBatchable.run();
-
-		Test.stopTest();
-
-        Visit__c [] visits = [SELECT Id, Status__c, Outcome__c, Appointment__r.Datetime__c FROM Visit__c ];
-
-        system.assertEquals(4,visits.size());
-    
-        
-        for(Visit__c v: visits){
-            if(v.Appointment__r.Datetime__c < now){
-
-                if(v.Status__c == 'Scheduled'){
-                    system.assertEquals('No Show', v.Outcome__c);
-                }
-
-                if(v.Status__c == 'Complete'){
-                    system.assertEquals('No Donation', v.Outcome__c);
-                }
-            }else{
-                system.assertEquals(null, v.Outcome__c);
+        for(Visit__c foundVisit : [SELECT Id, Status__c FROM Visit__c WHERE Appointment__r.Datetime__c < :now]) {
+            if (foundVisit.Status__c == 'Scheduled') {
+                visitIdToExpectedOutcome.put(foundVisit.Id, 'No Show');
+            } else if (foundVisit.Status__c == 'Checked-In') {
+                visitIdToExpectedOutcome.put(foundVisit.Id, 'No Donation');
             }
         }
 
+		Test.startTest();
+		EndOfDayVisitBatchable.run();
+		Test.stopTest();
+
+        Visit__c [] visits = [SELECT Id, Status__c, Outcome__c, Appointment__r.Datetime__c FROM Visit__c];
+        Assert.areEqual(4, visits.size());
+        
+        for(Visit__c v: visits) {
+            if (v.Appointment__r.Datetime__c < now) {
+                Assert.areEqual('Complete', v.Status__c);
+                Assert.areEqual(visitIdToExpectedOutcome.get(v.Id), v.Outcome__c);
+            } else {
+                Assert.isNull(v.Outcome__c);
+            }
+        }
 	}
 
     @IsTest

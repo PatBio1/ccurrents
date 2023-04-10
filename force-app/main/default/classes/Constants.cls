@@ -19,6 +19,7 @@ public with sharing class Constants {
     public static final String VERIFICATION_RESULT_SUCCESS = 'Success';
     public static final String VERIFICATION_RESULT_INCORRECT = 'Incorrect';
     public static final String VERIFICATION_RESULT_TOO_MANY = 'Too Many';
+    public static final String VERIFICATION_RESULT_TIMED_OUT = 'Timed Out';
 
     public static final String VISIT_STATUS_CHECKEDIN = 'Checked-In';
 
@@ -35,4 +36,8 @@ public with sharing class Constants {
     public static final String SPE_ANALYSIS_TASK_SUBJECT = 'SPE Analysis';
     public static final String PHYSICAL_EXAM_TASK_SUBJECT = 'Physical Exam';
     public static final String FIRST_VISIT_CODE_TASK_SUBJECT = 'First Visit Code';
+
+    public static final String DEFAULT_CUSTOMER_SUPPORT_CASE_SUBJECT = 'Donor Mobile App Support Request';
+    public static final String DEFAULT_CUSTOMER_SUPPORT_CASE_ORIGIN = 'Donor Mobile App Submission';
+    public static final String DEFAULT_CUSTOMER_SUPPORT_CASE_REASON = 'Support Request';
 }

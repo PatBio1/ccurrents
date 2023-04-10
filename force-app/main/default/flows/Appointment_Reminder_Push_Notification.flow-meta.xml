@@ -548,7 +548,7 @@
             <targetReference>Date_is_Past_Decision</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <textTemplates>
         <name>Appointment_Reminder_Text</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>

@@ -20,10 +20,13 @@
                 {labels.plasmaDonationSavesLives}
             </div>
 
-            <div>
+            <div class="slds-m-bottom--x-large">
                 <button class="slds-button slds-button_brand slds-button_stretch primary-button slds-m-bottom_medium" onclick={onJoinUsButtonClick}>{labels.joinUs}</button>
                 <lightning-button label={labels.alreadyHaveAnAccount} stretch="true" class="secondary-button" onclick={onLoginButtonClick}></lightning-button>
             </div>
+
+            <a class="slds-m-bottom--small legal-link" href={labels.privacyPolicyLink} target="_blank">{labels.privacyPolicy}</a>
+            <a class="legal-link" href={labels.termsOfServiceLink} target="_blank">{labels.termsOfService}</a>
         </div>
     </div>
 

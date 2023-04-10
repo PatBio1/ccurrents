@@ -13,7 +13,12 @@ const visitStatusToDisplayClass = new Map([
     ["Complete", "status-completed"]
 ]);
 
+const minPasswordCharacters = 8;
+const maxPasswordCharacters = 16;
+
 export {
     visitOutcomeToDisplayClass,
-    visitStatusToDisplayClass
+    visitStatusToDisplayClass,
+    minPasswordCharacters,
+    maxPasswordCharacters
 }

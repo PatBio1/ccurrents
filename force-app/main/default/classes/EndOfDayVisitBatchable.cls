@@ -45,6 +45,7 @@ public without sharing class EndOfDayVisitBatchable implements Database.Batchabl
     public void process_visits(List<Visit__c> visits) {
         for(Visit__c visit: visits){
             if(visit.Status__c == 'Scheduled'){
+                visit.Status__c = 'Complete';
                 visit.Outcome__c = 'No Show';
             }else if(visit.Status__c == 'Checked-In'){
                 visit.Status__c = 'Complete';

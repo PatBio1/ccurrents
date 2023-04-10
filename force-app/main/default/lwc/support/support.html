@@ -22,14 +22,14 @@
             <button if:false={messageValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.submit}</button>
         </div>
 
-        <div class="slds-m-bottom_small">
+        <div if:true={contactInformation} class="slds-m-bottom_small">
             <strong>{labels.phone}</strong><br/>
-            (800) 504-1337
+            {contactInformation.contactPhone}
         </div>
 
-        <div>
+        <div if:true={contactInformation}>
             <strong>{labels.email}</strong><br/>
-            info@proesisbio.com
+            {contactInformation.contactEmail}
         </div>
     </div>
 

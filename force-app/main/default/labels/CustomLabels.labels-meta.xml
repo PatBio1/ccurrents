@@ -952,4 +952,32 @@
         <shortDescription>Zip Code</shortDescription>
         <value>Zip Code</value>
     </labels>
+    <labels>
+        <fullName>Privacy_Policy</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Privacy Policy</shortDescription>
+        <value>Privacy Policy</value>
+    </labels>
+    <labels>
+        <fullName>Privacy_Policy_Link</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>https://proesisbio.com/privacy-policy</shortDescription>
+        <value>https://proesisbio.com/privacy-policy</value>
+    </labels>
+    <labels>
+        <fullName>Terms_of_Service</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Terms of Service</shortDescription>
+        <value>Terms of Service</value>
+    </labels>
+    <labels>
+        <fullName>Terms_of_Service_Link</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>https://proesisbio.com/privacy-policy</shortDescription>
+        <value>https://proesisbio.com/privacy-policy</value>
+    </labels>
 </CustomLabels>

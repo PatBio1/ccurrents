@@ -40,4 +40,4 @@ sfdx force:mdapi:deploy $CHECKONLY -w -1 --deploydir $DEPLOYDIR -u $ALIAS --test
 
 sleep 5s
 # is this causing failures?
-# sfdx force:mdapi:deploy:report -u $1
+sfdx force:mdapi:deploy:report -u $1

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payment_Method_Expiry_Warning_Days__c</fullName>
+    <description>Number of days before an alert is sent for a Payment Method about to expire</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Number of days before an alert is sent for a Payment Method about to expire</inlineHelpText>
+    <label>Payment Method Expiry Warning Days</label>
+    <precision>2</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

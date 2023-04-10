@@ -176,6 +176,6 @@
         <searchResultsAdditionalFields>Scope__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Source__c</searchResultsAdditionalFields>
     </searchLayouts>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>Private</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>

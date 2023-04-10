@@ -172,6 +172,6 @@
         <searchResultsAdditionalFields>Visit__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Viewed_Datetime__c</searchResultsAdditionalFields>
     </searchLayouts>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>Private</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>

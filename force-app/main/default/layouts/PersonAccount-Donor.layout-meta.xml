@@ -40,6 +40,10 @@
                 <behavior>Edit</behavior>
                 <field>First_Visit_Code__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Valid_Payment_Methods__pc</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

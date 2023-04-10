@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>isDefault__c</fullName>
-    <defaultValue>true</defaultValue>
+    <fullName>Replace_Card__c</fullName>
     <externalId>false</externalId>
-    <label>is Default</label>
+    <formula>Days_Until_Expiration__c &lt; $Setup.Proesis_Settings__c.Payment_Method_Expiry_Warning_Days__c</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Replace Card?</label>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Checkbox</type>

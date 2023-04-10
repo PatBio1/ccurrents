@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Valid_Payment_Methods__c</fullName>
+    <description>The number of valid Payment Methods for this Donor</description>
+    <externalId>false</externalId>
+    <inlineHelpText>The number of valid Payment Methods for this Donor</inlineHelpText>
+    <label>Valid Payment Methods</label>
+    <summaryFilterItems>
+        <field>Payment_Method__c.Is_Active__c</field>
+        <operation>equals</operation>
+        <value>True</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>Payment_Method__c.is_Expired__c</field>
+        <operation>equals</operation>
+        <value>False</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Payment_Method__c.Donor__c</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <type>Summary</type>
+</CustomField>

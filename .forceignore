@@ -1,6 +1,6 @@
 **/jsconfig.json
 
 **/.eslintrc.json
-
+**/notificationTypeConfig/**
 # **/connectedApps/**
 # **/profiles/**

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <columns>
+        <field>FK_$Visit__c.Appointment_Datetime__c</field>
+    </columns>
+    <columns>
+        <field>Transaction__c.Service__c</field>
+    </columns>
+    <columns>
+        <field>Transaction__c.Status__c</field>
+    </columns>
+    <columns>
+        <field>FK_$Visit__c.Outcome__c</field>
+    </columns>
+    <columns>
+        <field>FK_$Visit__c.Center_Donation_Type__c</field>
+    </columns>
+    <customDetailFormulas>
+        <calculatedFormula>(HOUR(TIMEVALUE(FK_Visit__c.Appointment_Datetime__c)) * 60) + MINUTE(TIMEVALUE(FK_Visit__c.Appointment_Datetime__c))</calculatedFormula>
+        <dataType>Double</dataType>
+        <description>VisitTimeSlot</description>
+        <developerName>CDF1</developerName>
+        <label>VisitTimeSlot</label>
+        <scale>0</scale>
+    </customDetailFormulas>
+    <description>Appointment Time by Loyalty Type (New, Norm, 1, 2, 3) - Sum of Donors grouped by Center, Loyalty Type, and Visit slot</description>
+    <filter>
+        <criteriaItems>
+            <column>CUST_CREATED_DATE</column>
+            <columnToColumn>false</columnToColumn>
+            <isUnlocked>true</isUnlocked>
+            <operator>equals</operator>
+            <value>LAST_90_DAYS</value>
+        </criteriaItems>
+        <language>en_US</language>
+    </filter>
+    <format>Summary</format>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>FK_$Visit__c.Center__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>CDF1</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
+        <field>Contact.Loyalty_Level__c</field>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <name>Appointment Time by Loyalty</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>ContactCustomEntity$Transaction__c@Transaction__c.Visit__c</reportType>
+    <scope>organization</scope>
+    <showDetails>false</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>LAST_ACTIVITY</dateColumn>
+        <interval>INTERVAL_CUSTOM</interval>
+    </timeFrameFilter>
+</Report>

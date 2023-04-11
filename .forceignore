@@ -2,5 +2,6 @@
 
 **/.eslintrc.json
 **/notificationTypeConfig/**
+**/settings/Case.settings-meta.xml
 # **/connectedApps/**
 # **/profiles/**

@@ -247,11 +247,11 @@
             <targetReference>Get_Visit_Record</targetReference>
         </connector>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
     <textTemplates>
         <name>Notification_Body</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>(Apology Email Text) plus: You will be receiving an extra {!Get_Visit_Record.Center_Donation_Type__r.Center__r.Apology_Campaign_Payment_Amount__c} for this donation.</text>
+        <text>We understand that waiting for an extended period of time can be frustrating. We apologize for any inconvenience. You will be receiving an extra {!Get_Visit_Record.Center_Donation_Type__r.Center__r.Apology_Campaign_Payment_Amount__c} for this donation.</text>
     </textTemplates>
     <textTemplates>
         <name>Notification_Title</name>

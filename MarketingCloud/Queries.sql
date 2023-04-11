@@ -295,3 +295,67 @@ ON v.Id = ar24.VisitId
 WHERE ar24.VisitId IS NULL AND
 v.Status__c = 'Scheduled' AND
 DATEDIFF(DAY, v.Appointment_Datetime__c, GETUTCDATE()) = 3
+
+-- SPE Reminder
+SELECT
+c.Id AS SubscriberKey,
+c.Email AS Email,
+c.FirstName AS FirstName,
+c.Last_SPE_Sample_Date__c AS LastSPESampleDate
+
+FROM Contact_Salesforce AS c
+
+LEFT JOIN
+(SELECT v.Donor__c
+FROM Visit__c_Salesforce AS v
+WHERE v.Appointment_Datetime__c > GETDATE()
+AND v.SPE_Analysis__c = 1)
+AS vis
+ON vis.Donor__c = c.Id
+
+LEFT JOIN
+(SELECT a.SubscriberKey
+FROM "SPE Reminder" AS a
+WHERE DATEDIFF(DAY, GETDATE(), a.DateAdded) < 28)
+AS apr
+ON apr.SubscriberKey = c.Id
+
+WHERE DATEDIFF(DAY, GETDATE(), DATEADD(YEAR, 1, c.Last_Physical_Exam_Date__c)) = 28 AND
+vis.Donor__c IS NULL AND
+apr.SubscriberKey IS NULL
+
+-- Reschedule Appointment
+SELECT v.Donor__c AS SubscriberKey,
+v.Id AS VisitId,
+v.Appointment_Datetime__c AS AppointmentDateTime,
+c.Email AS Email,
+c.FirstName AS FirstName,
+cent.Name AS CenterName
+
+FROM Visit__c_Salesforce as v
+
+LEFT JOIN
+(SELECT Id,
+Email,
+FirstName
+FROM Contact_Salesforce
+)
+AS c
+ON v.Donor__c = c.Id
+
+INNER JOIN
+(SELECT Id,
+Name
+FROM Account_Salesforce)
+AS cent
+ON v.Center__c = cent.Id
+
+LEFT JOIN
+(SELECT VisitId
+FROM "Reschedule Appointment"
+)
+AS ra
+ON v.Id = ra.VisitId
+
+WHERE ra.VisitId IS NULL AND
+v.Outcome__c = 'No Show'

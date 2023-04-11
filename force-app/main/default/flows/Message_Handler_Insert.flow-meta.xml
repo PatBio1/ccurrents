@@ -4,7 +4,7 @@
     <assignments>
         <name>Assign_User_Id_to_Recipient_Collection</name>
         <label>Assign User Id to Recipient Collection</label>
-        <locationX>842</locationX>
+        <locationX>974</locationX>
         <locationY>935</locationY>
         <assignmentItems>
             <assignToReference>Recipient_Id_Collection</assignToReference>
@@ -20,7 +20,7 @@
     <decisions>
         <name>Donor_Has_User_Record_Decision</name>
         <label>Donor Has User Record Decision</label>
-        <locationX>1370</locationX>
+        <locationX>1568</locationX>
         <locationY>575</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -42,7 +42,7 @@
     <decisions>
         <name>Gets_Appointment_Reminders_Decision</name>
         <label>Gets Appointment Reminders Decision</label>
-        <locationX>1238</locationX>
+        <locationX>974</locationX>
         <locationY>1175</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -64,7 +64,7 @@
     <decisions>
         <name>Has_Message_Type_Value_Decision</name>
         <label>Has Message Type Value Decision</label>
-        <locationX>1766</locationX>
+        <locationX>1997</locationX>
         <locationY>335</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -86,7 +86,7 @@
     <decisions>
         <name>Message_Handler_Type_Decision</name>
         <label>Message Handler Type Decision</label>
-        <locationX>842</locationX>
+        <locationX>974</locationX>
         <locationY>1055</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -120,18 +120,6 @@
             <label>Apology</label>
         </rules>
         <rules>
-            <name>Post_Donation_Satisfaction</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Message_Handler_Type__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Post Donation Satisfaction</stringValue>
-                </rightValue>
-            </conditions>
-            <label>Post Donation Satisfaction</label>
-        </rules>
-        <rules>
             <name>Annual_Physical</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
@@ -141,6 +129,9 @@
                     <stringValue>Annual Physical</stringValue>
                 </rightValue>
             </conditions>
+            <connector>
+                <targetReference>Annual_Physical_Reminder_Notification</targetReference>
+            </connector>
             <label>Annual Physical</label>
         </rules>
         <rules>
@@ -157,6 +148,36 @@
                 <targetReference>Gets_Appointment_Reminders_Decision</targetReference>
             </connector>
             <label>Appointment Reminder</label>
+        </rules>
+        <rules>
+            <name>SPE_Reminder</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Message_Handler_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>SPE Reminder</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>SPE_Reminder_Notification</targetReference>
+            </connector>
+            <label>SPE Reminder</label>
+        </rules>
+        <rules>
+            <name>Reschedule</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Message_Handler_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Reschedule</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Reschedule_Appointment</targetReference>
+            </connector>
+            <label>Reschedule</label>
         </rules>
     </decisions>
     <description>Handles actions needed for messages, primarily notifications, when Message records are inserted.</description>
@@ -185,7 +206,7 @@
     <recordLookups>
         <name>Get_Custom_Notification_Id</name>
         <label>Get Custom Notification Id</label>
-        <locationX>842</locationX>
+        <locationX>974</locationX>
         <locationY>695</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -206,7 +227,7 @@
     <recordLookups>
         <name>Get_Donor_Record_Comm_Prefs</name>
         <label>Get Donor Record Comm Prefs</label>
-        <locationX>842</locationX>
+        <locationX>974</locationX>
         <locationY>815</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -227,7 +248,7 @@
     <recordLookups>
         <name>Get_Donor_User_Id</name>
         <label>Get Donor User Id</label>
-        <locationX>1370</locationX>
+        <locationX>1568</locationX>
         <locationY>455</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
@@ -243,10 +264,14 @@
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>User</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>FirstName</queriedFields>
+        <queriedFields>LastName</queriedFields>
+        <queriedFields>Email</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
-        <locationX>1640</locationX>
+        <locationX>1871</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Has_Message_Type_Value_Decision</targetReference>
@@ -256,6 +281,43 @@
         <triggerType>RecordAfterSave</triggerType>
     </start>
     <status>Draft</status>
+    <subflows>
+        <name>Annual_Physical_Reminder_Notification</name>
+        <label>Annual Physical Reminder Notification</label>
+        <locationX>578</locationX>
+        <locationY>1175</locationY>
+        <flowName>Annual_Physical_Reminder_Notification</flowName>
+        <inputAssignments>
+            <name>Custom_Notification_Id_Input</name>
+            <value>
+                <elementReference>Get_Custom_Notification_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_Record_Input</name>
+            <value>
+                <elementReference>Get_Donor_Record_Comm_Prefs</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_User_Record_Input</name>
+            <value>
+                <elementReference>Get_Donor_User_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Message_Record_Input</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Recipient_Id_Collection_Input</name>
+            <value>
+                <elementReference>Recipient_Id_Collection</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
     <subflows>
         <name>Apology_Notification_Transaction_Records</name>
         <label>Apology Notification and Transaction Records</label>
@@ -296,9 +358,83 @@
     <subflows>
         <name>Appointment_Reminder_Notification</name>
         <label>Appointment Reminder Notification</label>
-        <locationX>1106</locationX>
+        <locationX>842</locationX>
         <locationY>1295</locationY>
         <flowName>Appointment_Reminder</flowName>
+        <inputAssignments>
+            <name>Custom_Notification_Id_Input</name>
+            <value>
+                <elementReference>Get_Custom_Notification_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_Record_Input</name>
+            <value>
+                <elementReference>Get_Donor_Record_Comm_Prefs</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_User_Record_Input</name>
+            <value>
+                <elementReference>Get_Donor_User_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Message_Record_Input</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Recipient_Id_Collection_Input</name>
+            <value>
+                <elementReference>Recipient_Id_Collection</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <name>Reschedule_Appointment</name>
+        <label>Reschedule Appointment</label>
+        <locationX>1634</locationX>
+        <locationY>1175</locationY>
+        <flowName>Reschedule_Appointment</flowName>
+        <inputAssignments>
+            <name>Custom_Notification_Id_Input</name>
+            <value>
+                <elementReference>Get_Custom_Notification_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_Record_Input</name>
+            <value>
+                <elementReference>Get_Donor_Record_Comm_Prefs</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_User_Record_Input</name>
+            <value>
+                <elementReference>Get_Donor_User_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Message_Record_Input</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Recipient_Id_Collection_Input</name>
+            <value>
+                <elementReference>Recipient_Id_Collection</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <name>SPE_Reminder_Notification</name>
+        <label>SPE Reminder Notification</label>
+        <locationX>1370</locationX>
+        <locationY>1175</locationY>
+        <flowName>SPE_Reminder_Notification</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
             <value>

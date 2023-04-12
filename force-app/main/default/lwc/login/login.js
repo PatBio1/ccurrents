@@ -226,6 +226,8 @@ export default class Menu extends LightningElement {
             this.password = undefined;
             this.passwordConfirm = undefined;
 
+            util.showGuestToast(this, 'success', labels.success, labels.passwordChanged);
+
             this.currentPage = PAGE_LOGIN;
         }).catch((error) => {
             util.showGuestToast(this, 'error', labels.error, error);

@@ -27,7 +27,7 @@ sfdx force:config:set defaultusername=$1
 
 #install the marketing cloud connect package (source has dependencies on this package)
 # commenting for now - will add back later when dependencies introduced into source
-sfdx package install --package MarketingCloud -w 10 --no-prompt 
+sfdx package install --package MarketingCloud -w 10 --no-prompt
 
 sfdx package install --package MobilePublisherIOS -w 10 --no-prompt
 

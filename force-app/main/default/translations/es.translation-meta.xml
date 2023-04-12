@@ -281,6 +281,10 @@
         <name>Password</name>
     </customLabels>
     <customLabels>
+        <label>Contraseña cambiada correctamente.</label>
+        <name>Password_Changed</name>
+    </customLabels>
+    <customLabels>
         <label>La contraseña debe constar de al menos 8 caracteres: al menos 1 minúscula, al menos 1 mayúscula, al menos 1 número y al menos 1 carácter especial.</label>
         <name>Password_Requirements</name>
     </customLabels>
@@ -431,6 +435,10 @@
     <customLabels>
         <label>Entregar</label>
         <name>Submit</name>
+    </customLabels>
+    <customLabels>
+        <label>Éxito</label>
+        <name>Success</name>
     </customLabels>
     <customLabels>
         <label>Sufijo</label>

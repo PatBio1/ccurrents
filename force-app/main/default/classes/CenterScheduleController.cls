@@ -152,30 +152,13 @@ public with sharing class CenterScheduleController {
 
     @AuraEnabled
     public static void addVisit(Id donorId, Id appointmentSlotId, Id centerId) {
-        Account donor = [SELECT PersonContactId, Loyalty_Level__pc FROM Account WHERE Id = :donorId LIMIT 1];
-        Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__pc);
-
-        Appointment__c targetSlot = [SELECT Id, Booked__c, Booked_Loyalty__c, Capacity_Loyalty__c FROM Appointment__c WHERE Id = :appointmentSlotId LIMIT 1];
-        if (loyaltyLevel > 0 && (targetSlot.Booked_Loyalty__c == null || targetSlot.Booked_Loyalty__c < targetSlot.Capacity_Loyalty__c)) {
-            if (targetSlot.Booked_Loyalty__c == null) {
-                targetSlot.Booked_Loyalty__c = 1;
-            } else {
-                targetSlot.Booked_Loyalty__c += 1;
-            }
-        } else {
-            targetSlot.Booked__c += 1;
-        }
-        update targetSlot;
-
-        Visit__c newVisit;
         try {
-            newVisit = new Visit__c(
-                Donor__c = donor.PersonContactId,
+            CoreSchedulerHandler.createVisit(new Visit__c(
+                Donor__c = [SELECT PersonContactId FROM Account WHERE Id = :donorId LIMIT 1]?.PersonContactId,
                 Center_Donation_Type__c = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :centerId LIMIT 1]?.Id,
                 Appointment__c = appointmentSlotId,
                 Status__c = 'Scheduled'
-            );
-            insert newVisit;
+            ));
         } catch(Exception addVisitException) {
             throw Util.createAuraHandledException(addVisitException);
         }
@@ -183,57 +166,7 @@ public with sharing class CenterScheduleController {
 
     @AuraEnabled
     public static void changeVisitAppointment(Id visitId, Id appointmentId){
-        if (appointmentId == null) {
-            return;
-        }
-
-        Visit__c visitDetails = [SELECT Id, Status__c, Center_Donation_Type__c, Appointment__c, Donor__r.Loyalty_Level__c FROM Visit__c WHERE Id = :visitId LIMIT 1];
-        Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(visitDetails.Donor__r.Loyalty_Level__c);
-        
-        List<Appointment__c> targetAppointments = [SELECT Id, Booked__c, Booked_Loyalty__c, Capacity_Loyalty__c FROM Appointment__c WHERE Id IN (:visitDetails.Appointment__c, :appointmentId)];
-        Appointment__c oldAppointment = (targetAppointments[0].Id == visitDetails.Appointment__c) ? targetAppointments[0] : targetAppointments[1];
-        Appointment__c newAppointment = (targetAppointments[0].Id == appointmentId) ? targetAppointments[0] : targetAppointments[1];
-
-        // Updating Slot Booked/Capacity
-        if (loyaltyLevel > 0 && oldAppointment.Booked_Loyalty__c != null && oldAppointment.Booked_Loyalty__c > 0) {
-            oldAppointment.Booked_Loyalty__c -= 1;
-        } else {
-            oldAppointment.Booked__c -= 1;
-        }
-
-        if (loyaltyLevel > 0 && (newAppointment.Booked_Loyalty__c == null || newAppointment.Booked_Loyalty__c < newAppointment.Capacity_Loyalty__c)) {
-            if (newAppointment.Booked_Loyalty__c == null) {
-                newAppointment.Booked_Loyalty__c = 1;
-            } else {
-                newAppointment.Booked_Loyalty__c += 1;
-            }
-        } else {
-            newAppointment.Booked__c += 1;
-        }
-        update targetAppointments;
-
-        // Create New Visit By Cloning Old Visit
-        Visit__c newVisit = visitDetails.clone(false, true, false, false);
-        newVisit.Appointment__c = appointmentId;
-        newVisit.Status__c = 'Scheduled';
-
-        insert newVisit;
-
-        // Query any Tasks associated with the old Visit, reassign them to the new Visit
-        List<Task> tasks = [SELECT Id FROM Task WHERE WhatId = :visitId];
-        if (tasks != null && tasks.size() > 0) {
-            for (Task task : tasks) {
-                task.WhatId = newVisit.Id;
-            }
-            update tasks;
-        }
-
-        // Change Old Visit to Complete/Rescheduled
-        try {
-            update new Visit__c(Id = visitId, Outcome__c = 'Rescheduled', Status__c = 'Complete');
-        } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
-        }
+        CoreSchedulerHandler.rescheduleVisit(new CoreSchedulerHandler.RescheduleRequest(visitId, appointmentId));
     }
 
     @AuraEnabled 

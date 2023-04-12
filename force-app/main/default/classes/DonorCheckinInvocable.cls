@@ -6,6 +6,8 @@ public without sharing class DonorCheckinInvocable {
     // NOTE - this assumes we'll receive a call for each unique checkin event at the Donor_CheckIn__e endpoint, but is bulkfied in case there is a need for processing these in larger batches. However, this method assumes only 1 check in per Donor Number - if multiple checkinis for the same donor are needed with this call, we'll need to refactor the method to handle this.
     @InvocableMethod(Label='Donor Checkin Visit Update' Description='Finds the visit related to this Donor Number and updates it to Checked-in Status with the time.' Category='Donor')
     public static void updateVisitStatus(List<List<Donor_CheckIn__e>> inputRecords) {
+        List<List<Donor_CheckIn__e>> validCheckinEvents = (List<List<Donor_CheckIn__e>>)DonorEventHelper.validateDonorAndVisitReferences(inputRecords);
+
         List<Donor_CheckIn__e> recordsToProcess = new List<Donor_CheckIn__e>();
         Map<String, Donor_CheckIn__e> donorNumberToPEs = new Map<String, Donor_CheckIn__e>();
         List<Datetime> dateTimesToProcess = new List<Datetime>();
@@ -14,7 +16,7 @@ public without sharing class DonorCheckinInvocable {
         Map<String, Visit__c> donorNumberToVisit = new Map<String, Visit__c>();
         List<Visit__c> visitsToUpdate = new List<Visit__c>();
 
-        for (List<Donor_CheckIn__e> recordList : inputRecords) {
+        for (List<Donor_CheckIn__e> recordList : validCheckinEvents) {
             for (Donor_CheckIn__e donorCheckIn : recordList) {
                 recordsToProcess.add(donorCheckIn);
                 donorNumberToPEs.put(donorCheckIn.Donor_Number__c, donorCheckIn);
@@ -44,29 +46,5 @@ public without sharing class DonorCheckinInvocable {
         if (!visitsToUpdate.isEmpty()) {
             update visitsToUpdate;
         }
-
-        // Find Donor Numbers that weren't matched to Visits and Contacts for Processing Exceptions (currently to ErrorLog__c records)
-        List<ErrorLog__c> errorEvents = new List<ErrorLog__c>();
-        for (String donorNumber : donorNumbersToQuery) {
-            if (donorNumberToVisit.get(donorNumber) == null) {
-                ErrorLog__c errorEvent = new ErrorLog__c();
-                errorEvent.Origin__c = 'DonorCheckinInvocable.updateVisitStatus';
-                errorEvent.ShortMessage__c = 'Donor Checkin Event Exception';
-                if (donorNumberToContact.get(donorNumber) == null) {
-                    errorEvent.ShortMessage__c = errorEvent.ShortMessage__c + ': No matching donor';
-                } else {
-                    errorEvent.ShortMessage__c = errorEvent.ShortMessage__c + ': No matching visit';
-                }
-                errorEvent.Type__c = Constants.ERRORLOG_TYPE_WARNING;
-                errorEvent.LongMessage__c = 'Platform Event Record Detail: ' + '/n' + String.valueOf(donorNumberToPEs.get(donorNumber));
-                errorEvents.add(errorEvent);
-            }
-        }
-
-        if (!errorEvents.isEmpty()) {
-            insert errorEvents;
-        }
-
     }
-
 }

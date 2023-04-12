@@ -10,7 +10,9 @@ public with sharing class DonorSelectorTest {
             Level__c testLevel2 = new Level__c(
                 Name = 'Level 2',
                 Description__c = 'This is test level 2',
-                Donation_Threshold__c = 20
+                Donation_Threshold__c = 20,
+                isActive__c = true,
+                isVisible__c = true
             );
             insert testLevel2;
 
@@ -18,7 +20,9 @@ public with sharing class DonorSelectorTest {
                 Name = 'Level 1',
                 Description__c = 'This is test level 1',
                 Donation_Threshold__c = 10,
-                Next_Level__c = testLevel2.Id
+                Next_Level__c = testLevel2.Id,
+                isActive__c = true,
+                isVisible__c = true
             );
             insert testLevel1;
             

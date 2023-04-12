@@ -33,47 +33,49 @@ public without sharing class SchedulerController {
         User userInfo = [SELECT Id, Contact.Soonest_Next_Visit__c FROM User WHERE Id = :UserInfo.getUserId()];
 
         try {
-            DateTime startTime = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 0, 0, 0);
-            DateTime endTime = startTime.addDays(1).addSeconds(-1);
-
-            List<Appointment__c> appointmentRecords = [
-                SELECT
-                    Datetime__c, Availability__c
-                FROM
-                    Appointment__c
-                WHERE
-                    Schedule__r.Center__c = :centerId
-                AND
-                    Datetime__c >= :startTime
-                AND
-                    Datetime__c >= :userInfo.Contact.Soonest_Next_Visit__c
-                AND
-                    Datetime__c <= :endTime
-                ORDER BY
-                    Datetime__c ASC
-            ];
-
-            DateTime elevenAM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 11, 0, 0);
-            DateTime twoPM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 14, 0, 0);
-
             List<AppointmentGroup> appointmentGroups = new List<AppointmentGroup>{
                 new AppointmentGroup('AM'),
                 new AppointmentGroup('Midday'),
                 new AppointmentGroup('PM')
             };
 
-            for (Appointment__c appointmentRecord : appointmentRecords) {
-                Appointment appointment = new Appointment();
-                appointment.id = appointmentRecord.Id;
-                appointment.name = appointmentRecord.Datetime__c.format('h:mm');
-                appointment.availability = (appointmentRecord.Availability__c == null ? 0 : appointmentRecord.Availability__c.intValue());
+            if (appointmentDate >= Date.today()) {
+                DateTime startTime = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 0, 0, 0);
+                DateTime endTime = startTime.addDays(1).addSeconds(-1);
 
-                if (appointmentRecord.Datetime__c < elevenAM) {
-                    appointmentGroups[0].appointments.add(appointment);
-                } else if (appointmentRecord.Datetime__c < twoPM) {
-                    appointmentGroups[1].appointments.add(appointment);
-                } else {
-                    appointmentGroups[2].appointments.add(appointment);
+                List<Appointment__c> appointmentRecords = [
+                    SELECT
+                        Datetime__c, Availability__c
+                    FROM
+                        Appointment__c
+                    WHERE
+                        Schedule__r.Center__c = :centerId
+                    AND 
+                        Datetime >= :userInfo.Contact.Soonest_Next_Visit__c
+                    AND
+                        Datetime__c >= :startTime
+                    AND
+                        Datetime__c <= :endTime
+                    ORDER BY
+                        Datetime__c ASC
+                ];
+
+                DateTime elevenAM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 11, 0, 0);
+                DateTime twoPM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 14, 0, 0);
+
+                for (Appointment__c appointmentRecord : appointmentRecords) {
+                    Appointment appointment = new Appointment();
+                    appointment.id = appointmentRecord.Id;
+                    appointment.name = appointmentRecord.Datetime__c.format('h:mm');
+                    appointment.availability = (appointmentRecord.Availability__c == null ? 0 : appointmentRecord.Availability__c.intValue());
+
+                    if (appointmentRecord.Datetime__c < elevenAM) {
+                        appointmentGroups[0].appointments.add(appointment);
+                    } else if (appointmentRecord.Datetime__c < twoPM) {
+                        appointmentGroups[1].appointments.add(appointment);
+                    } else {
+                        appointmentGroups[2].appointments.add(appointment);
+                    }
                 }
             }
 

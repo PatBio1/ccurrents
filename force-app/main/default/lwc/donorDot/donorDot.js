@@ -19,7 +19,11 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     popUpDirection;
 
     get donorLoyaltyLevel() {
-        return (this.donor.loyaltyTierName || "Normal Donor +15");
+        return (this.donor.loyaltyTierName);
+    }
+
+    get donorLoyaltyLevelDisplay() {
+        return (this.donorLoyaltyLevel) ? this.donorLoyaltyLevel : "No Loyalty";
     }
 
     get cantReschedule() {

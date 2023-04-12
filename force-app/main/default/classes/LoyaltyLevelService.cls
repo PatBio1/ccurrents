@@ -23,6 +23,7 @@ public without sharing class LoyaltyLevelService {
             for (Level__c loyaltyLevelRecord : [
                 SELECT Id
                 FROM Level__c
+                WHERE isActive__c = true 
                 ORDER BY Donation_Threshold__c ASC
             ]) {
                 loyaltyLevelIdToIndex.put(loyaltyLevelRecord.Id, loyaltyLevelIndex);
@@ -37,9 +38,7 @@ public without sharing class LoyaltyLevelService {
     public static List<LoyaltyLevel> getLoyaltyLevelDisplayInfo() {
         List<LoyaltyLevel> loyaltyLevels = new List<LoyaltyLevel>();
 
-        // The hard coded filter on the name is a temporary workaround.
-        // This will need to be reworked once the level records have been updated.
-        for (Level__c level : [SELECT Name, Donation_Threshold__c, Description__c FROM Level__c WHERE Name NOT IN ('Normal Donor +15') ORDER BY Donation_Threshold__c ASC]) {
+        for (Level__c level : [SELECT Name, Donation_Threshold__c, Description__c FROM Level__c WHERE isActive__c = true AND isVisible__c = true ORDER BY Donation_Threshold__c ASC]) {
             LoyaltyLevel loyaltyLevel = new LoyaltyLevel();
             loyaltyLevel.levelId = level.Id;
             loyaltyLevel.levelName = level.Name;
@@ -49,6 +48,29 @@ public without sharing class LoyaltyLevelService {
         }
 
         return loyaltyLevels;
+    }
+
+    @AuraEnabled
+    public static List<BadgeSetting> getLoyaltyBadgeDisplaySettings() {
+        // TODO: We may want to add a fileName field on the Level__c object to make this more flexible
+        Map<String, String> loyaltyTierNameToBadgeFileName = new Map<String, String> {
+            'Donor (Default)' => 'default',
+            'Normal Donor +15' => 'normal',
+            'Signature' => 'VIP',
+            'VIP' => 'royal',
+            'Royal' => 'signature'
+        };
+
+        List<BadgeSetting> badgeSettings = new List<BadgeSetting>();
+        for (Level__c level : [SELECT Name FROM Level__c WHERE isActive__c = true AND isVisible__c = true ORDER BY Donation_Threshold__c ASC]) {
+            BadgeSetting badgeSetting = new BadgeSetting();
+            badgeSetting.badgeName = level.Name;
+            badgeSetting.badgeFileName = loyaltyTierNameToBadgeFileName.get(level.Name);
+
+            badgeSettings.add(badgeSetting);
+        }
+
+        return badgeSettings;
     }
 
     public class LoyaltyLevel {
@@ -65,4 +87,11 @@ public without sharing class LoyaltyLevelService {
         public Decimal levelThreshold;
     }
 
+    public class BadgeSetting {
+        @AuraEnabled
+        public String badgeName;
+
+        @AuraEnabled
+        public String badgeFileName;
+    }
 }

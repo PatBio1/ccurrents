@@ -51,7 +51,7 @@ public without sharing class SchedulerController {
                     WHERE
                         Schedule__r.Center__c = :centerId
                     AND 
-                        Datetime >= :userInfo.Contact.Soonest_Next_Visit__c
+                        Datetime__c >= :userInfo.Contact.Soonest_Next_Visit__c
                     AND
                         Datetime__c >= :startTime
                     AND

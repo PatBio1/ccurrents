@@ -66,6 +66,7 @@ import nickname from '@salesforce/label/c.Nickname';
 import notifications from '@salesforce/label/c.Notifications';
 import noPaymentsYet from '@salesforce/label/c.No_Payments_Yet';
 import password from '@salesforce/label/c.Password';
+import passwordChanged from '@salesforce/label/c.Password_Changed';
 import passwordRequirements from '@salesforce/label/c.Password_Requirements';
 import passwordsDontMatch from '@salesforce/label/c.Passwords_Dont_Match';
 import passwordTooShort from '@salesforce/label/c.Password_Too_Short';
@@ -103,6 +104,7 @@ import state from '@salesforce/label/c.State';
 import streetAddress1 from '@salesforce/label/c.Street_Address_1';
 import streetAddress2 from '@salesforce/label/c.Street_Address_2';
 import submit from '@salesforce/label/c.Submit';
+import success from '@salesforce/label/c.Success';
 import suffix from '@salesforce/label/c.Suffix';
 import support from '@salesforce/label/c.Support';
 import supportInformation from '@salesforce/label/c.Support_Information';
@@ -208,6 +210,7 @@ const labels = {
     notifications,
     noPaymentsYet,
     password,
+    passwordChanged,
     passwordRequirements,
     passwordsDontMatch,
     passwordTooShort,
@@ -245,6 +248,7 @@ const labels = {
     streetAddress1,
     streetAddress2,
     submit,
+    success,
     suffix,
     support,
     supportInformation,

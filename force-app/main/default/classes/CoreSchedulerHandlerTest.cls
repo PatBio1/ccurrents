@@ -161,10 +161,10 @@ public class CoreSchedulerHandlerTest {
         List<Visit__c> createdVisits = [SELECT Id FROM Visit__c WHERE Appointment__c IN :bookedAppointmentsSlots];
         Assert.areEqual(testVisits.size(), createdVisits.size(), 'There should be the same amount of created visits as there were test visits.');
 
-        List<Appointment__c> updatedAppointments = [SELECT Id, Booked__c, Availability__c FROM Appointment__c WHERE Id IN :bookedAppointmentsSlots];
+        List<Appointment__c> updatedAppointments = [SELECT Id, Booked__c, Availability__c, Capacity__c FROM Appointment__c WHERE Id IN :bookedAppointmentsSlots];
         for (Appointment__c updatedAppointment : updatedAppointments) {
             Assert.areEqual(1, updatedAppointment.Booked__c, 'Appointment should be marked as booked.');
-            Assert.areEqual(BASE_CAPACITY - 1, updatedAppointment.Availability__c, 'Appointment should have ' + (BASE_CAPACITY - 1) + ' available slot.');
+            Assert.areEqual(updatedAppointment.Capacity__c - 1, updatedAppointment.Availability__c, 'Appointment should have ' + (updatedAppointment.Capacity__c - 1) + ' available slot.');
         }
     }
 }

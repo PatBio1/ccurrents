@@ -491,6 +491,13 @@
         <value>Password</value>
     </labels>
     <labels>
+        <fullName>Password_Changed</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Password Changed</shortDescription>
+        <value>Password successfully changed.</value>
+    </labels>
+    <labels>
         <fullName>Password_Requirements</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -755,6 +762,13 @@
         <protected>true</protected>
         <shortDescription>Submit</shortDescription>
         <value>Submit</value>
+    </labels>
+    <labels>
+        <fullName>Success</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Success</shortDescription>
+        <value>Success</value>
     </labels>
     <labels>
         <fullName>Suffix</fullName>

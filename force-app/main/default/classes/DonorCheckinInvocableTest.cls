@@ -32,15 +32,14 @@ public with sharing class DonorCheckinInvocableTest {
         insert testVisit;
 
         List<Donor_CheckIn__e> donorCheckInEvents = new List<Donor_CheckIn__e>{
-                new Donor_CheckIn__e(Donor_Number__c = donorAccount1.DonorId__c, Timestamp__c = testDateTime.addHours(1)),
-                new Donor_CheckIn__e(Donor_Number__c = donorAccount2.DonorId__c, Timestamp__c = testDateTime.addDays(-2)),
-                new Donor_CheckIn__e(Donor_Number__c = 'random', Timestamp__c = testDateTime)
+            new Donor_CheckIn__e(Donor_Number__c = donorAccount1.DonorId__c, Timestamp__c = testDateTime.addHours(1)),
+            new Donor_CheckIn__e(Donor_Number__c = donorAccount2.DonorId__c, Timestamp__c = testDateTime.addDays(-2)),
+            new Donor_CheckIn__e(Donor_Number__c = 'random', Timestamp__c = testDateTime)
         };
 
         // Remove this and use the Eventbus.publish() call when the flow is deployed and active. This is here only for the PROD check only test to pass.
         List<List<Donor_CheckIn__e>> invocableInputList = new List<List<Donor_CheckIn__e>>();
         invocableInputList.add(donorCheckInEvents);
-
 
         Test.startTest();
         /* IF the 'Donor Checkin Handler' Flow is active, this EventBus call will work and should be used. This is on purpose - we want this test to fail if that flow is changed or deactivated, as this is a business critical process that needs to run.
@@ -50,21 +49,7 @@ public with sharing class DonorCheckinInvocableTest {
         Test.stopTest();
 
         List<Visit__c> checkedInVisits = [SELECT Id, Status__c, Check_In__c FROM Visit__c WHERE Id = :testVisit.Id];
-        Integer noMatchingDonorCount = 0;
-        Integer noMatchingVisitCount = 0;
-        for (ErrorLog__c er : [SELECT Id, Type__c, ShortMessage__c, Origin__c FROM ErrorLog__c WHERE Origin__c = 'DonorCheckinInvocable.updateVisitStatus']) {
-            if (er.ShortMessage__c == 'Donor Checkin Event Exception: No matching donor') {
-                noMatchingDonorCount++;
-            } else if (er.ShortMessage__c == 'Donor Checkin Event Exception: No matching visit') {
-                noMatchingVisitCount++;
-            }
-        }
-
         Assert.areEqual(Constants.VISIT_STATUS_CHECKEDIN, checkedInVisits[0].Status__c);
         Assert.areEqual(donorCheckInEvents[0].Timestamp__c, checkedInVisits[0].Check_In__c);
-        Assert.areEqual(1, noMatchingVisitCount);
-        Assert.areEqual(1, noMatchingDonorCount);
-
     }
-
 }

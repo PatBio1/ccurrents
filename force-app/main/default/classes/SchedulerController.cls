@@ -30,6 +30,8 @@ public without sharing class SchedulerController {
 
     @AuraEnabled
     public static List<AppointmentGroup> getAppointments(Id centerId, Date appointmentDate) {
+        User userInfo = [SELECT Id, Contact.Soonest_Next_Visit__c FROM User WHERE Id = :UserInfo.getUserId()];
+
         try {
             List<AppointmentGroup> appointmentGroups = new List<AppointmentGroup>{
                 new AppointmentGroup('AM'),
@@ -48,6 +50,8 @@ public without sharing class SchedulerController {
                         Appointment__c
                     WHERE
                         Schedule__r.Center__c = :centerId
+                    AND 
+                        Datetime__c >= :userInfo.Contact.Soonest_Next_Visit__c
                     AND
                         Datetime__c >= :startTime
                     AND

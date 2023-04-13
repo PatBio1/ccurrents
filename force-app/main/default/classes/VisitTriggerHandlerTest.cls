@@ -153,8 +153,10 @@ public class VisitTriggerHandlerTest {
         insert testVisits;
         Test.stopTest();
 
-        for(Visit__c testVisit : [SELECT Id, isFirstVisit__c FROM Visit__c WHERE Id IN :testVisits]) {
+        for(Visit__c testVisit : [SELECT Id, isFirstVisit__c, Physical_Exam__c, SPE_Analysis__c FROM Visit__c WHERE Id IN :testVisits]) {
             Assert.isTrue(testVisit.isFirstVisit__c, 'The Is First Visit flag on the visit wasn\'t set to true');
+            Assert.isTrue(testVisit.Physical_Exam__c, 'The Is Physical Exam flag on the visit wasn\'t set to true');
+            Assert.isTrue(testVisit.SPE_Analysis__c, 'The Is SPE Analysis flag on the visit wasn\'t set to true');
         }
     }
 
@@ -175,8 +177,10 @@ public class VisitTriggerHandlerTest {
         }
         insert testVisits;
 
-        for(Visit__c firstVisit : [SELECT Id, isFirstVisit__c FROM Visit__c WHERE Id IN :testVisits]) {
+        for(Visit__c firstVisit : [SELECT Id, isFirstVisit__c, Physical_Exam__c, SPE_Analysis__c FROM Visit__c WHERE Id IN :testVisits]) {
             Assert.isTrue(firstVisit.isFirstVisit__c, 'The Is First Visit flag on the visit wasn\'t set to true');
+            Assert.isTrue(firstVisit.Physical_Exam__c, 'The Is Physical Exam flag on the visit wasn\'t set to true');
+            Assert.isTrue(firstVisit.SPE_Analysis__c, 'The Is SPE Analysis flag on the visit wasn\'t set to true');
         }
 
         List<Visit__c> testSecondVisits = new List<Visit__c>();
@@ -193,12 +197,16 @@ public class VisitTriggerHandlerTest {
         insert testSecondVisits;
         Test.stopTest();
 
-        for(Visit__c firstVisit : [SELECT Id, isFirstVisit__c FROM Visit__c WHERE Id IN :testVisits]) {
+        for(Visit__c firstVisit : [SELECT Id, isFirstVisit__c, Physical_Exam__c, SPE_Analysis__c FROM Visit__c WHERE Id IN :testVisits]) {
             Assert.isFalse(firstVisit.isFirstVisit__c, 'The Is First Visit flag on the visit wasn\'t set to false');
+            Assert.isFalse(firstVisit.Physical_Exam__c, 'The Is Physical Exam flag on the visit wasn\'t set to false');
+            Assert.isFalse(firstVisit.SPE_Analysis__c, 'The Is SPE Analysis flag on the visit wasn\'t set to false');
         }
 
-        for(Visit__c secondVisit : [SELECT Id, isFirstVisit__c FROM Visit__c WHERE Id IN :testSecondVisits]) {
+        for(Visit__c secondVisit : [SELECT Id, isFirstVisit__c, Physical_Exam__c, SPE_Analysis__c FROM Visit__c WHERE Id IN :testSecondVisits]) {
             Assert.isTrue(secondVisit.isFirstVisit__c, 'The Is First Visit flag on the visit wasn\'t set to true');
+            Assert.isTrue(secondVisit.Physical_Exam__c, 'The Is Physical Exam flag on the visit wasn\'t set to true');
+            Assert.isTrue(secondVisit.SPE_Analysis__c, 'The Is SPE Analysis flag on the visit wasn\'t set to true');
         }
     }
 
@@ -233,8 +241,10 @@ public class VisitTriggerHandlerTest {
         insert secondSetOfVisits;
         Test.stopTest();
 
-        for(Visit__c testVisit : [SELECT Id, isFirstVisit__c FROM Visit__c WHERE Id IN :secondSetOfVisits]) {
+        for(Visit__c testVisit : [SELECT Id, isFirstVisit__c, SPE_Analysis__c, Physical_Exam__c FROM Visit__c WHERE Id IN :secondSetOfVisits]) {
             Assert.isFalse(testVisit.isFirstVisit__c, 'The First Visit Flag shouldn\'t have been set to true');
+            Assert.isFalse(testVisit.Physical_Exam__c, 'The Physical Exam Flag shouldn\'t have been set to true');
+            Assert.isFalse(testVisit.SPE_Analysis__c, 'The SPE Analysis Flag shouldn\'t have been set to true');
         }
     }
 

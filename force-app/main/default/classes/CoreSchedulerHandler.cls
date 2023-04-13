@@ -17,8 +17,6 @@ public with sharing class CoreSchedulerHandler {
             }
             
             visitsToInsert.add(request.createNewVisit());
-            tasksToUpdate.addAll(request.reparentTasksToNewVisit());
-            visitsToUpdate.add(request.markOriginalVisitAsRescheduled());
         }
 
         if (appointmentSlotIdToRecord.size() > 0) {
@@ -27,6 +25,12 @@ public with sharing class CoreSchedulerHandler {
 
         if (visitsToInsert.size() > 0) {
             insert visitsToInsert;
+        }
+
+        // We need to insert the new visits before we can reparent the tasks
+        for(RescheduleRequest request : rescheduleBatchRequest.rescheduleRequests) {
+            tasksToUpdate.addAll(request.reparentTasksToNewVisit());
+            visitsToUpdate.add(request.markOriginalVisitAsRescheduled());
         }
 
         if (tasksToUpdate.size() > 0) {

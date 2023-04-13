@@ -112,6 +112,8 @@ public without sharing class VisitTriggerHelper {
                 Visit__c earliestVisit = donor.Visits__r[0];
                 if (!earliestVisit.isFirstVisit__c) {
                     earliestVisit.isFirstVisit__c = true;
+                    earliestVisit.Physical_Exam__c = true;
+                    earliestVisit.SPE_Analysis__c = true;
                     visitRecordsToUpdate.put(earliestVisit.Id, earliestVisit);
                 
 
@@ -126,7 +128,10 @@ public without sharing class VisitTriggerHelper {
 
                         hasAlreadyHadFirstVisitCreated = true;
                         originalFirstVisit = donor.Visits__r[i];
+
                         originalFirstVisit.isFirstVisit__c = false;
+                        originalFirstVisit.Physical_Exam__c = false;
+                        originalFirstVisit.SPE_Analysis__c = false;
 
                         visitRecordsToUpdate.put(donor.Visits__r[i].Id, donor.Visits__r[i]);
 

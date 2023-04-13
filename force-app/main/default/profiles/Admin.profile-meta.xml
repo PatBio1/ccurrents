@@ -32,6 +32,9 @@
         <layout>Campaign-Campaign Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
+        <layout>Case-Case Layout</layout>
+    </layoutAssignments>
+    <layoutAssignments>
         <layout>Center_Donation_Type__c-Center Donation Type Layout</layout>
     </layoutAssignments>
     <layoutAssignments>

@@ -80,6 +80,10 @@ export default class RescheduleVisitModal extends LightningModal {
     }
 
     async initSoonestNextVisitDate() {
+        if (!this.donorId) {
+            return;
+        }
+
         this.isLoading = true;
 
         let serverSoonestNextVisitDateTime = await getSoonestNextRescheduleVisitDate({ donorId: this.donorId });
@@ -164,26 +168,31 @@ export default class RescheduleVisitModal extends LightningModal {
     handleUpdateSearchDate(event) {
         let targetDateField = event.currentTarget.dataset.searchDate;
 
-        if (targetDateField === "Start") {
-            let targetNewStartDate = new Date(event.detail.value);
+        let dateValue = new Date(...event.detail.value.split('-'));
+        dateValue.setMonth(dateValue.getMonth() - 1); 
 
-            if (targetNewStartDate < this.minimumStartDate) {
+        if (targetDateField === "Start") {
+            dateValue.setHours(0);
+            dateValue.setMinutes(0);
+            dateValue.setSeconds(0);
+            dateValue.setMilliseconds(0);
+
+            if (dateValue < new Date(this.minimumStartDate.getFullYear(), this.minimumStartDate.getMonth(), this.minimumStartDate.getDate(), 0, 0, 0)) {
                 event.currentTarget.setCustomValidity(`Start date must be after or equal to ${this.minimumStartDate.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`);
                 return;
             } else {
                 event.currentTarget.setCustomValidity('');
             }
 
-            this.selectedStartDate = event.detail.value;
-            this.adjustedStartDate = new Date(this.selectedStartDate);
-
-            this.adjustedStartDate.setDate(this.adjustedStartDate.getDate() + 1);
-            this.adjustedStartDate.setHours(0);
-            this.adjustedStartDate.setMinutes(0);
-            this.adjustedStartDate.setSeconds(0);
-            this.adjustedStartDate.setMilliseconds(0);
+            this.selectedStartDate = dateValue.toISOString();
+            this.adjustedStartDate = dateValue;
         } else {
-            if (this.selectedStartDate && new Date(event.detail.value) < new Date(this.selectedStartDate)) {
+            dateValue.setHours(23);
+            dateValue.setMinutes(59);
+            dateValue.setSeconds(59);
+            dateValue.setMilliseconds(999);
+
+            if (this.adjustedStartDate && dateValue < this.adjustedStartDate) {
                 event.currentTarget.setCustomValidity(`End date must be after or equal to ${this.adjustedStartDate.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`);
                 return;
             } else {
@@ -191,13 +200,7 @@ export default class RescheduleVisitModal extends LightningModal {
             }
 
             this.selectedEndDate = event.detail.value;
-            this.adjustedEndDate = new Date(this.selectedEndDate);
-
-            this.adjustedEndDate.setDate(this.adjustedEndDate.getDate() + 1);
-            this.adjustedEndDate.setHours(23);
-            this.adjustedEndDate.setMinutes(59);
-            this.adjustedEndDate.setSeconds(59);
-            this.adjustedEndDate.setMilliseconds(999);
+            this.adjustedEndDate = dateValue;
         }
 
         if (this.selectedStartDate && this.selectedEndDate) {

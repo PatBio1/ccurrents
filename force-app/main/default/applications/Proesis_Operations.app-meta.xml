@@ -280,6 +280,7 @@
     <tabs>Message__c</tabs>
     <tabs>Transaction__c</tabs>
     <tabs>Visit__c</tabs>
+    <tabs>standard-Case</tabs>
     <tabs>standard-report</tabs>
     <tabs>standard-Dashboard</tabs>
     <tabs>standard-Feed</tabs>

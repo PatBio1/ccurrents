@@ -199,15 +199,30 @@ Account[] donors = new Account[]{
     
     // Create Levels for payment calculations
     // Has self reverential field to link the next level so have to make this verbose
-    Level__c levelRoyal = new Level__c (
-            Name = 'Royal',
-            Donation_Payment__c = 5.00,
-            Donation_Points__c = 200,
-            Donation_Threshold__c = 90,
+    Level__c levelRoyalPlus = new Level__c (
+            Name = 'Royal+',
+            Donation_Threshold__c = 75,
+            Donation_Payment__c = 0.00, // payment adjustment
+            Donation_Points__c = 500,
+            Threshold_Payment__c = 0.00,
+            Threshold_Points__c = 0,
             Donation_Type__c = donationType.Id,
             Schedule_Rights__c = '2',
+            isVisible__c = false,
+            isActive__c = true
+    );
+    upsert levelRoyalPlus Name;
+
+    Level__c levelRoyal = new Level__c (
+            Name = 'Royal',
+            Donation_Threshold__c = 50,
+            Donation_Payment__c = 0.00, // payment adjustment
+            Donation_Points__c = 300,
             Threshold_Payment__c = 200.00,
             Threshold_Points__c = 0,
+            Donation_Type__c = donationType.Id,
+            Schedule_Rights__c = '2',
+            Next_Level__c = levelRoyalPlus.Id,
             isVisible__c = true,
             isActive__c = true
     );
@@ -215,13 +230,13 @@ Account[] donors = new Account[]{
     
     Level__c levelVIP = new Level__c (
             Name = 'VIP',
-            Donation_Payment__c = 0.00,
-            Donation_Points__c = 160,
-            Donation_Threshold__c = 60,
-            Donation_Type__c = donationType.Id,
-            Schedule_Rights__c = '1',
+            Donation_Threshold__c = 25,
+            Donation_Payment__c = 0.00, // payment adjustment
+            Donation_Points__c = 200,
             Threshold_Payment__c = 100.00,
             Threshold_Points__c = 0,
+            Donation_Type__c = donationType.Id,
+            Schedule_Rights__c = '0',
             Next_Level__c = levelRoyal.Id,
             isVisible__c = true,
             isActive__c = true
@@ -230,47 +245,63 @@ Account[] donors = new Account[]{
     
     Level__c levelSignature = new Level__c (
             Name = 'Signature',
-            Donation_Payment__c = 0.00,
+            Donation_Threshold__c = 10,
+            Donation_Payment__c = 0.00, // payment adjustment
             Donation_Points__c = 100,
-            Donation_Threshold__c = 30,
-            Donation_Type__c = donationType.Id,
-            Schedule_Rights__c = '1',
             Threshold_Payment__c = 50.00,
             Threshold_Points__c = 0,
+            Donation_Type__c = donationType.Id,
+            Schedule_Rights__c = '0',
             Next_Level__c = levelVIP.Id,
             isVisible__c = true,
             isActive__c = true
     );
     upsert levelSignature Name;
     
-    Level__c levelNormal15 = new Level__c (
-            Name = 'Normal Donor +15',
-            Donation_Payment__c = 0.00,
-            Donation_Points__c = 0,
-            Donation_Threshold__c = 14,
+    Level__c levelNormal6 = new Level__c (
+            Name = 'Normal Donor 6',
+            Donation_Threshold__c = 6,
+            Donation_Payment__c = 0.00, // payment adjustment
+            Donation_Points__c = 50,
+            Threshold_Payment__c = 0.00,
+            Threshold_Points__c = 0,
             Donation_Type__c = donationType.Id,
             Schedule_Rights__c = '0',
-            Threshold_Payment__c = 15.00,
-            Threshold_Points__c = 0,
+            Next_Level__c = levelSignature.Id,
             isVisible__c = false,
             isActive__c = true
     );
-    upsert levelNormal15 Name;
+    upsert levelNormal6 Name;
     
     Level__c levelNormal = new Level__c (
-            Name = 'Donor (Default)',
-            Donation_Payment__c = -5.00,
-            Donation_Points__c = 0,
-            Donation_Threshold__c = 0,
+            Name = 'Normal Donor',
+            Donation_Threshold__c = 5,
+            Donation_Payment__c = 0.00, // payment adjustment
+            Donation_Points__c = 50,
+            Threshold_Payment__c = 15.00,
+            Threshold_Points__c = 0,
             Donation_Type__c = donationType.Id,
             Schedule_Rights__c = '0',
-            Threshold_Payment__c = 0,
-            Threshold_Points__c = 0,
-            Next_Level__c = levelSignature.Id,
+            Next_Level__c = levelNormal6.Id,
             isVisible__c = true,
             isActive__c = true
     );
     upsert levelNormal Name;
+
+    Level__c levelNew = new Level__c (
+        Name = 'New Donor',
+        Donation_Threshold__c = 0,
+        Donation_Payment__c = 50.00, // payment adjustment
+        Donation_Points__c = 50,
+        Threshold_Payment__c = 0.00,
+        Threshold_Points__c = 0,
+        Donation_Type__c = donationType.Id,
+        Schedule_Rights__c = '0',
+        Next_Level__c = levelNormal.Id,
+        isVisible__c = false,
+        isActive__c = true
+    );
+    upsert levelNew Name;
     
     // Update Donors Loyalty Level
     Level__c[] loyaltylevels = [select Id from Level__c where Donation_Type__c = :donationType.Id and isActive__c=true and isVisible__c=true];

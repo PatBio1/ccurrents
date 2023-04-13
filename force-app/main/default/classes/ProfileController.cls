@@ -7,6 +7,17 @@ public without sharing class ProfileController {
 
     @AuraEnabled
     public static Id upsertLead(Profile profile) {
+        if (!String.isEmpty(profile.email)) {
+            List<List<SObject>> matchingEmailSObjects = [FIND :profile.email IN EMAIL FIELDS RETURNING User, Lead];
+            if (matchingEmailSObjects != null && matchingEmailSObjects.size() > 0 && (matchingEmailSObjects[0].size() > 0 || matchingEmailSObjects[1].size() > 0)) {
+                List<Lead> matchingLeads = (List<Lead>)matchingEmailSObjects[1];
+
+                if ((matchingLeads.size() == 1 && matchingLeads[0].Id != profile.id) || matchingLeads.size() > 1) {
+                    throw new AuraHandledException('The provided email address is already in use.');
+                }
+            }
+        }
+
         try {
             Util.testExceptionHandling();
 

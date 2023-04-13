@@ -216,7 +216,7 @@ public with sharing class CenterScheduleController {
 
     @AuraEnabled
     public static DateTime getSoonestNextRescheduleVisitDate(Id donorId) {
-        return [SELECT Id, Soonest_Next_Visit__pc FROM Account WHERE Id = :donorId LIMIT 1]?.Soonest_Next_Visit__pc;
+        return [SELECT Id, Soonest_Next_Visit__c FROM Contact WHERE Id = :donorId LIMIT 1]?.Soonest_Next_Visit__c;
     }
 
     @AuraEnabled

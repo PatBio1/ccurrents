@@ -426,13 +426,15 @@ public with sharing class CenterSchedulerControllerTests {
 
     @IsTest
     static void testGetSoonestNextRescheduleVisitDate() {
-        Account targetDonor = [SELECT Id, Soonest_Next_Visit__pc FROM Account WHERE RecordType.DeveloperName = 'Donor' LIMIT 1];
+        Contact targetDonor = [SELECT Id, Soonest_Next_Visit__c FROM Contact WHERE Soonest_Next_Visit__c != null LIMIT 1];
         Datetime returnedSoonestNextVisitDate;
 
         Test.startTest();
-        returnedSoonestNextVisitDate = CenterScheduleController.getSoonestNextRescheduleVisitDate(targetDonor.Id);
+        System.runAs(TestUtil.createAdminUser()) {
+            returnedSoonestNextVisitDate = CenterScheduleController.getSoonestNextRescheduleVisitDate(targetDonor.Id);
+        }
         Test.stopTest();
 
-        Assert.areEqual(targetDonor.Soonest_Next_Visit__pc, returnedSoonestNextVisitDate, 'The soonest next visit date should be returned');
+        Assert.areEqual(targetDonor.Soonest_Next_Visit__c, returnedSoonestNextVisitDate, 'The soonest next visit date should be returned');
     }
 }

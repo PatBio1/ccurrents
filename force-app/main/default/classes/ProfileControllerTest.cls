@@ -27,6 +27,35 @@ public with sharing class ProfileControllerTest {
     }
 
     @isTest
+    static void testUpsertDuplicateLead() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.firstName = 'First';
+            profile.middleName = 'Middle';
+            profile.lastName = 'Last';
+            profile.email = 'test123@test.com';
+            ProfileController.upsertLead(profile);
+
+            profile = new ProfileController.Profile();
+            profile.firstName = 'First2';
+            profile.middleName = 'Middle2';
+            profile.lastName = 'Last2';
+            profile.email = 'test123@test.com';
+
+            Boolean wasExceptionThrown = false;
+            Test.startTest();
+            try {
+                ProfileController.upsertLead(profile);
+            } catch(AuraHandledException dupeExcepion) {
+                wasExceptionThrown = true;
+            }
+            Test.stopTest();
+
+            Assert.isTrue(wasExceptionThrown, 'Duplicate Lead Exception was not thrown');
+        }
+    }
+
+    @isTest
     static void testUpsertLeadException() {
         TestUtil.throwException = true;
 

@@ -39,13 +39,20 @@ public without sharing class DonorSelector {
 
     @AuraEnabled
     public static DonorRewardsInfo getDonorRewardsInfo() {
-        return new DonorRewardsInfo([
+        List<Contact> targetDonor = [
             SELECT Name, Balance_Currency__c, Balance_Points__c, Total_Visits_365d__c,
                 Loyalty_Level__r.Name, Loyalty_Level__r.Donation_Threshold__c, 
                 Loyalty_Level__r.Next_Level__r.Name, Loyalty_Level__r.Next_Level__r.Donation_Threshold__c
             FROM Contact 
-            WHERE Id IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()) LIMIT 1
-        ]);
+            WHERE Id IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId())
+            LIMIT 1
+        ];
+
+        if (targetDonor == null || targetDonor.isEmpty()) {
+            return null;
+        }
+
+        return new DonorRewardsInfo(targetDonor[0]);
     }
 
     public class DonorSearchResult {

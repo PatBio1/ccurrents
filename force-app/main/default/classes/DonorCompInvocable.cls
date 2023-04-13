@@ -5,10 +5,15 @@
 public without sharing class DonorCompInvocable {
     @InvocableMethod(Label='Handle Donor Comp Event' Description='Handles the Donor Comp Event by updating the Visit Status to Complete and creating a Donation Transaction' Category='Donor')
     public static void handleDonorCompEvent(List<List<Donor_Comp__e>> inputRecords) {
-        updateVisitStatusComplete(inputRecords);
-        handleCreateDonationTransactions(inputRecords);
+        // Donor Comp Events returned by this function have both a valid donor and visit reference
+        List<List<Donor_Comp__e>> validDonorEvents = (List<List<Donor_Comp__e>>)DonorEventHelper.validateDonorAndVisitReferences(inputRecords);
+
+        if (!validDonorEvents.isEmpty()) {
+            updateVisitStatusComplete(validDonorEvents);
+            handleCreateDonationTransactions(validDonorEvents);
+        }
     }
-    
+
     // NOTE (similar to Donor Checkin), this assumes we'll receive a call for each unique comp event at the Donor_Comp__e endpoint, but is bulkfied in case there is a need for processing these in larger batches. However, this method assumes only 1 check in per Donor Number - if multiple checkinis for the same donor are needed with this call, we'll need to refactor the method to handle this.
     public static void updateVisitStatusComplete(List<List<Donor_Comp__e>> inputRecords) {
         List<Donor_Comp__e> recordsToProcess = new List<Donor_Comp__e>();
@@ -34,12 +39,8 @@ public without sharing class DonorCompInvocable {
             // Assuming FDA 48 Hour rule mandates (at least) 24 hours between visits, check if this event is within 12 hours of the Visit (Appointment) Date Time
             if (comp.Timestamp__c <= visit.Appointment__r.Datetime__c.addHours(12) && comp.Timestamp__c >= visit.Appointment__r.Datetime__c.addHours(-12)) {
                 Visit__c visitUpdate = new Visit__c(Id = visit.Id);
-                visitUpdate.Status__c = Constants.VISIT_STATUS_COMPLETE;
-                visitUpdate.Donation_Complete__c = comp.Timestamp__c;
-                visitUpdate.Outcome__c = Constants.VISIT_OUTCOME_DONATION;
-                visitUpdate.Collection_Number__c = comp.Collection_Number__c;
-                visitUpdate.Donation_Volume__c = comp.Collection_Volume__c;
-                visitUpdate.Collection_Device_ID__c = comp.BECS_Device__c;
+                updateVisitToCompleteDonationStatus(visitUpdate, comp);
+
                 visitsToUpdate.add(visitUpdate);
                 donorNumberToVisit.put(comp.Donor_Number__c, visitUpdate);
             }
@@ -53,28 +54,17 @@ public without sharing class DonorCompInvocable {
         if (!visitsToUpdate.isEmpty()) {
             update visitsToUpdate;
         }
+    }
 
-        // Find Donor Numbers that weren't matched to Visits and Contacts for Processing Exceptions (currently to ErrorLog__c records)
-        List<ErrorLog__c> errorEvents = new List<ErrorLog__c>();
-        for (String donorNumber : donorNumbersToQuery) {
-            if (donorNumberToVisit.get(donorNumber) == null) {
-                ErrorLog__c errorEvent = new ErrorLog__c();
-                errorEvent.Origin__c = 'DonorCompInvocable.updateVisitStatusComplete';
-                errorEvent.ShortMessage__c = 'Donor Comp Event Exception';
-                if (donorNumberToContact.get(donorNumber) == null) {
-                    errorEvent.ShortMessage__c = errorEvent.ShortMessage__c + ': No matching donor';
-                } else {
-                    errorEvent.ShortMessage__c = errorEvent.ShortMessage__c + ': No matching visit';
-                }
-                errorEvent.Type__c = Constants.ERRORLOG_TYPE_WARNING;
-                errorEvent.LongMessage__c = 'Platform Event Record Detail: ' + '/n' + String.valueOf(donorNumberToPEs.get(donorNumber));
-                errorEvents.add(errorEvent);
-            }
-        }
+    private static Visit__c updateVisitToCompleteDonationStatus(Visit__c visit, Donor_Comp__e comp) {
+        visit.Status__c = Constants.VISIT_STATUS_COMPLETE;
+        visit.Donation_Complete__c = comp.Timestamp__c;
+        visit.Outcome__c = Constants.VISIT_OUTCOME_DONATION;
+        visit.Collection_Number__c = comp.Collection_Number__c;
+        visit.Donation_Volume__c = comp.Collection_Volume__c;
+        visit.Collection_Device_ID__c = comp.BECS_Device__c;
 
-        if (!errorEvents.isEmpty()) {
-            insert errorEvents;
-        }
+        return visit;
     }
 
     public static void handleCreateDonationTransactions(List<List<Donor_Comp__e>> inputRecords) {
@@ -99,6 +89,7 @@ public without sharing class DonorCompInvocable {
         List<Account> donorsToUpdate = new List<Account>();
         Map<Id, Transaction__c> donorIdToTransaction = new Map<Id, Transaction__c>();
         Map<Id, List<Txn_Line_Item__c>> donorIdToTxnLineItems = new Map<Id, List<Txn_Line_Item__c>>();
+        List<Level__c> lowestLoyaltyLevelByThreshold = [SELECT Id, Donation_Threshold__c, Threshold_Payment__c, Threshold_Points__c FROM Level__c WHERE Donation_Threshold__c > 0 AND isActive__c = true ORDER BY Donation_Threshold__c ASC LIMIT 1];
 
         for(Contact foundContact : [
             SELECT Id, AccountId, Loyalty_Level__c, Loyalty_Level__r.Donation_Points__c, Loyalty_Level__r.Donation_Payment__c,
@@ -111,23 +102,23 @@ public without sharing class DonorCompInvocable {
             FROM Contact 
             WHERE Account.DonorId__c IN :donorNumbersToQuery
         ]) {
-            if (foundContact.Visits__r == null || foundContact.Visits__r.size() == 0 || foundContact.Loyalty_Level__c == null) {
+            if (foundContact.Visits__r == null || foundContact.Visits__r.size() == 0) {
                 continue;
             }
 
-            // Create the parent transaction record
-            donorIdToTransaction.put(foundContact.Id, new Transaction__c(
-                Donor__c = foundContact.Id,
-                Visit__c = foundContact.Visits__r[0].Id,
-                Type__c = 'Credit'
-            ));
-
-            // Two Txn Line items need to be created, one for points, one for currency
             Visit__c targetVisitRecord = foundContact.Visits__r[0];
             Rate__c targetRateRecord = centerAndDonationTypeToRate.get(
                 targetVisitRecord.Center_Donation_Type__r.Center__c + '-' + targetVisitRecord.Center_Donation_Type__r.Donation_Type__c
             );
 
+            // Create the parent transaction record
+            donorIdToTransaction.put(foundContact.Id, new Transaction__c(
+                Donor__c = foundContact.Id,
+                Visit__c = targetVisitRecord.Id,
+                Type__c = 'Credit'
+            ));
+
+            // Two Txn Line items need to be created, one for points, one for currency
             List<Txn_Line_Item__c> txnLineItems = new List<Txn_Line_Item__c>();
             if (foundContact.Loyalty_Level__r.Donation_Points__c != null && foundContact.Loyalty_Level__r.Donation_Points__c > 0) {
                 txnLineItems.add(new Txn_Line_Item__c(
@@ -149,33 +140,43 @@ public without sharing class DonorCompInvocable {
             }
             donorIdToTxnLineItems.put(foundContact.Id, txnLineItems);
 
+            // Get the target promotional level, this should be the Next_Level__c on the current level
+            // If they don't have a current level reference (shouldn\'t happen), use the lowest level by non-zero threshold
+            Level__c targetPromotionLevel;
+
+            if (foundContact.Loyalty_Level__c != null && foundContact.Loyalty_Level__r.Next_Level__c != null) {
+                targetPromotionLevel = foundContact.Loyalty_Level__r.Next_Level__r;
+            } else if (lowestLoyaltyLevelByThreshold != null && lowestLoyaltyLevelByThreshold.size() > 0) {
+                targetPromotionLevel = lowestLoyaltyLevelByThreshold[0];
+            }
+
             // Check if the amount of donations is greater than or equal to the donation threshold
             // If it is and there is another level, promote the donor!
             if (
-                foundContact.Loyalty_Level__r.Next_Level__c != null && 
-                foundContact.Visits__r.size() == foundContact.Loyalty_Level__r.Next_Level__r.Donation_Threshold__c
+                foundContact.Loyalty_Level__c != null &&
+                targetPromotionLevel != null && 
+                foundContact.Visits__r.size() == targetPromotionLevel.Donation_Threshold__c
             ) {
-                // foundContact.Loyalty_Level__c = foundContact.Loyalty_Level__r.Next_Level__c;
-                donorsToUpdate.add(new Account(Id = foundContact.AccountId, Loyalty_Level__pc = foundContact.Loyalty_Level__r.Next_Level__c));
+                donorsToUpdate.add(new Account(Id = foundContact.AccountId, Loyalty_Level__pc = targetPromotionLevel.Id));
 
                 // Apply New Level Bonuses onto the line items
                 List<Txn_Line_Item__c> lineItems = donorIdToTxnLineItems.get(foundContact.Id);
 
-                if (foundContact.Loyalty_Level__r.Next_Level__r != null && foundContact.Loyalty_Level__r.Next_Level__r.Threshold_Points__c != null && foundContact.Loyalty_Level__r.Next_Level__r.Threshold_Points__c > 0) {
+                if (targetPromotionLevel.Threshold_Points__c != null && targetPromotionLevel.Threshold_Points__c > 0) {
                     lineItems.add(new Txn_Line_Item__c(
                         Item__c	= 'Threshold Points',
                         Quantity__c = 1,
                         Type__c = 'Points',
-                        Unit_Cost__c = foundContact.Loyalty_Level__r.Next_Level__r.Threshold_Points__c
+                        Unit_Cost__c = targetPromotionLevel.Threshold_Points__c
                     ));
                 }
 
-                if (foundContact.Loyalty_Level__r.Next_Level__r != null && foundContact.Loyalty_Level__r.Next_Level__r.Threshold_Payment__c != null && foundContact.Loyalty_Level__r.Next_Level__r.Threshold_Payment__c > 0) {
+                if (targetPromotionLevel.Threshold_Payment__c != null && targetPromotionLevel.Threshold_Payment__c > 0) {
                     lineItems.add(new Txn_Line_Item__c(
                         Item__c	= 'Threshold Payment',
                         Quantity__c = 1,
                         Type__c = 'Currency',
-                        Unit_Cost__c = foundContact.Loyalty_Level__r.Next_Level__r.Threshold_Payment__c
+                        Unit_Cost__c = targetPromotionLevel.Threshold_Payment__c
                     ));
                 }
             }

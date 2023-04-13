@@ -72,23 +72,12 @@ public with sharing class DonorCompInvocableTest {
         Test.stopTest();
 
         List<Visit__c> compVisits = [SELECT Id, Status__c, Donation_Complete__c, Outcome__c, Collection_Number__c, Donation_Volume__c FROM Visit__c WHERE Id = :testVisit.Id];
-        Integer noMatchingDonorCount = 0;
-        Integer noMatchingVisitCount = 0;
-        for (ErrorLog__c er : [SELECT Id, Type__c, ShortMessage__c, Origin__c FROM ErrorLog__c WHERE Origin__c = 'DonorCompInvocable.updateVisitStatusComplete']) {
-            if (er.ShortMessage__c == 'Donor Comp Event Exception: No matching donor') {
-                noMatchingDonorCount++;
-            } else if (er.ShortMessage__c == 'Donor Comp Event Exception: No matching visit') {
-                noMatchingVisitCount++;
-            }
-        }
 
         Assert.areEqual(Constants.VISIT_STATUS_COMPLETE, compVisits[0].Status__c);
         Assert.areEqual(donorCompEvents[0].Timestamp__c, compVisits[0].Donation_Complete__c);
         Assert.areEqual(Constants.VISIT_OUTCOME_DONATION, compVisits[0].Outcome__c);
         Assert.areEqual(donorCompEvents[0].Collection_Number__c, compVisits[0].Collection_Number__c);
         Assert.areEqual(donorCompEvents[0].Collection_Volume__c, compVisits[0].Donation_Volume__c);
-        Assert.areEqual(1, noMatchingVisitCount);
-        Assert.areEqual(1, noMatchingDonorCount);
     }
 
     @IsTest

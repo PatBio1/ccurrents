@@ -1,7 +1,8 @@
 @isTest
 public with sharing class SchedulerControllerTest {
+
     @TestSetup
-    static void makeData(){
+    static void setupData() {
         TestUtil.createAdminUser();
     }
 
@@ -9,6 +10,7 @@ public with sharing class SchedulerControllerTest {
     static void testGetCenter() {
         User experienceUser = TestUtil.createExperienceUser();
         User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
+
         System.runAs(adminUser) {
             Account center = TestUtil.createMiramarCenter();
             insert center;
@@ -30,29 +32,30 @@ public with sharing class SchedulerControllerTest {
     @isTest
     static void testGetAppointments() {
         Account center;
-        User experienceUser = TestUtil.createExperienceUser();
+
         User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
+
         System.runAs(adminUser) {
             center = TestUtil.createMiramarCenter();
             insert center;
 
             Schedule__c schedule = new Schedule__c(
                 Center__c = center.Id,
-                Begin_Date__c = Date.newInstance(2023, 1, 10).addDays(-10),
-                End_Date__c = Date.newInstance(2023, 1, 10).addDays(30)
+                Begin_Date__c = Date.today().addDays(-10),
+                End_Date__c = Date.today().addDays(30)
             );
             insert schedule;
 
             Appointment__c appointment = new Appointment__c();
             appointment.Schedule__c = schedule.Id;
-            appointment.Datetime__c = DateTime.newInstance(2023, 1, 10, 10, 0, 0);
+            appointment.Datetime__c = DateTime.newInstance(Date.today().year(), Date.today().month(), Date.today().day(), 10, 0, 0);
             appointment.Duration__c = 10;
             appointment.Capacity__c = 5;
             insert appointment;
         }
 
-        System.runAs(experienceUser) {
-            List<SchedulerController.AppointmentGroup> appointmentGroups = SchedulerController.getAppointments(center.Id, Date.newInstance(2023, 1, 10));
+        System.runAs(TestUtil.createExperienceUser()) {
+            List<SchedulerController.AppointmentGroup> appointmentGroups = SchedulerController.getAppointments(center.Id, Date.today());
 
             System.assertEquals(3, appointmentGroups.size());
             System.assertEquals(1, appointmentGroups[0].appointments.size());
@@ -62,9 +65,49 @@ public with sharing class SchedulerControllerTest {
     }
 
     @isTest
+    static void testGetAppointmentsInPast() {
+        Account center;
+
+        User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
+
+        Date yesterday = Date.today().addDays(-1);
+
+        System.runAs(adminUser) {
+            center = TestUtil.createMiramarCenter();
+            insert center;
+
+            Schedule__c schedule = new Schedule__c(
+                Center__c = center.Id,
+                Begin_Date__c = Date.today().addDays(-10),
+                End_Date__c = Date.today().addDays(30)
+            );
+            insert schedule;
+
+            Appointment__c appointment = new Appointment__c();
+            appointment.Schedule__c = schedule.Id;
+            appointment.Datetime__c = DateTime.newInstance(yesterday.year(), yesterday.month(), yesterday.day(), 10, 0, 0);
+            appointment.Duration__c = 10;
+            appointment.Capacity__c = 5;
+            insert appointment;
+        }
+
+        System.runAs(TestUtil.createExperienceUser()) {
+            List<SchedulerController.AppointmentGroup> appointmentGroups = SchedulerController.getAppointments(center.Id, yesterday);
+
+            System.assertEquals(3, appointmentGroups.size());
+
+            // Appoinments in the past should not be returned.
+            System.assertEquals(0, appointmentGroups[0].appointments.size());
+            System.assertEquals(0, appointmentGroups[1].appointments.size());
+            System.assertEquals(0, appointmentGroups[2].appointments.size());
+        }
+    }
+
+    @isTest
     static void testGetVisits() {
         User experienceUser = TestUtil.createExperienceUser();
         User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
+
         System.runAs(adminUser) {
             Account center = TestUtil.createMiramarCenter();
             insert center;
@@ -109,10 +152,10 @@ public with sharing class SchedulerControllerTest {
 
     @isTest
     static void testScheduleVisit() {
-        User experienceUser = TestUtil.createExperienceUser();
-
         Appointment__c appointment;
+
         User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
+
         System.runAs(adminUser) {
             Account center = TestUtil.createMiramarCenter();
             insert center;
@@ -141,24 +184,28 @@ public with sharing class SchedulerControllerTest {
             insert centerDonationType;
         }
 
-        System.runAs(experienceUser) {
-            Id visitId = SchedulerController.scheduleVisit(appointment.Id);   
+        System.runAs(TestUtil.createExperienceUser()) {
+            Id visitId = SchedulerController.scheduleVisit(appointment.Id);
         }
-        Task[] tasks = [SELECT ID, Subject, Description  FROM Task];
-        system.assertEquals(3, tasks.size()); // Expecting First Visit Code, SPE Exam, and Physcial Exam tasks
 
-        Set<String> expectedTasks = new Set<String> { Constants.SPE_ANALYSIS_TASK_SUBJECT, Constants.PHYSICAL_EXAM_TASK_SUBJECT, Constants.FIRST_VISIT_CODE_TASK_SUBJECT };
-        for(Task task : tasks) {
+        List<Task> tasks = [SELECT Subject, Description FROM Task];
+
+        System.assertEquals(3, tasks.size()); // Expecting First Visit Code, SPE Exam, and Physcial Exam tasks
+
+        Set<String> expectedTasks = new Set<String>{Constants.SPE_ANALYSIS_TASK_SUBJECT, Constants.PHYSICAL_EXAM_TASK_SUBJECT, Constants.FIRST_VISIT_CODE_TASK_SUBJECT};
+
+        for (Task task : tasks) {
             Assert.isTrue(expectedTasks.contains(task.Subject));
             expectedTasks.remove(task.Subject);
 
             if (task.Subject == Constants.FIRST_VISIT_CODE_TASK_SUBJECT) {
-                system.assertEquals(7, task.Description.length(), 'First Visit Code should be 7 characters long');
+                System.assertEquals(7, task.Description.length(), 'First Visit Code should be 7 characters long');
             }
         }
 
-        Appointment__c targetAppointment = [SELECT Id, Booked__c FROM Appointment__c WHERE Id = :appointment.Id LIMIT 1];
-        system.assertEquals(1, targetAppointment.Booked__c, 'Adding a visit should increment the booked value');
+        Appointment__c targetAppointment = [SELECT Booked__c FROM Appointment__c WHERE Id = :appointment.Id];
+
+        System.assertEquals(1, targetAppointment.Booked__c, 'Adding a visit should increment the booked value');
     }
 
 }

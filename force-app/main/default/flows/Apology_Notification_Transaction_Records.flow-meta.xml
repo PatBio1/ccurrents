@@ -4,12 +4,9 @@
         <name>Send_Notification</name>
         <label>Send Notification</label>
         <locationX>176</locationX>
-        <locationY>278</locationY>
+        <locationY>1118</locationY>
         <actionName>customNotificationAction</actionName>
         <actionType>customNotificationAction</actionType>
-        <connector>
-            <targetReference>Build_Transaction_Record</targetReference>
-        </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>customNotifTypeId</name>
@@ -36,9 +33,9 @@
             </value>
         </inputParameters>
         <inputParameters>
-            <name>targetId</name>
+            <name>targetPageRef</name>
             <value>
-                <elementReference>Message_Record_Input.Visit__c</elementReference>
+                <stringValue>{type:&apos;communitiesLandingPage&apos;,attributes:{name:&apos;Home&apos;}}</stringValue>
             </value>
         </inputParameters>
     </actionCalls>
@@ -47,7 +44,7 @@
         <name>Assign_Message_Record_Updates</name>
         <label>Assign Message Record Updates</label>
         <locationX>176</locationX>
-        <locationY>998</locationY>
+        <locationY>878</locationY>
         <assignmentItems>
             <assignToReference>Message_Record_Update.Id</assignToReference>
             <operator>Assign</operator>
@@ -70,7 +67,7 @@
         <name>Assign_New_Transaction_Record_Id</name>
         <label>Assign New Transaction Record Id</label>
         <locationX>176</locationX>
-        <locationY>638</locationY>
+        <locationY>518</locationY>
         <assignmentItems>
             <assignToReference>New_Transaction_Record_Id</assignToReference>
             <operator>Assign</operator>
@@ -86,7 +83,7 @@
         <name>Build_Transaction_Line_Item</name>
         <label>Build Transaction Line Item</label>
         <locationX>176</locationX>
-        <locationY>758</locationY>
+        <locationY>638</locationY>
         <assignmentItems>
             <assignToReference>Transaction_Line_Item.Transaction__c</assignToReference>
             <operator>Assign</operator>
@@ -137,7 +134,7 @@
         <name>Build_Transaction_Record</name>
         <label>Build Transaction Record</label>
         <locationX>176</locationX>
-        <locationY>398</locationY>
+        <locationY>278</locationY>
         <assignmentItems>
             <assignToReference>Transaction_Header.Visit__c</assignToReference>
             <operator>Assign</operator>
@@ -196,7 +193,7 @@
         <name>Create_Transaction_Header</name>
         <label>Create Transaction Header</label>
         <locationX>176</locationX>
-        <locationY>518</locationY>
+        <locationY>398</locationY>
         <connector>
             <targetReference>Assign_New_Transaction_Record_Id</targetReference>
         </connector>
@@ -206,7 +203,7 @@
         <name>Create_Txn_Line_Item</name>
         <label>Create Txn Line Item</label>
         <locationX>176</locationX>
-        <locationY>878</locationY>
+        <locationY>758</locationY>
         <connector>
             <targetReference>Assign_Message_Record_Updates</targetReference>
         </connector>
@@ -219,7 +216,7 @@
         <locationY>158</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Send_Notification</targetReference>
+            <targetReference>Build_Transaction_Record</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -237,7 +234,10 @@
         <name>Update_Message_Record_Body</name>
         <label>Update Message Record Body</label>
         <locationX>176</locationX>
-        <locationY>1118</locationY>
+        <locationY>998</locationY>
+        <connector>
+            <targetReference>Send_Notification</targetReference>
+        </connector>
         <inputReference>Message_Record_Update</inputReference>
     </recordUpdates>
     <start>

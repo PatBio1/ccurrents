@@ -174,7 +174,6 @@
         <searchResultsAdditionalFields>Appointment__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Donor__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Status__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields xsi:nil="true"></searchResultsAdditionalFields>
     </searchLayouts>
     <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>

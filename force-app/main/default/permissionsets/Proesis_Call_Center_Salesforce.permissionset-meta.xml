@@ -117,11 +117,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Account.NameLocal</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Account.NumberOfEmployees</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -562,11 +557,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Contact.FirstNameLocal</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Contact.First_Donation__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -617,11 +607,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Contact.LastNameLocal</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Contact.Last_Donation__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -663,11 +648,6 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Contact.MailingAddress</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Contact.MiddleNameLocal</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -932,11 +912,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Lead.CompanyLocal</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Lead.Description</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -997,11 +972,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Lead.FirstNameLocal</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Lead.GenderIdentity</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1032,11 +1002,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Lead.LastNameLocal</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Lead.LastTransferDate</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1048,11 +1013,6 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Lead.LeadSource</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Lead.MiddleNameLocal</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

@@ -286,27 +286,85 @@ public without sharing class VisitTriggerHelper {
         }
     }
 
-    public static void updateLastPreviousDonation(List<Visit__c> visits) {
+    public static void updateLastPreviousFields(List<Visit__c> visits) {
         Set<Id> donorIds = new Set<Id>();
         for(Visit__c visit : visits) {
             donorIds.add(visit.Donor__c);
         }
 
-        List<Contact> donorsToUpdate = new List<Contact>();
-        for(Contact donor : [SELECT Id, Last_Previous_Donation__c, (SELECT Id FROM Visits__r WHERE Status__c = 'Complete' AND Outcome__c = 'Donation' ORDER BY Appointment_Datetime__c DESC) FROM Contact WHERE Id IN :donorIds]) {
+        Map<Id, Contact> donorsToUpdate = new Map<Id, Contact>();
+        Map<Id, Boolean> donorIdToFoundLastDonation = new Map<Id, Boolean>(), donorIdToFoundLastPreviousDonation = new Map<Id, Boolean>();
+        Map<Id, Boolean> donorIdToFoundLastScheduled = new Map<Id, Boolean>(), donorIdToFoundLastPreviousScheduled = new Map<Id, Boolean>();
+
+        for(Contact donor : [
+            SELECT Id, Last_Previous_Donation__c, Last_Previous_Scheduled_Visit__c, (
+                SELECT Id, Status__c, Outcome__c 
+                FROM Visits__r 
+                WHERE (Status__c = 'Complete' AND Outcome__c = 'Donation') OR 
+                    Status__c IN ('New', 'Scheduled', 'Checked-In') 
+                ORDER BY Appointment_Datetime__c DESC
+                LIMIT 4
+            ) 
+            FROM Contact 
+            WHERE Id IN :donorIds
+        ]) {
             if (donor.Visits__r == null || donor.Visits__r.size() < 2) {
                 continue;
             }
 
-            Visit__c lastPreviousDonationVisit = donor.Visits__r[1];
-            if (donor.Last_Previous_Donation__c == null || donor.Last_Previous_Donation__c != lastPreviousDonationVisit.Id) {
-                donor.Last_Previous_Donation__c = lastPreviousDonationVisit.Id;
-                donorsToUpdate.add(donor);
+            for(Visit__c visit : donor.Visits__r) {
+                if (visit.Status__c == 'Complete' && visit.Outcome__c == 'Donation') {
+                    Boolean foundLastDonation = donorIdToFoundLastDonation.get(donor.Id);
+                    Boolean foundLastPreviousDonation = donorIdToFoundLastPreviousDonation.get(donor.Id);
+
+                    if (foundLastDonation != null && foundLastDonation) {
+                        if (foundLastPreviousDonation != null && foundLastPreviousDonation) {
+                            break;
+                        } else {
+                            if (donor.Last_Previous_Donation__c == null || donor.Last_Previous_Donation__c != visit.Id) {
+                                Contact donorToUpdate = donorsToUpdate.get(donor.Id);
+                                if (donorToUpdate == null) {
+                                    donorToUpdate = new Contact(Id = donor.Id);
+                                }
+
+                                donorToUpdate.Last_Previous_Donation__c = visit.Id;
+                                donorsToUpdate.put(donor.Id, donorToUpdate);
+                            }
+
+                            donorIdToFoundLastPreviousDonation.put(donor.Id, true);
+                        }
+                    } else {
+                        donorIdToFoundLastDonation.put(donor.Id, true);
+                    }
+                } else {
+                    Boolean foundLastScheduled = donorIdToFoundLastScheduled.get(donor.Id);
+                    Boolean foundLastPreviousScheduled = donorIdToFoundLastPreviousScheduled.get(donor.Id);
+
+                    if (foundLastScheduled != null && foundLastScheduled) {
+                        if (foundLastPreviousScheduled != null && foundLastPreviousScheduled) {
+                            break;
+                        } else {
+                            if (donor.Last_Previous_Scheduled_Visit__c == null || donor.Last_Previous_Scheduled_Visit__c != visit.Id) {
+                                Contact donorToUpdate = donorsToUpdate.get(donor.Id);
+                                if (donorToUpdate == null) {
+                                    donorToUpdate = new Contact(Id = donor.Id);
+                                }
+
+                                donorToUpdate.Last_Previous_Scheduled_Visit__c = visit.Id;
+                                donorsToUpdate.put(donor.Id, donorToUpdate);
+                            }
+
+                            donorIdToFoundLastPreviousScheduled.put(donor.Id, true);
+                        }
+                    } else {
+                        donorIdToFoundLastScheduled.put(donor.Id, true);
+                    }
+                }
             }
         }
 
         if (donorsToUpdate.size() > 0) {
-            update donorsToUpdate;
+            update donorsToUpdate.values();
         }
     }
 }

@@ -2,7 +2,7 @@
 public with sharing class NotificationsControllerTest {
 
     @isTest
-    static void testGetNotifications() {
+    static void testGetNotificationsDonor() {
         User experienceUser = TestUtil.createExperienceUser();
 
         System.runAs(TestUtil.createAdminUser()) {
@@ -22,7 +22,40 @@ public with sharing class NotificationsControllerTest {
         }
 
         System.runAs(experienceUser) {
-            List<NotificationsController.Notification> notifications = NotificationsController.getNotifications();
+            List<NotificationsController.Notification> notifications = NotificationsController.getNotifications(null);
+
+            System.assertEquals(1, notifications.size());
+            System.assertEquals('Subject', notifications[0].subject);
+            System.assertEquals('Body', notifications[0].body);
+        }
+    }
+
+    @isTest
+    static void testGetNotificationsCenter() {
+        User experienceUser = TestUtil.createExperienceUser();
+        Account center;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            center = TestUtil.createMiramarCenter();
+            insert center;
+
+            Message__c message = new Message__c();
+            message.Center__c = center.Id;
+            message.Name = 'Subject';
+            message.Body__c = 'Body';
+            message.Expiration_Date__c = Date.today().addDays(5);
+
+            Message__c expiredMessage = new Message__c();
+            expiredMessage.Center__c = center.Id;
+            expiredMessage.Name = 'Expired Subject';
+            expiredMessage.Body__c = 'Expired Body';
+            expiredMessage.Expiration_Date__c = Date.today().addDays(-5);
+
+            insert new List<Message__c>{message, expiredMessage};
+        }
+
+        System.runAs(experienceUser) {
+            List<NotificationsController.Notification> notifications = NotificationsController.getNotifications(center.Id);
 
             System.assertEquals(1, notifications.size());
             System.assertEquals('Subject', notifications[0].subject);
@@ -38,7 +71,7 @@ public with sharing class NotificationsControllerTest {
             Boolean exceptionThrown = false;
 
             try {
-                NotificationsController.getNotifications();
+                NotificationsController.getNotifications(null);
             } catch (Exception e) {
                 exceptionThrown = true;
             }

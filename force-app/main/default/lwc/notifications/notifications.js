@@ -1,10 +1,13 @@
-import { LightningElement } from 'lwc';
+import { api, LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import labels from 'c/labelService';
 import util from 'c/util';
 import getNotifications from '@salesforce/apex/NotificationsController.getNotifications';
 
 export default class Notifications extends NavigationMixin(LightningElement) {
+
+    @api centerId;
+    @api hideHeader;
 
     labels = labels;
     loading = true;
@@ -17,7 +20,13 @@ export default class Notifications extends NavigationMixin(LightningElement) {
     loadNotifications() {
         this.loading = true;
 
-        getNotifications().then(response => {
+        const request = {
+            centerId: this.centerId
+        };
+
+        console.log('getNotifications request', JSON.stringify(request));
+
+        getNotifications(request).then(response => {
             console.log('getNotifications response', response);
 
             this.notifications = response;

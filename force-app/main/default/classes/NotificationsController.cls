@@ -1,24 +1,45 @@
 public without sharing class NotificationsController {
 
     @AuraEnabled
-    public static List<Notification> getNotifications() {
+    public static List<Notification> getNotifications(Id centerId) {
         try {
             Util.testExceptionHandling();
 
-            User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
+            List<Message__c> messages;
 
-            List<Message__c> messages = [
-                SELECT
-                    Name, Body__c
-                FROM
-                    Message__c
-                WHERE
-                    Donor__c = :user.ContactId
-                AND
-                    Expiration_Date__c > :Date.today()
-                ORDER BY
-                    CreatedDate DESC
-            ];
+            // If center is not specified, get donor messages.
+            if (centerId == null) {
+                User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
+
+                messages = [
+                    SELECT
+                        Name, Body__c
+                    FROM
+                        Message__c
+                    WHERE
+                        Donor__c = :user.ContactId
+                    AND
+                        Expiration_Date__c > :Date.today()
+                    ORDER BY
+                        CreatedDate DESC
+                ];
+            }
+
+            // Else get center messages.
+            else {
+                messages = [
+                    SELECT
+                        Name, Body__c
+                    FROM
+                        Message__c
+                    WHERE
+                        Center__c = :centerId
+                    AND
+                        Expiration_Date__c > :Date.today()
+                    ORDER BY
+                        CreatedDate DESC
+                ];
+            }
 
             List<Notification> notifications = new List<Notification>();
 

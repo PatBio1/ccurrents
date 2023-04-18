@@ -2,7 +2,7 @@
 
     <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
 
-    <div class="slds-var-p-around_medium">
+    <div if:false={hideHeader} class="slds-var-p-around_medium">
         <div class="title-medium">
             {labels.notifications}
         </div>

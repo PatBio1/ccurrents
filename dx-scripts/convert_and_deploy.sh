@@ -10,7 +10,7 @@ fi
 #cleanup
 rm -rf deploy 
 
-sfdx force:source:convert -r force-app/main/default/ -d deploy
+sfdx force:source:convert -r force-app/main/ -d deploy
 
 
 ./dx-scripts/deploy.sh $1 checkonly

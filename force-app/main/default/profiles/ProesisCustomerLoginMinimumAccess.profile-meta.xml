@@ -46,10 +46,6 @@
         <layout>Message__c-Message Layout</layout>
     </layoutAssignments>
     <layoutAssignments>
-        <layout>PersonAccount-Donor</layout>
-        <recordType>PersonAccount.Donor</recordType>
-    </layoutAssignments>
-    <layoutAssignments>
         <layout>Postal_Code__c-Postal Code Layout</layout>
     </layoutAssignments>
     <layoutAssignments>

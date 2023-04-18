@@ -22,5 +22,4 @@ public without sharing class VisitSelector {
 
         return results;
     }
-
 }

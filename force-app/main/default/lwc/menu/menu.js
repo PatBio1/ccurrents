@@ -38,7 +38,7 @@ export default class Menu extends NavigationMixin(LightningElement) {
 
             let donorRewardsInfo = await getDonorRewardsInfo();
             if (donorRewardsInfo && donorRewardsInfo.currentLoyaltyLevel) {
-                this.userLoyaltyLevel = currentLoyaltyLevel;
+                this.userLoyaltyLevel = donorRewardsInfo.currentLoyaltyLevel;
             }
         }
     }

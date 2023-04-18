@@ -11,6 +11,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     @api icon = 'standard:account';
     @api donor;
     @api appointment;
+    @api centerId;
     @api popFlipYPoint;
 
     donorLink;
@@ -179,6 +180,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
             existingVisitId: this.donor.visitId,
             donorId: this.donor.donorId,
             originDate: originDate,
+            centerId: this.centerId,
 
             onvisitrescheduled: (event) => {
                 this.dispatchEvent(new CustomEvent("visitrescheduled", { detail: {...event.detail} }));

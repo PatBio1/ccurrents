@@ -32,6 +32,12 @@
                 <elementReference>Recipient_Id_Collection_Input</elementReference>
             </value>
         </inputParameters>
+        <inputParameters>
+            <name>targetPageRef</name>
+            <value>
+                <stringValue>{type:&apos;communitiesLandingPage&apos;,attributes:{name:&apos;Home&apos;}}</stringValue>
+            </value>
+        </inputParameters>
     </actionCalls>
     <apiVersion>57.0</apiVersion>
     <environments>Default</environments>

@@ -45,7 +45,7 @@ export default class AddVisitModal extends LightningModal {
         this.foundDonors = await searchVisitElgibleDonorByName({ 
             nameSearchString: this.template.querySelector("lightning-input[data-donor-name-search]").value,
             targetVisitDateString: this.appointmentSlotDate,
-            allowLoyaltyDonors: this.hasLoyaltyAvailability,
+            allowLoyaltyDonors: this.hasAvailability || this.hasLoyaltyAvailability,
             allowDonors: this.hasAvailability
         });
         

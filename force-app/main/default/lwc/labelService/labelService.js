@@ -77,6 +77,7 @@ import personalCard from '@salesforce/label/c.Personal_Card';
 import personalInformation from '@salesforce/label/c.Personal_Information';
 import phone from '@salesforce/label/c.Phone';
 import plasmaDonationSavesLives from '@salesforce/label/c.Plasma_Donation_Saves_Lives';
+import pointBrandName from '@salesforce/label/c.Point_Brand_Name';
 import popularTimes from '@salesforce/label/c.Popular_Times';
 import previous from '@salesforce/label/c.Previous';
 import privacyPolicy from '@salesforce/label/c.Privacy_Policy';
@@ -221,6 +222,7 @@ const labels = {
     personalInformation,
     phone,
     plasmaDonationSavesLives,
+    pointBrandName,
     popularTimes,
     previous,
     privacyPolicy,

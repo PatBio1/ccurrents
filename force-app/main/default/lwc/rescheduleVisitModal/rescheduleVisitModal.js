@@ -11,6 +11,7 @@ export default class RescheduleVisitModal extends LightningModal {
     @api existingVisitId;
     @api donorId;
     @api originDate;
+    @api centerId;
 
     groupedAppointments;
     soonestNextVisit;
@@ -117,6 +118,7 @@ export default class RescheduleVisitModal extends LightningModal {
     async fetchRescheduleAppointmentsByRange() {
         this.isLoading = true;
         let availableAppointments = await getAvailableRescheduleAppointmentRange({
+            centerId: this.centerId,
             currentDateTime: new Date(Date.now()),
             soonestNextVisit: this.soonestNextVisit,
             searchStartDateTime: this.adjustedStartDate,

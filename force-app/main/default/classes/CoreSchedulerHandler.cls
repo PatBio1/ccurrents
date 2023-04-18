@@ -1,4 +1,4 @@
-public with sharing class CoreSchedulerHandler {
+public without sharing class CoreSchedulerHandler {
     public static void rescheduleVisit(RescheduleRequest rescheduleRequest) {
         rescheduleVisits(new RescheduleBatchRequest(new List<RescheduleRequest>{ rescheduleRequest }));
     }
@@ -66,14 +66,18 @@ public with sharing class CoreSchedulerHandler {
             Integer loyaltyLevel = donorIdToLoyaltyLevel.get(newVisit.Donor__c);
             Appointment__c targetAppointmentSlot = appointmentSlots.get(newVisit.Appointment__c);
 
-            if (loyaltyLevel > 0 && (targetAppointmentSlot.Booked_Loyalty__c == null || targetAppointmentSlot.Booked_Loyalty__c < targetAppointmentSlot.Capacity_Loyalty__c)) {
+            if (targetAppointmentSlot.Booked__c == null || targetAppointmentSlot.Booked__c < targetAppointmentSlot.Capacity__c) {
+                if (targetAppointmentSlot.Booked__c == null) {
+                    targetAppointmentSlot.Booked__c = 1;
+                } else {
+                    targetAppointmentSlot.Booked__c += 1;
+                }
+            } else if (loyaltyLevel > 0 && (targetAppointmentSlot.Booked_Loyalty__c == null || targetAppointmentSlot.Booked_Loyalty__c < targetAppointmentSlot.Capacity_Loyalty__c)) {
                 if (targetAppointmentSlot.Booked_Loyalty__c == null) {
                     targetAppointmentSlot.Booked_Loyalty__c = 1;
                 } else {
                     targetAppointmentSlot.Booked_Loyalty__c += 1;
                 }
-            } else {
-                targetAppointmentSlot.Booked__c += 1;
             }
 
             appointmentSlots.put(newVisit.Appointment__c, targetAppointmentSlot);
@@ -156,17 +160,21 @@ public with sharing class CoreSchedulerHandler {
             updatedAppointments.add(oldAppointmentSlot);
     
             // New Appointment Slot
-            if (donorLoyaltyLevel > 0 && (newAppointmentSlot.Booked_Loyalty__c == null || newAppointmentSlot.Booked_Loyalty__c < newAppointmentSlot.Capacity_Loyalty__c)) {
+            if (newAppointmentSlot.Booked__c == null || newAppointmentSlot.Booked__c < newAppointmentSlot.Capacity__c) {
+                if (newAppointmentSlot.Booked__c == null) {
+                    newAppointmentSlot.Booked__c = 1;
+                } else {
+                    newAppointmentSlot.Booked__c += 1;
+                }
+            } else if (donorLoyaltyLevel > 0 && (newAppointmentSlot.Booked_Loyalty__c == null || newAppointmentSlot.Booked_Loyalty__c < newAppointmentSlot.Capacity_Loyalty__c)) {
                 if (newAppointmentSlot.Booked_Loyalty__c == null) {
                     newAppointmentSlot.Booked_Loyalty__c = 1;
                 } else {
                     newAppointmentSlot.Booked_Loyalty__c += 1;
                 }
-            } else {
-                newAppointmentSlot.Booked__c += 1;
             }
+
             updatedAppointments.add(newAppointmentSlot);
-    
             return updatedAppointments;
         }
     

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Role xmlns="http://soap.sforce.com/2006/04/metadata">
+    <contactAccessLevel>Edit</contactAccessLevel>
+    <description>All Miramar</description>
+    <mayForecastManagerShare>false</mayForecastManagerShare>
+    <name>Miramar Center Management</name>
+    <opportunityAccessLevel>Read</opportunityAccessLevel>
+    <parentRole>Operations</parentRole>
+</Role>

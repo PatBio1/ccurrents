@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Role xmlns="http://soap.sforce.com/2006/04/metadata">
+    <contactAccessLevel>Edit</contactAccessLevel>
+    <description>Dallas Center Staff</description>
+    <mayForecastManagerShare>false</mayForecastManagerShare>
+    <name>Dallas Center Staff</name>
+    <opportunityAccessLevel>Read</opportunityAccessLevel>
+    <parentRole>Dallas_Center_Management</parentRole>
+</Role>

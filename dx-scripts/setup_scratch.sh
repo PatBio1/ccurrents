@@ -35,7 +35,7 @@ sfdx force:config:set defaultusername=$1
 
 
 ## push local code artifacts to scratch org
-sfdx force:source:push
+sfdx force:source:push --quiet
 
 
 #these actions only run if we are not in CI

@@ -79,6 +79,8 @@ import phone from '@salesforce/label/c.Phone';
 import plasmaDonationSavesLives from '@salesforce/label/c.Plasma_Donation_Saves_Lives';
 import popularTimes from '@salesforce/label/c.Popular_Times';
 import previous from '@salesforce/label/c.Previous';
+import privacyPolicy from '@salesforce/label/c.Privacy_Policy';
+import privacyPolicyLink from '@salesforce/label/c.Privacy_Policy_Link';
 import recommendedToYou from '@salesforce/label/c.Recommended_To_You';
 import rememberMe from '@salesforce/label/c.Remember_Me';
 import removePhoto from '@salesforce/label/c.Remove_Photo';
@@ -111,6 +113,8 @@ import supportInformation from '@salesforce/label/c.Support_Information';
 import sundayAbbreviation from '@salesforce/label/c.Sunday_Abbreviation';
 import taxi from '@salesforce/label/c.Taxi';
 import tellUsAboutYou from '@salesforce/label/c.Tell_Us_About_You';
+import termsOfService from '@salesforce/label/c.Terms_of_Service';
+import termsOfServiceLink from '@salesforce/label/c.Terms_of_Service_Link';
 import thursdayAbbreviation from '@salesforce/label/c.Thursday_Abbreviation';
 import trackYourProgress from '@salesforce/label/c.Track_Your_Progress';
 import tuesdayAbbreviation from '@salesforce/label/c.Tuesday_Abbreviation';
@@ -129,10 +133,6 @@ import welcomeToProesis from '@salesforce/label/c.Welcome_To_Proesis';
 import workingHours from '@salesforce/label/c.Working_Hours';
 import yourHealth from '@salesforce/label/c.Your_Health';
 import zipCode from '@salesforce/label/c.Zip_Code';
-import privacyPolicy from '@salesforce/label/c.Privacy_Policy';
-import privacyPolicyLink from '@salesforce/label/c.Privacy_Policy_Link';
-import termsOfService from '@salesforce/label/c.Terms_of_Service';
-import termsOfServiceLink from '@salesforce/label/c.Terms_of_Service_Link';
 
 const labels = {
     formatLabel: function (label, args) {
@@ -223,6 +223,8 @@ const labels = {
     plasmaDonationSavesLives,
     popularTimes,
     previous,
+    privacyPolicy,
+    privacyPolicyLink,
     recommendedToYou,
     rememberMe,
     removePhoto,
@@ -255,6 +257,8 @@ const labels = {
     sundayAbbreviation,
     taxi,
     tellUsAboutYou,
+    termsOfService,
+    termsOfServiceLink,
     thursdayAbbreviation,
     trackYourProgress,
     tuesdayAbbreviation,
@@ -272,11 +276,7 @@ const labels = {
     welcomeToProesis,
     workingHours,
     yourHealth,
-    zipCode,
-    privacyPolicy,
-    privacyPolicyLink,
-    termsOfService,
-    termsOfServiceLink
+    zipCode
 };
 
 export default labels;

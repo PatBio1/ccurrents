@@ -1,0 +1,6 @@
+@import 'c/sharedCss';
+
+.notification {
+    background-color: #f5f0ff;
+    border-color: #8979a9;
+}

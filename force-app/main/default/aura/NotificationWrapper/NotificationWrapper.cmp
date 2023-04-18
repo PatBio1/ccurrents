@@ -1,0 +1,5 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,force:hasRecordId">
+
+<c:notification recordId="{!v.recordId}"/>
+
+</aura:component>

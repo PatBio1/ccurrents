@@ -1,0 +1,11 @@
+{
+  "activeViewId" : "54776bb8-9c01-4d39-905d-f5d93a6c8ebf",
+  "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
+  "configurationTags" : [ ],
+  "id" : "ae69d0db-ae2d-443f-8ae8-d5702817ad80",
+  "label" : "Message Detail",
+  "objectApiName" : "Message__c",
+  "routeType" : "detail-a0a",
+  "type" : "route",
+  "urlPrefix" : "message"
+}

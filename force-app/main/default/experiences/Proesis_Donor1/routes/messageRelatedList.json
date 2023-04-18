@@ -1,0 +1,11 @@
+{
+  "activeViewId" : "62c7a524-d4e5-4876-9c1e-7fc5fc2baacc",
+  "appPageId" : "eaf007f1-0530-49e3-8eea-3f8422079ea7",
+  "configurationTags" : [ ],
+  "id" : "a46282ff-97e5-4a96-806e-cd253d093938",
+  "label" : "Message Related List",
+  "objectApiName" : "Message__c",
+  "routeType" : "relatedlist-a0a",
+  "type" : "route",
+  "urlPrefix" : "message"
+}

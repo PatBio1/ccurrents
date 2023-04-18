@@ -1,4 +1,5 @@
 import { NavigationMixin } from 'lightning/navigation';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 // At least 1 lowercase, 1 uppercase, 1 number and 1 special character.
 const passwordRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])");
@@ -65,8 +66,6 @@ export function navigateToPage(component, name) {
 }
 
 export function showToast(component, variant = 'info', title = '', message = '', mode = 'dismissable') {
-    console.log('toast', message);
-
     const event = new ShowToastEvent({
         title,
         message: this.getFilteredErrorMessage(message),
@@ -78,8 +77,6 @@ export function showToast(component, variant = 'info', title = '', message = '',
 }
 
 export function showGuestToast(component, variant = 'info', title = '', message = '', mode = 'dismissable') {
-    console.log('toast', message);
-
     component?.template?.querySelector('c-guest-toast')?.show(variant, title, this.getFilteredErrorMessage(message), mode);
 }
 

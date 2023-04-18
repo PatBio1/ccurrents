@@ -1,7 +1,7 @@
 @isTest
 public with sharing class SchedulerControllerTest {
 
-    @TestSetup
+    @testSetup
     static void setupData() {
         TestUtil.createAdminUser();
     }

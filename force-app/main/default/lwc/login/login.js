@@ -8,7 +8,6 @@ import constants from 'c/constants';
 import labels from 'c/labelService';
 import util from 'c/util';
 
-
 const PAGE_LOGIN = 'Login';
 const PAGE_FORGOT_PASSWORD = 'Forgot Password';
 const PAGE_VERIFY_EMAIL = 'Verify Email';
@@ -155,6 +154,8 @@ export default class Menu extends LightningElement {
     }
 
     onBackButtonClick() {
+        this.email = undefined;
+        this.emailCode = undefined;
         this.password = undefined;
         this.passwordConfirm = undefined;
 
@@ -173,6 +174,7 @@ export default class Menu extends LightningElement {
         sendVerificationEmail(request).then(response => {
             console.log('sendVerificationEmail response', response);
 
+            this.emailVerificationsExhausted = false;
             this.currentPage = PAGE_VERIFY_EMAIL;
         }).catch((error) => {
             util.showGuestToast(this, 'error', labels.error, error);

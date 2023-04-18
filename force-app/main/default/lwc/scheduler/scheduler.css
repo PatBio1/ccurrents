@@ -37,3 +37,10 @@
     border-color: #d1c7e4;
     color: #1f1e1f;
 }
+
+.donor-rewards-panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}

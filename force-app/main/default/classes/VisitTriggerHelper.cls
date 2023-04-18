@@ -88,6 +88,10 @@ public without sharing class VisitTriggerHelper {
         }
 
         if (donorIds.size() > 0) {
+            Set<String> acceptableFirstVisitOutcomes = new Set<String> {
+                null, 'Donation', 'No Donation'
+            };
+
             Map<Id, Visit__c> visitRecordsToUpdate = new Map<Id, Visit__c>();
             List<Task> tasksToCreate = new List<Task>();
             Map<Id, Id> visitIdToNewTaskParentId = new Map<Id, Id>();
@@ -95,99 +99,101 @@ public without sharing class VisitTriggerHelper {
             Set<Id> annualPhysicalExamVisitTasksToDelete = new Set<Id>();
             Set<Id> triannualSPEVisitTasksToDelete = new Set<Id>();
 
+            // Handle First Visit Flags and Tasks
+            // This is handled by a second query in order to reduce looping and heap size (in the event of a large visit backlog for a donor)
             for(Contact donor : [
-                SELECT Id, Account.First_Visit_Code__c, Account.Days_Until_Annum__pc, Account.Days_until_Triannum__pc, (
-                    SELECT Id, Name, Donor__c, Appointment_Datetime__c, isFirstVisit__c, Physical_Exam__c, SPE_Analysis__c 
+                SELECT Id, Account.First_Visit_Code__c, (
+                    SELECT Id, isFirstVisit__c, Outcome__c
+                    FROM Visits__r 
+                    WHERE Outcome__c IN :acceptableFirstVisitOutcomes OR 
+                        isFirstVisit__c = true 
+                    ORDER BY Appointment_Datetime__c ASC 
+                    LIMIT 2
+                ) 
+                FROM Contact 
+                WHERE Id IN :donorIds
+            ]) {
+                if (donor.Visits__r.size() > 0) {
+                    Visit__c intendedFirstVisit = donor.Visits__r[0];
+                    Visit__c nextSoonestVisit = (donor.Visits__r.size() > 1) ? donor.Visits__r[1] : null;
+
+                    if (!intendedFirstVisit.isFirstVisit__c) {
+                        intendedFirstVisit.isFirstVisit__c = true;
+                        intendedFirstVisit.Physical_Exam__c = true;
+                        intendedFirstVisit.SPE_Analysis__c = true;
+
+                        // Check to see if the nextSoonestVisit was previously marked as a first visit
+                        // If it was, we need to unmark it and note that the visit tasks need to be reparented
+                        if (nextSoonestVisit != null && nextSoonestVisit.isFirstVisit__c) {
+                            nextSoonestVisit.isFirstVisit__c = false;
+                            nextSoonestVisit.Physical_Exam__c = false;
+                            nextSoonestVisit.SPE_Analysis__c = false;
+
+                            visitRecordsToUpdate.put(nextSoonestVisit.Id, nextSoonestVisit);
+                            visitIdToNewTaskParentId.put(nextSoonestVisit.Id, intendedFirstVisit.Id);
+                        } else {
+                            tasksToCreate.add(new Task(
+                                WhatId = intendedFirstVisit.Id,
+                                WhoId = donor.Id,
+                                Subject = Constants.PHYSICAL_EXAM_TASK_SUBJECT
+                            ));
+
+                            tasksToCreate.add(new Task(
+                                WhatId = intendedFirstVisit.Id,
+                                WhoId = donor.Id,
+                                Subject = Constants.SPE_ANALYSIS_TASK_SUBJECT
+                            ));
+
+                            tasksToCreate.add(new Task(
+                                WhatId = intendedFirstVisit.Id,
+                                WhoId = donor.Id,
+                                Subject = Constants.FIRST_VISIT_CODE_TASK_SUBJECT,
+                                Description = donor.Account.First_Visit_Code__c
+                            ));
+                        }
+
+                        visitRecordsToUpdate.put(intendedFirstVisit.Id, intendedFirstVisit);
+                    } else if (!acceptableFirstVisitOutcomes.contains(intendedFirstVisit.Outcome__c) && nextSoonestVisit != null) {
+                        // The soonest visit is no longer a viable first visit, so we need to unmark it
+                        intendedFirstVisit.isFirstVisit__c = false;
+                        intendedFirstVisit.Physical_Exam__c = false;
+                        intendedFirstVisit.SPE_Analysis__c = false;
+
+                        visitRecordsToUpdate.put(intendedFirstVisit.Id, intendedFirstVisit);
+
+                        // Mark the next visit as a first visit
+                        nextSoonestVisit.isFirstVisit__c = true;
+                        nextSoonestVisit.Physical_Exam__c = true;
+                        nextSoonestVisit.SPE_Analysis__c = true;
+
+                        visitRecordsToUpdate.put(nextSoonestVisit.Id, nextSoonestVisit);
+                        visitIdToNewTaskParentId.put(nextSoonestVisit.Id, nextSoonestVisit.Id);
+                    }
+                }
+            }
+
+            for(Contact donor : [
+                SELECT Id, Account.Days_Until_Annum__pc, Account.Days_until_Triannum__pc, (
+                    SELECT Id, Name, Donor__c, Appointment_Datetime__c, Physical_Exam__c, SPE_Analysis__c 
                     FROM Visits__r 
                     ORDER BY Appointment_Datetime__c ASC
                 ) 
                 FROM Contact 
                 WHERE Id IN :donorIds
             ]) {
-                if (donor.Visits__r == null || donor.Visits__r.size() == 0) {
-                    continue;
-                }
-                
-                // Process First Visit Flag / Tasks
-                Visit__c earliestVisit = donor.Visits__r[0];
-                if (!earliestVisit.isFirstVisit__c) {
-                    earliestVisit.isFirstVisit__c = true;
-                    earliestVisit.Physical_Exam__c = true;
-                    earliestVisit.SPE_Analysis__c = true;
-                    visitRecordsToUpdate.put(earliestVisit.Id, earliestVisit);
-                
+                Integer closestPhysicalExamDayCount = 999999999;
+                Visit__c closestPhysicalExamVisit;
 
-                    // If a first visit has already been created
-                    Boolean hasAlreadyHadFirstVisitCreated = false;
-                    Visit__c originalFirstVisit;
+                Integer closestSpeAnalysisDayCount = 999999999;
+                Visit__c closestSpeAnalysisVisit;
 
-                    for(Integer i = 1; i < donor.Visits__r.size(); i++) {
-                        if (!donor.Visits__r[i].isFirstVisit__c) {
-                            continue;
-                        }
+                List<Visit__c> currentPhysicalExamVisits = new List<Visit__c>();
+                List<Visit__c> currentSpeAnalysisVisits = new List<Visit__c>();
 
-                        hasAlreadyHadFirstVisitCreated = true;
-                        originalFirstVisit = donor.Visits__r[i];
-
-                        originalFirstVisit.isFirstVisit__c = false;
-                        originalFirstVisit.Physical_Exam__c = false;
-                        originalFirstVisit.SPE_Analysis__c = false;
-
-                        visitRecordsToUpdate.put(donor.Visits__r[i].Id, donor.Visits__r[i]);
-
-                        // There should only ever be one marked as isFirstVisit__c
-                        break;
-                    }
-
-                    if (hasAlreadyHadFirstVisitCreated) {
-                        visitIdToNewTaskParentId.put(originalFirstVisit.Id, earliestVisit.Id);
-                    } else {
-                        // No first visit has been created yet so create the SPE, Medical Exam, and First Visit Code Tasks
-
-                        tasksToCreate.add(new Task(
-                            WhatId = earliestVisit.Id,
-                            WhoId = donor.Id,
-                            Subject = Constants.PHYSICAL_EXAM_TASK_SUBJECT
-                        ));
-
-                        tasksToCreate.add(new Task(
-                            WhatId = earliestVisit.Id,
-                            WhoId = donor.Id,
-                            Subject = Constants.SPE_ANALYSIS_TASK_SUBJECT
-                        ));
-
-                        tasksToCreate.add(new Task(
-                            WhatId = earliestVisit.Id,
-                            WhoId = donor.Id,
-                            Subject = Constants.FIRST_VISIT_CODE_TASK_SUBJECT,
-                            Description = donor.Account.First_Visit_Code__c
-                        ));
-                    }
-                }
-
-                // Process Annual Visit Tasks
-                if (donor.Account != null && donor.Account.Days_Until_Annum__pc != null && donor.Account.Days_until_Triannum__pc != null) {
-                    // First we determine what visit for each donor is the closest to the annual exam date as well as in the acceptable range for the annual exam
-                    // Then we mark any visits that are within the acceptable range as annual visits and mark the others as not annual visits (if they were previous)
-                    // Also need to delete any tasks if we unmark a visit as a annual exam visit
-
-                    Integer closestPhysicalExamDayCount = 999999999;
-                    Visit__c closestPhysicalExamVisit;
-
-                    Integer closestSpeAnalysisDayCount = 999999999;
-                    Visit__c closestSpeAnalysisVisit;
-
-                    List<Visit__c> currentPhysicalExamVisits = new List<Visit__c>();
-                    List<Visit__c> currentSpeAnalysisVisits = new List<Visit__c>();
-
-                    // Finding the closest SPE / Physical Exam visit
-                    for(Integer i = 0; i < donor.Visits__r.size(); i++) {
-                        Visit__c visit = donor.Visits__r[i];
+                for(Visit__c visit : donor.Visits__r) {
+                    // Check for Physical Exam and SPE visit
+                    if (donor.Account != null && donor.Account.Days_Until_Annum__pc != null && donor.Account.Days_until_Triannum__pc != null) {
                         Integer daysRemainingUntilVisit = Date.today().daysBetween(visit.Appointment_Datetime__c.date());
-
-                        if (visit.isFirstVisit__c || visit.Appointment_Datetime__c == null) {
-                            continue;
-                        }
 
                         // Physical Exam
                         Integer daysRemainingForAnnum = (Integer)donor.Account.Days_Until_Annum__pc - daysRemainingUntilVisit;
@@ -211,43 +217,43 @@ public without sharing class VisitTriggerHelper {
                             currentSpeAnalysisVisits.add(visit);
                         }
                     }
+                }
 
-                    // Creating the annual exam task and deleting old tasks, if applicable
-                    if (closestPhysicalExamVisit != null && !closestPhysicalExamVisit.Physical_Exam__c) {
-                        closestPhysicalExamVisit.Physical_Exam__c = true;
-                        visitRecordsToUpdate.put(closestPhysicalExamVisit.Id, closestPhysicalExamVisit);
+                // Creating the annual exam task and deleting old tasks, if applicable
+                if (closestPhysicalExamVisit != null && !closestPhysicalExamVisit.Physical_Exam__c) {
+                    closestPhysicalExamVisit.Physical_Exam__c = true;
+                    visitRecordsToUpdate.put(closestPhysicalExamVisit.Id, closestPhysicalExamVisit);
 
-                        tasksToCreate.add(new Task(
-                            WhatId = closestPhysicalExamVisit.Id,
-                            WhoId = closestPhysicalExamVisit.Donor__c,
-                            Subject = Constants.PHYSICAL_EXAM_TASK_SUBJECT
-                        ));
+                    tasksToCreate.add(new Task(
+                        WhatId = closestPhysicalExamVisit.Id,
+                        WhoId = closestPhysicalExamVisit.Donor__c,
+                        Subject = Constants.PHYSICAL_EXAM_TASK_SUBJECT
+                    ));
 
-                        for(Visit__c visit : currentPhysicalExamVisits) {
-                            visit.Physical_Exam__c = false;
+                    for(Visit__c visit : currentPhysicalExamVisits) {
+                        visit.Physical_Exam__c = false;
 
-                            annualPhysicalExamVisitTasksToDelete.add(visit.Id);
-                            visitRecordsToUpdate.put(visit.Id, visit);
-                        }
+                        annualPhysicalExamVisitTasksToDelete.add(visit.Id);
+                        visitRecordsToUpdate.put(visit.Id, visit);
                     }
+                }
 
-                    // Creating the triannual exam task and deleting old tasks, if applicable
-                    if (closestSpeAnalysisVisit != null && !closestSpeAnalysisVisit.SPE_Analysis__c) {
-                        closestSpeAnalysisVisit.SPE_Analysis__c = true;
-                        visitRecordsToUpdate.put(closestSpeAnalysisVisit.Id, closestSpeAnalysisVisit);
+                // Creating the triannual exam task and deleting old tasks, if applicable
+                if (closestSpeAnalysisVisit != null && !closestSpeAnalysisVisit.SPE_Analysis__c) {
+                    closestSpeAnalysisVisit.SPE_Analysis__c = true;
+                    visitRecordsToUpdate.put(closestSpeAnalysisVisit.Id, closestSpeAnalysisVisit);
 
-                        tasksToCreate.add(new Task(
-                            WhatId = closestSpeAnalysisVisit.Id,
-                            WhoId = closestSpeAnalysisVisit.Donor__c,
-                            Subject = Constants.SPE_ANALYSIS_TASK_SUBJECT
-                        ));
+                    tasksToCreate.add(new Task(
+                        WhatId = closestSpeAnalysisVisit.Id,
+                        WhoId = closestSpeAnalysisVisit.Donor__c,
+                        Subject = Constants.SPE_ANALYSIS_TASK_SUBJECT
+                    ));
 
-                        for(Visit__c visit : currentSpeAnalysisVisits) {
-                            visit.SPE_Analysis__c = false;
+                    for(Visit__c visit : currentSpeAnalysisVisits) {
+                        visit.SPE_Analysis__c = false;
 
-                            triannualSPEVisitTasksToDelete.add(visit.Id);
-                            visitRecordsToUpdate.put(visit.Id, visit);
-                        }
+                        triannualSPEVisitTasksToDelete.add(visit.Id);
+                        visitRecordsToUpdate.put(visit.Id, visit);
                     }
                 }
             }

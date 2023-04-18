@@ -133,6 +133,7 @@ import privacyPolicy from '@salesforce/label/c.Privacy_Policy';
 import privacyPolicyLink from '@salesforce/label/c.Privacy_Policy_Link';
 import termsOfService from '@salesforce/label/c.Terms_of_Service';
 import termsOfServiceLink from '@salesforce/label/c.Terms_of_Service_Link';
+import pointBrandName from '@salesforce/label/c.Point_Brand_Name';
 
 const labels = {
     formatLabel: function (label, args) {
@@ -276,7 +277,8 @@ const labels = {
     privacyPolicy,
     privacyPolicyLink,
     termsOfService,
-    termsOfServiceLink
+    termsOfServiceLink,
+    pointBrandName
 };
 
 export default labels;

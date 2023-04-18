@@ -994,4 +994,11 @@
         <shortDescription>https://proesisbio.com/privacy-policy</shortDescription>
         <value>https://proesisbio.com/privacy-policy</value>
     </labels>
+    <labels>
+        <fullName>Point_Brand_Name</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>PlasmaPoints</shortDescription>
+        <value>PlasmaPoints</value>
+    </labels>
 </CustomLabels>

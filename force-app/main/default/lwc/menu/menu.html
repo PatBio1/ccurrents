@@ -11,13 +11,12 @@
             <div class="slds-col slds-size_1-of-3 slds-text-align_right">
                 <template if:false={isGuest}>
                     <div style="display: flex; flex-direction: row; justify-content: flex-end; align-items: center;">
-                        <div style="position: relative;">
+                        <div style="position: relative; transform: scale(1.2);">
                             <div if:true={hasUnreadNotifications} class="notification-badge"></div>
                             <lightning-icon icon-name="utility:notification" size="x-small" class="slds-p-right_medium" variant="inverse" onclick={onNotificationsClick}></lightning-icon>
                         </div>
                         
-                        <div style="position: relative;">
-                            <!-- <lightning-icon class="loyalty-badge" icon-name="utility:favorite" size="xx-small"></lightning-icon> -->
+                        <div style="position: relative; transform: scale(1.2);">
                             <span class="loyalty-badge slds-avatar slds-avatar_circle">
                                 <c-loyalty-tier-badge width="64px" height="64px" loyalty-tier-name={displayLoyaltyLevel}></c-loyalty-tier-badge>
                             </span>

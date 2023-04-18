@@ -35,8 +35,8 @@ public without sharing class SchedulerController {
         try {
             List<AppointmentGroup> appointmentGroups = new List<AppointmentGroup>{
                 new AppointmentGroup('AM'),
-                new AppointmentGroup('Midday'),
-                new AppointmentGroup('PM')
+                new AppointmentGroup('PM'),
+                new AppointmentGroup('Evening')
             };
 
             if (appointmentDate >= Date.today()) {
@@ -126,33 +126,14 @@ public without sharing class SchedulerController {
     @AuraEnabled
     public static Id scheduleVisit(Id appointmentId) {
         try {
-            User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
+            Appointment__c appointment = [SELECT Id, Schedule__r.Center__c FROM Appointment__c WHERE Id = :appointmentId LIMIT 1];
 
-            Contact contact = [SELECT Account.First_Visit_Code__c, Loyalty_Level__c FROM Contact WHERE  Id = :user.ContactId][0];
-            Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(contact.Loyalty_Level__c);
-
-            Appointment__c appointment = [SELECT Schedule__r.Center__c, Booked__c, Booked_Loyalty__c FROM Appointment__c WHERE Id = :appointmentId];
-            if (loyaltyLevel > 0) {
-                if (appointment.Booked_Loyalty__c == null) {
-                    appointment.Booked_Loyalty__c = 1;
-                } else {
-                    appointment.Booked_Loyalty__c += 1;
-                }
-            } else {
-                appointment.Booked__c += 1;
-            }
-            update appointment;
-
-            Center_Donation_Type__c centerDonationType = [
-                SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :appointment.Schedule__r.Center__c LIMIT 1
-            ];
-
-            Visit__c visit = new Visit__c();
-            visit.Donor__c = user.ContactId;
-            visit.Appointment__c = appointmentId;
-            visit.Center_Donation_Type__c = centerDonationType.Id;
-            visit.Status__c = 'Scheduled';
-            insert visit;
+            Visit__c visit = CoreSchedulerHandler.createVisit(new Visit__c(
+                Donor__c = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId() LIMIT 1]?.ContactId,
+                Appointment__c = appointment.Id,
+                Status__c = 'Scheduled',
+                Center_Donation_Type__c = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :appointment.Schedule__r.Center__c LIMIT 1]?.Id
+            ));
 
             return visit.Id;
         } catch (Exception e) {

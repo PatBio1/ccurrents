@@ -324,6 +324,7 @@ public without sharing class ProfileController {
 
         update new Account(
             Id = leadConvertResult.getAccountId(),
+            RecordTypeId = Constants.DONOR_RECORD_TYPE_ID,
             Loyalty_Level__pc = LoyaltyLevelService.getDefault().Id,
             First_Visit_Code__c = ScheduleUtils.createFirstVisitCode()
         );

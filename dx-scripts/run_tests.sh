@@ -6,11 +6,11 @@
 if [ $# -lt 1 ]
 then
     echo Running tests in default scratch org
-    sfdx force:apex:test:run  -l RunLocalTests --wait 60 --resultformat tap --codecoverage -d test_results;
+    sfdx force:apex:test:run  -y -l RunLocalTests --wait 60 --resultformat tap --codecoverage -d test_results;
     sleep 5;
     ./dx-scripts/parse_test_results.js
     exit
 fi
 
 #otherwise run tests in specified username or alias org
-sfdx force:apex:test:run -l RunLocalTests -r human --wait 60 --verbose -u $1
+sfdx force:apex:test:run -y -l RunLocalTests -r human --wait 60 --verbose -u $1

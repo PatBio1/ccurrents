@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Payment_Service_Base_Retry__c</fullName>
+    <description>Initial number of seconds for a failure retry</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Initial number of seconds for a failure retry</inlineHelpText>
+    <label>Payment Service Base Retry</label>
+    <precision>4</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

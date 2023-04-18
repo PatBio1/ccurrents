@@ -37,28 +37,30 @@ sfdx force:config:set defaultusername=$1
 ## push local code artifacts to scratch org
 sfdx force:source:push
 
-## assign any required permission sets
-sfdx force:user:permset:assign -n ProesisAdministratorSalesforceLicense
 
-## run any anymous apex scripts to setup data, batches, etc...
-sfdx force:apex:execute -f dx-scripts/apex/setup_users.cls
-
-# add Sample Donor records
-sfdx force:data:bulk:upsert -s Account -f ./data/AccountDataBulk.csv -i Id -w 1
-
-sfdx force:apex:execute -f dx-scripts/apex/setup_sample_data.cls
-
-# add Postal Code records
-sfdx force:data:bulk:upsert -s Postal_Code__c -f ./data/postalCodes.csv -i Id
-
-# publish scratch org community
-sfdx force:community:publish --name 'Proesis Donor'
-
+#these actions only run if we are not in CI
 if [ $# -eq 1 ]
 then
+    ## assign any required permission sets
+    sfdx force:user:permset:assign -n ProesisAdministratorSalesforceLicense
+
+    ## run any anymous apex scripts to setup data, batches, etc...
+    sfdx force:apex:execute -f dx-scripts/apex/setup_users.cls
+
+    # add Sample Donor records
+    sfdx force:data:bulk:upsert -s Account -f ./data/AccountDataBulk.csv -i Id -w 1
+
+    sfdx force:apex:execute -f dx-scripts/apex/setup_sample_data.cls
+
+    # add Postal Code records
+    sfdx force:data:bulk:upsert -s Postal_Code__c -f ./data/postalCodes.csv -i Id
+
+    # publish scratch org community
+    sfdx force:community:publish --name 'Proesis Donor'
     # open new scratch org in browser to default page
     sfdx force:org:open
     # open new scratch org in browser to default page
-    # unless there is an additional arg indicating this is in CI
+    
+    
     exit
 fi

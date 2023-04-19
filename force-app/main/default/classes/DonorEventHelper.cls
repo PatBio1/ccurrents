@@ -1,4 +1,4 @@
-public with sharing class DonorEventHelper {
+public without sharing class DonorEventHelper {
     public static List<List<SObject>> validateDonorAndVisitReferences(List<List<SObject>> inputRecords) {
         Map<String, SObject> runningDonorNumberList = getDonorNumberToDonorEvent(inputRecords);
         Map<String, Object> getRelatedObjectMappingsResult = mapDonorNumberToDonorRelatedRecords(runningDonorNumberList);

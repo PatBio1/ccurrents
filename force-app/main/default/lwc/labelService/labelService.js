@@ -1,5 +1,7 @@
 import about from '@salesforce/label/c.About';
 import aboutDonationExperience from '@salesforce/label/c.About_Donation_Experience';
+import acceptTOSPrivacyTitle from '@salesforce/label/c.Accept_TOS_Privacy_Title';
+import acceptTOSPrivacyMessage from '@salesforce/label/c.Accept_TOS_Privacy_Message';
 import accountVerifiedSuccess from '@salesforce/label/c.Account_Verified_Success';
 import address from '@salesforce/label/c.Address';
 import all from '@salesforce/label/c.All';
@@ -52,6 +54,7 @@ import logoutConfirmation from '@salesforce/label/c.Logout_Confirmation';
 import lostMyCard from '@salesforce/label/c.Lost_My_card';
 import loveToHearFromYou from '@salesforce/label/c.Love_To_Hear_From_You';
 import loyaltyTiers from '@salesforce/label/c.Loyalty_Tiers';
+import marketingCommunicationsOpsText from '@salesforce/label/c.Marketing_Communications_Ops_Text';
 import message from '@salesforce/label/c.Message';
 import middleName from '@salesforce/label/c.Middle_Name';
 import mobilePhone from '@salesforce/label/c.Mobile_Phone';
@@ -118,6 +121,7 @@ import termsOfService from '@salesforce/label/c.Terms_of_Service';
 import termsOfServiceLink from '@salesforce/label/c.Terms_of_Service_Link';
 import thursdayAbbreviation from '@salesforce/label/c.Thursday_Abbreviation';
 import trackYourProgress from '@salesforce/label/c.Track_Your_Progress';
+import tOSPrivacyPolicyOpsText from '@salesforce/label/c.TOS_Privacy_Policy_Ops_Text';
 import tuesdayAbbreviation from '@salesforce/label/c.Tuesday_Abbreviation';
 import updatesAndAppointments from '@salesforce/label/c.Updates_And_Appointments';
 import uploadAnotherPhoto from '@salesforce/label/c.Upload_Another_Photo';
@@ -145,6 +149,8 @@ const labels = {
     // Alphabetical Order
     about,
     aboutDonationExperience,
+    acceptTOSPrivacyTitle,
+    acceptTOSPrivacyMessage,
     accountVerifiedSuccess,
     address,
     all,
@@ -197,6 +203,7 @@ const labels = {
     lostMyCard,
     loveToHearFromYou,
     loyaltyTiers,
+    marketingCommunicationsOpsText,
     message,
     middleName,
     mobilePhone,
@@ -263,6 +270,7 @@ const labels = {
     termsOfServiceLink,
     thursdayAbbreviation,
     trackYourProgress,
+    tOSPrivacyPolicyOpsText,
     tuesdayAbbreviation,
     updatesAndAppointments,
     uploadAnotherPhoto,

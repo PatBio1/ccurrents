@@ -246,6 +246,9 @@ public without sharing class ProfileController {
             Util.testExceptionHandling();
 
             Database.LeadConvertResult leadConvertResult = convertLead(profile);
+            if (profile.isAcceptingMarketingComms) {
+                handleCreateMarketingConsent(leadConvertResult.getLeadId(), leadConvertResult.getContactId());
+            }
 
             User user = createUser(leadConvertResult.getAccountId(), profile.language);
 
@@ -371,6 +374,18 @@ public without sharing class ProfileController {
         return user;
     }
 
+    @TestVisible
+    private static void handleCreateMarketingConsent(Id leadId, Id contactId) {
+        insert new Consent_Transaction__c(
+            Lead__c = leadId,
+            Contact__c = contactId,
+            Scope__c = Constants.DEFAULT_MARKETING_CONSENT_SCOPE,
+            Source__c = Constants.DEFAULT_MARKETING_CONSENT_SOURCE,
+            Type_of_Consent__c = Constants.DEFAULT_MARKETING_CONSENT_TYPE,
+            Date_Time_of_Consent__c = System.today()
+        );
+    }
+
     @future
     private static void commitUserFromScheduler(Id accountId, String language) {
         Database.DMLOptions userEmailOptions = new Database.DMLOptions();
@@ -450,6 +465,7 @@ public without sharing class ProfileController {
         @AuraEnabled
         public String smsCode {get; set;}
 
+        @AuraEnabled
+        public Boolean isAcceptingMarketingComms {get; set;}
     }
-
 }

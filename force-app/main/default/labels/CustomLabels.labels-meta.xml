@@ -1001,4 +1001,32 @@
         <shortDescription>PlasmaPoints</shortDescription>
         <value>PlasmaPoints</value>
     </labels>
+    <labels>
+        <fullName>Marketing_Communications_Ops_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>I agree to receive marketing communications from Proesis</shortDescription>
+        <value>I agree to receive marketing communications from Proesis</value>
+    </labels>
+    <labels>
+        <fullName>TOS_Privacy_Policy_Ops_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>I agree to the {0} and {1}</shortDescription>
+        <value>I agree to the {0} and {1}</value>
+    </labels>
+    <labels>
+        <fullName>Accept_TOS_Privacy_Title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Accept Terms of Service and Privacy Policy</shortDescription>
+        <value>Accept Terms of Service and Privacy Policy</value>
+    </labels>
+    <labels>
+        <fullName>Accept_TOS_Privacy_Message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Please review and accept the terms of service and privacy policy.</shortDescription>
+        <value>Please review and accept the terms of service and privacy policy.</value>
+    </labels>
 </CustomLabels>

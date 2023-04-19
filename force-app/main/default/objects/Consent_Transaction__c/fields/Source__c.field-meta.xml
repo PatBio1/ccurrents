@@ -28,6 +28,11 @@
                 <default>false</default>
                 <label>Subscriber</label>
             </value>
+            <value>
+                <fullName>Mobile Registration</fullName>
+                <default>false</default>
+                <label>Mobile Registration</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

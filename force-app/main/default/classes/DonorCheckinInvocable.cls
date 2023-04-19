@@ -7,6 +7,9 @@ public without sharing class DonorCheckinInvocable {
     @InvocableMethod(Label='Donor Checkin Visit Update' Description='Finds the visit related to this Donor Number and updates it to Checked-in Status with the time.' Category='Donor')
     public static void updateVisitStatus(List<List<Donor_CheckIn__e>> inputRecords) {
         List<List<Donor_CheckIn__e>> validCheckinEvents = (List<List<Donor_CheckIn__e>>)DonorEventHelper.validateDonorAndVisitReferences(inputRecords);
+        if (validCheckinEvents.size() == 0) {
+            return;
+        }
 
         List<Donor_CheckIn__e> recordsToProcess = new List<Donor_CheckIn__e>();
         Map<String, Donor_CheckIn__e> donorNumberToPEs = new Map<String, Donor_CheckIn__e>();

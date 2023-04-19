@@ -38,12 +38,14 @@ export default class Profile extends LightningElement {
     currentPage = PAGE_BASIC_PROFILE;
     @track profile = {
         howGetToCenter: '',
-        language: language.replace('-', '_')
+        language: language.replace('-', '_'),
+        isAcceptingMarketingComms: true
     };
     resendEmailCodeEnabled = true;
     emailVerificationsExhausted = false;
     resendSmsCodeEnabled = true;
     smsVerificationsExhausted = false;
+    areTosAndPrivacyPoliciesAccepted = false;
     startURL;
 
     @api center;
@@ -53,6 +55,13 @@ export default class Profile extends LightningElement {
         if (currentPageReference) {
             this.startURL = currentPageReference.state?.startURL;
         }
+    }
+
+    get formattedTosAndPrivacyPoliciesOptText() {
+        return labels.formatLabel(labels.tOSPrivacyPolicyOpsText, [
+            `<a href=${labels.privacyPolicyLink} target='_blank'>${labels.privacyPolicy}</a>`,
+            `<a href=${labels.termsOfServiceLink} target='_blank'>${labels.termsOfService}</a>`
+        ]);
     }
 
     get verifyEmailInstructionsLabel() {
@@ -223,6 +232,14 @@ export default class Profile extends LightningElement {
         ]);
     }
 
+    onTosAndPrivacyChange(event) {
+        this.areTosAndPrivacyPoliciesAccepted = event.target.checked;
+    }
+
+    onAcceptMarketingCommsChange(event) {
+        this.profile.isAcceptingMarketingComms = event.target.checked;
+    }
+
     onFieldChange(event) {
         let field = event.target?.dataset?.field;
 
@@ -351,6 +368,11 @@ export default class Profile extends LightningElement {
     }
 
     onPictureNextButtonClick() {
+        if (!this.areTosAndPrivacyPoliciesAccepted) {
+            util.showGuestToast(this, 'error', labels.acceptTOSPrivacyTitle, labels.acceptTOSPrivacyMessage);
+            return;
+        }
+
         this.saveProfile(PAGE_PASSWORD);
     }
 

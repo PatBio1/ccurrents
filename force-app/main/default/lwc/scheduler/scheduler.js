@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import labels from 'c/labelService';
 import util from 'c/util';
 
+import getCurrentDonorVisitCount from '@salesforce/apex/VisitSelector.getCurrentDonorVisitCount';
 import getCenter from '@salesforce/apex/SchedulerController.getCenter';
 import getAppointments from '@salesforce/apex/SchedulerController.getAppointments';
 import scheduleVisit from '@salesforce/apex/SchedulerController.scheduleVisit';
@@ -19,7 +20,16 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
     center = {};
     @track appointmentGroups = [];
 
+    existingVisitCount;
     appointmentSelected = false;
+
+    get screenTitle() {
+        if (!this.existingVisitCount) {
+            return labels.scheduleYour1stAppointment;
+        }
+
+        return labels.scheduleYourAppointment;
+    }
 
     get hasRewardInfo() {
         return (this.donorPoints !== undefined && this.donorCurrency !== undefined);
@@ -41,6 +51,7 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
 
         this.appointmentDate = year + '-' + month + '-' + day;
 
+        this.loadExistingVisitCount();
         this.loadCenter();
         this.loadDonorRewardsInfo();
     }
@@ -174,6 +185,18 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
 
             this.donorCurrency = response.donorBalance;
             this.donorPoints = response.donorPoints;
+        } catch (error) {
+            console.log(error);
+        } finally {
+            this.loading = false;
+        }
+    }
+
+    async loadExistingVisitCount() {
+        this.loading = true;
+
+        try {
+            this.existingVisitCount = await getCurrentDonorVisitCount();
         } catch (error) {
             console.log(error);
         } finally {

@@ -246,7 +246,7 @@ public without sharing class ProfileController {
             Util.testExceptionHandling();
 
             Database.LeadConvertResult leadConvertResult = convertLead(profile);
-            if (profile.isAcceptingMarketingComms) {
+            if (profile.isAcceptingMarketingComms != null && profile.isAcceptingMarketingComms) {
                 handleCreateMarketingConsent(leadConvertResult.getLeadId(), leadConvertResult.getContactId());
             }
 

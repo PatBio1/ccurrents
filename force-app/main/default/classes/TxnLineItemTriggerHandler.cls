@@ -1,4 +1,4 @@
-public with sharing class TxnLineItemTriggerHandler extends TriggerFactory.BaseHandler {
+public without sharing class TxnLineItemTriggerHandler extends TriggerFactory.BaseHandler {
     public override void beforeInsert(List<SObject> newList) {
         rollupTxnLineItemFields((List<Txn_Line_Item__c>) newList);
     }

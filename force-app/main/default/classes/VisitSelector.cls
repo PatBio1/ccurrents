@@ -4,6 +4,20 @@
 
 public without sharing class VisitSelector {
 
+    @AuraEnabled
+    public static Integer getCurrentDonorVisitCount() {
+        Integer donorVisitCount = 0;
+
+        try {
+            User currentUser = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId() LIMIT 1];
+            donorVisitCount = [SELECT count() FROM Visit__c WHERE Donor__c = :currentUser.ContactId];
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+
+        return donorVisitCount;
+    }
+
     public static List<Visit__c> getVisitsInRangeForDonorNumbers(List<Datetime> dateTimesToProcess, Set<String> donorNumbersToQuery){
         dateTimesToProcess.sort();
         // Assuming FDA 48 Hour rule mandates (at least) 24 hours between visits

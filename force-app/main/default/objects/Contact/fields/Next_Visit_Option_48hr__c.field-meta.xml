@@ -3,7 +3,13 @@
     <fullName>Next_Visit_Option_48hr__c</fullName>
     <description>The next visit according to the 48 hour FDA rule</description>
     <externalId>false</externalId>
-    <formula>Last_Donation__c + 2</formula>
+    <formula>IF (Last_Donation__c != NULL &amp;&amp; Last_Scheduled_Visit__c != NULL, 
+   FROMUNIXTIME(MAX(UNIXTIMESTAMP(Last_Donation__c + 2), UNIXTIMESTAMP(Last_Scheduled_Visit__c + 2))), 
+   IF (Last_Donation__c != NULL,
+      Last_Donation__c + 2,
+      Last_Scheduled_Visit__c + 2
+   )
+)</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <inlineHelpText>The next visit according to the 48 hour FDA rule</inlineHelpText>
     <label>Next Visit Option 48hr</label>

@@ -40,4 +40,8 @@ public with sharing class Constants {
     public static final String DEFAULT_CUSTOMER_SUPPORT_CASE_SUBJECT = 'Donor Mobile App Support Request';
     public static final String DEFAULT_CUSTOMER_SUPPORT_CASE_ORIGIN = 'Donor Mobile App Submission';
     public static final String DEFAULT_CUSTOMER_SUPPORT_CASE_REASON = 'Support Request';
+
+    public static final String DEFAULT_MARKETING_CONSENT_SCOPE = 'Global';
+    public static final String DEFAULT_MARKETING_CONSENT_SOURCE = 'Mobile Registration';
+    public static final String DEFAULT_MARKETING_CONSENT_TYPE = 'Opt-in';
 }

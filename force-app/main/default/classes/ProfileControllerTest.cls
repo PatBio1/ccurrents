@@ -699,4 +699,33 @@ public with sharing class ProfileControllerTest {
         Assert.isTrue(exceptionThrown, 'An exception should have been thrown');
     }
 
+    @isTest 
+    static void testHandleCreateMarketingConsent() {
+        Lead lead = new Lead();
+        lead.FirstName = 'Test Lead First';
+        lead.LastName = 'Test Last';
+        lead.Email = 'ctester@ccurrents.com.testing';
+        insert lead;
+
+        Account testDonorAccount = TestUtil.createTestDonor('111-222');
+        insert testDonorAccount;
+
+        Contact testDonor = [SELECT Id FROM Contact WHERE AccountId = :testDonorAccount.Id LIMIT 1];
+
+        Test.startTest();
+        ProfileController.handleCreateMarketingConsent(lead.Id, testDonor.Id);
+        Test.stopTest();
+
+        List<Consent_Transaction__c> marketingConsents = [
+            SELECT Id, Scope__c, Source__c, Type_of_Consent__c 
+            FROM Consent_Transaction__c 
+            WHERE Lead__c = :lead.Id AND 
+                Contact__c = :testDonor.Id
+        ];
+
+        Assert.areEqual(1, marketingConsents.size(), 'A marketing consent should have been created');
+        Assert.areEqual(Constants.DEFAULT_MARKETING_CONSENT_SCOPE, marketingConsents[0].Scope__c, 'The marketing consent\'s scope should be ' + Constants.DEFAULT_MARKETING_CONSENT_SCOPE);
+        Assert.areEqual(Constants.DEFAULT_MARKETING_CONSENT_SOURCE, marketingConsents[0].Source__c, 'The marketing consent\'s source should be ' + Constants.DEFAULT_MARKETING_CONSENT_SOURCE);
+        Assert.areEqual(Constants.DEFAULT_MARKETING_CONSENT_TYPE, marketingConsents[0].Type_of_Consent__c, 'The marketing consent\'s type should be ' + Constants.DEFAULT_MARKETING_CONSENT_TYPE);
+    }
 }

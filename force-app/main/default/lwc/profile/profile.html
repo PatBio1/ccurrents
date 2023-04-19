@@ -136,6 +136,15 @@
                     </div>
                 </template>
             </div>
+
+            <div class="legal-and-marketing-opts-container slds-m-bottom_small">
+                <div class="linked-checkbox-container">
+                    <lightning-input type="checkbox" label="" checked={profile.areTosAndPrivacyPoliciesAccepted} variant="label-hidden" onchange={onTosAndPrivacyChange}></lightning-input>
+                    <lightning-formatted-rich-text value={formattedTosAndPrivacyPoliciesOptText}></lightning-formatted-rich-text>
+                </div>
+                
+                <lightning-input type="checkbox" label={labels.marketingCommunicationsOpsText} checked={profile.isAcceptingMarketingComms} onchange={onAcceptMarketingCommsChange}></lightning-input>
+            </div>
         </div>
 
         <div class="slds-grid slds-gutters">

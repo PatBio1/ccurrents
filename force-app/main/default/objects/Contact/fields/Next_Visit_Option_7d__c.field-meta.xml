@@ -3,7 +3,13 @@
     <fullName>Next_Visit_Option_7d__c</fullName>
     <description>The next visit 7d past Previous to Last Visit</description>
     <externalId>false</externalId>
-    <formula>Last_Previous_Donation__r.Donation_Complete__c + 7</formula>
+    <formula>IF (Last_Previous_Donation__c != NULL &amp;&amp; Last_Previous_Scheduled_Visit__c != NULL, 
+   FROMUNIXTIME(MAX(UNIXTIMESTAMP(Last_Previous_Donation__r.Donation_Complete__c + 7), UNIXTIMESTAMP(Last_Previous_Scheduled_Visit__r.Appointment_Datetime__c + 7))), 
+   IF (Last_Previous_Donation__c != NULL,
+      Last_Previous_Donation__r.Donation_Complete__c + 7,
+      Last_Previous_Scheduled_Visit__r.Appointment_Datetime__c + 7
+   )
+)</formula>
     <label>Next Visit Option 7d</label>
     <required>false</required>
     <type>DateTime</type>

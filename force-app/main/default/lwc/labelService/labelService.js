@@ -94,6 +94,7 @@ import saved from '@salesforce/label/c.Saved';
 import schedule from '@salesforce/label/c.Schedule';
 import scheduleAppointment from '@salesforce/label/c.Schedule_Appointment';
 import scheduled from '@salesforce/label/c.Scheduled';
+import scheduleYourAppointment from '@salesforce/label/c.Schedule_Your_Appointment';
 import scheduleYour1stAppointment from '@salesforce/label/c.Schedule_Your_1st_Appointment';
 import selectTimeSlot from '@salesforce/label/c.Select_Time_Slot';
 import setGoal from '@salesforce/label/c.Set_Goal';
@@ -239,6 +240,7 @@ const labels = {
     schedule,
     scheduleAppointment,
     scheduled,
+    scheduleYourAppointment,
     scheduleYour1stAppointment,
     selectTimeSlot,
     setGoal,

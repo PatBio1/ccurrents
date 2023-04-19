@@ -84,16 +84,17 @@ public class CoreSchedulerHandlerTest {
         }
         insert originalVisits;
 
-        List<CoreSchedulerHandler.RescheduleRequest> rescheduleRequests = new List<CoreSchedulerHandler.RescheduleRequest>();
+        Map<Id, CoreSchedulerHandler.RescheduleRequest> rescheduleRequests = new Map<Id, CoreSchedulerHandler.RescheduleRequest>();
+
         for (Integer i = 0; i < originalVisits.size(); i++) {
-            rescheduleRequests.add(new CoreSchedulerHandler.RescheduleRequest(
+            rescheduleRequests.put(originalVisits[i].Id, new CoreSchedulerHandler.RescheduleRequest(
                 originalVisits[i].Id,
                 targetAppointments[i + 1].Id
             ));
         }
 
         Test.startTest();
-        CoreSchedulerHandler.rescheduleVisits(new CoreSchedulerHandler.RescheduleBatchRequest(rescheduleRequests));
+        CoreSchedulerHandler.rescheduleVisits(new CoreSchedulerHandler.RescheduleBatchRequest(rescheduleRequests.values()));
         Test.stopTest();
 
         List<Visit__c> updatedOriginalVisits = [SELECT Id, Status__c, Outcome__c FROM Visit__c WHERE Id IN :originalVisits];
@@ -102,11 +103,15 @@ public class CoreSchedulerHandlerTest {
             Assert.areEqual('Rescheduled', updatedOriginalVisit.Outcome__c, 'Original visit should be marked as rescheduled.');
         }
 
-        List<Visit__c> newRescheduledVisits = [SELECT Id, Status__c FROM Visit__c WHERE Appointment__c IN :targetAppointments AND Id NOT IN :originalVisits];
+        List<Visit__c> newRescheduledVisits = [SELECT Id, Status__c, Rescheduled_Visit__c FROM Visit__c WHERE Appointment__c IN :targetAppointments AND Id NOT IN :originalVisits];
         Assert.areEqual(originalVisits.size(), newRescheduledVisits.size(), 'There should be the same amount of new visits as there were original visits.');
 
         for (Visit__c newRescheduledVisit : newRescheduledVisits) {
             Assert.areEqual('Scheduled', newRescheduledVisit.Status__c, 'New visit should be marked as scheduled.');
+            Assert.isNotNull(newRescheduledVisit.Rescheduled_Visit__c, 'New visit should have a reference to an old visit');
+            
+            CoreSchedulerHandler.RescheduleRequest rescheduleRequest = rescheduleRequests.get(newRescheduledVisit.Rescheduled_Visit__c);
+            Assert.areEqual(rescheduleRequest.originalVisitId, newRescheduledVisit.Rescheduled_Visit__c, 'New visit should have a reference to the old visit');
         }
     }
 

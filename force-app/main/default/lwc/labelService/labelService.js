@@ -94,6 +94,7 @@ import saved from '@salesforce/label/c.Saved';
 import schedule from '@salesforce/label/c.Schedule';
 import scheduleAppointment from '@salesforce/label/c.Schedule_Appointment';
 import scheduled from '@salesforce/label/c.Scheduled';
+import scheduleYourAppointment from '@salesforce/label/c.Schedule_Your_Appointment';
 import scheduleYour1stAppointment from '@salesforce/label/c.Schedule_Your_1st_Appointment';
 import selectTimeSlot from '@salesforce/label/c.Select_Time_Slot';
 import setGoal from '@salesforce/label/c.Set_Goal';
@@ -134,7 +135,6 @@ import welcomeToProesis from '@salesforce/label/c.Welcome_To_Proesis';
 import workingHours from '@salesforce/label/c.Working_Hours';
 import yourHealth from '@salesforce/label/c.Your_Health';
 import zipCode from '@salesforce/label/c.Zip_Code';
-import scheduleYourAppointment from '@salesforce/label/c.Schedule_Your_Appointment';
 
 const labels = {
     formatLabel: function (label, args) {
@@ -240,6 +240,7 @@ const labels = {
     schedule,
     scheduleAppointment,
     scheduled,
+    scheduleYourAppointment,
     scheduleYour1stAppointment,
     selectTimeSlot,
     setGoal,
@@ -279,8 +280,7 @@ const labels = {
     welcomeToProesis,
     workingHours,
     yourHealth,
-    zipCode,
-    scheduleYourAppointment
+    zipCode
 };
 
 export default labels;

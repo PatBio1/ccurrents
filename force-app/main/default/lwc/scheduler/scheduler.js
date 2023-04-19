@@ -2,9 +2,11 @@ import { track, LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import labels from 'c/labelService';
 import util from 'c/util';
+
 import getCenter from '@salesforce/apex/SchedulerController.getCenter';
 import getAppointments from '@salesforce/apex/SchedulerController.getAppointments';
 import scheduleVisit from '@salesforce/apex/SchedulerController.scheduleVisit';
+import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsInfo';
 
 export default class Scheduler extends NavigationMixin(LightningElement) {
 
@@ -12,10 +14,16 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
     currentPage = 'Scheduler';
     loading = true;
     appointmentDate;
+    donorPoints;
+    donorCurrency;
     center = {};
     @track appointmentGroups = [];
 
     appointmentSelected = false;
+
+    get hasRewardInfo() {
+        return (this.donorPoints !== undefined && this.donorCurrency !== undefined);
+    }
 
     get showScheduler() {
         return (this.currentPage === 'Scheduler');
@@ -34,6 +42,7 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
         this.appointmentDate = year + '-' + month + '-' + day;
 
         this.loadCenter();
+        this.loadDonorRewardsInfo();
     }
 
     onAppointmentDateChange(event) {
@@ -156,4 +165,19 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
         });
     }
 
+    async loadDonorRewardsInfo() {
+        this.loading = true;
+
+        try {
+            let response = await getDonorRewardsInfo();
+            console.log("loadDonorRewardsInfo", response);
+
+            this.donorCurrency = response.donorBalance;
+            this.donorPoints = response.donorPoints;
+        } catch (error) {
+            console.log(error);
+        } finally {
+            this.loading = false;
+        }
+    }
 }

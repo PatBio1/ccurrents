@@ -23,8 +23,8 @@
                     </div>
 
                     <div class="wallet-field">
-                        <p><b>Points</b></p>
-                        <p><lightning-formatted-number value={donorRewardsInfo.donorPoints}></lightning-formatted-number> P</p>
+                        <p><b>{labels.pointBrandName}</b></p>
+                        <p><lightning-formatted-number value={donorRewardsInfo.donorPoints}></lightning-formatted-number></p>
                     </div>
 
                     <!-- Instructed to remove this according to #267, leaving it here in case we need it -->
@@ -38,11 +38,11 @@
                 </div>
 
                 <p if:true={donorRewardsInfo} class="slds-m-bottom_small">
-                    *minimum withdrawal is <lightning-formatted-number value={donorRewardsInfo.minimumWithdrawalAmount}></lightning-formatted-number> P
+                    *minimum withdrawal is <lightning-formatted-number value={donorRewardsInfo.minimumWithdrawalAmount}></lightning-formatted-number> {labels.pointBrandName}
                 </p>
 
                 <div class="slds-m-bottom_small">
-                    <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled={cantRedeemPoints}>Redeem points</button>
+                    <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled={cantRedeemPoints}>Redeem {labels.pointBrandName}</button>
                 </div>
 
                 <div class="slds-m-bottom_medium my-status-container">
@@ -62,7 +62,7 @@
     
                                 <div>
                                     <p><b>{loyaltyTier.displayName}</b></p>
-                                    <p>{loyaltyTier.levelThreshold} Aps</p>
+                                    <p>{loyaltyTier.levelThreshold} Dons</p>
                                 </div>
                             </div>
                         </template>
@@ -70,7 +70,7 @@
                 </div>
 
                 <div if:true={hasRewardsInfo}>
-                    Left: <strong>{donorRewardsInfo.remainingVisitsForNextTier} appointments</strong> to get <strong><span style="color: #A18B76;">{donorRewardsInfo.nextLoyaltyLevel}</span></strong> status
+                    Left: <strong>{donorRewardsInfo.remainingVisitsForNextTier} donations</strong> to get <strong><span style="color: #A18B76;">{donorRewardsInfo.nextLoyaltyLevel}</span></strong> status
                 </div>
             </lightning-tab>
 

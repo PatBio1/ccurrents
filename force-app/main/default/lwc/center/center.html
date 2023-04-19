@@ -77,12 +77,8 @@
                 <lightning-tab label={labels.updatesAndAppointments}>
                     <div class="title-small">{labels.notifications}</div>
 
-                    <!--article class="slds-card slds-card_boundary slds-m-top_medium">
-                        <div class="slds-card__body slds-card__body_inner">
-                            Your visit was confirmed:<br/><br/>
-                            <strong>3 Jan, Tuesday, 2023 at 9am</strong>
-                        </div>
-                    </article-->
+                    <c-notifications center-id={currentCenterId} hide-header="true"></c-notifications>
+
                 </lightning-tab>
             </lightning-tabset>
         </template>

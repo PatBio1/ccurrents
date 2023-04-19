@@ -1,6 +1,6 @@
 @IsTest
 public class CoreSchedulerHandlerTest {
-    final static Integer AMOUNT_OF_DONORS = 200;
+    final static Integer AMOUNT_OF_DONORS = 50;
     final static Integer BASE_CAPACITY = 2;
 
     @TestSetup

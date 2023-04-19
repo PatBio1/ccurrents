@@ -25,15 +25,19 @@ public with sharing class DonorCompInvocableTest {
         Rate__c testRateRecord = new Rate__c(
             Donation_Type__c = testDonationType.Id,
             Center__c = centerAccount.Id,
-            Base_Payment__c = 100
+            Base_Payment__c = 100,
+            Type__c = 'Base'
         );
         insert testRateRecord;
 
-        Level__c testLevel2 = new Level__c(Name = 'Level 2', Donation_Threshold__c = TEST_DONATION_THRESHOLD, Donation_Payment__c = 200, Donation_Points__c = 2000, Threshold_Points__c = 1000, Threshold_Payment__c = 100);
+        Level__c testLevel2 = new Level__c(Name = 'Level 2', Donation_Threshold__c = TEST_DONATION_THRESHOLD, Donation_Payment__c = 200, Donation_Points__c = 2000, Threshold_Points__c = 1000, Threshold_Payment__c = 100, isActive__c = true, isVisible__c = true);
         insert testLevel2;
 
-        Level__c testLevel1 = new Level__c(Name = 'Level 1', Donation_Payment__c = 100, Donation_Points__c = 1000, Threshold_Points__c = 500, Threshold_Payment__c = 50, Next_Level__c = testLevel2.Id);
+        Level__c testLevel1 = new Level__c(Name = 'Level 1', Donation_Payment__c = 100, Donation_Points__c = 1000, Threshold_Points__c = 500, Threshold_Payment__c = 50, Next_Level__c = testLevel2.Id, isActive__c = true, isVisible__c = true);
         insert testLevel1;
+
+        Level__c bonusLevel1 = new Level__c(Name = 'Bonus Level 1', Donation_Threshold__c = TEST_DONATION_THRESHOLD - 1, Threshold_Points__c = 333, Threshold_Payment__c = 33, isActive__c = true, isVisible__c = false);
+        insert bonusLevel1;
 
         Account donorAccount1 = TestUtil.createTestDonor('123456');
         donorAccount1.Loyalty_Level__pc = testLevel1.Id;
@@ -86,12 +90,13 @@ public with sharing class DonorCompInvocableTest {
         Id scheduledId = [SELECT Id FROM Schedule__c LIMIT 1]?.Id;
 
         List<Appointment__c> testAppointments = new List<Appointment__c>();
-        Datetime currentDatetime = Datetime.now().addDays(14);
+        Datetime currentDatetime = Datetime.now().addDays(-14 * TEST_DONATION_THRESHOLD);
 
         for (Integer i = 0; i < TEST_DONATION_THRESHOLD; i++) {
             testAppointments.add(TestUtil.createTestAppointment(scheduledId, currentDatetime));
             currentDatetime = currentDatetime.addDays(14);
         }
+        insert testAppointments;
 
         List<Visit__c> testVisits = new List<Visit__c>();
         Id centerDonationTypeId = [SELECT Id FROM Center_Donation_Type__c LIMIT 1][0].Id;
@@ -133,11 +138,11 @@ public with sharing class DonorCompInvocableTest {
         Assert.areEqual(2, donors[0].Transactions__r.size(), 'Donor should have 2 transactions');
         
         // Level 1 Transaction
-        Assert.areEqual(200, donors[0].Transactions__r[0].Amount_Currency__c, 'Last Transaction should have Amount_Currency__c = 200');
-        Assert.areEqual(1000, donors[0].Transactions__r[0].Amount_Points__c, 'Last Transaction should have Amount_Points__c = 1000');
+        Assert.areEqual(233, donors[0].Transactions__r[0].Amount_Currency__c, 'First Transaction should have Amount_Currency__c = 233');
+        Assert.areEqual(1333, donors[0].Transactions__r[0].Amount_Points__c, 'First Transaction should have Amount_Points__c = 1333');
 
         // Level 2 Transaction
-        Assert.areEqual(300, donors[0].Transactions__r[1].Amount_Currency__c, 'Last Transaction should have Amount_Currency__c = 300');
-        Assert.areEqual(2000, donors[0].Transactions__r[1].Amount_Points__c, 'Last Transaction should have Amount_Points__c = 2000');
+        Assert.areEqual(300, donors[0].Transactions__r[1].Amount_Currency__c, 'Last Transaction should have Amount_Currency__c = 333');
+        Assert.areEqual(2000, donors[0].Transactions__r[1].Amount_Points__c, 'Last Transaction should have Amount_Points__c = 2333');
     }
 }

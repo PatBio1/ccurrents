@@ -1,6 +1,5 @@
 import { api, track, wire, LightningElement } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import constants from 'c/constants';
 import labels from 'c/labelService';
@@ -296,11 +295,8 @@ export default class Profile extends LightningElement {
                     }
                 }));
             }).catch((error) => {
-                this.dispatchEvent(new ShowToastEvent({
-                    title: 'Create Donor Error',
-                    message: error.body.message,
-                    variant: 'error'
-                }))
+                util.showToast(this, 'error', 'Create Donor Error', error);
+
                 this.loading = false;
             });
 

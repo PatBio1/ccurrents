@@ -1,17 +1,11 @@
 @isTest
 public with sharing class SchedulerControllerTest {
 
-    @TestSetup
-    static void setupData() {
-        TestUtil.createAdminUser();
-    }
-
     @isTest
     static void testGetCenter() {
         User experienceUser = TestUtil.createExperienceUser();
-        User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
 
-        System.runAs(adminUser) {
+        System.runAs(TestUtil.createAdminUser()) {
             Account center = TestUtil.createMiramarCenter();
             insert center;
 
@@ -33,9 +27,7 @@ public with sharing class SchedulerControllerTest {
     static void testGetAppointments() {
         Account center;
 
-        User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
-
-        System.runAs(adminUser) {
+        System.runAs(TestUtil.createAdminUser()) {
             center = TestUtil.createMiramarCenter();
             insert center;
 
@@ -67,12 +59,9 @@ public with sharing class SchedulerControllerTest {
     @isTest
     static void testGetAppointmentsInPast() {
         Account center;
-
-        User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
-
         Date yesterday = Date.today().addDays(-1);
 
-        System.runAs(adminUser) {
+        System.runAs(TestUtil.createAdminUser()) {
             center = TestUtil.createMiramarCenter();
             insert center;
 
@@ -106,9 +95,8 @@ public with sharing class SchedulerControllerTest {
     @isTest
     static void testGetVisits() {
         User experienceUser = TestUtil.createExperienceUser();
-        User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
 
-        System.runAs(adminUser) {
+        System.runAs(TestUtil.createAdminUser()) {
             Account center = TestUtil.createMiramarCenter();
             insert center;
 
@@ -154,9 +142,7 @@ public with sharing class SchedulerControllerTest {
     static void testScheduleVisit() {
         Appointment__c appointment;
 
-        User adminUser = [SELECT Id FROM User WHERE Name = 'Admin User'];
-
-        System.runAs(adminUser) {
+        System.runAs(TestUtil.createAdminUser()) {
             Account center = TestUtil.createMiramarCenter();
             insert center;
 

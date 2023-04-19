@@ -1,14 +1,14 @@
 public with sharing class TestUtil {
 
+    private static Integer userCount = 0;
+    private static UserRole sharedUserRole;
+
     public static Boolean throwException = false;
 
     public static User createAdminUser() {
-        UserRole userRole = new UserRole(
-            Name = 'AdminTest'
-        );
-        insert userRole;
+        UserRole userRole = getUserRole();
 
-        String userEmail = 'admin@' + UserInfo.getOrganizationId() + '.test.com';
+        String userEmail = 'admin' + userCount + '@' + UserInfo.getOrganizationId() + '.test.com';
 
         User user = new User(
             FirstName = 'Admin',
@@ -26,6 +26,8 @@ public with sharing class TestUtil {
         );
         insert user;
 
+        userCount++;
+
         PermissionSet adminPermissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.ADMIN_PERMISSION_SET_NAME];
 
         insert new PermissionSetAssignment(
@@ -36,13 +38,23 @@ public with sharing class TestUtil {
         return user;
     }
 
-    public static User createExperienceUser() {
-        UserRole userRole = new UserRole(
-            Name = 'Test'
-        );
-        insert userRole;
+    private static UserRole getUserRole() {
+        if (sharedUserRole == null) {
+            sharedUserRole = new UserRole(
+                Name = 'Test'
+            );
 
-        String userWithRoleEmail = 'userwithrole@' + UserInfo.getOrganizationId() + '.test.com';
+            insert sharedUserRole;
+        }
+
+        return sharedUserRole;
+    }
+
+
+    public static User createExperienceUser() {
+        UserRole userRole = getUserRole();
+
+        String userWithRoleEmail = 'userwithrole' + userCount + '@' + UserInfo.getOrganizationId() + '.test.com';
 
         User userWithRole = new User(
             FirstName = 'Role',
@@ -60,12 +72,14 @@ public with sharing class TestUtil {
         );
         insert userWithRole;
 
+        userCount++;
+
         Account account;
         Contact contact;
         User experienceUser;
 
         System.runAs(userWithRole) {
-            String experienceUserEmail = 'experience@' + UserInfo.getOrganizationId() + '.test.com';
+            String experienceUserEmail = 'experience' + userCount + '@' + UserInfo.getOrganizationId() + '.test.com';
 
             Account = new Account(
                 FirstName = 'Test',
@@ -91,6 +105,8 @@ public with sharing class TestUtil {
                 ContactId = [SELECT PersonContactId FROM Account WHERE Id = :account.Id LIMIT 1].PersonContactId
             );
             insert experienceUser;
+
+            userCount++;
         }
 
         return experienceUser;

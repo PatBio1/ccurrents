@@ -347,14 +347,15 @@ public with sharing class CenterSchedulerControllerTests {
     @IsTest
     static void testGetAvailableRescheduleAppointmentRange() {
         List<CenterScheduleController.RescheduleSlot> rescheduleSlots;
+        Schedule__c targetSchedule = [SELECT Id, Center__c FROM Schedule__c LIMIT 1];
         DateTime currentDateTime = DateTime.newInstance(currentDate, Time.newInstance(0, 0, 0, 0));
 
         User contextuser = TestUtil.createAdminUser();
-        
 
         Test.startTest();
         System.runAs(contextuser){
             rescheduleSlots = CenterScheduleController.getAvailableRescheduleAppointmentRange(
+                targetSchedule.Center__c,
                 currentDateTime,
                 currentDateTime.addDays(1),
                 DateTime.newInstance(startDate, Time.newInstance(0, 0, 0, 0)),
@@ -371,6 +372,7 @@ public with sharing class CenterSchedulerControllerTests {
     @IsTest
     static void testNoAvailableRescheduleAppointmentRange() {
         List<CenterScheduleController.RescheduleSlot> rescheduleSlots;
+        Schedule__c targetSchedule = [SELECT Id, Center__c FROM Schedule__c LIMIT 1];
         DateTime currentDateTime = DateTime.newInstance(currentDate, Time.newInstance(0, 0, 0, 0));
 
         User contextuser = TestUtil.createAdminUser();
@@ -378,6 +380,7 @@ public with sharing class CenterSchedulerControllerTests {
         Test.startTest();
         System.runAs(contextuser){
             rescheduleSlots = CenterScheduleController.getAvailableRescheduleAppointmentRange(
+                targetSchedule.Center__c,
                 currentDateTime,
                 currentDateTime.addDays(1),
                 DateTime.newInstance(endDate, Time.newInstance(0, 0, 0, 0)),

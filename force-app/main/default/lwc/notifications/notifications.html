@@ -1,9 +1,22 @@
 <template>
 
-    <div class="slds-var-p-around_medium">
+    <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
+
+    <div if:false={hideHeader} class="slds-var-p-around_medium">
         <div class="title-medium">
             {labels.notifications}
         </div>
+    </div>
+
+    <div class="slds-var-p-around_medium">
+        <template for:each={notifications} for:item="notification" for:index="notificationIndex">
+            <article key={notification.id} class="slds-card slds-card_boundary notification" data-index={notificationIndex} onclick={onNotificationClick}>
+                <div class="slds-card__body slds-card__body_inner">
+                    <strong>{notification.subject}</strong><br/>
+                    <div class="notification-body">{notification.body}</div>
+                </div>
+            </article>
+        </template>
     </div>
 
 </template>

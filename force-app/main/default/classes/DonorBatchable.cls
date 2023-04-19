@@ -4,16 +4,7 @@ public with sharing class DonorBatchable implements Database.Batchable<SObject>,
 	}
 
     public Database.QueryLocator start(Database.BatchableContext context) {
-        return Database.getQueryLocator([
-            SELECT Id, Total_Visits_365d__c, (
-                SELECT Id, Appointment_Datetime__c
-                FROM Visits__r
-                WHERE Appointment_Datetime__c >= LAST_N_DAYS:365 AND 
-                    Status__c = 'Complete' AND 
-                    Outcome__c = 'Donation'
-            )
-            FROM Contact
-        ]);
+        return Database.getQueryLocator([SELECT Id, Total_Visits_365d__c FROM Contact]);
     }
 
     public void execute(Database.BatchableContext context, List<Contact> donors) {
@@ -25,9 +16,12 @@ public with sharing class DonorBatchable implements Database.Batchable<SObject>,
 	}
 
     public void processDonorTotalVisits(List<Contact> donors) {
+        Map<Id, Integer> donorIdToVisitCount = DonorBatchableHelper.calculateDonor365DayVisitTotals(donors);
+
         for (Contact donor : donors) {
-            donor.Total_Visits_365d__c = donor.Visits__r.size();
+            donor.Total_Visits_365d__c = donorIdToVisitCount.get(donor.Id);
         }
+
         update donors;
     }
 }

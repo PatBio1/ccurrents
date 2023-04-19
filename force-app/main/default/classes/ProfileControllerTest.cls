@@ -501,6 +501,8 @@ public with sharing class ProfileControllerTest {
         System.runAs(TestUtil.createExperienceGuestUser()) {
             Level__c level = new Level__c();
             level.Donation_Threshold__c = 0;
+            level.isActive__c = true;
+            level.isVisible__c = true;
             insert level;
 
             Account account = TestUtil.createMiramarCenter();
@@ -650,6 +652,8 @@ public with sharing class ProfileControllerTest {
         System.runAs(TestUtil.createAdminUser()) {
             Level__c level = new Level__c();
             level.Donation_Threshold__c = 0;
+            level.isActive__c = true;
+            level.isVisible__c = true;
             insert level;
 
             Account account = TestUtil.createMiramarCenter();

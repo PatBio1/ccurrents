@@ -81,18 +81,37 @@ public without sharing class DonorCompInvocable {
         for (Rate__c rate : [
             SELECT Id, Center__c, Donation_Type__c, Base_Payment__c 
             FROM Rate__c
+            WHERE Type__c = 'Base'
         ]) {
             centerAndDonationTypeToRate.put(rate.Center__c + '-' + rate.Donation_Type__c, rate);
+        }
+
+        Map<Decimal, List<Level__c>> donationThresholdToBonusLevels = new Map<Decimal, List<Level__c>>();
+        for(Level__c bonusLevel : [SELECT Id, Name, Donation_Threshold__c, Threshold_Payment__c, Threshold_Points__c FROM Level__c WHERE isActive__c = true AND isVisible__c = false AND Donation_Threshold__c > 0]) {
+            List<Level__c> thresholdBonusLevels = donationThresholdToBonusLevels.get(bonusLevel.Donation_Threshold__c);
+            if (thresholdBonusLevels == null) {
+                thresholdBonusLevels = new List<Level__c>();
+            }
+
+            thresholdBonusLevels.add(bonusLevel);
+            donationThresholdToBonusLevels.put(bonusLevel.Donation_Threshold__c, thresholdBonusLevels);
         }
 
         // Iterate all relevant donors and update loyalty level/create donation transactions
         List<Account> donorsToUpdate = new List<Account>();
         Map<Id, Transaction__c> donorIdToTransaction = new Map<Id, Transaction__c>();
         Map<Id, List<Txn_Line_Item__c>> donorIdToTxnLineItems = new Map<Id, List<Txn_Line_Item__c>>();
-        List<Level__c> lowestLoyaltyLevelByThreshold = [SELECT Id, Donation_Threshold__c, Threshold_Payment__c, Threshold_Points__c FROM Level__c WHERE Donation_Threshold__c > 0 AND isActive__c = true ORDER BY Donation_Threshold__c ASC LIMIT 1];
+        List<Level__c> lowestLoyaltyLevelByThreshold = [
+            SELECT Id, Donation_Threshold__c, Threshold_Payment__c, Threshold_Points__c 
+            FROM Level__c 
+            WHERE Donation_Threshold__c > 0 AND 
+                isActive__c = true 
+            ORDER BY Donation_Threshold__c ASC 
+            LIMIT 1
+        ];
 
-        for(Contact foundContact : [
-            SELECT Id, AccountId, Loyalty_Level__c, Loyalty_Level__r.Donation_Points__c, Loyalty_Level__r.Donation_Payment__c,
+        List<Contact> targetContacts = [
+            SELECT Id, AccountId, Loyalty_Level__c, Loyalty_Level__r.Donation_Points__c, Loyalty_Level__r.Donation_Payment__c, Total_Visits_365d__c,
             Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, Loyalty_Level__r.Next_Level__c, Loyalty_Level__r.Next_Level__r.Threshold_Payment__c, Loyalty_Level__r.Next_Level__r.Threshold_Points__c, (
                 SELECT Id, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c 
                 FROM Visits__r 
@@ -101,7 +120,12 @@ public without sharing class DonorCompInvocable {
             ) 
             FROM Contact 
             WHERE Account.DonorId__c IN :donorNumbersToQuery
-        ]) {
+        ];
+
+        Map<Id, Integer> donorIdToTotalVisitCount = DonorBatchableHelper.calculateDonor365DayVisitTotals(targetContacts);
+        for(Contact foundContact : targetContacts) {
+            Integer totalVisitCount = donorIdToTotalVisitCount.get(foundContact.Id);
+
             if (foundContact.Visits__r == null || foundContact.Visits__r.size() == 0) {
                 continue;
             }
@@ -115,7 +139,7 @@ public without sharing class DonorCompInvocable {
             donorIdToTransaction.put(foundContact.Id, new Transaction__c(
                 Donor__c = foundContact.Id,
                 Visit__c = targetVisitRecord.Id,
-                Type__c = 'Credit'
+                Type__c = 'Debit'
             ));
 
             // Two Txn Line items need to be created, one for points, one for currency
@@ -140,6 +164,34 @@ public without sharing class DonorCompInvocable {
             }
             donorIdToTxnLineItems.put(foundContact.Id, txnLineItems);
 
+            // Handle Bonus Level payments (levels that are active but not visible)
+            // These levels provide one time payments when the threshold is hit
+            for(Decimal bonusLevelThreshold : donationThresholdToBonusLevels.keySet()) {
+                if (totalVisitCount == bonusLevelThreshold) {
+                    for(Level__c bonusLevel : donationThresholdToBonusLevels.get(bonusLevelThreshold)) {
+                        if (bonusLevel.Threshold_Points__c != null && bonusLevel.Threshold_Points__c > 0) {
+                            donorIdToTxnLineItems.get(foundContact.Id).add(new Txn_Line_Item__c(
+                                Item__c	= bonusLevel.Name + ' - Bonus Points',
+                                Quantity__c = 1,
+                                Type__c = 'Points',
+                                Unit_Cost__c = bonusLevel.Threshold_Points__c
+                            ));
+                        }
+
+                        if (bonusLevel.Threshold_Payment__c != null && bonusLevel.Threshold_Payment__c > 0) {
+                            donorIdToTxnLineItems.get(foundContact.Id).add(new Txn_Line_Item__c(
+                                Item__c	= bonusLevel.Name + ' - Bonus Payment',
+                                Quantity__c = 1,
+                                Type__c = 'Currency',
+                                Unit_Cost__c = bonusLevel.Threshold_Payment__c
+                            ));
+                        }
+                    }
+
+                    break;
+                }
+            }
+
             // Get the target promotional level, this should be the Next_Level__c on the current level
             // If they don't have a current level reference (shouldn\'t happen), use the lowest level by non-zero threshold
             Level__c targetPromotionLevel;
@@ -155,7 +207,7 @@ public without sharing class DonorCompInvocable {
             if (
                 foundContact.Loyalty_Level__c != null &&
                 targetPromotionLevel != null && 
-                foundContact.Visits__r.size() == targetPromotionLevel.Donation_Threshold__c
+                totalVisitCount == targetPromotionLevel.Donation_Threshold__c
             ) {
                 donorsToUpdate.add(new Account(Id = foundContact.AccountId, Loyalty_Level__pc = targetPromotionLevel.Id));
 

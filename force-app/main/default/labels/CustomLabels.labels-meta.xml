@@ -991,8 +991,8 @@
         <fullName>Terms_of_Service_Link</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>https://proesisbio.com/privacy-policy</shortDescription>
-        <value>https://proesisbio.com/privacy-policy</value>
+        <shortDescription>https://proesisbio.com/terms-of-use</shortDescription>
+        <value>https://proesisbio.com/terms-of-use</value>
     </labels>
     <labels>
         <fullName>Point_Brand_Name</fullName>

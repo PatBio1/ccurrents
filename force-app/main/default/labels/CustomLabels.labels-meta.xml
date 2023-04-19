@@ -1029,4 +1029,11 @@
         <shortDescription>Please review and accept the terms of service and privacy policy.</shortDescription>
         <value>Please review and accept the terms of service and privacy policy.</value>
     </labels>
+    <labels>
+        <fullName>Schedule_Your_Appointment</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Schedule Your Appointment</shortDescription>
+        <value>Schedule Your Appointment</value>
+    </labels>
 </CustomLabels>

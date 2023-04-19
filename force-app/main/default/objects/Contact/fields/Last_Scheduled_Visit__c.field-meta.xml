@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Scheduled_Visit__c</fullName>
+    <externalId>false</externalId>
+    <label>Last Scheduled Visit</label>
+    <summarizedField>Visit__c.Appointment_Datetime__c</summarizedField>
+    <summaryFilterItems>
+        <field>Visit__c.Status__c</field>
+        <operation>equals</operation>
+        <value>New, Scheduled, Checked-In</value>
+    </summaryFilterItems>
+    <summaryForeignKey>Visit__c.Donor__c</summaryForeignKey>
+    <summaryOperation>max</summaryOperation>
+    <type>Summary</type>
+</CustomField>

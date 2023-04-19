@@ -181,6 +181,7 @@ public without sharing class CoreSchedulerHandler {
         public Visit__c createNewVisit() {
             this.newVisit = originalVisit.clone(false, true, false, false);
     
+            newVisit.Rescheduled_Visit__c = originalVisit.Id;
             newVisit.Appointment__c = newAppointmentSlot.Id;
             newVisit.Status__c = 'Scheduled';
     

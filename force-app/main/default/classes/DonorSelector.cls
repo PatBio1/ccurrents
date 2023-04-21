@@ -7,12 +7,17 @@ public without sharing class DonorSelector {
 
         List<DonorSearchResult> donorSearchResults = new List<DonorSearchResult>();
 
+        // We'll search for eligible donors up to the end of the day of the target visit date as the soonest next visit time component doesn't matter
+        DateTime adjustedVisitDateTime = targetVisitDateString.addHours(23);
+        adjustedVisitDateTime = adjustedVisitDateTime.addMinutes(59);
+        adjustedVisitDateTime = adjustedVisitDateTime.addSeconds(59);
+
         for(Account donor : [
             SELECT Id, Name, PersonEmail, PersonMobilePhone, Soonest_Next_Visit__pc, Loyalty_Level__pc, Loyalty_Level__pr.Name
             FROM Account
             WHERE Name LIKE :(nameSearchString + '%') AND
                 RecordTypeId = :Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId() AND
-                Soonest_Next_Visit__pc <= :targetVisitDateString
+                Soonest_Next_Visit__pc <= :adjustedVisitDateTime
         ]) {
             Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__pc);
 

@@ -44,4 +44,7 @@ public with sharing class Constants {
     public static final String DEFAULT_MARKETING_CONSENT_SCOPE = 'Global';
     public static final String DEFAULT_MARKETING_CONSENT_SOURCE = 'Mobile Registration';
     public static final String DEFAULT_MARKETING_CONSENT_TYPE = 'Opt-in';
+
+    public static final String UNMARKED_DONATION_TASK_SUBJECT = 'Unmarked Donation Found';
+    public static final String UNMARKED_DONATION_TASK_DESCRIPTION = 'A vist with a record donation volume was found that was not marked with an outcome of "Donation".';
 }

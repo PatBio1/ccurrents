@@ -108,13 +108,32 @@ public with sharing class EndOfDayVisitBatchableTest {
                     Appointment__c = appointments[0].id,
                     Center_Donation_Type__c = cdt.Id,
                     Donor__c = donor.id,
-                    Status__c = 'Checked-In'
+                    Status__c = 'New'
                 ),
                 new Visit__c(
                     Appointment__c = appointments[1].id,
                     Center_Donation_Type__c = cdt.Id,
                     Donor__c = donor.id,
                     Status__c = 'Scheduled'
+                ),
+                new Visit__c(
+                    Appointment__c = appointments[0].id,
+                    Center_Donation_Type__c = cdt.Id,
+                    Donor__c = donor.id,
+                    Status__c = 'Checked-In'
+                ),
+                new Visit__c(
+                    Appointment__c = appointments[1].id,
+                    Center_Donation_Type__c = cdt.Id,
+                    Donor__c = donor.id,
+                    Status__c = 'Complete'
+                ),
+                new Visit__c(
+                    Appointment__c = appointments[0].id,
+                    Center_Donation_Type__c = cdt.Id,
+                    Donor__c = donor.id,
+                    Status__c = 'Complete',
+                    Donation_Volume__c = 10
                 ),
                 new Visit__c(
                     Appointment__c = appointments[2].id,
@@ -136,12 +155,23 @@ public with sharing class EndOfDayVisitBatchableTest {
     @IsTest
 	static void testEndOfDayVisitBatchable() {
         Map<Id, String> visitIdToExpectedOutcome = new Map<Id, String>();
+        Set<Id> visitsExpectedToHaveNoDonationTask = new Set<Id>();
 
-        for(Visit__c foundVisit : [SELECT Id, Status__c FROM Visit__c WHERE Appointment__r.Datetime__c < :now]) {
-            if (foundVisit.Status__c == 'Scheduled') {
+        for(Visit__c foundVisit : [SELECT Id, Status__c, Donor__c, Donation_Volume__c FROM Visit__c WHERE Appointment__r.Datetime__c < :now]) {
+            if (foundVisit.Status__c == 'New') {
+                visitIdToExpectedOutcome.put(foundVisit.Id, 'Canceled');
+            } else if (foundVisit.Status__c == 'Scheduled') {
                 visitIdToExpectedOutcome.put(foundVisit.Id, 'No Show');
             } else if (foundVisit.Status__c == 'Checked-In') {
                 visitIdToExpectedOutcome.put(foundVisit.Id, 'No Donation');
+            } else if (foundVisit.Status__c == 'Complete') {
+                if (foundVisit.Donation_Volume__c == null || foundVisit.Donation_Volume__c == 0) {
+                    visitIdToExpectedOutcome.put(foundVisit.Id, 'No Donation');
+                    continue;
+                }
+
+                visitIdToExpectedOutcome.put(foundVisit.Id, 'Donation');
+                visitsExpectedToHaveNoDonationTask.add(foundVisit.Id);
             }
         }
 
@@ -149,27 +179,38 @@ public with sharing class EndOfDayVisitBatchableTest {
 		EndOfDayVisitBatchable.run();
 		Test.stopTest();
 
-        Visit__c [] visits = [SELECT Id, Status__c, Outcome__c, Appointment__r.Datetime__c FROM Visit__c];
-        Assert.areEqual(4, visits.size());
+        String taskSubjectSearchString = Constants.UNMARKED_DONATION_TASK_SUBJECT + '%';
+        Visit__c [] targetedVisits = [
+            SELECT Id, Status__c, Outcome__c, Appointment__r.Datetime__c, Donor__c, (
+                SELECT Id, Subject, Description, WhoId 
+                FROM Tasks 
+                WHERE Subject LIKE :taskSubjectSearchString
+            ) 
+            FROM Visit__c 
+            WHERE Appointment_Datetime__c < :System.now()
+        ];
+
+        Assert.areEqual(5, targetedVisits.size());
         
-        for(Visit__c v: visits) {
-            if (v.Appointment__r.Datetime__c < now) {
-                Assert.areEqual('Complete', v.Status__c);
-                Assert.areEqual(visitIdToExpectedOutcome.get(v.Id), v.Outcome__c);
+        for(Visit__c targetedVisit : targetedVisits) {
+            Assert.areEqual('Complete', targetedVisit.Status__c, 'Visit status should be complete');
+            Assert.areEqual(visitIdToExpectedOutcome.get(targetedVisit.Id), targetedVisit.Outcome__c, 'Visit outcome should be ' + visitIdToExpectedOutcome.get(targetedVisit.Id));
+
+            if (visitsExpectedToHaveNoDonationTask.contains(targetedVisit.Id)) {
+                Assert.areEqual(1, targetedVisit.Tasks.size(), 'Visit should have 1 \'No Donation\' task');
+                Assert.areEqual(targetedVisit.Donor__c, targetedVisit.Tasks[0].WhoId, 'Task should be assigned to the donor');
+                Assert.areEqual(Constants.UNMARKED_DONATION_TASK_SUBJECT, targetedVisit.Tasks[0].Subject, 'Task subject should be ' + Constants.UNMARKED_DONATION_TASK_SUBJECT);
+                Assert.areEqual(Constants.UNMARKED_DONATION_TASK_DESCRIPTION, targetedVisit.Tasks[0].Description, 'Task description should be ' + Constants.UNMARKED_DONATION_TASK_DESCRIPTION);
             } else {
-                Assert.isNull(v.Outcome__c);
+                Assert.areEqual(0, targetedVisit.Tasks.size(), 'Visit should have no tasks');
             }
         }
 	}
 
     @IsTest
 	static void testSchedulable() {
-
 		Test.startTest();
-
 		EndOfDayVisitBatchable.scheduleDaily();
-
 		Test.stopTest();
-
 	}
 }

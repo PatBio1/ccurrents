@@ -300,7 +300,7 @@ public without sharing class VisitTriggerHelper {
             SELECT Id, Last_Previous_Donation__c, Last_Previous_Scheduled_Visit__c, (
                 SELECT Id, Status__c, Outcome__c 
                 FROM Visits__r 
-                WHERE (Status__c = 'Complete' AND Outcome__c = 'Donation') OR 
+                WHERE (Status__c = 'Complete' AND Outcome__c IN ('Donation', 'No Donation')) OR 
                     Status__c IN ('New', 'Scheduled', 'Checked-In') 
                 ORDER BY Appointment_Datetime__c DESC
                 LIMIT 4
@@ -308,38 +308,12 @@ public without sharing class VisitTriggerHelper {
             FROM Contact 
             WHERE Id IN :donorIds
         ]) {
-            if (donor.Visits__r == null || donor.Visits__r.size() < 2) {
-                continue;
-            }
-
-            for(Visit__c visit : donor.Visits__r) {
-                if (visit.Status__c == 'Complete' && visit.Outcome__c == 'Donation') {
-                    Boolean foundLastDonation = donorIdToFoundLastDonation.get(donor.Id);
-                    Boolean foundLastPreviousDonation = donorIdToFoundLastPreviousDonation.get(donor.Id);
-
-                    if (foundLastDonation != null && foundLastDonation) {
-                        if (foundLastPreviousDonation != null && foundLastPreviousDonation) {
-                            break;
-                        } else {
-                            if (donor.Last_Previous_Donation__c == null || donor.Last_Previous_Donation__c != visit.Id) {
-                                Contact donorToUpdate = donorsToUpdate.get(donor.Id);
-                                if (donorToUpdate == null) {
-                                    donorToUpdate = new Contact(Id = donor.Id);
-                                }
-
-                                donorToUpdate.Last_Previous_Donation__c = visit.Id;
-                                donorsToUpdate.put(donor.Id, donorToUpdate);
-                            }
-
-                            donorIdToFoundLastPreviousDonation.put(donor.Id, true);
-                        }
-                    } else {
-                        donorIdToFoundLastDonation.put(donor.Id, true);
-                    }
-                } else {
+            if (donor.Visits__r != null && donor.Visits__r.size() >= 2) {
+                for(Visit__c visit : donor.Visits__r) {
+                    // Last Previous Scheduled Visit can be set by any visit that isn't canceled or rescheduled
                     Boolean foundLastScheduled = donorIdToFoundLastScheduled.get(donor.Id);
                     Boolean foundLastPreviousScheduled = donorIdToFoundLastPreviousScheduled.get(donor.Id);
-
+    
                     if (foundLastScheduled != null && foundLastScheduled) {
                         if (foundLastPreviousScheduled != null && foundLastPreviousScheduled) {
                             break;
@@ -349,17 +323,54 @@ public without sharing class VisitTriggerHelper {
                                 if (donorToUpdate == null) {
                                     donorToUpdate = new Contact(Id = donor.Id);
                                 }
-
+    
                                 donorToUpdate.Last_Previous_Scheduled_Visit__c = visit.Id;
                                 donorsToUpdate.put(donor.Id, donorToUpdate);
                             }
-
+    
                             donorIdToFoundLastPreviousScheduled.put(donor.Id, true);
                         }
                     } else {
                         donorIdToFoundLastScheduled.put(donor.Id, true);
                     }
+                    
+                    if (visit.Status__c == 'Complete' && visit.Outcome__c == 'Donation') {
+                        Boolean foundLastDonation = donorIdToFoundLastDonation.get(donor.Id);
+                        Boolean foundLastPreviousDonation = donorIdToFoundLastPreviousDonation.get(donor.Id);
+    
+                        if (foundLastDonation != null && foundLastDonation) {
+                            if (foundLastPreviousDonation != null && foundLastPreviousDonation) {
+                                break;
+                            } else {
+                                if (donor.Last_Previous_Donation__c == null || donor.Last_Previous_Donation__c != visit.Id) {
+                                    Contact donorToUpdate = donorsToUpdate.get(donor.Id);
+                                    if (donorToUpdate == null) {
+                                        donorToUpdate = new Contact(Id = donor.Id);
+                                    }
+    
+                                    donorToUpdate.Last_Previous_Donation__c = visit.Id;
+                                    donorsToUpdate.put(donor.Id, donorToUpdate);
+                                }
+    
+                                donorIdToFoundLastPreviousDonation.put(donor.Id, true);
+                            }
+                        } else {
+                            donorIdToFoundLastDonation.put(donor.Id, true);
+                        }
+                    }
                 }
+            }
+
+            // Check to see if we found valid last scheduled visits
+            // If we didn't, clear the Last_Previous_Scheduled_Visit__c field as it's no longer valid
+            if ((donorIdToFoundLastScheduled.get(donor.Id) == null || !donorIdToFoundLastScheduled.get(donor.Id)) && donor.Last_Previous_Scheduled_Visit__c != null) {
+                Contact donorToUpdate = donorsToUpdate.get(donor.Id);
+                if (donorToUpdate == null) {
+                    donorToUpdate = new Contact(Id = donor.Id);
+                }
+
+                donorToUpdate.Last_Previous_Scheduled_Visit__c = null;
+                donorsToUpdate.put(donor.Id, donorToUpdate);
             }
         }
 

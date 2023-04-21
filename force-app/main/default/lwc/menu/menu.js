@@ -25,7 +25,7 @@ export default class Menu extends NavigationMixin(LightningElement) {
     photoUrl;
 
     get displayLoyaltyLevel() {
-        return this.userLoyaltyLevel || "Donor (Default)";
+        return (this.userLoyaltyLevel || 'Donor (Default)');
     }
 
     get hasUnreadNotifications() {
@@ -71,7 +71,7 @@ export default class Menu extends NavigationMixin(LightningElement) {
     }
 
     onBuddyRewardsButtonClick() {
-        window.open('https://proesisbio.com/', "_blank");
+        window.open('https://proesisbio.com/', '_blank');
     }
 
     onSupportButtonClick() {

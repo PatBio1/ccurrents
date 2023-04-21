@@ -518,6 +518,7 @@ public class VisitTriggerHandlerTest {
                 Status__c = 'Checked-In'
             ));
         }
+
         insert lastPreviousScheduledVisits;
 
         // Check to make sure the last previous donation was updated on the visit's donor

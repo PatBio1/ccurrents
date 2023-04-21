@@ -14,7 +14,7 @@ public class VisitTriggerHandlerTest {
 
         List<Account> testDonors = new List<Account>();
         for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
-            testDonors.add(TestUtil.createTestDonor(ScheduleUtils.createFirstVisitCode()));
+            testDonors.add(TestUtil.createDonor(ScheduleUtils.createFirstVisitCode()));
         }
         insert testDonors;
 

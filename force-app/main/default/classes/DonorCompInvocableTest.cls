@@ -39,11 +39,11 @@ public with sharing class DonorCompInvocableTest {
         Level__c bonusLevel1 = new Level__c(Name = 'Bonus Level 1', Donation_Threshold__c = TEST_DONATION_THRESHOLD - 1, Threshold_Points__c = 333, Threshold_Payment__c = 33, isActive__c = true, isVisible__c = false);
         insert bonusLevel1;
 
-        Account donorAccount1 = TestUtil.createTestDonor('123456');
+        Account donorAccount1 = TestUtil.createDonor('123456');
         donorAccount1.Loyalty_Level__pc = testLevel1.Id;
         insert donorAccount1;
 
-        Account donorAccount2 = TestUtil.createTestDonor('654321');
+        Account donorAccount2 = TestUtil.createDonor('654321');
         donorAccount2.Loyalty_Level__pc = testLevel1.Id;
         insert donorAccount2;
     }

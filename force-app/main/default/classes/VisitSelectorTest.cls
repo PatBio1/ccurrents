@@ -23,7 +23,7 @@ public class VisitSelectorTest {
             centerDonationType.isActive__c = true;
             insert centerDonationType;
 
-            Account testDonor = TestUtil.createTestDonor(ScheduleUtils.createFirstVisitCode());
+            Account testDonor = TestUtil.createDonor(ScheduleUtils.createFirstVisitCode());
             insert testDonor;
 
             List<Visit__c> visits = new List<Visit__c>();

@@ -38,19 +38,6 @@ public with sharing class TestUtil {
         return user;
     }
 
-    private static UserRole getUserRole() {
-        if (sharedUserRole == null) {
-            sharedUserRole = new UserRole(
-                Name = 'Test'
-            );
-
-            insert sharedUserRole;
-        }
-
-        return sharedUserRole;
-    }
-
-
     public static User createExperienceUser() {
         UserRole userRole = getUserRole();
 
@@ -231,7 +218,7 @@ public with sharing class TestUtil {
         };
     }
 
-    public static Account createTestDonor(String donorId) {
+    public static Account createDonor(String donorId) {
         return new Account(
             RecordTypeId = Constants.DONOR_RECORD_TYPE_ID,
             FirstName = 'Test',
@@ -297,7 +284,7 @@ public with sharing class TestUtil {
             donorContactId = donorUser.ContactId;
             donorId = donorUser.AccountId;
         } else {
-            Account donor = createTestDonor(donorExternalId);
+            Account donor = createDonor(donorExternalId);
             insert donor;
             donorContactId = [SELECT PersonContactId FROM Account WHERE Id = :donor.Id][0].PersonContactId;
         }
@@ -334,6 +321,18 @@ public with sharing class TestUtil {
             PathOnClient = 'test.txt',
             VersionData = Blob.valueOf('data')
         );
+    }
+
+    private static UserRole getUserRole() {
+        if (sharedUserRole == null) {
+            sharedUserRole = new UserRole(
+                Name = 'Test'
+            );
+
+            insert sharedUserRole;
+        }
+
+        return sharedUserRole;
     }
 
     public class VisitTestSetup {

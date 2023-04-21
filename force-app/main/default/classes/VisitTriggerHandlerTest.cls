@@ -492,6 +492,56 @@ public class VisitTriggerHandlerTest {
         }
     }
 
+    @isTest static void testUpdateLastPreviousScheduledVisitToNull() {
+        List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c ORDER BY Datetime__c DESC LIMIT 2];
+        Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        List<Account> targetDonors = [SELECT Id, PersonContactId FROM Account WHERE DonorId__c != NULL];
+        List<Visit__c> testVisits = new List<Visit__c>();
+
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            testVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = targetAppointments[0].Id,
+                Status__c = 'Scheduled'
+            ));
+        }
+        insert testVisits;
+
+        List<Visit__c> lastPreviousScheduledVisits = new List<Visit__c>();
+        for(Integer i = 0; i < AMOUNT_OF_VISITS; i++) {
+            lastPreviousScheduledVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonors[i].PersonContactId,
+                Appointment__c = targetAppointments[1].Id,
+                Status__c = 'Checked-In'
+            ));
+        }
+        insert lastPreviousScheduledVisits;
+
+        // Check to make sure the last previous donation was updated on the visit's donor
+        for(Visit__c lastPreviousScheduledVisit : [SELECT Id, Donor__c, Donor__r.Last_Previous_Scheduled_Visit__c FROM Visit__c WHERE Id IN :lastPreviousScheduledVisits]) {
+            Assert.areEqual(lastPreviousScheduledVisit.Id, lastPreviousScheduledVisit.Donor__r.Last_Previous_Scheduled_Visit__c, 'The donor\'s last previous scheduled visit was not updated');
+        }
+
+        // Canceled visits shouldn't be stored in the last previous scheduled visit field
+        // This should cause the field to be set to null
+        for(Visit__c lastPreviousScheduledVisit : lastPreviousScheduledVisits) {
+            lastPreviousScheduledVisit.Status__c = 'Complete';
+            lastPreviousScheduledVisit.Outcome__c = 'Canceled';
+        }
+
+        Test.startTest();
+        update lastPreviousScheduledVisits;
+        Test.stopTest();
+
+        // Check to make sure the last previous donation was updated on the visit's donor
+        for(Visit__c lastPreviousScheduledVisit : [SELECT Id, Donor__c, Donor__r.Last_Previous_Scheduled_Visit__c FROM Visit__c WHERE Id IN :lastPreviousScheduledVisits]) {
+            Assert.isNull(lastPreviousScheduledVisit.Donor__r.Last_Previous_Scheduled_Visit__c, 'The donor\'s last previous scheduled visit was not cleared after canceling the visit');
+        }
+    }
+
     @isTest static void testNoUpdateLastPreviousScheduledVisit() {
         List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c ORDER BY Datetime__c DESC LIMIT 2];
         Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];

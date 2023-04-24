@@ -20,10 +20,10 @@ public with sharing class DonorCheckinInvocableTest {
         Center_Donation_Type__c testCenterDonationType = TestUtil.createCenterDonationType(centerAccount.Id);
         insert testCenterDonationType;
 
-        Account donorAccount1 = TestUtil.createTestDonor('123456');
+        Account donorAccount1 = TestUtil.createDonor('123456');
         insert donorAccount1;
 
-        Account donorAccount2 = TestUtil.createTestDonor('654321');
+        Account donorAccount2 = TestUtil.createDonor('654321');
         insert donorAccount2;
 
         Id donor1ContactId = [SELECT PersonContactId FROM Account WHERE Id = :donorAccount1.Id][0].PersonContactId;

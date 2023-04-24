@@ -707,7 +707,7 @@ public with sharing class ProfileControllerTest {
         lead.Email = 'ctester@ccurrents.com.testing';
         insert lead;
 
-        Account testDonorAccount = TestUtil.createTestDonor('111-222');
+        Account testDonorAccount = TestUtil.createDonor('111-222');
         insert testDonorAccount;
 
         Contact testDonor = [SELECT Id FROM Contact WHERE AccountId = :testDonorAccount.Id LIMIT 1];

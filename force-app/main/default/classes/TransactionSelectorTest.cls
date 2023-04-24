@@ -11,7 +11,7 @@ public class TransactionSelectorTest {
             Center_Donation_Type__c testCenterDonationType = TestUtil.createCenterDonationType(centerAccount.Id);
             insert testCenterDonationType;
 
-            Account donorAccount = TestUtil.createTestDonor('123456');
+            Account donorAccount = TestUtil.createDonor('123456');
             insert donorAccount;
 
             Id donorContactId = [SELECT PersonContactId FROM Account WHERE Id = :donorAccount.Id LIMIT 1].PersonContactId;

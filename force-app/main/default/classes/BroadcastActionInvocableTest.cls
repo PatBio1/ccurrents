@@ -14,7 +14,7 @@ public with sharing class BroadcastActionInvocableTest {
         AccountContactRelation acr = new AccountContactRelation();
         System.runAs(testUser) {
             testSetup = TestUtil.createFullTestVisitSetup('123456', testDateTime, true);
-            donor2 = TestUtil.createTestDonor('3456');
+            donor2 = TestUtil.createDonor('3456');
             insert donor2;
             donor2ContactId = [SELECT PersonContactId FROM Account WHERE Id = :donor2.Id][0].PersonContactId;
             acr = TestUtil.createDonorCenterRelation(donor2ContactId, testSetup.CenterId);

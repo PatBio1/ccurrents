@@ -1,4 +1,4 @@
-import { track, LightningElement } from 'lwc';
+import { api, track, LightningElement } from 'lwc';
 import changeLocationModal from 'c/changeLocationModal';
 import labels from 'c/labelService';
 import util from 'c/util';
@@ -10,6 +10,8 @@ const DEFAULT_LONGITUDE = -94.757340;
 const DEFAULT_POSTAL_CODE = '66112';
 
 export default class CenterChooser extends LightningElement {
+
+    @api isSignup;
 
     labels = labels;
     loading = true;
@@ -101,7 +103,7 @@ export default class CenterChooser extends LightningElement {
     }
 
     onViewCenterClick(event) {
-        let index = event.target.dataset.index;
+        let index = event.currentTarget.dataset.index;
         this.centerToView = this.centers[index];
 
         this.showCenter = true;

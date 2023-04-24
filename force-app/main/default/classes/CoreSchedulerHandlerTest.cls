@@ -20,7 +20,7 @@ public class CoreSchedulerHandlerTest {
 
         Datetime currentDatetime = testDateTime;
         for (Integer i = 0; i < AMOUNT_OF_DONORS; i++) {
-            donors.add(TestUtil.createTestDonor(String.valueOf(i)));
+            donors.add(TestUtil.createDonor(String.valueOf(i)));
 
             Appointment__c testAppointment = TestUtil.createTestAppointment(testSchedule.Id, currentDatetime);
             testAppointment.Capacity__c = BASE_CAPACITY;

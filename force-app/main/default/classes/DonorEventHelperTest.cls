@@ -36,7 +36,7 @@ public class DonorEventHelperTest {
 
         List<Account> donors = new List<Account>();
         for (Integer i = 0; i < AMOUNT_OF_DONORS; i++) {
-            Account donorAccount = TestUtil.createTestDonor(String.valueOf(i));
+            Account donorAccount = TestUtil.createDonor(String.valueOf(i));
             donorAccount.Last_Used_Center__pc = centerAccount.Id;
 
             donors.add(donorAccount);

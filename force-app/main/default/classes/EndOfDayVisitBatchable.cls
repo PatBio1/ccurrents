@@ -1,8 +1,11 @@
-public without sharing class EndOfDayVisitBatchable implements Database.Batchable<SObject>, Schedulable {
+public without sharing class EndOfDayVisitBatchable implements Database.Batchable<SObject>, Schedulable, Database.Stateful {
+    final static String VISIT_STATUS_NEW = 'New';
+    final static String VISIT_STATUS_SCHEDULED = 'Scheduled';
+    final static String VISIT_STATUS_CHECKED_IN = 'Checked-In';
+    final static String VISIT_STATUS_COMPLETE = 'Complete';
 
-    public static String CheckedInStatus = 'Checked-In';
-    public static String ScheduledStatus = 'Scheduled';
-    public static String NoShowOutcome = 'No Show';
+    Group proesisOperationsQueue; // Fallback queue in case a center manager queue can't be found
+    Map<String, Group> centerManagerQueues;
 
     public static void run() {
         Database.executeBatch(new EndOfDayVisitBatchable());
@@ -15,20 +18,25 @@ public without sharing class EndOfDayVisitBatchable implements Database.Batchabl
 	}
 
     public Database.QueryLocator start(Database.BatchableContext BC) {
-        Set<String> statuses = new Set<String>{CheckedInStatus,ScheduledStatus};
+        // Initialize the center manager queues
+        centerManagerQueues = new Map<String, Group>();
+
+        for (Group targetedQueue : [SELECT Id, DeveloperName FROM Group WHERE Type = 'Queue' AND (DeveloperName LIKE 'Center_Manager_%' OR DeveloperName = 'Proesis_Operations')]) {
+            if (targetedQueue.DeveloperName == 'Proesis_Operations') {
+                proesisOperationsQueue = targetedQueue;
+            } else if (targetedQueue.DeveloperName.startsWith('Center_Manager_')) {
+                centerManagerQueues.put(targetedQueue.DeveloperName, targetedQueue);
+            }
+        }
+
+        // Query all incomplete visits in the past so we can update them
+        Set<String> visitStatuses = new Set<String>{ VISIT_STATUS_NEW, VISIT_STATUS_SCHEDULED, VISIT_STATUS_CHECKED_IN };
+
         return Database.getQueryLocator([
-            SELECT
-                Id,
-                Outcome__c,
-                Status__c
-            FROM
-                Visit__c
-            WHERE
-                Appointment__r.Datetime__c <: System.now()
-            AND
-                Outcome__c = null
-            AND
-                Status__c IN: statuses
+            SELECT Id, Outcome__c, Status__c, Donation_Volume__c, Center_Donation_Type__r.Center__r.Name, Donor__c
+            FROM Visit__c
+            WHERE Appointment__r.Datetime__c < :System.now() AND
+                (Outcome__c = null OR Status__c IN :visitStatuses)
         ]);
     }
 
@@ -43,15 +51,51 @@ public without sharing class EndOfDayVisitBatchable implements Database.Batchabl
 	}
 
     public void process_visits(List<Visit__c> visits) {
-        for(Visit__c visit: visits){
-            if(visit.Status__c == 'Scheduled'){
-                visit.Status__c = 'Complete';
-                visit.Outcome__c = 'No Show';
-            }else if(visit.Status__c == 'Checked-In'){
-                visit.Status__c = 'Complete';
-                visit.Outcome__c = 'No Donation';
+        List<Task> tasksToInsert = new List<Task>();
+
+        for(Visit__c visit: visits) {
+            String visitStatus = visit.Status__c;
+
+            if (visitStatus != VISIT_STATUS_COMPLETE) {
+                if (visitStatus == VISIT_STATUS_NEW) {
+                    visit.Outcome__c = 'Canceled';
+                } else if (visitStatus == VISIT_STATUS_SCHEDULED) {
+                    visit.Outcome__c = 'No Show';
+                } else if (visitStatus == VISIT_STATUS_CHECKED_IN) {
+                    visit.Outcome__c = 'No Donation';
+                }
+
+                visit.Status__c = VISIT_STATUS_COMPLETE;
+            } else {
+                if (visit.Donation_Volume__c == null || visit.Donation_Volume__c <= 0) {
+                    visit.Outcome__c = 'No Donation';
+                    continue;
+                }
+                
+                visit.Outcome__c = 'Donation';
+
+                // Make a task noting a visit with a donation was made but wasn't recorded
+                Group targetQueue = centerManagerQueues.get('Center_Manager_' + visit.Center_Donation_Type__r.Center__r.Name.replaceAll(' ', '_'));
+                if (targetQueue == null && proesisOperationsQueue != null) {
+                    targetQueue = proesisOperationsQueue;
+                } else {
+                    throw new QueryException('No queue found for center ' + visit.Center_Donation_Type__r.Center__r.Name);
+                }
+
+                tasksToInsert.add(new Task(
+                    WhoId = visit.Donor__c,
+                    WhatId = visit.Id,
+                    Subject = Constants.UNMARKED_DONATION_TASK_SUBJECT,
+                    Description = Constants.UNMARKED_DONATION_TASK_DESCRIPTION,
+                    OwnerId = targetQueue.Id
+                ));
             }
         }
+
+        if (!tasksToInsert.isEmpty()) {
+            insert tasksToInsert;
+        }
+
         update visits;
     }
 

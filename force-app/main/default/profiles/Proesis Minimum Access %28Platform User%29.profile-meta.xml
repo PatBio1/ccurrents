@@ -72,7 +72,7 @@
     <recordTypeVisibilities>
         <default>true</default>
         <recordType>PersonAccount.Donor</recordType>
-        <visible>false</visible>
+        <visible>true</visible>
     </recordTypeVisibilities>
     <userLicense>Salesforce Platform</userLicense>
 </Profile>

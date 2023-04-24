@@ -12,7 +12,7 @@
                 <template if:false={isGuest}>
                     <div style="display: flex; flex-direction: row; justify-content: flex-end; align-items: center;">
                         <div style="position: relative; transform: scale(1.2);">
-                            <div if:true={hasUnreadNotifications} class="notification-badge"></div>
+                            <div if:true={doesUserHaveUnreadNotifications} class="notification-badge"></div>
                             <lightning-icon icon-name="utility:notification" size="x-small" class="slds-p-right_medium" variant="inverse" onclick={onNotificationsClick}></lightning-icon>
                         </div>
                         

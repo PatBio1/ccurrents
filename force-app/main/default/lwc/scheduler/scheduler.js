@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import labels from 'c/labelService';
 import util from 'c/util';
 
+import getCenterRate from '@salesforce/apex/RateSelector.getCenterRate';
 import getCurrentDonorVisitCount from '@salesforce/apex/VisitSelector.getCurrentDonorVisitCount';
 import getCenter from '@salesforce/apex/SchedulerController.getCenter';
 import getAppointments from '@salesforce/apex/SchedulerController.getAppointments';
@@ -18,10 +19,15 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
     donorPoints;
     donorCurrency;
     center = {};
+    centerRateInfo;
     @track appointmentGroups = [];
 
     existingVisitCount;
     appointmentSelected = false;
+
+    get hasCenterRateInfo() {
+        return (this.centerRateInfo !== undefined);
+    }
 
     get screenTitle() {
         if (!this.existingVisitCount) {
@@ -141,6 +147,7 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
             console.log('response', response);
             this.center = response;
 
+            this.loadCenterRate();
             this.loadAppointments();
         }).catch((error) => {
             console.log(error);
@@ -201,6 +208,14 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
             console.log(error);
         } finally {
             this.loading = false;
+        }
+    }
+
+    async loadCenterRate() {
+        try {
+            this.centerRateInfo = await getCenterRate({ centerId: this.center.id, targetDonationType: 'Normal Source Plasma' });
+        } catch(e) {
+            console.error(e);
         }
     }
 }

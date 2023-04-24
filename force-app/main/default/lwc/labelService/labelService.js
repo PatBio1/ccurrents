@@ -61,6 +61,7 @@ import mobilePhone from '@salesforce/label/c.Mobile_Phone';
 import mondayAbbreviation from '@salesforce/label/c.Monday_Abbreviation';
 import myAppointments from '@salesforce/label/c.My_Appointments';
 import myBalance from '@salesforce/label/c.My_Balance';
+import myDonations from '@salesforce/label/c.My_Donations';
 import myLocation from '@salesforce/label/c.My_Location';
 import myProfile from '@salesforce/label/c.My_Profile';
 import myRewards from '@salesforce/label/c.My_Rewards';
@@ -75,6 +76,7 @@ import passwordsDontMatch from '@salesforce/label/c.Passwords_Dont_Match';
 import passwordTooShort from '@salesforce/label/c.Password_Too_Short';
 import past from '@salesforce/label/c.Past';
 import paymentHistory from '@salesforce/label/c.Payment_History';
+import perDonation from '@salesforce/label/c.Per_Donation';
 import perPt from '@salesforce/label/c.Per_Pt';
 import personalCard from '@salesforce/label/c.Personal_Card';
 import personalInformation from '@salesforce/label/c.Personal_Information';
@@ -133,6 +135,7 @@ import verifyEmailInstructions from '@salesforce/label/c.Verify_Email_Instructio
 import verifyPhone from '@salesforce/label/c.Verify_Phone';
 import verifyPhoneInstructions from '@salesforce/label/c.Verify_Phone_Instructions';
 import walk from '@salesforce/label/c.Walk';
+import walletBalanceTitle from '@salesforce/label/c.Wallet_Balance_Title';
 import watchVideo from '@salesforce/label/c.Watch_Video';
 import wednesdayAbbreviation from '@salesforce/label/c.Wednesday_Abbreviation';
 import welcomeToProesis from '@salesforce/label/c.Welcome_To_Proesis';
@@ -211,6 +214,7 @@ const labels = {
     mondayAbbreviation,
     myAppointments,
     myBalance,
+    myDonations,
     myLocation,
     myProfile,
     myRewards,
@@ -225,6 +229,7 @@ const labels = {
     passwordTooShort,
     past,
     paymentHistory,
+    perDonation,
     perPt,
     personalCard,
     personalInformation,
@@ -283,6 +288,7 @@ const labels = {
     verifyPhone,
     verifyPhoneInstructions,
     walk,
+    walletBalanceTitle,
     watchVideo,
     wednesdayAbbreviation,
     welcomeToProesis,

@@ -3,19 +3,11 @@ import PROESIS_LOYALTY_BADGES from '@salesforce/resourceUrl/Proesis_Loyalty_Badg
 
 import getLoyaltyBadgeDisplaySettings from '@salesforce/apex/LoyaltyLevelService.getLoyaltyBadgeDisplaySettings';
 
-// Seems like there was a mismatch on the order. The order provided to the UX team is different than the order configured in org data
-// const loyaltyTierNameToBadgeFileName = new Map([
-//     ["Donor (Default)", "default"],
-//     ["Normal Donor +15", "normal"],
-//     ["Signature", "VIP"],
-//     ["VIP", "royal"],
-//     ["Royal", "signature"]
-// ]);
-
 export default class LoyaltyTierBadge extends LightningElement {
     @api width;
     @api height;
     @api loyaltyTierName;
+    @api hideName = false;
 
     badgeSettings;
     currentBadgeFileName;
@@ -34,7 +26,7 @@ export default class LoyaltyTierBadge extends LightningElement {
             return '';
         }
 
-        return `${PROESIS_LOYALTY_BADGES}/badges/${this.currentBadgeFileName}.svg`;
+        return `${PROESIS_LOYALTY_BADGES}/badges/${this.currentBadgeFileName}.svg#Layer_1`;
     }
 
     async renderedCallback() {
@@ -48,7 +40,15 @@ export default class LoyaltyTierBadge extends LightningElement {
         }
 
         if (this.isInitialized) {
-            let targetBadgeFileName = this.badgeSettings.find(badgeSetting => badgeSetting.badgeName === this.loyaltyTierName)?.badgeFileName;
+            let badgeSettings = this.badgeSettings.find(badgeSetting => badgeSetting.badgeName === this.loyaltyTierName);
+            console.log(`Trying to Fetch: ${this.loyaltyTierName}`, badgeSettings);
+
+            if (!badgeSettings) {
+                return;
+            }
+
+            let targetBadgeFileName = (this.hideName) ? badgeSettings.noNameBadgeFileName : badgeSettings.fullBadgeFileName;
+
             if (targetBadgeFileName && targetBadgeFileName !== this.currentBadgeFileName) {
                 this.currentBadgeFileName = targetBadgeFileName;
             }

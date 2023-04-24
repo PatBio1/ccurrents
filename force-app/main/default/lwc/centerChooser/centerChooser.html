@@ -13,7 +13,7 @@
                                             <div class="slds-page-header__name">
                                                 <div class="slds-page-header__name-title">
                                                     <h1>
-                                                        <lightning-icon icon-name="utility:company" size="x-small" class="center-icon"></lightning-icon>
+                                                        <!-- <lightning-icon icon-name="utility:company" size="x-small" class="center-icon"></lightning-icon> -->
                                                         <span class="slds-page-header__title slds-truncate" style="color: #000; display: inline;">{center.name}</span>
                                                     </h1>
                                                 </div>
@@ -26,7 +26,8 @@
                         </div>
                     </div>
                     <div class="slds-col slds-size_1-of-3 slds-text-align_right">
-                        <span style="color: #000;"><strong>$20 {labels.perPt}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></span><lightning-icon icon-name="utility:chevronright" size="x-small" class="view-center-icon"></lightning-icon><br/>
+                        <lightning-icon icon-name="utility:chevronright" size="x-small" class="view-center-icon"></lightning-icon>
+                        <br/>
                         <p style="color: #8979a9;">{center.distance} {center.distanceUnit}</p>
                     </div>
                 </div>
@@ -68,7 +69,7 @@
                                                     <div class="slds-page-header__name">
                                                         <div class="slds-page-header__name-title">
                                                             <h1>
-                                                                <lightning-icon icon-name="utility:company" size="x-small" class="center-icon"></lightning-icon>
+                                                                <!-- <lightning-icon icon-name="utility:company" size="x-small" class="center-icon"></lightning-icon> -->
                                                                 <span class="slds-page-header__title slds-truncate" style="color: #000; display: inline;">{center.name}</span>
                                                             </h1>
                                                         </div>
@@ -81,7 +82,8 @@
                                 </div>
                             </div>
                             <div class="slds-col slds-size_1-of-3 slds-text-align_right">
-                                <span style="color: #000;"><strong>$20 {labels.perPt}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></span><lightning-icon icon-name="utility:chevronright" size="x-small" class="view-center-icon" data-index={centerIndex} onclick={onViewCenterClick}></lightning-icon><br/>
+                                <lightning-icon icon-name="utility:chevronright" size="x-small" class="view-center-icon" data-index={centerIndex} onclick={onViewCenterClick}></lightning-icon>
+                                <br/>
                                 <p style="color: #8979a9;">{center.distance} {center.distanceUnit}</p>
                             </div>
                         </div>

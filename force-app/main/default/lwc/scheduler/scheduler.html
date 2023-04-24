@@ -4,15 +4,26 @@
     <!--article class="slds-card" style="background-color: #f5f0ff">
         <div class="slds-card__body slds-card__body_inner"-->
             <div class="title-medium slds-m-bottom_small">{screenTitle}</div>
-            <div class="donor-rewards-panel slds-m-bottom_x-large" if:true={hasRewardInfo}>
-                <p><strong>Your Balance:</strong></p>
 
-                <div style="color: #99429C;">
-                    <span><lightning-formatted-number format-style="currency" currency-code="USD" value={donorCurrency}></lightning-formatted-number></span> <span style="margin: 0 0.5rem">/</span> {donorPoints} {labels.pointBrandName}
+            <div class="slds-m-bottom_large">
+                <div class="donor-rewards-panel slds-m-bottom_small" if:true={hasRewardInfo}>
+                    <p><strong>Your Balance:</strong></p>
+    
+                    <div style="color: #99429C;">
+                        <span><lightning-formatted-number format-style="currency" currency-code="USD" value={donorCurrency}></lightning-formatted-number></span> <span style="margin: 0 0.5rem">/</span> {donorPoints} {labels.pointBrandName}
+                    </div>
+                </div>
+    
+                <div class="donor-rewards-panel" if:true={hasCenterRateInfo}>
+                    <p><strong>Center Rate:</strong></p>
+    
+                    <div style="color: #99429C;">
+                        <span><lightning-formatted-number format-style="currency" currency-code="USD" value={centerRateInfo.basePayment}></lightning-formatted-number></span> <span style="margin: 0 0.5rem">/</span> {centerRateInfo.basePoints} {labels.pointBrandName}
+                    </div>
                 </div>
             </div>
 
-            <div class="slds-grid slds-gutters slds-m-top_medium">
+            <div class="slds-grid slds-grid--vertical-align-center slds-gutters slds-m-bottom_medium slds-m-top_medium">
                 <div class="slds-col slds-size_3-of-4">
                     <div class="slds-page-header" style="background-color: #f5f0ff; padding: 0;">
                         <div class="slds-page-header__row">
@@ -38,7 +49,14 @@
                 </div>
 
                 <div class="slds-col slds-size_1-of-4 slds-text-align_right">
-                    <span style="color: #000;"><strong>$20 {labels.perPt}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></span><lightning-icon icon-name="utility:chevronright" size="x-small" class="view-center-icon" onclick={onViewCenterClick}></lightning-icon>
+                    <!-- <span style="color: #000;"><strong>$20 {labels.perPt}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</strong></span> -->
+                    
+                    <!-- <div style="margin-right: 0.5rem;" if:true={hasCenterRateInfo}>
+                        <p>{centerRateInfo.basePayment} {labels.perPt}</p>
+                        <p>{centerRateInfo.basePoints} {labels.pointBrandName} {labels.perPt}</p>
+                    </div> -->
+
+                    <lightning-icon icon-name="utility:chevronright" size="x-small" class="view-center-icon" onclick={onViewCenterClick}></lightning-icon>
                 </div>
             </div>
 

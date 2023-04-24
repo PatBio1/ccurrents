@@ -13,6 +13,20 @@ public class LoyaltyLevelServiceTest {
     }
 
     @IsTest
+    static void getLoyaltyLevelTest() {
+        List<Level__c> foundLoyaltyLevels = [SELECT Id FROM Level__c WHERE isActive__c = true ORDER BY Donation_Threshold__c ASC];
+        Integer returnedLoyaltyLevel1, returnedLoyaltyLevel2;
+
+        Test.startTest();
+        returnedLoyaltyLevel1 = LoyaltyLevelService.getLoyaltyLevel(foundLoyaltyLevels[0].Id);
+        returnedLoyaltyLevel2 = LoyaltyLevelService.getLoyaltyLevel(foundLoyaltyLevels[foundLoyaltyLevels.size() - 1].Id);
+        Test.stopTest();
+
+        Assert.areEqual(0, returnedLoyaltyLevel1, 'Should have returned 0 for the first loyalty level');
+        Assert.areEqual(foundLoyaltyLevels.size() - 1, returnedLoyaltyLevel2, 'Should have returned ' + (foundLoyaltyLevels.size() - 1) + ' for the last loyalty level');
+    }
+
+    @IsTest
     static void getLoyaltyLevelDisplayInfoTest() {
         List<LoyaltyLevelService.LoyaltyLevel> foundLoyaltyLevels;
 
@@ -46,12 +60,15 @@ public class LoyaltyLevelServiceTest {
         System.assertEquals(3, foundBadgeSettings.size(), 'Should have found 3 badge settings');
 
         System.assertEquals('Bronze', foundBadgeSettings[0].badgeName, 'Should have found Bronze badge setting');
-        System.assertEquals('bronze', foundBadgeSettings[0].badgeFileName, 'Bronze badge setting should have a file name of bronze');
+        System.assertEquals('bronze_Full', foundBadgeSettings[0].fullBadgeFileName, 'Bronze badge setting should have a file name of bronze');
+        System.assertEquals('bronze_Centered_Stars', foundBadgeSettings[0].noNameBadgeFileName, 'Bronze badge setting should have a \'No Name\' file name of bronze');
 
         System.assertEquals('Silver', foundBadgeSettings[1].badgeName, 'Should have found Silver badge setting');
-        System.assertEquals('silver', foundBadgeSettings[1].badgeFileName, 'Silver badge setting should have a file name of silver');
+        System.assertEquals('silver_Full', foundBadgeSettings[1].fullBadgeFileName, 'Silver badge setting should have a file name of silver');
+        System.assertEquals('silver_Centered_Stars', foundBadgeSettings[1].noNameBadgeFileName, 'Silver badge setting should have a \'No Name\' file name of silver');
 
         System.assertEquals('Gold', foundBadgeSettings[2].badgeName, 'Should have found Gold badge setting');
-        System.assertEquals('gold', foundBadgeSettings[2].badgeFileName, 'Gold badge setting should have a file name of gold');
+        System.assertEquals('gold_Full', foundBadgeSettings[2].fullBadgeFileName, 'Gold badge setting should have a file name of gold');
+        System.assertEquals('gold_Centered_Stars', foundBadgeSettings[2].noNameBadgeFileName, 'Gold badge setting should have a \'No Name\' file name of gold');
     }
 }

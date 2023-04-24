@@ -15,7 +15,7 @@
 
                 <div if:true={donorRewardsInfo} class="my-wallet-container slds-m-bottom_small">
                     <div class="wallet-field">
-                        <p><b>$ Balance</b></p>
+                        <p><b>{labels.walletBalanceTitle}</b></p>
                         <p>
                             <lightning-formatted-number format-style="currency" currency-code={userCurrency} value={donorRewardsInfo.donorBalance}>
                             </lightning-formatted-number>
@@ -55,14 +55,12 @@
                     <div if:true={loyaltyLevelsInfo} class="loyalty-tiers">
                         <template for:each={loyaltyLevelsInfo} for:item="loyaltyTier">
                             <div key={loyaltyTier.displayName} class="loyalty-tier" data-is-current={loyaltyTier.isCurrentTier}>
-                                <span class="loyalty-tier-badge slds-avatar slds-avatar_circle" style={loyaltyTier.style}>
-                                    <c-loyalty-tier-badge width="48" height="48" loyalty-tier-name={loyaltyTier.levelName}>
-                                    </c-loyalty-tier-badge>
-                                </span>
+                                <c-loyalty-tier-badge width="80" height="80" loyalty-tier-name={loyaltyTier.levelName}>
+                                </c-loyalty-tier-badge>
     
                                 <div>
                                     <p><b>{loyaltyTier.displayName}</b></p>
-                                    <p>{loyaltyTier.levelThreshold} Dons</p>
+                                    <p>{loyaltyTier.levelThreshold} donations</p>
                                 </div>
                             </div>
                         </template>
@@ -184,48 +182,6 @@
                         </div>
                     </template>
                 </div>
-            </lightning-tab>
-
-            <lightning-tab label={labels.goalsTracker}>
-                <lightning-spinner if:true={isLoading}>
-                </lightning-spinner>
-
-                <template if:true={noGoalSet}>
-                    <div class="slds-m-bottom_small">
-                        You haven't set any goals yet. To do so, press the "Set a Goal" button below.
-                    </div>
-
-                    <lightning-button  label={labels.setGoal} variant="brand" stretch="true" class="primary-button" onclick={onSetGoalButtonClick}></lightning-button>
-                </template>
-
-                <template if:true={settingGoal}>
-                    <div class="slds-m-bottom_small">
-                        Choose the amount of money you want to earn from your donations and we'll notify you about your achievements.
-                    </div>
-                    <div class="slds-m-bottom_small">
-                        <lightning-input type="currency" label="Enter amount" value={goalAmount} onchange={onGoalAmountChange}></lightning-input>
-                    </div>
-                    <div class="slds-grid slds-gutters">
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-button label={labels.cancel} stretch="true" class="secondary-button" onclick={onSetGoalCancelButtonClick}></lightning-button>
-                        </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <lightning-button if:true={goalValid} label={labels.apply} variant="brand" stretch="true" class="primary-button" onclick={onSetGoalApplyButtonClick}></lightning-button>
-                            <button if:false={goalValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.apply}</button>
-                        </div>
-                    </div>
-                </template>
-
-                <template if:true={goalSet}>
-                    <div class="slds-grid slds-m-bottom_medium">
-                        <div class="slds-col slds-size_1-of-2 title-small">
-                            {labels.personalCard}
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-text-align_right">
-                            <lightning-button variant="base" label={labels.lostMyCard} icon-name="utility:inspector_panel" icon-position="left" class="tertiary-button" onclick={onLostCardButtonClick}></lightning-button>
-                        </div>
-                    </div>
-                </template>
             </lightning-tab>
         </lightning-tabset>
     </div>

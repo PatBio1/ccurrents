@@ -17,8 +17,8 @@
 
 .loyalty-badge {
     position: absolute;
-    left: -19px;
-    top: -16px;
+    left: -6px;
+    top: -6px;
     pointer-events: none;
 }
 

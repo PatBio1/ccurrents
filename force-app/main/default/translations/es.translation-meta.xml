@@ -17,6 +17,14 @@
         <name>Address</name>
     </customLabels>
     <customLabels>
+        <label>Por favor revise y acepte los términos de servicio y la política de privacidad.</label>
+        <name>Accept_TOS_Privacy_Message</name>
+    </customLabels>
+    <customLabels>
+        <label>Acepto los Términos de servicio y la Política de privacidad</label>
+        <name>Accept_TOS_Privacy_Title</name>
+    </customLabels>
+    <customLabels>
         <label>Todo</label>
         <name>All</name>
     </customLabels>
@@ -221,6 +229,10 @@
         <name>Loyalty_Tiers</name>
     </customLabels>
     <customLabels>
+        <label>Acepto recibir comunicaciones comerciales de Proesis</label>
+        <name>Marketing_Communications_Ops_Text</name>
+    </customLabels>
+    <customLabels>
         <label>Mensaje</label>
         <name>Message</name>
     </customLabels>
@@ -247,6 +259,10 @@
     <customLabels>
         <label>Mi balance</label>
         <name>My_Balance</name>
+    </customLabels>
+    <customLabels>
+        <label>Mis donaciones</label>
+        <name>My_Donations</name>
     </customLabels>
     <customLabels>
         <label>Mi ubicacion</label>
@@ -305,6 +321,10 @@
         <name>Payment_History</name>
     </customLabels>
     <customLabels>
+        <label>por donación</label>
+        <name>Per_Donation</name>
+    </customLabels>
+    <customLabels>
         <label>por pt</label>
         <name>Per_Pt</name>
     </customLabels>
@@ -325,12 +345,24 @@
         <name>Plasma_Donation_Saves_Lives</name>
     </customLabels>
     <customLabels>
+        <label>PlasmaPuntos</label>
+        <name>Point_Brand_Name</name>
+    </customLabels>
+    <customLabels>
         <label>Horarios populares</label>
         <name>Popular_Times</name>
     </customLabels>
     <customLabels>
         <label>Anterior</label>
         <name>Previous</name>
+    </customLabels>
+    <customLabels>
+        <label>Política de privacidad</label>
+        <name>Privacy_Policy</name>
+    </customLabels>
+    <customLabels>
+        <label>https://proesisbio.com/privacy-policy</label>
+        <name>Privacy_Policy_Link</name>
     </customLabels>
     <customLabels>
         <label>Recomendado para ti</label>
@@ -379,6 +411,10 @@
     <customLabels>
         <label>Programar una cita</label>
         <name>Schedule_Appointment</name>
+    </customLabels>
+    <customLabels>
+        <label>Programe su cita</label>
+        <name>Schedule_Your_Appointment</name>
     </customLabels>
     <customLabels>
         <label>Programe su primera cita</label>
@@ -465,6 +501,14 @@
         <name>Taxi</name>
     </customLabels>
     <customLabels>
+        <label>Términos de servicio</label>
+        <name>Terms_of_Service</name>
+    </customLabels>
+    <customLabels>
+        <label>https://proesisbio.com/terms-of-use</label>
+        <name>Terms_of_Service_Link</name>
+    </customLabels>
+    <customLabels>
         <label>Cuéntanos acerca de ti</label>
         <name>Tell_Us_About_You</name>
     </customLabels>
@@ -475,6 +519,10 @@
     <customLabels>
         <label>Jue</label>
         <name>Thursday_Abbreviation</name>
+    </customLabels>
+    <customLabels>
+        <label>Acepto las {0} y {1}</label>
+        <name>TOS_Privacy_Policy_Ops_Text</name>
     </customLabels>
     <customLabels>
         <label>Seguimiento de su progreso</label>
@@ -539,6 +587,10 @@
     <customLabels>
         <label>Bienvenidos a Proesis</label>
         <name>Welcome_To_Proesis</name>
+    </customLabels>
+    <customLabels>
+        <label>Título del saldo de Wallet</label>
+        <name>Wallet_Balance_Title</name>
     </customLabels>
     <customLabels>
         <label>Horarios</label>

@@ -24,7 +24,7 @@ export default class Notifications extends LightningElement {
 
         console.log('viewNotification request', JSON.stringify(request));
 
-        viewNotification().then(response => {
+        viewNotification(request).then(response => {
             console.log('viewNotification response', response);
 
             this.notification = response;

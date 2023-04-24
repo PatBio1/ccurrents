@@ -26,7 +26,7 @@
         </div>
 
         <div class="legend slds-m-bottom_medium">
-            <canvas data-loyalty-tier-chart>
+            <canvas style="width: 90%;" data-loyalty-tier-chart>
             </canvas>
         </div>
 
@@ -41,20 +41,21 @@
         <template if:true={loyaltyLevels}>
             <template for:each={loyaltyLevels} for:item="loyaltyTier">
                 <div key={loyaltyTier.levelName}>
-                    <div class="tier slds-m-bottom_xx-small">
-                        <div class="tier-icon">
-                            <span class="slds-avatar slds-avatar_circle" style={loyaltyTier.iconBackgroundStyle}>
-                                <c-loyalty-tier-badge loyalty-tier-name={loyaltyTier.levelName}></c-loyalty-tier-badge>
-                            </span>
-                        </div>
+                    <div class="tier slds-m-bottom_large">
+                        <c-loyalty-tier-badge width="64" height="64" loyalty-tier-name={loyaltyTier.levelName}></c-loyalty-tier-badge>
+
                         <div class="tier-name slds-m-left_x-small" style="color: #8979A9;">
                             <strong>{loyaltyTier.levelName}</strong>
-                            <p style="font-size: 12px;">
-                                {loyaltyTier.loyaltyCurrencyPerDonation} {labels.pointBrandName} 
+                            <span style="font-size: 12px;">
+                                <span> - </span>
+
+                                <lightning-formatted-number maximum-fraction-digits="0" format-style="currency" currency-code="USD" value={loyaltyTier.loyaltyPointsPerDonation}></lightning-formatted-number>
+                                <span style="margin-left: 0.25rem;">{labels.perDonation}</span>
+
                                 <span style="margin: 0 0.25rem;">&amp;</span> 
-                                <lightning-formatted-number format-style="currency" currency-code="USD" value={loyaltyTier.loyaltyPointsPerDonation}></lightning-formatted-number>
-                                <span style="margin-left: 0.25rem;">Per Donation</span>
-                            </p>
+
+                                {loyaltyTier.loyaltyCurrencyPerDonation} {labels.pointBrandName}
+                            </span>
                         </div>
                     </div>
         

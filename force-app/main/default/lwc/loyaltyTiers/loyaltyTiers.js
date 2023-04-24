@@ -13,8 +13,7 @@ import getLoyaltyLevelDisplayInfo from '@salesforce/apex/LoyaltyLevelService.get
 import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsInfo';
 
 const LEVEL_NAME_TO_BACKGROUND_STYLE = new Map([
-    ["Donor (Default)", "rgba(43, 130, 51, 0.2)"],
-    ["Normal Donor +15", "rgba(152, 50, 133, 0.2)"],
+    ["Normal Donor", "rgba(152, 50, 133, 0.2)"],
     ["Signature", "rgba(212, 195, 179, 0.6)"],
     ["VIP", "#E3E3F1"],
     ["Royal", "rgba(219, 202, 160, 0.57)"]
@@ -60,17 +59,19 @@ export default class LoyaltyTiers extends LightningElement {
         await loadScript(this, chartJsDatalabels);
 
         let reverseOrderLevels = [...this.loyaltyLevels].reverse();
+        let colors
+
         new Chart(this.template.querySelector("canvas[data-loyalty-tier-chart]"), {
             plugins: [ChartDataLabels],
             type: 'bar',
             data: {
-                labels: ['My Aps', ...reverseOrderLevels.map((level) => level.levelName)],
+                labels: [labels.myDonations, ...reverseOrderLevels.map((level) => level.levelName)],
                 datasets: [{
-                    label: '# of Appointments',
+                    label: '# of Donations',
                     data: [this.rewardsInfo.donorVisitCount, ...reverseOrderLevels.map((level) => level.levelThreshold)], // Need to fetch these from the backend
                     borderWidth: 0,
                     minBarLength: 5,
-                    backgroundColor: reverseOrderLevels.map((level) => LEVEL_NAME_TO_BACKGROUND_STYLE.get(level.levelName)),
+                    backgroundColor: ["#88D3FF", ...reverseOrderLevels.map((level) => { return LEVEL_NAME_TO_BACKGROUND_STYLE.get(level.levelName); })],
                     datalabels: {
                         anchor: "end",
                         align: "end"
@@ -81,7 +82,8 @@ export default class LoyaltyTiers extends LightningElement {
                 indexAxis: "y",
                 scales: {
                     x: {
-                        display: false
+                        display: false,
+                        max: Math.max(...reverseOrderLevels.map((level) => level.levelThreshold)) + 10
                     },
                     y: {
                         grid: {

@@ -9,6 +9,7 @@ import logoutModal from 'c/logoutModal';
 import labels from 'c/labelService';
 import util from 'c/util';
 
+import hasUnreadNotifications from '@salesforce/apex/NotificationsController.hasUnreadNotifications';
 import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsInfo';
 
 export default class Menu extends NavigationMixin(LightningElement) {
@@ -22,21 +23,20 @@ export default class Menu extends NavigationMixin(LightningElement) {
     menuStyle = 'background: url(' + proesisDonor + '/images/Proesis-Gradient3.png) no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;';
 
     userLoyaltyLevel;
+    doesUserHaveUnreadNotifications = false;
     photoUrl;
 
     get displayLoyaltyLevel() {
         return (this.userLoyaltyLevel || 'Donor (Default)');
     }
 
-    get hasUnreadNotifications() {
-        return true;
-    }
-
     async renderedCallback() {
         if (!this.isInitialied && !this.isGuest) {
             this.isInitialied = true;
 
-            let donorRewardsInfo = await getDonorRewardsInfo();
+            let [doesHaveUnreadNotifications, donorRewardsInfo] = await Promise.all([hasUnreadNotifications(), getDonorRewardsInfo()]);
+
+            this.doesUserHaveUnreadNotifications = doesHaveUnreadNotifications;
             if (donorRewardsInfo && donorRewardsInfo.currentLoyaltyLevel) {
                 this.userLoyaltyLevel = donorRewardsInfo.currentLoyaltyLevel;
             }

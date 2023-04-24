@@ -43,6 +43,7 @@ public with sharing class PromotionPaymentInvocableTest {
             promotionPaymentRequest.donorId = experienceUser.ContactId;
             promotionPaymentRequest.visitId = visit.Id;
             promotionPaymentRequest.amount = 100;
+            promotionPaymentRequest.reason = 'reason';
 
             List<PromotionPaymentInvocable.PromotionPaymentResponse> promotionPaymentResponses = PromotionPaymentInvocable.invoke(new List<PromotionPaymentInvocable.PromotionPaymentRequest>{promotionPaymentRequest});
 
@@ -50,6 +51,7 @@ public with sharing class PromotionPaymentInvocableTest {
             System.assertEquals(experienceUser.ContactId, promotionPaymentResponses[0].donorId);
             System.assertEquals(visit.Id, promotionPaymentResponses[0].visitId);
             System.assertEquals(100, promotionPaymentResponses[0].amount);
+            System.assertEquals('reason', promotionPaymentResponses[0].reason);
         }
     }
 

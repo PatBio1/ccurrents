@@ -11,6 +11,7 @@ public with sharing class ExceptionPaymentInvocable {
             exceptionPaymentResponse.donorId = exceptionPaymentRequest.donorId;
             exceptionPaymentResponse.visitId = exceptionPaymentRequest.visitId;
             exceptionPaymentResponse.amount = exceptionPaymentRequest.amount;
+            exceptionPaymentResponse.reason = exceptionPaymentRequest.reason;
             exceptionPaymentResponses.add(exceptionPaymentResponse);
         }
 
@@ -28,6 +29,9 @@ public with sharing class ExceptionPaymentInvocable {
         @InvocableVariable
         public Decimal amount;
 
+        @InvocableVariable
+        public String reason;
+
     }
 
     public class ExceptionPaymentResponse {
@@ -40,6 +44,9 @@ public with sharing class ExceptionPaymentInvocable {
 
         @InvocableVariable
         public Decimal amount;
+
+        @InvocableVariable
+        public String reason;
 
     }
 

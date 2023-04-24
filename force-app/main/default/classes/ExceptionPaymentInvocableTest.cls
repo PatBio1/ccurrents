@@ -43,6 +43,7 @@ public with sharing class ExceptionPaymentInvocableTest {
             exceptionPaymentRequest.donorId = experienceUser.ContactId;
             exceptionPaymentRequest.visitId = visit.Id;
             exceptionPaymentRequest.amount = 100;
+            exceptionPaymentRequest.reason = 'reason';
 
             List<ExceptionPaymentInvocable.ExceptionPaymentResponse> exceptionPaymentResponses = ExceptionPaymentInvocable.invoke(new List<ExceptionPaymentInvocable.ExceptionPaymentRequest>{exceptionPaymentRequest});
 
@@ -50,6 +51,7 @@ public with sharing class ExceptionPaymentInvocableTest {
             System.assertEquals(experienceUser.ContactId, exceptionPaymentResponses[0].donorId);
             System.assertEquals(visit.Id, exceptionPaymentResponses[0].visitId);
             System.assertEquals(100, exceptionPaymentResponses[0].amount);
+            System.assertEquals('reason', exceptionPaymentResponses[0].reason);
         }
     }
 

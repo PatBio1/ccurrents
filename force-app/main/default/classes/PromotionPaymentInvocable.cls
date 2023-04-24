@@ -11,6 +11,7 @@ public with sharing class PromotionPaymentInvocable {
             promotionPaymentResponse.donorId = promotionPaymentRequest.donorId;
             promotionPaymentResponse.visitId = promotionPaymentRequest.visitId;
             promotionPaymentResponse.amount = promotionPaymentRequest.amount;
+            promotionPaymentResponse.reason = promotionPaymentRequest.reason;
             promotionPaymentResponses.add(promotionPaymentResponse);
         }
 
@@ -28,6 +29,9 @@ public with sharing class PromotionPaymentInvocable {
         @InvocableVariable
         public Decimal amount;
 
+        @InvocableVariable
+        public String reason;
+
     }
 
     public class PromotionPaymentResponse {
@@ -40,6 +44,9 @@ public with sharing class PromotionPaymentInvocable {
 
         @InvocableVariable
         public Decimal amount;
+
+        @InvocableVariable
+        public String reason;
 
     }
 

@@ -82,7 +82,7 @@ public class DonationServiceTest {
 
     @IsTest 
     static void testCreateExceptionTransactions() {
-        Rate__c targetExceptionRate = [SELECT Id, Base_Payment__c, Description__c FROM Rate__c WHERE Type__c = 'Exception' LIMIT 1];
+        Rate__c targetExceptionRate = [SELECT Id, Base_Payment__c, Description__c, Center__c FROM Rate__c WHERE Type__c = 'Exception' LIMIT 1];
         List<Visit__c> targetVisits = [SELECT Id, Donor__c FROM Visit__c];
 
         List<DonationService.DonationExceptionRequest> exceptionPaymentRequests = new List<DonationService.DonationExceptionRequest>();
@@ -91,6 +91,11 @@ public class DonationServiceTest {
                 visit.Donor__c, visit.Id, targetExceptionRate.Id
             ));
         }
+
+        update new Account(
+            Id = targetExceptionRate.Center__c,
+            Max_Dollar_Per_Day__c = (targetExceptionRate.Base_Payment__c * targetVisits.size())
+        );
 
         Test.startTest();
         DonationService.createExceptionTransactions(exceptionPaymentRequests);
@@ -105,5 +110,39 @@ public class DonationServiceTest {
             Assert.areEqual(targetExceptionRate.Base_Payment__c, txnRecord.Txn_Line_Items__r[0].Total__c, 'Total of line item in created transaction should be equal to base payment of exception rate');
             Assert.areEqual(targetExceptionRate.Description__c, txnRecord.Txn_Line_Items__r[0].Item__c, 'Item of line item in created transaction should be equal to exception rate description');
         }
+    }
+
+    @IsTest 
+    static void testCreateExceptionTransactionsWithLimits() {
+        Rate__c targetExceptionRate = [SELECT Id, Base_Payment__c, Description__c, Center__c FROM Rate__c WHERE Type__c = 'Exception' LIMIT 1];
+        List<Visit__c> targetVisits = [SELECT Id, Donor__c FROM Visit__c];
+
+        List<DonationService.DonationExceptionRequest> exceptionPaymentRequests = new List<DonationService.DonationExceptionRequest>();
+        Decimal totalExceptionPaymentAmount = targetExceptionRate.Base_Payment__c * targetVisits.size();
+
+        for(Visit__c visit : targetVisits) {
+            exceptionPaymentRequests.add(new DonationService.DonationExceptionRequest(
+                visit.Donor__c, visit.Id, targetExceptionRate.Id
+            ));
+        }
+
+        Boolean isExceptionThrown = false;
+        update new Account(
+            Id = targetExceptionRate.Center__c,
+            Max_Dollar_Per_Day__c = totalExceptionPaymentAmount - 1
+        );
+
+        Test.startTest();
+        try {
+            DonationService.createExceptionTransactions(exceptionPaymentRequests);
+        } catch(Exception e) {
+            isExceptionThrown = true;
+        }
+        Test.stopTest();
+
+        Assert.isTrue(isExceptionThrown, 'Exception should be thrown when total exception payment amount exceeds center limit');
+        
+        List<Transaction__c> createdTransactions = [SELECT Id, Amount_Currency__c, (SELECT Id, Total__c, Item__c FROM Txn_Line_Items__r) FROM Transaction__c];
+        Assert.areEqual(0, createdTransactions.size(), 'No Transactions should have been made when limit is exceeded');
     }
 }

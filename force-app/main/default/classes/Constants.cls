@@ -47,4 +47,7 @@ public with sharing class Constants {
 
     public static final String UNMARKED_DONATION_TASK_SUBJECT = 'Unmarked Donation Found';
     public static final String UNMARKED_DONATION_TASK_DESCRIPTION = 'A vist with a record donation volume was found that was not marked with an outcome of "Donation".';
+
+    public static final String CENTER_DAY_EXCEPTION_LIMIT_ERROR = 'Center Day limit exceeded for center {0}';
+    public static final String CENTER_INDIVIDUAL_EXCEPTION_LIMIT_ERROR = 'Center Individual Payment limit exceeded for center {0}';
 }

@@ -5,11 +5,60 @@ public with sharing class DonationService {
 
     public static void createExceptionTransactions(List<DonationExceptionRequest> exceptionRequests) {
         Set<Id> exceptionRateIds = new Set<Id>();
+        Set<Id> visitIds = new Set<Id>();
+
         for (DonationExceptionRequest exceptionRequest : exceptionRequests) {
             exceptionRateIds.add(exceptionRequest.exceptionRateId);
+            visitIds.add(exceptionRequest.visitId);
+        }
+
+        // Verify Exception Limits haven't been exceeded before creating transactions
+        Map<Id, Rate__c> exceptionRates = new Map<Id, Rate__c>([SELECT Id, Name, Base_Payment__c, Description__c FROM Rate__c WHERE Id IN :exceptionRateIds]);
+        Map<Id, Account> centerIdToCenter = new Map<Id, Account>();
+
+        for(Visit__c targetVisit : [
+            SELECT Id, Center_Donation_Type__r.Center__r.Name, Center_Donation_Type__r.Center__r.Max_Dollar_Per_Day__c, Center_Donation_Type__r.Center__r.Individual_Exception_Limit__c 
+            FROM Visit__c 
+            WHERE Id IN :visitIds
+        ]) {
+            centerIdToCenter.put(targetVisit.Id, targetVisit.Center_Donation_Type__r.Center__r);
+        }
+
+        Map<Id, Decimal> centerIdToTotalExceptionAmount = new Map<Id, Decimal>();
+        for (AggregateResult result : [
+            SELECT Visit__r.Center_Donation_Type__r.Center__c centerId, SUM(Amount_Currency__c) totalExceptionAmount
+            FROM Transaction__c
+            WHERE Visit__c IN :visitIds AND
+                Type__c = 'Credit' AND
+                SubType__c = 'Exception' AND 
+                CreatedDate = TODAY
+            GROUP BY Visit__r.Center_Donation_Type__r.Center__c
+        ]) {
+            centerIdToTotalExceptionAmount.put((Id)result.get('centerId'), (Decimal)result.get('totalExceptionAmount'));
+        }
+
+        for (DonationExceptionRequest exceptionRequest : exceptionRequests) {
+            Rate__c exceptionRate = exceptionRates.get(exceptionRequest.exceptionRateId);
+            Account center = centerIdToCenter.get(exceptionRequest.visitId);
+
+            Decimal totalExceptionAmount = centerIdToTotalExceptionAmount.get(center.Id);
+            if (totalExceptionAmount == null) {
+                totalExceptionAmount = 0;
+            }
+
+            totalExceptionAmount += exceptionRate.Base_Payment__c;
+            centerIdToTotalExceptionAmount.put(center.Id, totalExceptionAmount);
+
+            if ((center.Max_Dollar_Per_Day__c != null && center.Max_Dollar_Per_Day__c > 0) && totalExceptionAmount > center.Max_Dollar_Per_Day__c) {
+                throw new CreateExceptionPaymentException(String.format(Constants.CENTER_DAY_EXCEPTION_LIMIT_ERROR, new List<object> { center.Name }));
+            }
+
+            if ((center.Individual_Exception_Limit__c != null && center.Individual_Exception_Limit__c > 0) && exceptionRate.Base_Payment__c > center.Individual_Exception_Limit__c) {
+                throw new CreateExceptionPaymentException(String.format(Constants.CENTER_INDIVIDUAL_EXCEPTION_LIMIT_ERROR, new List<object> { center.Name }));
+            }
         }
         
-        Map<Id, Rate__c> exceptionRates = new Map<Id, Rate__c>([SELECT Id, Name, Base_Payment__c, Description__c FROM Rate__c WHERE Id IN :exceptionRateIds]);
+        // Assuming no exceptions, create the actual transactions
         Map<Id, Transaction__c> visitIdToTransaction = new Map<Id, Transaction__c>();
         Map<Id, Task> visitIdToExceptionPaymentTask = new Map<Id, Task>();
 
@@ -65,4 +114,6 @@ public with sharing class DonationService {
             this.exceptionRateId = exceptionRateId;
         }
     }
+
+    public class CreateExceptionPaymentException extends Exception {}
 }

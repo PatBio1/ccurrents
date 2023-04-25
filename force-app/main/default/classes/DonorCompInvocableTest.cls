@@ -175,7 +175,11 @@ public with sharing class DonorCompInvocableTest {
         Test.stopTest();
 
         List<Contact> donors = [
-            SELECT Id, Loyalty_Level__r.Name, (SELECT Id, Amount_Currency__c, Amount_Points__c FROM Transactions__r ORDER BY Name ASC)
+            SELECT Id, Loyalty_Level__r.Name, (
+                SELECT Id, Amount_Currency__c, Amount_Points__c 
+                FROM Transactions__r 
+                ORDER BY Name ASC
+            )
             FROM Contact
             WHERE Id IN (SELECT PersonContactId FROM Account WHERE Id = :donorAccounts[0].Id)
         ];
@@ -191,5 +195,83 @@ public with sharing class DonorCompInvocableTest {
         Assert.areEqual(300, donors[0].Transactions__r[1].Amount_Currency__c, 'Last Transaction should have Amount_Currency__c = 333');
         Assert.areEqual(2000, donors[0].Transactions__r[1].Amount_Points__c, 'Last Transaction should have Amount_Points__c = 2333');
     }
-    
+
+    @IsTest 
+    static void testHandleCreateDonationMessages() {
+        List<Account> donorAccounts = [SELECT Id, PersonContactId, DonorId__c FROM Account WHERE DonorId__c != null LIMIT 1];
+        Id scheduledId = [SELECT Id FROM Schedule__c LIMIT 1]?.Id;
+
+        List<Appointment__c> testAppointments = new List<Appointment__c>();
+        Datetime currentDatetime = Datetime.now().addDays(-14 * (TEST_DONATION_THRESHOLD + 1));
+
+        for (Integer i = 0; i < TEST_DONATION_THRESHOLD + 1; i++) {
+            testAppointments.add(TestUtil.createTestAppointment(scheduledId, currentDatetime));
+            currentDatetime = currentDatetime.addDays(14);
+        }
+        insert testAppointments;
+
+        List<Visit__c> testVisits = new List<Visit__c>();
+        Id centerDonationTypeId = [SELECT Id FROM Center_Donation_Type__c LIMIT 1][0].Id;
+
+        for (Integer i = 0; i < TEST_DONATION_THRESHOLD; i++) {
+            Visit__c testVisit = TestUtil.createVisit(donorAccounts[0].PersonContactId, centerDonationTypeId, testAppointments[i].Id);
+            testVisit.Status__c = 'Complete';
+            testVisit.Outcome__c = 'Donation';
+
+            testVisits.add(testVisit);
+        }
+        insert testVisits;
+
+        Visit__c level2DonationVisit = TestUtil.createVisit(donorAccounts[0].PersonContactId, centerDonationTypeId, testAppointments[TEST_DONATION_THRESHOLD].Id);
+        level2DonationVisit.Status__c = 'Complete';
+        level2DonationVisit.Outcome__c = 'Donation';
+
+        Test.startTest();
+        // Should create normal transaction with Level 1 Rates
+        DonorCompInvocable.handleCreateDonationTransactions(new List<List<Donor_Comp__e>>{
+            new List<Donor_Comp__e>{
+                new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now())
+            }
+        });
+
+        insert level2DonationVisit;
+
+        // Should create transaction with threshold payments
+        DonorCompInvocable.handleCreateDonationTransactions(new List<List<Donor_Comp__e>>{
+            new List<Donor_Comp__e>{
+                new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now())
+            }
+        });
+        Test.stopTest();
+
+        List<Contact> donors = [
+            SELECT Id, Loyalty_Level__r.Name, (
+                SELECT Id, Name, Message_Handler_Type__c, Body__c, Visit__c, Transaction__c, Transaction__r.Visit__c, Trigger_Marketing_Cloud__c
+                FROM Messages__r 
+                ORDER BY CreatedDate ASC
+            )
+            FROM Contact
+            WHERE Id IN (SELECT PersonContactId FROM Account WHERE Id = :donorAccounts[0].Id)
+        ];
+
+        Assert.areEqual(2, donors[0].Messages__r.size(), 'Donor should have 2 messages');
+
+        // Loyalty Donation Message
+        Assert.areEqual(System.label.Loyalty_Donation_Payment_Message_Title, donors[0].Messages__r[0].Name, 'First Message should have Name = ' + System.label.Loyalty_Donation_Payment_Message_Title);
+        Assert.areEqual(Constants.LOYALTY_DONATION_PAYMENT_MESSAGE_HANDLER, donors[0].Messages__r[0].Message_Handler_Type__c, 'First Message should have Message_Handler_Type__c = ' + Constants.LOYALTY_DONATION_PAYMENT_MESSAGE_HANDLER);
+        Assert.areEqual(System.label.Loyalty_Donation_Payment_Message_Body, donors[0].Messages__r[0].Body__c, 'First Message should have Body = ' + System.label.Loyalty_Donation_Payment_Message_Body);
+        Assert.areEqual(testVisits[testVisits.size() - 1].Id, donors[0].Messages__r[0].Visit__c, 'First Message should have Visit__c = ' + testVisits[testVisits.size() - 1].Id);
+        Assert.isNotNull(donors[0].Messages__r[0].Transaction__c, 'First Message should have Transaction__c');
+        Assert.areEqual(testVisits[testVisits.size() - 1].Id, donors[0].Messages__r[0].Transaction__r.Visit__c, 'The linked transaction should be the transaction linked to the last visit');
+        Assert.isTrue(donors[0].Messages__r[0].Trigger_Marketing_Cloud__c, 'First Message should have Trigger_Marketing_Cloud__c = true');
+
+        // Regular Donation Message
+        Assert.areEqual(System.label.Donation_Payment_Message_Title, donors[0].Messages__r[1].Name, 'Second Message should have Name = ' + System.label.Donation_Payment_Message_Title);
+        Assert.areEqual(Constants.DONATION_PAYMENT_MESSAGE_HANDLER, donors[0].Messages__r[1].Message_Handler_Type__c, 'Second Message should have Message_Handler_Type__c = ' + Constants.DONATION_PAYMENT_MESSAGE_HANDLER);
+        Assert.areEqual(System.label.Donation_Payment_Message_Body, donors[0].Messages__r[1].Body__c, 'Second Message should have Body = ' + System.label.Donation_Payment_Message_Body);
+        Assert.areEqual(level2DonationVisit.Id, donors[0].Messages__r[1].Visit__c, 'Second Message should have Visit__c = ' + level2DonationVisit.Id);
+        Assert.isNotNull(donors[0].Messages__r[1].Transaction__c, 'Second Message should have Transaction__c');
+        Assert.areEqual(level2DonationVisit.Id, donors[0].Messages__r[1].Transaction__r.Visit__c, 'The linked transaction should be the transaction linked to the last visit');
+        Assert.isTrue(donors[0].Messages__r[1].Trigger_Marketing_Cloud__c, 'Second Message should have Trigger_Marketing_Cloud__c = true');
+    }
 }

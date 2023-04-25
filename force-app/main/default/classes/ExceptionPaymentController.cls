@@ -1,7 +1,14 @@
-public with sharing class ExceptionPaymentController {
+public without sharing class ExceptionPaymentController {
     @AuraEnabled
     public static void createExceptionPayment(Id donorId, Id visitId, Id exceptionRateId) {
-        DonationService.createExceptionTransaction(new DonationService.DonationExceptionRequest(donorId, visitId, exceptionRateId));
+        try {
+            DonationService.createExceptionTransaction(new DonationService.DonationExceptionRequest(donorId, visitId, exceptionRateId));
+        } catch(Exception e) {
+            AuraHandledException newException = new AuraHandledException(e.getMessage());
+            newException.setMessage(e.getMessage()); // Without this line, the error message returns 'Script-thrown exception' in the apex unit test
+
+            throw newException;
+        }
     }
 
     @AuraEnabled
@@ -11,10 +18,27 @@ public with sharing class ExceptionPaymentController {
         }
 
         Visit__c targetVisit = [
-            SELECT Id, Appointment_Datetime__c, Donor__c, Donor__r.Name, Center_Donation_Type__r.Center__r.Name, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c
+            SELECT Id, Appointment_Datetime__c, Donor__c, Donor__r.Name, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c
             FROM Visit__c
             WHERE Id = :targetVisitId
             LIMIT 1
+        ];
+
+        Account targetCenterAccount = [
+            SELECT Id, Name, Max_Dollar_Per_Day__c, Individual_Exception_Limit__c
+            FROM Account
+            WHERE Id = :targetVisit.Center_Donation_Type__r.Center__c AND 
+                RecordType.DeveloperName = 'Center'
+            LIMIT 1
+        ];
+
+        List<AggregateResult> exceptionTransactionCurrencySum = [
+            SELECT Visit__r.Center_Donation_Type__r.Center__c, SUM(Amount_Currency__c) sum
+            FROM Transaction__c
+            WHERE Visit__r.Center_Donation_Type__r.Center__c = :targetCenterAccount.Id AND 
+                SubType__c = 'Exception' AND 
+                CreatedDate = TODAY
+            GROUP BY Visit__r.Center_Donation_Type__r.Center__c
         ];
 
         List<Rate__c> availableCenterExceptionRates = [
@@ -25,7 +49,13 @@ public with sharing class ExceptionPaymentController {
                 Type__c = 'Exception'
         ];
 
-        return new VisitExceptionPaymentInfo(targetVisit, availableCenterExceptionRates);
+        Decimal usedDayLimit = (exceptionTransactionCurrencySum != null && exceptionTransactionCurrencySum.size() > 0) ? (Decimal)exceptionTransactionCurrencySum[0].get('sum') : 0;
+        return new VisitExceptionPaymentInfo(
+            targetVisit, 
+            targetCenterAccount, 
+            usedDayLimit, 
+            availableCenterExceptionRates
+        );
     }
 
     public class VisitExceptionPaymentInfo {
@@ -42,16 +72,27 @@ public with sharing class ExceptionPaymentController {
         public String visitCenterName;
 
         @AuraEnabled
+        public Decimal visitDayLimit;
+        @AuraEnabled
+        public Decimal visitDayRemainingLimit;
+
+        @AuraEnabled
+        public Decimal visitIndividualLimit;
+
+        @AuraEnabled
         public Datetime visitDatetime;
 
         @AuraEnabled
         public List<ExceptionPaymentType> availableExceptionPaymentTypes;
 
-        public VisitExceptionPaymentInfo(Visit__c targetVisit, List<Rate__c> availableCenterExceptionRates) {
+        public VisitExceptionPaymentInfo(Visit__c targetVisit, Account targetCenter, Decimal usedDayLimit, List<Rate__c> availableCenterExceptionRates) {
             this.visitId = targetVisit.Id;
             this.visitDonorId = targetVisit.Donor__c;
             this.visitDonorName = targetVisit.Donor__r.Name;
-            this.visitCenterName = targetVisit.Center_Donation_Type__r.Center__r.Name;
+            this.visitCenterName = targetCenter.Name;
+            this.visitDayLimit = (targetCenter.Max_Dollar_Per_Day__c == null) ? 0 : targetCenter.Max_Dollar_Per_Day__c;
+            this.visitDayRemainingLimit = visitDayLimit - usedDayLimit;
+            this.visitIndividualLimit = (targetCenter.Individual_Exception_Limit__c == null) ? 0 : targetCenter.Individual_Exception_Limit__c;
             this.visitDatetime = targetVisit.Appointment_Datetime__c;
 
             this.availableExceptionPaymentTypes = new List<ExceptionPaymentType>();

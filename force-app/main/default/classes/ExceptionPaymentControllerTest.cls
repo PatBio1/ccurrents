@@ -132,4 +132,36 @@ public class ExceptionPaymentControllerTest {
             Assert.areEqual(exceptionRates.get(exceptionPaymentType.id).Base_Payment__c, exceptionPaymentType.amount, 'Exception payment type amount should be equal to exception rate base payment');
         }
     }
+
+    @IsTest
+    static void testExceptionPaymentExceptionHandling() {
+        Rate__c targetExceptionRate = [SELECT Id, Base_Payment__c, Description__c, Center__c, Center__r.Name FROM Rate__c WHERE Type__c = 'Exception' LIMIT 1];
+        Visit__c targetVisit = [SELECT Id, Donor__c FROM Visit__c LIMIT 1];
+
+        Boolean wasExceptionThrown = false;
+        String exceptionMessage;
+
+        // Update Center Limit to 1 lower than rate payment to force exception
+        Account centerAccount = new Account(
+            Id = targetExceptionRate.Center__c,
+            Individual_Exception_Limit__c = targetExceptionRate.Base_Payment__c - 1
+        );
+        update centerAccount;
+
+        Test.startTest();
+        try {
+            ExceptionPaymentController.createExceptionPayment(targetVisit.Donor__c, targetVisit.Id, targetExceptionRate.Id);
+        } catch(AuraHandledException e) {
+            wasExceptionThrown = true;
+            exceptionMessage = e.getMessage();
+        }
+        Test.stopTest();
+
+        Assert.isTrue(wasExceptionThrown, 'Exception should have been thrown');
+        Assert.areEqual(
+            String.format(Constants.CENTER_INDIVIDUAL_EXCEPTION_LIMIT_ERROR, new List<object> { targetExceptionRate.Center__r.Name }), 
+            exceptionMessage, 
+            'Exception message should be equal to expected exception message'
+        );
+    }
 }

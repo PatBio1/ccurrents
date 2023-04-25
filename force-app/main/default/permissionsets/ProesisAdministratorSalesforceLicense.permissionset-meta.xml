@@ -344,6 +344,10 @@
         <enabled>true</enabled>
         <name>Broadcast_Actions</name>
     </customPermissions>
+    <customPermissions>
+        <enabled>true</enabled>
+        <name>Center_Manager_Actions</name>
+    </customPermissions>
     <customSettingAccesses>
         <enabled>true</enabled>
         <name>ErrorLogDefaults__c</name>

@@ -5,7 +5,8 @@
 }
 
 .visit-info-section,
-.payment-confirmation-section {
+.payment-confirmation-section,
+.center-exception-limits {
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
@@ -19,7 +20,8 @@
 }
 
 .visit-info-row,
-.payment-confirmation-row {
+.payment-confirmation-row,
+.exception-limit-row {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -41,6 +43,27 @@
     text-align: center;
     font-size: 16px;
     font-weight: 500;
+}
+
+.exception-limit-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    padding: 0.75rem 1.5rem;
+
+    text-align: center;
+}
+
+.exception-limit-container > h3 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.exception-limit-container > p {
+    font-size: 18px;
 }
 
 lightning-radio-group {

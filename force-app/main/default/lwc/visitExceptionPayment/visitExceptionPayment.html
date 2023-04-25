@@ -27,6 +27,29 @@
                     </div>
                 </div>
 
+                <template if:true={hasCenterLimits}>
+                  <h1 class="modal-section-header">Center Limit Info</h1>
+
+                  <div class="center-exception-limits">
+                      <div class="exception-limit-row">
+                          <div if:true={hasCenterDayLimit} style={centerDayLimitBackgroundStyle} class="exception-limit-container">
+                              <h3>Center Day Limit</h3>
+
+                              <p>
+                                <lightning-formatted-number value={baseVisitExceptionPaymentInfo.visitDayRemainingLimit} format-style="currency" currency-code={userCurrency}></lightning-formatted-number>
+                                <span> / </span>
+                                <lightning-formatted-number value={baseVisitExceptionPaymentInfo.visitDayLimit} format-style="currency" currency-code={userCurrency}></lightning-formatted-number>
+                              </p>
+                          </div>
+
+                          <div if:true={hasCenterIndividualLimit} style={centerIndividualLimitBackgroundStyle} class="exception-limit-container">
+                              <h3>Center Payment Limit</h3>
+                              <p><lightning-formatted-number value={baseVisitExceptionPaymentInfo.visitIndividualLimit} format-style="currency" currency-code={userCurrency}></lightning-formatted-number></p>
+                          </div>
+                      </div>
+                  </div>
+                </template>
+
                 <div class="exception-rate-section">
                     <h1 class="modal-section-header">Exception Rate Selection</h1>
 

@@ -172,4 +172,70 @@ public class CoreSchedulerHandlerTest {
             Assert.areEqual(updatedAppointment.Capacity__c - 1, updatedAppointment.Availability__c, 'Appointment should have ' + (updatedAppointment.Capacity__c - 1) + ' available slot.');
         }
     }
+
+    @IsTest 
+    static void testCancelVisit() {
+        Appointment__c targetAppointment = [SELECT Id, Datetime__c FROM Appointment__c LIMIT 1];
+        Contact targetDonor = [SELECT Id FROM Contact LIMIT 1];
+        Center_Donation_Type__c targetCenterDonationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        Visit__c testVisit = CoreSchedulerHandler.createVisit(new Visit__c(
+            Appointment__c = targetAppointment.Id,
+            Donor__c = targetDonor.Id,
+            Center_Donation_Type__c = targetCenterDonationType.Id,
+            Status__c = 'Scheduled'
+        ));
+
+        Test.startTest();
+        CoreSchedulerHandler.cancelVisit(testVisit.Id);
+        Test.stopTest();
+
+        Visit__c canceledVisit = [SELECT Id, Status__c, Outcome__c FROM Visit__c WHERE Id = :testVisit.Id LIMIT 1];
+        Assert.areEqual('Complete', canceledVisit.Status__c, 'Visit status should be marked as complete.');
+        Assert.areEqual('Canceled', canceledVisit.Outcome__c, 'Visit outcome should be marked as canceled.');
+
+        targetAppointment = [SELECT Id, Booked__c FROM Appointment__c WHERE Id = :testVisit.Appointment__c LIMIT 1];
+        Assert.areEqual(0, targetAppointment.Booked__c, 'Appointment should be marked as not booked.');
+    }
+
+    @IsTest 
+    static void testCancelVisits() {
+        List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c];
+        List<Contact> targetDonors = [SELECT Id FROM Contact];
+        Center_Donation_Type__c targetCenterDonationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        List<Visit__c> testVisits = new List<Visit__c>();
+        Set<Id> bookedAppointmentsSlots = new Set<Id>();
+
+        for (Integer i = 0; i < targetDonors.size(); i++) {
+            testVisits.add(new Visit__c(
+                Appointment__c = targetAppointments[i].Id,
+                Donor__c = targetDonors[i].Id,
+                Center_Donation_Type__c = targetCenterDonationType.Id,
+                Status__c = 'Scheduled'
+            ));
+
+            bookedAppointmentsSlots.add(targetAppointments[i].Id);
+        }
+
+        CoreSchedulerHandler.createVisits(testVisits);
+
+        List<Id> createdVisitIds = new List<Id>();
+        for (Visit__c testVisit : testVisits) {
+            createdVisitIds.add(testVisit.Id);
+        }
+
+        Test.startTest();
+        CoreSchedulerHandler.cancelVisits(createdVisitIds);
+        Test.stopTest();
+
+        for(Visit__c testVisit : [SELECT Id, Status__c, Outcome__c FROM Visit__c WHERE Id IN :createdVisitIds]) {
+            Assert.areEqual('Complete', testVisit.Status__c, 'Visit status should be marked as complete.');
+            Assert.areEqual('Canceled', testVisit.Outcome__c, 'Visit outcome should be marked as canceled.');
+        }
+
+        for (Appointment__c updatedAppointment : [SELECT Id, Booked__c FROM Appointment__c WHERE Id IN :bookedAppointmentsSlots]) {
+            Assert.areEqual(0, updatedAppointment.Booked__c, 'Appointment should be marked as booked.');
+        }
+    }
 }

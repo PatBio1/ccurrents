@@ -141,6 +141,24 @@ public without sharing class SchedulerController {
         }
     }
 
+    @AuraEnabled
+    public static void rescheduleVisit(Id appointmentId, Id originalVisitId) {
+        try {
+            CoreSchedulerHandler.rescheduleVisit(new CoreSchedulerHandler.RescheduleRequest(originalVisitId, appointmentId));
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled 
+    public static void cancelVisit(Id visitId) {
+        try {
+            CoreSchedulerHandler.cancelVisit(visitId);
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
     public class AppointmentGroup {
 
         @AuraEnabled

@@ -1057,4 +1057,81 @@
         <shortDescription>Balance</shortDescription>
         <value>Balance</value>
     </labels>
+    <labels>
+        <fullName>Reschedule_Action</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Reschedule</shortDescription>
+        <value>Reschedule</value>
+    </labels>
+    <labels>
+        <fullName>Reschedule_Visit_Title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Reschedule Visit</shortDescription>
+        <value>Reschedule Visit</value>
+    </labels>
+    <labels>
+        <fullName>Confirm_Visit_Cancel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Please confirm below that you wish to cancel this visit.</shortDescription>
+        <value>Please confirm below that you wish to cancel this visit.</value>
+    </labels>
+    <labels>
+        <fullName>Confirm_Visit_Cancel_Action</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Confirm Cancellation</shortDescription>
+        <value>Confirm Cancellation</value>
+    </labels>
+    <labels>
+        <fullName>Visit_Cancel_Action</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Cancel Visit</shortDescription>
+        <value>Cancel Visit</value>
+    </labels>
+    <labels>
+        <fullName>Reschedule_Visit_Action</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Reschedule Visit</shortDescription>
+        <value>Reschedule Visit</value>
+    </labels>
+    <labels>
+        <fullName>Mobile_Visit_Actions</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Visit Actions</shortDescription>
+        <value>Visit Actions</value>
+    </labels>
+    <labels>
+        <fullName>Your_Balance_Label</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Your Balance</shortDescription>
+        <value>Your Balance</value>
+    </labels>
+    <labels>
+        <fullName>Center_Rate_Label</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Center Rate</shortDescription>
+        <value>Center Rate</value>
+    </labels>
+    <labels>
+        <fullName>Promotion_Chart_Description</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Here you can observe how many donations you need to reach the next level</shortDescription>
+        <value>Here you can observe how many donations you need to reach the next level</value>
+    </labels>
+    <labels>
+        <fullName>Visits_Remaining_For_Tier</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>{0} Donations to get {1} status</shortDescription>
+        <value>{0} Donations to get {1} status</value>
+    </labels>
 </CustomLabels>

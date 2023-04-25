@@ -194,4 +194,122 @@ public with sharing class SchedulerControllerTest {
         System.assertEquals(1, targetAppointment.Booked__c, 'Adding a visit should increment the booked value');
     }
 
+    @isTest
+    static void testRescheduleVisit() {
+        User experienceUser = TestUtil.createExperienceUser();
+
+        List<Appointment__c> testAppointments;
+        Visit__c testVisit;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            Account center = TestUtil.createMiramarCenter();
+            insert center;
+
+            Schedule__c schedule = new Schedule__c(
+                Center__c = center.Id,
+                Begin_Date__c = Date.newInstance(2023, 1, 10).addDays(-10),
+                End_Date__c = Date.newInstance(2023, 1, 10).addDays(30)
+            );
+            insert schedule;
+
+            testAppointments = new List<Appointment__c> {
+                new Appointment__c(
+                    Schedule__c = schedule.Id,
+                    Datetime__c = DateTime.newInstance(2023, 1, 10, 10, 0, 0),
+                    Duration__c = 10,
+                    Capacity__c = 5
+                ),
+                new Appointment__c(
+                    Schedule__c = schedule.Id,
+                    Datetime__c = DateTime.newInstance(2023, 1, 10, 11, 0, 0),
+                    Duration__c = 10,
+                    Capacity__c = 5
+                )
+            };
+            insert testAppointments;
+
+            Donation_Type__c donationType = new Donation_Type__c();
+            insert donationType;
+
+            Center_Donation_Type__c centerDonationType = new Center_Donation_Type__c();
+            centerDonationType.Center__c = center.Id;
+            centerDonationType.Donation_Type__c = donationType.Id;
+            centerDonationType.isActive__c = true;
+            insert centerDonationType;
+
+            testVisit = new Visit__c();
+            testVisit.Appointment__c = testAppointments[0].Id;
+            testVisit.Donor__c = experienceUser.ContactId;
+            testVisit.Status__c = 'Scheduled';
+            testVisit.Center_Donation_Type__c = centerDonationType.Id;
+            insert testVisit;
+
+            Test.startTest();
+            SchedulerController.rescheduleVisit(testAppointments[1].Id, testVisit.Id);
+            Test.stopTest();
+        }
+
+        Visit__c originalVisit = [SELECT Id, Status__c, Outcome__c, Appointment__c FROM Visit__c WHERE Id = :testVisit.Id LIMIT 1];
+        Assert.areEqual('Complete', originalVisit.Status__c, 'Original visit should be marked as complete');
+        Assert.areEqual('Rescheduled', originalVisit.Outcome__c, 'Original visit should be marked as rescheduled');
+
+        Visit__c newVisit = [SELECT Id, Status__c, Outcome__c, Appointment__c FROM Visit__c WHERE Id != :testVisit.Id LIMIT 1];
+        Assert.areEqual('Scheduled', newVisit.Status__c, 'New visit should be marked as scheduled');
+        Assert.isNull(newVisit.Outcome__c, 'New visit should not have an outcome');
+        Assert.areEqual(testAppointments[1].Id, newVisit.Appointment__c, 'New visit should be associated with the new appointment');
+    }
+
+    @isTest
+    static void testCancelVisit() {
+        User experienceUser = TestUtil.createExperienceUser();
+
+        List<Appointment__c> testAppointments;
+        Visit__c testVisit;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            Account center = TestUtil.createMiramarCenter();
+            insert center;
+
+            Schedule__c schedule = new Schedule__c(
+                Center__c = center.Id,
+                Begin_Date__c = Date.newInstance(2023, 1, 10).addDays(-10),
+                End_Date__c = Date.newInstance(2023, 1, 10).addDays(30)
+            );
+            insert schedule;
+
+            testAppointments = new List<Appointment__c> {
+                new Appointment__c(
+                    Schedule__c = schedule.Id,
+                    Datetime__c = DateTime.newInstance(2023, 1, 10, 10, 0, 0),
+                    Duration__c = 10,
+                    Capacity__c = 5
+                )
+            };
+            insert testAppointments;
+
+            Donation_Type__c donationType = new Donation_Type__c();
+            insert donationType;
+
+            Center_Donation_Type__c centerDonationType = new Center_Donation_Type__c();
+            centerDonationType.Center__c = center.Id;
+            centerDonationType.Donation_Type__c = donationType.Id;
+            centerDonationType.isActive__c = true;
+            insert centerDonationType;
+
+            testVisit = new Visit__c();
+            testVisit.Appointment__c = testAppointments[0].Id;
+            testVisit.Donor__c = experienceUser.ContactId;
+            testVisit.Status__c = 'Scheduled';
+            testVisit.Center_Donation_Type__c = centerDonationType.Id;
+            insert testVisit;
+
+            Test.startTest();
+            SchedulerController.cancelVisit(testVisit.Id);
+            Test.stopTest();
+        }
+
+        Visit__c cancelledVisit = [SELECT Id, Status__c, Outcome__c FROM Visit__c WHERE Id = :testVisit.Id LIMIT 1];
+        Assert.areEqual('Complete', cancelledVisit.Status__c, 'Original visit should be marked as complete');
+        Assert.areEqual('Canceled', cancelledVisit.Outcome__c, 'Original visit should be marked as canceled');
+    }
 }

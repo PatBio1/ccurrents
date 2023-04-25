@@ -1,0 +1,21 @@
+.mobile-actions-conatiner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.confirm-cancel-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+}
+
+.confirm-cancel-message { 
+    font-size: 16px;
+    font-weight: 600;
+}

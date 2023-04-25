@@ -3,12 +3,12 @@ public without sharing class NotificationsController {
     @AuraEnabled
     public static Boolean hasUnreadNotifications() {
         Integer unreadNotificationCount = 0;
-        
+
         try {
             unreadNotificationCount = [
-                SELECT count() 
-                FROM Message__c 
-                WHERE Donor__c IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()) AND 
+                SELECT COUNT()
+                FROM Message__c
+                WHERE Donor__c IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()) AND
                     isViewed__c = false AND
                     Viewed_Datetime__c = null
             ];
@@ -16,7 +16,7 @@ public without sharing class NotificationsController {
             throw new AuraHandledException(e.getMessage());
         }
 
-        return (unreadNotificationCount == null || unreadNotificationCount > 0);
+        return (unreadNotificationCount > 0);
     }
 
     @AuraEnabled
@@ -91,6 +91,7 @@ public without sharing class NotificationsController {
             ];
 
             if (message.Viewed_Datetime__c == null) {
+                message.isViewed__c = true;
                 message.Viewed_Datetime__c = DateTime.now();
                 update message;
             }

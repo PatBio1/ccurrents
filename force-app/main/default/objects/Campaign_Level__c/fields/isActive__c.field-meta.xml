@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>isActive__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indicates if the incentive level is active or not. Allows for editing incentives, activating, and deactivating.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Indicates if the incentive level is active or not. Allows for editing incentives, activating, and deactivating.</inlineHelpText>
+    <label>isActive</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Expiration_Date__c</fullName>
+    <defaultValue>TODAY()+90</defaultValue>
     <description>Indicates the date the message will expire.</description>
     <externalId>false</externalId>
     <inlineHelpText>Indicates the date the message will expire.</inlineHelpText>

@@ -6,7 +6,7 @@ public without sharing class DonorCompInvocable {
     @InvocableMethod(Label='Handle Donor Comp Event' Description='Handles the Donor Comp Event by updating the Visit Status to Complete and creating a Donation Transaction' Category='Donor')
     public static void handleDonorCompEvent(List<List<Donor_Comp__e>> inputRecords) {
         // Donor Comp Events returned by this function have both a valid donor and visit reference
-        List<List<Donor_Comp__e>> validDonorEvents = (List<List<Donor_Comp__e>>)DonorEventHelper.validateDonorAndVisitReferences(inputRecords);
+        List<List<Donor_Comp__e>> validDonorEvents = (List<List<Donor_Comp__e>>) DonorEventHelper.validateDonorAndVisitReferences(inputRecords);
 
         if (!validDonorEvents.isEmpty()) {
             updateVisitStatusComplete(validDonorEvents);
@@ -34,11 +34,12 @@ public without sharing class DonorCompInvocable {
         }
 
         // find visits in this list
-        for (Visit__c visit : VisitSelector.getVisitsInRangeForDonorNumbers(dateTimesToProcess,donorNumbersToQuery)) {
+        for (Visit__c visit : VisitSelector.getVisitsInRangeForDonorNumbers(dateTimesToProcess, donorNumbersToQuery)) {
             Donor_Comp__e comp = donorNumberToPEs.get(visit.Donor__r.Account.DonorId__c);
             // Assuming FDA 48 Hour rule mandates (at least) 24 hours between visits, check if this event is within 12 hours of the Visit (Appointment) Date Time
             if (comp.Timestamp__c <= visit.Appointment__r.Datetime__c.addHours(12) && comp.Timestamp__c >= visit.Appointment__r.Datetime__c.addHours(-12)) {
-                Visit__c visitUpdate = new Visit__c(Id = visit.Id);
+                Visit__c visitUpdate = new Visit__c(Id = visit.Id,
+                    Donor__c = visit.Donor__c);
                 updateVisitToCompleteDonationStatus(visitUpdate, comp);
 
                 visitsToUpdate.add(visitUpdate);
@@ -53,6 +54,7 @@ public without sharing class DonorCompInvocable {
 
         if (!visitsToUpdate.isEmpty()) {
             update visitsToUpdate;
+            updateCampaignVisitCounter(visitsToUpdate);
         }
     }
 
@@ -79,7 +81,7 @@ public without sharing class DonorCompInvocable {
         // Get All Rates stored by a composite key of Center__c + Donation_Type__c
         Map<String, Rate__c> centerAndDonationTypeToRate = new Map<String, Rate__c>();
         for (Rate__c rate : [
-            SELECT Id, Center__c, Donation_Type__c, Base_Payment__c 
+            SELECT Id, Center__c, Donation_Type__c, Base_Payment__c
             FROM Rate__c
             WHERE Type__c = 'Base'
         ]) {
@@ -87,7 +89,7 @@ public without sharing class DonorCompInvocable {
         }
 
         Map<Decimal, List<Level__c>> donationThresholdToBonusLevels = new Map<Decimal, List<Level__c>>();
-        for(Level__c bonusLevel : [SELECT Id, Name, Donation_Threshold__c, Threshold_Payment__c, Threshold_Points__c FROM Level__c WHERE isActive__c = true AND isVisible__c = false AND Donation_Threshold__c > 0]) {
+        for (Level__c bonusLevel : [SELECT Id, Name, Donation_Threshold__c, Threshold_Payment__c, Threshold_Points__c FROM Level__c WHERE isActive__c = true AND isVisible__c = false AND Donation_Threshold__c > 0]) {
             List<Level__c> thresholdBonusLevels = donationThresholdToBonusLevels.get(bonusLevel.Donation_Threshold__c);
             if (thresholdBonusLevels == null) {
                 thresholdBonusLevels = new List<Level__c>();
@@ -102,28 +104,28 @@ public without sharing class DonorCompInvocable {
         Map<Id, Transaction__c> donorIdToTransaction = new Map<Id, Transaction__c>();
         Map<Id, List<Txn_Line_Item__c>> donorIdToTxnLineItems = new Map<Id, List<Txn_Line_Item__c>>();
         List<Level__c> lowestLoyaltyLevelByThreshold = [
-            SELECT Id, Donation_Threshold__c, Threshold_Payment__c, Threshold_Points__c 
-            FROM Level__c 
-            WHERE Donation_Threshold__c > 0 AND 
-                isActive__c = true 
-            ORDER BY Donation_Threshold__c ASC 
+            SELECT Id, Donation_Threshold__c, Threshold_Payment__c, Threshold_Points__c
+            FROM Level__c
+            WHERE Donation_Threshold__c > 0 AND
+            isActive__c = true
+            ORDER BY Donation_Threshold__c ASC
             LIMIT 1
         ];
 
         List<Contact> targetContacts = [
             SELECT Id, AccountId, Loyalty_Level__c, Loyalty_Level__r.Donation_Points__c, Loyalty_Level__r.Donation_Payment__c, Total_Visits_365d__c,
-            Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, Loyalty_Level__r.Next_Level__c, Loyalty_Level__r.Next_Level__r.Threshold_Payment__c, Loyalty_Level__r.Next_Level__r.Threshold_Points__c, (
-                SELECT Id, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c 
-                FROM Visits__r 
-                WHERE Status__c = 'Complete' AND Outcome__c = 'Donation' 
+                Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, Loyalty_Level__r.Next_Level__c, Loyalty_Level__r.Next_Level__r.Threshold_Payment__c, Loyalty_Level__r.Next_Level__r.Threshold_Points__c, (
+                SELECT Id, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c
+                FROM Visits__r
+                WHERE Status__c = 'Complete' AND Outcome__c = 'Donation'
                 ORDER BY Appointment_Datetime__c DESC
-            ) 
-            FROM Contact 
+            )
+            FROM Contact
             WHERE Account.DonorId__c IN :donorNumbersToQuery
         ];
 
         Map<Id, Integer> donorIdToTotalVisitCount = DonorBatchableHelper.calculateDonor365DayVisitTotals(targetContacts);
-        for(Contact foundContact : targetContacts) {
+        for (Contact foundContact : targetContacts) {
             Integer totalVisitCount = donorIdToTotalVisitCount.get(foundContact.Id);
 
             if (foundContact.Visits__r == null || foundContact.Visits__r.size() == 0) {
@@ -146,7 +148,7 @@ public without sharing class DonorCompInvocable {
             List<Txn_Line_Item__c> txnLineItems = new List<Txn_Line_Item__c>();
             if (foundContact.Loyalty_Level__r.Donation_Points__c != null && foundContact.Loyalty_Level__r.Donation_Points__c > 0) {
                 txnLineItems.add(new Txn_Line_Item__c(
-                    Item__c	= 'Donation Points',
+                    Item__c = 'Donation Points',
                     Quantity__c = 1,
                     Type__c = 'Points',
                     Unit_Cost__c = foundContact.Loyalty_Level__r.Donation_Points__c
@@ -156,7 +158,7 @@ public without sharing class DonorCompInvocable {
             Decimal loyaltyLevelPaymentBonus = (foundContact.Loyalty_Level__r.Donation_Payment__c != null) ? foundContact.Loyalty_Level__r.Donation_Payment__c : 0;
             if (targetRateRecord != null && targetRateRecord.Base_Payment__c != null && targetRateRecord.Base_Payment__c > 0) {
                 txnLineItems.add(new Txn_Line_Item__c(
-                    Item__c	= 'Donation Payment',
+                    Item__c = 'Donation Payment',
                     Quantity__c = 1,
                     Type__c = 'Currency',
                     Unit_Cost__c = targetRateRecord.Base_Payment__c + loyaltyLevelPaymentBonus
@@ -166,12 +168,12 @@ public without sharing class DonorCompInvocable {
 
             // Handle Bonus Level payments (levels that are active but not visible)
             // These levels provide one time payments when the threshold is hit
-            for(Decimal bonusLevelThreshold : donationThresholdToBonusLevels.keySet()) {
+            for (Decimal bonusLevelThreshold : donationThresholdToBonusLevels.keySet()) {
                 if (totalVisitCount == bonusLevelThreshold) {
-                    for(Level__c bonusLevel : donationThresholdToBonusLevels.get(bonusLevelThreshold)) {
+                    for (Level__c bonusLevel : donationThresholdToBonusLevels.get(bonusLevelThreshold)) {
                         if (bonusLevel.Threshold_Points__c != null && bonusLevel.Threshold_Points__c > 0) {
                             donorIdToTxnLineItems.get(foundContact.Id).add(new Txn_Line_Item__c(
-                                Item__c	= bonusLevel.Name + ' - Bonus Points',
+                                Item__c = bonusLevel.Name + ' - Bonus Points',
                                 Quantity__c = 1,
                                 Type__c = 'Points',
                                 Unit_Cost__c = bonusLevel.Threshold_Points__c
@@ -180,7 +182,7 @@ public without sharing class DonorCompInvocable {
 
                         if (bonusLevel.Threshold_Payment__c != null && bonusLevel.Threshold_Payment__c > 0) {
                             donorIdToTxnLineItems.get(foundContact.Id).add(new Txn_Line_Item__c(
-                                Item__c	= bonusLevel.Name + ' - Bonus Payment',
+                                Item__c = bonusLevel.Name + ' - Bonus Payment',
                                 Quantity__c = 1,
                                 Type__c = 'Currency',
                                 Unit_Cost__c = bonusLevel.Threshold_Payment__c
@@ -206,8 +208,8 @@ public without sharing class DonorCompInvocable {
             // If it is and there is another level, promote the donor!
             if (
                 foundContact.Loyalty_Level__c != null &&
-                targetPromotionLevel != null && 
-                totalVisitCount == targetPromotionLevel.Donation_Threshold__c
+                    targetPromotionLevel != null &&
+                    totalVisitCount == targetPromotionLevel.Donation_Threshold__c
             ) {
                 donorsToUpdate.add(new Account(Id = foundContact.AccountId, Loyalty_Level__pc = targetPromotionLevel.Id));
 
@@ -216,7 +218,7 @@ public without sharing class DonorCompInvocable {
 
                 if (targetPromotionLevel.Threshold_Points__c != null && targetPromotionLevel.Threshold_Points__c > 0) {
                     lineItems.add(new Txn_Line_Item__c(
-                        Item__c	= 'Threshold Points',
+                        Item__c = 'Threshold Points',
                         Quantity__c = 1,
                         Type__c = 'Points',
                         Unit_Cost__c = targetPromotionLevel.Threshold_Points__c
@@ -225,7 +227,7 @@ public without sharing class DonorCompInvocable {
 
                 if (targetPromotionLevel.Threshold_Payment__c != null && targetPromotionLevel.Threshold_Payment__c > 0) {
                     lineItems.add(new Txn_Line_Item__c(
-                        Item__c	= 'Threshold Payment',
+                        Item__c = 'Threshold Payment',
                         Quantity__c = 1,
                         Type__c = 'Currency',
                         Unit_Cost__c = targetPromotionLevel.Threshold_Payment__c
@@ -239,7 +241,7 @@ public without sharing class DonorCompInvocable {
         insert donorIdToTransaction.values();
 
         List<Txn_Line_Item__c> txnLineItems = new List<Txn_Line_Item__c>();
-        for(Transaction__c transactionRecord : donorIdToTransaction.values()) {
+        for (Transaction__c transactionRecord : donorIdToTransaction.values()) {
             // Relate the transaction to the line items
             for (Txn_Line_Item__c lineItem : donorIdToTxnLineItems.get(transactionRecord.Donor__c)) {
                 lineItem.Transaction__c = transactionRecord.Id;
@@ -249,5 +251,79 @@ public without sharing class DonorCompInvocable {
         }
 
         insert txnLineItems;
+    }
+
+    public static void updateCampaignVisitCounter(List<Visit__c> visitsToProcess) {
+        Map<Id, List<CampaignMember>> donorToCampaignMembers = new Map<Id, List<CampaignMember>>();
+        List<Date> datesInRange = new List<Date>();
+        Map<Id, List<Visit__c>> donorToVisitsInRange = new Map<Id, List<Visit__c>>();
+        List<CampaignMember> finalCampaignMemberUpdates = new List<CampaignMember>();
+
+        for (Visit__c visit : visitsToProcess) {
+            donorToCampaignMembers.put(visit.Donor__c, new List<CampaignMember>());
+            donorToVisitsInRange.put(visit.Donor__c, new List<Visit__c>());
+        }
+
+        for (CampaignMember cm : [
+            SELECT Id,
+                ContactId,
+                CampaignId,
+                Eligible_Donation_Count__c,
+                CreatedDate
+            FROM CampaignMember
+            WHERE Campaign.IsActive = TRUE
+            AND Campaign.Type = 'Incentive'
+            AND ContactId IN :donorToCampaignMembers.keySet()
+        ]) {
+            List<CampaignMember> donorCMs = donorToCampaignMembers.get(cm.ContactId);
+            cm.Eligible_Donation_Count__c = 0; // set to zero; we want to recount these in case something changes
+            donorCMs.add(cm);
+            donorToCampaignMembers.put(cm.ContactId, donorCMs);
+            datesInRange.add(Date.valueOf(cm.CreatedDate));
+        }
+
+        datesInRange.sort();
+        Date minDate = datesInRange[0];
+        Time minTime = Time.newInstance(0, 0, 0, 0);
+        Datetime minDateTime = Datetime.newInstance(minDate, minTime);
+
+        for (Visit__c visit : [
+            SELECT Id,
+                Appointment_Datetime__c,
+                Donor__c
+            FROM Visit__c
+            WHERE Donor__c IN :donorToVisitsInRange.keySet()
+            AND Status__c = :Constants.VISIT_STATUS_COMPLETE
+            AND Outcome__c = :Constants.VISIT_OUTCOME_DONATION
+            AND Appointment_Datetime__c >= :minDateTime
+        ]) {
+            List<Visit__c> donorVisits = donorToVisitsInRange.get(visit.Donor__c);
+            donorVisits.add(visit);
+            donorToVisitsInRange.put(visit.Donor__c, donorVisits);
+        }
+
+        for (Id donorId : donorToCampaignMembers.keySet()) {
+            if (donorToCampaignMembers.get(donorId).size() >= 1) {
+                for (CampaignMember cm : donorToCampaignMembers.get(donorId)) {
+                    Integer campaignMemberVisitCounter = 0;
+                    Date checkDate = Date.valueOf(cm.CreatedDate);
+                    if (donorToVisitsInRange.get(cm.ContactId).size() >= 1) {
+                        for (Visit__c visit : donorToVisitsInRange.get(cm.ContactId)) {
+                            if (Date.valueOf(visit.Appointment_Datetime__c) >= checkDate) {
+                                campaignMemberVisitCounter++;
+                            }
+                        }
+                    }
+                    CampaignMember cmUpdate = new CampaignMember(
+                        Id = cm.Id,
+                        Eligible_Donation_Count__c = campaignMemberVisitCounter
+                    );
+                    finalCampaignMemberUpdates.add(cmUpdate);
+                }
+            }
+        }
+        if (!finalCampaignMemberUpdates.isEmpty()) {
+            update finalCampaignMemberUpdates;
+        }
     }
 }

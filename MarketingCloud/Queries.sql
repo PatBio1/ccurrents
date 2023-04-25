@@ -359,3 +359,99 @@ ON v.Id = ra.VisitId
 
 WHERE ra.VisitId IS NULL AND
 v.Outcome__c = 'No Show'
+
+-- Donation Payment
+
+SELECT t.Id AS TransactionId,
+t.Donor__c AS SubscriberKey,
+t.Amount_Currency__c AS TotalPayment,
+t.Amount_Points__c AS TotalPoints,
+dp.TotalAmount AS DonationPayment,
+dp2.TotalAmount AS DonationPoints,
+bp.TotalAmount AS BonusPayment,
+bp2.TotalAmount AS BonusPoints,
+tp.TotalAmount AS ThresholdPayment,
+tp2.TotalAmount AS ThresholdPoints,
+ct.FirstName AS FirstName,
+ct.LastName AS LastName,
+ct.Email AS Email,
+ct.Enable_Email__c AS EnableEmail,
+ct.Enable_Payment_Notifications__c AS EnablePaymentNotifications,
+ct.Loyalty_Level__c AS LoyaltyLevelId,
+ll.Name AS LoyaltyLevelName
+
+FROM Transaction__c_Salesforce AS t
+
+LEFT JOIN (SELECT txn1.Transaction__c AS TransactionId,
+SUM(txn1.Total__c) AS TotalAmount
+FROM Txn_Line_Item__c_Salesforce AS txn1
+WHERE txn1.Item__c = 'Donation Payment'
+GROUP BY txn1.Transaction__c
+) AS dp
+ON t.Id = dp.TransactionId
+
+LEFT JOIN (SELECT txn2.Transaction__c AS TransactionId,
+SUM(txn2.Total__c) AS TotalAmount
+FROM Txn_Line_Item__c_Salesforce AS txn2
+WHERE txn2.Item__c = 'Donation Points'
+GROUP BY txn2.Transaction__c
+) AS dp2
+ON t.Id = dp2.TransactionId
+
+LEFT JOIN (SELECT txn3.Transaction__c AS TransactionId,
+SUM(txn3.Total__c) AS TotalAmount
+FROM Txn_Line_Item__c_Salesforce AS txn3
+WHERE txn3.Item__c LIKE '%Bonus Payment'
+GROUP BY txn3.Transaction__c
+) AS bp
+ON t.Id = bp.TransactionId
+
+LEFT JOIN (SELECT txn4.Transaction__c AS TransactionId,
+SUM(txn4.Total__c) AS TotalAmount
+FROM Txn_Line_Item__c_Salesforce AS txn4
+WHERE txn4.Item__c LIKE '%Bonus Points'
+GROUP BY txn4.Transaction__c
+) AS bp2
+ON t.Id = bp2.TransactionId
+
+LEFT JOIN (SELECT txn5.Transaction__c AS TransactionId,
+SUM(txn5.Total__c) AS TotalAmount
+FROM Txn_Line_Item__c_Salesforce AS txn5
+WHERE txn5.Item__c = 'Threshold Payment'
+GROUP BY txn5.Transaction__c
+) AS tp
+ON t.Id = tp.TransactionId
+
+LEFT JOIN (SELECT txn6.Transaction__c AS TransactionId,
+SUM(txn6.Total__c) AS TotalAmount
+FROM Txn_Line_Item__c_Salesforce AS txn6
+WHERE txn6.Item__c = 'Threshold Points'
+GROUP BY txn6.Transaction__c
+) AS tp2
+ON t.Id = tp2.TransactionId
+
+INNER JOIN (SELECT c.Id,
+c.FirstName,
+c.LastName,
+c.Email,
+c.Enable_Email__c,
+c.Enable_Payment_Notifications__c,
+c.Loyalty_Level__c
+FROM Contact_Salesforce AS c)
+AS ct
+ON t.Donor__c = ct.Id
+
+LEFT JOIN (SELECT l.Id,
+l.Name
+FROM Level__c_Salesforce AS l)
+AS ll
+ON ct.Loyalty_Level__c = ll.Id
+
+LEFT JOIN (SELECT dpe.TransactionId
+FROM "Donor Payment" AS dpe)
+AS dpeEmail
+ON t.Id = dpeEmail.TransactionId
+
+WHERE
+dpeEmail.TransactionId IS NULL AND
+DATEDIFF(DAY, DATEADD(DAY, -7, t.CreatedDate), t.CreatedDate) <= 7

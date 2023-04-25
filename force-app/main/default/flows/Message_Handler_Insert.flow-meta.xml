@@ -4,13 +4,13 @@
     <assignments>
         <name>Assign_User_Id_to_Recipient_Collection</name>
         <label>Assign User Id to Recipient Collection</label>
-        <locationX>974</locationX>
-        <locationY>935</locationY>
+        <locationX>1106</locationX>
+        <locationY>1055</locationY>
         <assignmentItems>
             <assignToReference>Recipient_Id_Collection</assignToReference>
             <operator>Add</operator>
             <value>
-                <elementReference>Get_Donor_User_Id.Id</elementReference>
+                <elementReference>Donor_User_Record.Id</elementReference>
             </value>
         </assignmentItems>
         <connector>
@@ -20,21 +20,21 @@
     <decisions>
         <name>Donor_Has_User_Record_Decision</name>
         <label>Donor Has User Record Decision</label>
-        <locationX>1568</locationX>
-        <locationY>575</locationY>
+        <locationX>1766</locationX>
+        <locationY>815</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Donor_Has_User_Record</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>Get_Donor_User_Id</leftValueReference>
+                <leftValueReference>Donor_User_Record</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Get_Custom_Notification_Id</targetReference>
+                <targetReference>Get_Custom_Notification_Type_Id</targetReference>
             </connector>
             <label>Donor Has User Record</label>
         </rules>
@@ -43,13 +43,13 @@
         <name>Gets_Appointment_Reminders_Decision</name>
         <label>Gets Appointment Reminders Decision</label>
         <locationX>974</locationX>
-        <locationY>1175</locationY>
+        <locationY>1295</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Receives_Appointment_Reminders</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>Get_Donor_Record_Comm_Prefs.Enable_Appointment_Reminders__c</leftValueReference>
+                <leftValueReference>Donor_Contact_Record.Enable_Appointment_Reminders__c</leftValueReference>
                 <operator>EqualTo</operator>
                 <rightValue>
                     <booleanValue>true</booleanValue>
@@ -64,7 +64,7 @@
     <decisions>
         <name>Has_Message_Type_Value_Decision</name>
         <label>Has Message Type Value Decision</label>
-        <locationX>1997</locationX>
+        <locationX>2591</locationX>
         <locationY>335</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -78,7 +78,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Get_Donor_User_Id</targetReference>
+                <targetReference>Get_Donor_Communication_Preferences</targetReference>
             </connector>
             <label>Has Message Type</label>
         </rules>
@@ -86,8 +86,8 @@
     <decisions>
         <name>Message_Handler_Type_Decision</name>
         <label>Message Handler Type Decision</label>
-        <locationX>974</locationX>
-        <locationY>1055</locationY>
+        <locationX>1106</locationX>
+        <locationY>1175</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Welcome_New_Donor</name>
@@ -179,6 +179,50 @@
             </connector>
             <label>Reschedule</label>
         </rules>
+        <rules>
+            <name>Donation_Payment</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Message_Handler_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Donation Payment</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Message_Handler_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Donation with Loyalty Promotion Payment</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Donation_Payment_Notification</targetReference>
+            </connector>
+            <label>Donation Payment</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Receives_Mobile_Push_Notifications_Decision</name>
+        <label>Receives Mobile Push Notifications Decision</label>
+        <locationX>2228</locationX>
+        <locationY>575</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Mobile_Notifications_Enabled</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Donor_Contact_Record.Enable_Mobile_Push__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_User_Record_From_Donor_Id</targetReference>
+            </connector>
+            <label>Mobile Notifications Enabled</label>
+        </rules>
     </decisions>
     <description>Handles actions needed for messages, primarily notifications, when Message records are inserted.</description>
     <environments>Default</environments>
@@ -203,75 +247,8 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
-    <recordLookups>
-        <name>Get_Custom_Notification_Id</name>
-        <label>Get Custom Notification Id</label>
-        <locationX>974</locationX>
-        <locationY>695</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Get_Donor_Record_Comm_Prefs</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>DeveloperName</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Proesis_Donor_App_Mobile</stringValue>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>CustomNotificationType</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_Donor_Record_Comm_Prefs</name>
-        <label>Get Donor Record Comm Prefs</label>
-        <locationX>974</locationX>
-        <locationY>815</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Assign_User_Id_to_Recipient_Collection</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.Donor__c</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>Contact</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_Donor_User_Id</name>
-        <label>Get Donor User Id</label>
-        <locationX>1568</locationX>
-        <locationY>455</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Donor_Has_User_Record_Decision</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>ContactId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.Donor__c</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>User</object>
-        <queriedFields>Id</queriedFields>
-        <queriedFields>FirstName</queriedFields>
-        <queriedFields>LastName</queriedFields>
-        <queriedFields>Email</queriedFields>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
     <start>
-        <locationX>1871</locationX>
+        <locationX>2465</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Has_Message_Type_Value_Decision</targetReference>
@@ -280,29 +257,29 @@
         <recordTriggerType>Create</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
     <subflows>
         <name>Annual_Physical_Reminder_Notification</name>
         <label>Annual Physical Reminder Notification</label>
         <locationX>578</locationX>
-        <locationY>1175</locationY>
+        <locationY>1295</locationY>
         <flowName>Annual_Physical_Reminder_Notification</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
             <value>
-                <elementReference>Get_Custom_Notification_Id</elementReference>
+                <elementReference>Custom_Notification_Type_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_Record_Comm_Prefs</elementReference>
+                <elementReference>Donor_Contact_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_User_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_User_Id</elementReference>
+                <elementReference>Donor_User_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -322,24 +299,24 @@
         <name>Apology_Notification_Transaction_Records</name>
         <label>Apology Notification and Transaction Records</label>
         <locationX>314</locationX>
-        <locationY>1175</locationY>
+        <locationY>1295</locationY>
         <flowName>Apology_Notification_Transaction_Records</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
             <value>
-                <elementReference>Get_Custom_Notification_Id</elementReference>
+                <elementReference>Custom_Notification_Type_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_Record_Comm_Prefs</elementReference>
+                <elementReference>Donor_Contact_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_User_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_User_Id</elementReference>
+                <elementReference>Donor_User_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -359,24 +336,24 @@
         <name>Appointment_Reminder_Notification</name>
         <label>Appointment Reminder Notification</label>
         <locationX>842</locationX>
-        <locationY>1295</locationY>
+        <locationY>1415</locationY>
         <flowName>Appointment_Reminder</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
             <value>
-                <elementReference>Get_Custom_Notification_Id</elementReference>
+                <elementReference>Custom_Notification_Type_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_Record_Comm_Prefs</elementReference>
+                <elementReference>Donor_Contact_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_User_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_User_Id</elementReference>
+                <elementReference>Donor_User_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -393,27 +370,114 @@
         </inputAssignments>
     </subflows>
     <subflows>
-        <name>Reschedule_Appointment</name>
-        <label>Reschedule Appointment</label>
-        <locationX>1634</locationX>
-        <locationY>1175</locationY>
-        <flowName>Reschedule_Appointment</flowName>
+        <name>Donation_Payment_Notification</name>
+        <label>Donation Payment Notification</label>
+        <locationX>1898</locationX>
+        <locationY>1295</locationY>
+        <flowName>Donation_Payment_Notification</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
             <value>
-                <elementReference>Get_Custom_Notification_Id</elementReference>
+                <elementReference>Custom_Notification_Type_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_Record_Comm_Prefs</elementReference>
+                <elementReference>Donor_Contact_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_User_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_User_Id</elementReference>
+                <elementReference>Donor_User_Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Message_Record_Input</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <description>Runs in system context, to ensure this flow fires correctly.</description>
+        <name>Get_Custom_Notification_Type_Id</name>
+        <label>Get Custom Notification Type Id</label>
+        <locationX>1106</locationX>
+        <locationY>935</locationY>
+        <connector>
+            <targetReference>Assign_User_Id_to_Recipient_Collection</targetReference>
+        </connector>
+        <flowName>Get_Proesis_Mobile_Custom_Notification_Type_Id</flowName>
+        <outputAssignments>
+            <assignToReference>Custom_Notification_Type_Record</assignToReference>
+            <name>Custom_Notification_Type_Record</name>
+        </outputAssignments>
+    </subflows>
+    <subflows>
+        <description>Runs in system mode, to get the contact communication preference info, so we can run the flow correctly.</description>
+        <name>Get_Donor_Communication_Preferences</name>
+        <label>Get Donor Communication Preferences</label>
+        <locationX>2228</locationX>
+        <locationY>455</locationY>
+        <connector>
+            <targetReference>Receives_Mobile_Push_Notifications_Decision</targetReference>
+        </connector>
+        <flowName>Get_Contact_Communication_Preferences</flowName>
+        <inputAssignments>
+            <name>Id_Input</name>
+            <value>
+                <elementReference>$Record.Donor__c</elementReference>
+            </value>
+        </inputAssignments>
+        <outputAssignments>
+            <assignToReference>Donor_Contact_Record</assignToReference>
+            <name>Contact_Record_Output</name>
+        </outputAssignments>
+    </subflows>
+    <subflows>
+        <name>Get_User_Record_From_Donor_Id</name>
+        <label>Get User Record From Donor Id</label>
+        <locationX>1766</locationX>
+        <locationY>695</locationY>
+        <connector>
+            <targetReference>Donor_Has_User_Record_Decision</targetReference>
+        </connector>
+        <flowName>Get_User_Record_From_Contact_Id</flowName>
+        <inputAssignments>
+            <name>Contact_Id_Input</name>
+            <value>
+                <elementReference>$Record.Donor__c</elementReference>
+            </value>
+        </inputAssignments>
+        <outputAssignments>
+            <assignToReference>Donor_User_Record</assignToReference>
+            <name>User_Record_Output</name>
+        </outputAssignments>
+    </subflows>
+    <subflows>
+        <name>Reschedule_Appointment</name>
+        <label>Reschedule Appointment</label>
+        <locationX>1634</locationX>
+        <locationY>1295</locationY>
+        <flowName>Reschedule_Appointment</flowName>
+        <inputAssignments>
+            <name>Custom_Notification_Id_Input</name>
+            <value>
+                <elementReference>Custom_Notification_Type_Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_Record_Input</name>
+            <value>
+                <elementReference>Donor_Contact_Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_User_Record_Input</name>
+            <value>
+                <elementReference>Donor_User_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -433,24 +497,24 @@
         <name>SPE_Reminder_Notification</name>
         <label>SPE Reminder Notification</label>
         <locationX>1370</locationX>
-        <locationY>1175</locationY>
+        <locationY>1295</locationY>
         <flowName>SPE_Reminder_Notification</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
             <value>
-                <elementReference>Get_Custom_Notification_Id</elementReference>
+                <elementReference>Custom_Notification_Type_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_Record_Comm_Prefs</elementReference>
+                <elementReference>Donor_Contact_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_User_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_User_Id</elementReference>
+                <elementReference>Donor_User_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -470,24 +534,24 @@
         <name>Welcome_New_Donor_Notification</name>
         <label>Welcome New Donor Notification</label>
         <locationX>50</locationX>
-        <locationY>1175</locationY>
+        <locationY>1295</locationY>
         <flowName>Welcome_New_Donor_Notification</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
             <value>
-                <elementReference>Get_Custom_Notification_Id</elementReference>
+                <elementReference>Custom_Notification_Type_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_Record_Comm_Prefs</elementReference>
+                <elementReference>Donor_Contact_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <name>Donor_User_Record_Input</name>
             <value>
-                <elementReference>Get_Donor_User_Id</elementReference>
+                <elementReference>Donor_User_Record</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -503,6 +567,31 @@
             </value>
         </inputAssignments>
     </subflows>
+    <variables>
+        <name>Custom_Notification_Type_Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>CustomNotificationType</objectType>
+    </variables>
+    <variables>
+        <description>Communication preferences.</description>
+        <name>Donor_Contact_Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Contact</objectType>
+    </variables>
+    <variables>
+        <name>Donor_User_Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>User</objectType>
+    </variables>
     <variables>
         <name>Notification_Recipient_User_Id</name>
         <dataType>String</dataType>

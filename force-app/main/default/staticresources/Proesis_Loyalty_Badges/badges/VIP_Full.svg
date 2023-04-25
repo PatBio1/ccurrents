@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 27.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 559.70001 505.66"
+   sodipodi:docname="VIP_Full.svg"
+   width="559.70001"
+   height="505.66"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs58" />
+  <sodipodi:namedview
+     id="namedview56"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.95092593"
+     inkscape:cx="279.72736"
+     inkscape:cy="253.4372"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
+     inkscape:window-x="2552"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Layer_1" />
+  <style
+     type="text/css"
+     id="style31">
+	.st0{fill:#5A2DAD;}
+	.st1{fill:#5A2DAD;stroke:#FFFFFF;stroke-width:13;stroke-miterlimit:10;}
+	.st2{fill:none;stroke:#FFFFFF;stroke-width:13;stroke-miterlimit:10;}
+	.st3{fill:#FFFFFF;}
+</style>
+  <g
+     id="g53"
+     transform="translate(-260.14999,-287.17)">
+    <circle
+       class="st0"
+       cx="540"
+       cy="542.25"
+       r="224.49001"
+       id="circle33" />
+    <path
+       class="st0"
+       d="m 539.69,300.56 c 8.76,0 17.65,0.49 26.42,1.45 32.13,3.53 62.61,13.24 90.58,28.86 27.02,15.1 50.59,35.05 70.06,59.31 19.46,24.26 33.83,51.6 42.71,81.25 9.19,30.69 12.06,62.55 8.53,94.68 -6.47,58.99 -34.42,113.19 -78.69,152.63 -43.95,39.15 -100.42,60.71 -158.99,60.71 -8.76,0 -17.65,-0.49 -26.42,-1.45 -32.13,-3.53 -62.61,-13.24 -90.58,-28.86 -27.02,-15.1 -50.59,-35.05 -70.06,-59.31 -19.46,-24.26 -33.83,-51.6 -42.71,-81.25 -9.19,-30.69 -12.06,-62.55 -8.53,-94.68 6.47,-58.99 34.42,-113.19 78.69,-152.62 43.95,-39.16 100.42,-60.72 158.99,-60.72 z m 0,-13.39 c -127.26,0 -236.79,95.84 -250.99,225.26 -15.23,138.79 84.94,263.64 223.73,278.87 9.37,1.03 18.67,1.53 27.88,1.53 127.26,0 236.79,-95.84 250.99,-225.26 15.23,-138.79 -84.94,-263.64 -223.73,-278.87 -9.37,-1.03 -18.67,-1.53 -27.88,-1.53 z"
+       id="path35" />
+    <rect
+       x="266.64999"
+       y="603"
+       class="st1"
+       width="546.70001"
+       height="118.81"
+       id="rect37" />
+    <g
+       id="g43">
+      <polygon
+         class="st2"
+         points="525.3,437.21 498.06,463.77 504.49,501.26 470.82,483.56 437.14,501.26 443.58,463.77 416.33,437.21 453.98,431.74 470.82,397.63 487.65,431.74 "
+         id="polygon39" />
+      <polygon
+         class="st2"
+         points="663.67,437.21 636.42,463.77 642.86,501.26 609.18,483.56 575.51,501.26 581.94,463.77 554.7,437.21 592.35,431.74 609.18,397.63 626.02,431.74 "
+         id="polygon41" />
+    </g>
+    <g
+       id="g51">
+      <path
+         class="st3"
+         d="m 513.12,687.52 h -16.8 l -19.3,-53.05 h 14.02 l 13.67,40.12 13.55,-40.12 h 14.02 z"
+         id="path45" />
+      <path
+         class="st3"
+         d="m 550.08,687.52 h -12.85 v -53.05 h 12.85 z"
+         id="path47" />
+      <path
+         class="st3"
+         d="m 583.98,672.48 h -12.23 v 15.04 H 558.9 v -53.05 h 25.08 c 11.45,0 20.2,7.66 20.2,19.02 0,11.34 -8.75,18.99 -20.2,18.99 z m -12.22,-27.19 v 16.37 h 11.33 c 4.88,0 7.93,-3.63 7.93,-8.2 0,-4.92 -3.2,-8.16 -7.93,-8.16 h -11.33 z"
+         id="path49" />
+    </g>
+  </g>
+</svg>

@@ -147,7 +147,7 @@
         <type>Default</type>
     </actionOverrides>
     <allowInChatterGroups>false</allowInChatterGroups>
-    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <compactLayoutAssignment>OrgWide</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
     <description>Represents an available time slot in a Clinic Schedule</description>
     <enableActivities>true</enableActivities>

@@ -21,7 +21,7 @@ public with sharing class DonorCompInvocableTest {
         Center_Donation_Type__c testCenterDonationType = TestUtil.createCenterDonationType(centerAccount.Id);
         Donation_Type__c testDonationType = [SELECT Id FROM Donation_Type__c LIMIT 1];
         insert testCenterDonationType;
-        
+
         Rate__c testRateRecord = new Rate__c(
             Donation_Type__c = testDonationType.Id,
             Center__c = centerAccount.Id,
@@ -46,11 +46,34 @@ public with sharing class DonorCompInvocableTest {
         Account donorAccount2 = TestUtil.createDonor('654321');
         donorAccount2.Loyalty_Level__pc = testLevel1.Id;
         insert donorAccount2;
+
+        Campaign positiveTestCampaign = new Campaign(
+            Name = 'Incentive Campaign',
+            Type = 'Incentive',
+            IsActive = true,
+            StartDate = Date.today(),
+            EndDate = Date.today().addDays(30),
+            Status = 'In Progress'
+        );
+
+        insert positiveTestCampaign;
+
+        Campaign negativeTestCampaign = new Campaign(
+            Name = 'Email Campaign',
+            Type = 'Email',
+            IsActive = true,
+            StartDate = Date.today(),
+            EndDate = Date.today().addDays(30),
+            Status = 'In Progress'
+        );
+
+        insert negativeTestCampaign;
+
     }
 
     @IsTest
     static void testUpdateVisitStatusComplete() {
-        List<Account> donorAccounts = [SELECT Id, DonorId__c FROM Account WHERE DonorId__c != null];
+        List<Account> donorAccounts = [SELECT Id, DonorId__c, PersonContactId FROM Account WHERE DonorId__c != null];
         Id appointmentId = [SELECT Id FROM Appointment__c LIMIT 1][0].Id;
         Id centerDonationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1][0].Id;
         Id donor1ContactId = [SELECT PersonContactId FROM Account WHERE Id = :donorAccounts[0].Id][0].PersonContactId;
@@ -58,8 +81,23 @@ public with sharing class DonorCompInvocableTest {
         Visit__c testVisit = TestUtil.createVisit(donor1ContactId, centerDonationType, appointmentId);
         insert testVisit;
 
+        List<Campaign> testCampaigns = [SELECT Id FROM Campaign WHERE IsActive = TRUE];
+        List<CampaignMember> newCampaignMembers = new List<CampaignMember>();
+
+        for (Account donor : donorAccounts) {
+            for (Campaign cp : testCampaigns) {
+                CampaignMember newCampaignMember = new CampaignMember(
+                    CampaignId = cp.Id,
+                    ContactId = donor.PersonContactId
+                );
+                newCampaignMembers.add(newCampaignMember);
+            }
+        }
+
+        insert newCampaignMembers;
+
         List<Donor_Comp__e> donorCompEvents = new List<Donor_Comp__e>{
-            new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now().addHours(1), Collection_Volume__c = 555, Collection_Number__c ='collection number', hasException__c = 0),
+            new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now().addHours(1), Collection_Volume__c = 555, Collection_Number__c = 'collection number', hasException__c = 0),
             new Donor_Comp__e(Donor_Number__c = donorAccounts[1].DonorId__c, Timestamp__c = Datetime.now().addDays(-2), hasException__c = 0),
             new Donor_Comp__e(Donor_Number__c = 'random', Timestamp__c = Datetime.now(), hasException__c = 0)
         };
@@ -77,11 +115,15 @@ public with sharing class DonorCompInvocableTest {
 
         List<Visit__c> compVisits = [SELECT Id, Status__c, Donation_Complete__c, Outcome__c, Collection_Number__c, Donation_Volume__c FROM Visit__c WHERE Id = :testVisit.Id];
 
+        List<CampaignMember> cmChecks = [SELECT Id, Eligible_Donation_Count__c FROM CampaignMember WHERE Eligible_Donation_Count__c > 0];
+
         Assert.areEqual(Constants.VISIT_STATUS_COMPLETE, compVisits[0].Status__c);
         Assert.areEqual(donorCompEvents[0].Timestamp__c, compVisits[0].Donation_Complete__c);
         Assert.areEqual(Constants.VISIT_OUTCOME_DONATION, compVisits[0].Outcome__c);
         Assert.areEqual(donorCompEvents[0].Collection_Number__c, compVisits[0].Collection_Number__c);
         Assert.areEqual(donorCompEvents[0].Collection_Volume__c, compVisits[0].Donation_Volume__c);
+        Assert.areEqual(1, cmChecks.size());
+        Assert.areEqual(1, cmChecks[0].Eligible_Donation_Count__c);
     }
 
     @IsTest
@@ -116,16 +158,20 @@ public with sharing class DonorCompInvocableTest {
 
         Test.startTest();
         // Should create normal transaction with Level 1 Rates
-        DonorCompInvocable.handleCreateDonationTransactions(new List<List<Donor_Comp__e>> { new List<Donor_Comp__e>{ 
-            new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now())
-        }});
+        DonorCompInvocable.handleCreateDonationTransactions(new List<List<Donor_Comp__e>>{
+            new List<Donor_Comp__e>{
+                new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now())
+            }
+        });
 
         insert crossDonationThresholdVisit;
 
         // Should create transaction with threshold payments
-        DonorCompInvocable.handleCreateDonationTransactions(new List<List<Donor_Comp__e>> { new List<Donor_Comp__e>{ 
-            new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now())
-        }});
+        DonorCompInvocable.handleCreateDonationTransactions(new List<List<Donor_Comp__e>>{
+            new List<Donor_Comp__e>{
+                new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now())
+            }
+        });
         Test.stopTest();
 
         List<Contact> donors = [
@@ -136,7 +182,7 @@ public with sharing class DonorCompInvocableTest {
 
         Assert.areEqual('Level 2', donors[0].Loyalty_Level__r.Name, 'Donor should be Level 2 after 5 visits');
         Assert.areEqual(2, donors[0].Transactions__r.size(), 'Donor should have 2 transactions');
-        
+
         // Level 1 Transaction
         Assert.areEqual(233, donors[0].Transactions__r[0].Amount_Currency__c, 'First Transaction should have Amount_Currency__c = 233');
         Assert.areEqual(1333, donors[0].Transactions__r[0].Amount_Points__c, 'First Transaction should have Amount_Points__c = 1333');
@@ -145,4 +191,5 @@ public with sharing class DonorCompInvocableTest {
         Assert.areEqual(300, donors[0].Transactions__r[1].Amount_Currency__c, 'Last Transaction should have Amount_Currency__c = 333');
         Assert.areEqual(2000, donors[0].Transactions__r[1].Amount_Points__c, 'Last Transaction should have Amount_Points__c = 2333');
     }
+    
 }

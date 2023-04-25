@@ -33,9 +33,9 @@
             </value>
         </inputParameters>
         <inputParameters>
-            <name>targetPageRef</name>
+            <name>targetId</name>
             <value>
-                <stringValue>{type:&apos;communitiesLandingPage&apos;,attributes:{name:&apos;Home&apos;}}</stringValue>
+                <elementReference>Message_Record_Input.Id</elementReference>
             </value>
         </inputParameters>
     </actionCalls>

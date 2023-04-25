@@ -1,6 +1,25 @@
 public without sharing class NotificationsController {
 
     @AuraEnabled
+    public static Boolean hasUnreadNotifications() {
+        Integer unreadNotificationCount = 0;
+
+        try {
+            unreadNotificationCount = [
+                SELECT COUNT()
+                FROM Message__c
+                WHERE Donor__c IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()) AND
+                    isViewed__c = false AND
+                    Viewed_Datetime__c = null
+            ];
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+
+        return (unreadNotificationCount > 0);
+    }
+
+    @AuraEnabled
     public static List<Notification> getNotifications(Id centerId) {
         try {
             Util.testExceptionHandling();
@@ -19,7 +38,7 @@ public without sharing class NotificationsController {
                     WHERE
                         Donor__c = :user.ContactId
                     AND
-                        Expiration_Date__c > :Date.today()
+                        (Expiration_Date__c = null OR Expiration_Date__c > :Date.today())
                     ORDER BY
                         CreatedDate DESC
                 ];
@@ -35,7 +54,7 @@ public without sharing class NotificationsController {
                     WHERE
                         Center__c = :centerId
                     AND
-                        Expiration_Date__c > :Date.today()
+                        (Expiration_Date__c = null OR Expiration_Date__c > :Date.today())
                     ORDER BY
                         CreatedDate DESC
                 ];
@@ -72,6 +91,7 @@ public without sharing class NotificationsController {
             ];
 
             if (message.Viewed_Datetime__c == null) {
+                message.isViewed__c = true;
                 message.Viewed_Datetime__c = DateTime.now();
                 update message;
             }

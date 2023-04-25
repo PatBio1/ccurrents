@@ -13,8 +13,7 @@ import getLoyaltyLevelDisplayInfo from '@salesforce/apex/LoyaltyLevelService.get
 import getUserTransactions from '@salesforce/apex/TransactionSelector.getUserTransactions';
 
 const LOYALTY_TIER_NAME_TO_DISPLAY_PROPS = new Map([
-    ['Donor (Default)', { displayName: 'Default', style: 'background: rgba(43, 130, 51, 0.2);'}],
-    ['Normal Donor +15', { displayName: 'Normal', style: 'background: rgba(152, 50, 133, 0.2);'}],
+    ["Normal Donor", { displayName: 'Normal', style: 'background: rgba(152, 50, 133, 0.2);'}],
     ['Signature', { displayName: 'Signature', style: 'background: rgba(212, 195, 179, 0.6);'}],
     ['VIP', { displayName: 'VIP', style: 'background: #E3E3F1;'}],
     ['Royal', { displayName: 'Royal', style: 'background: rgba(219, 202, 160, 0.57);'}]

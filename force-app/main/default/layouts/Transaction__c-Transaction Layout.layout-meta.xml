@@ -152,13 +152,25 @@
         <sortField>Datetime__c</sortField>
         <sortOrder>Desc</sortOrder>
     </relatedLists>
+    <relatedLists>
+        <excludeButtons>MassChangeOwner</excludeButtons>
+        <excludeButtons>New</excludeButtons>
+        <fields>NAME</fields>
+        <fields>Donor__c</fields>
+        <fields>Visit__c</fields>
+        <fields>Body__c</fields>
+        <fields>CREATED_DATE</fields>
+        <relatedList>Message__c.Transaction__c</relatedList>
+        <sortField>CREATED_DATE</sortField>
+        <sortOrder>Desc</sortOrder>
+    </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>false</showHighlightsPanel>
     <showInteractionLogPanel>false</showInteractionLogPanel>
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h8D000002Uuz0</masterLabel>
+        <masterLabel>00h8I000000cYja</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

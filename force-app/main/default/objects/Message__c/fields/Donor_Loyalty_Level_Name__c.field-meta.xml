@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Donor_Loyalty_Level_Name__c</fullName>
+    <description>Indicates the Donor&apos;s Loyalty Level Name; used for Messaging.</description>
+    <externalId>false</externalId>
+    <formula>Donor__r.Loyalty_Level__r.Name</formula>
+    <inlineHelpText>Indicates the Donor&apos;s Loyalty Level Name; used for Messaging.</inlineHelpText>
+    <label>Donor Loyalty Level Name</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

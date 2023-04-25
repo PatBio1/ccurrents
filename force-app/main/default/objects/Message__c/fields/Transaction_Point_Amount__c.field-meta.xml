@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Transaction_Point_Amount__c</fullName>
+    <description>Indicates the point amount of the related transaction, if applicable.</description>
+    <externalId>false</externalId>
+    <formula>Transaction__r.Amount_Points__c</formula>
+    <inlineHelpText>Indicates the point amount of the related transaction, if applicable.</inlineHelpText>
+    <label>Transaction Point Amount</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

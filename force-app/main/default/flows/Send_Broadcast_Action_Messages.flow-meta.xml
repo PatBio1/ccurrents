@@ -73,6 +73,7 @@
         <locationY>494</locationY>
         <inputReference>Message_Records</inputReference>
     </recordCreates>
+    <runInMode>SystemModeWithoutSharing</runInMode>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>

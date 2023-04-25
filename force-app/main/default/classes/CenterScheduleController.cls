@@ -170,24 +170,9 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled 
-    public static void cancelVisit(Id visitId){
-        Visit__c visitDetails = [SELECT Id, Appointment__c, Appointment__r.Booked__c, Appointment__r.Booked_Loyalty__c, Donor__r.Loyalty_Level__c FROM Visit__c WHERE Id = :visitId LIMIT 1];
-        Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(visitDetails.Donor__r.Loyalty_Level__c);
-
-        Appointment__c appointmentToUpdate = new Appointment__c(Id = visitDetails.Appointment__c, Booked__c = visitDetails.Appointment__r.Booked__c, Booked_Loyalty__c = visitDetails.Appointment__r.Booked_Loyalty__c);
-        if (loyaltyLevel > 0) {
-            appointmentToUpdate.Booked_Loyalty__c -= 1;
-        } else {
-            appointmentToUpdate.Booked__c -= 1;
-        }
-        update appointmentToUpdate;
-
+    public static void cancelVisit(Id visitId) {
         try {
-            visitDetails.Status__c = 'Complete';
-            visitDetails.Outcome__c = 'Canceled';
-
-            update visitDetails;
-            
+            CoreSchedulerHandler.cancelVisit(visitId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }

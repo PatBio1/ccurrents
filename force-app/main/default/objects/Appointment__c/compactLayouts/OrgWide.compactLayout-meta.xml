@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OrgWide</fullName>
+    <fields>Name</fields>
+    <fields>Datetime__c</fields>
+    <fields>Capacity__c</fields>
+    <fields>Booked__c</fields>
+    <label>OrgWide</label>
+</CompactLayout>

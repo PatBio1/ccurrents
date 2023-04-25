@@ -5,7 +5,7 @@ public without sharing class LoyaltyLevelService {
     public static Level__c getDefault() {
         return [
             SELECT
-                Id
+                Id, Donation_Points__c, Donation_Payment__c
             FROM
                 Level__c
             WHERE
@@ -55,26 +55,25 @@ public without sharing class LoyaltyLevelService {
     @AuraEnabled
     public static List<BadgeSetting> getLoyaltyBadgeDisplaySettings() {
         // TODO: We may want to add a fileName field on the Level__c object to make this more flexible
-        Map<String, String> loyaltyTierNameToBadgeFileName = new Map<String, String> {
-            'Donor (Default)' => 'default',
-            'Normal Donor +15' => 'normal',
-            'Signature' => 'VIP',
-            'VIP' => 'royal',
-            'Royal' => 'signature'
+        Map<String, String> loyaltyTierNameToBadgeFileNamePrefix = new Map<String, String> {
+            'Signature' => 'Signature',
+            'VIP' => 'VIP',
+            'Royal' => 'Royal'
         };
 
         // TODO: This is a hack to get the tests to pass. We should find a better way to do this.
         if (Test.isRunningTest()) {
-            loyaltyTierNameToBadgeFileName.put('Bronze', 'bronze');
-            loyaltyTierNameToBadgeFileName.put('Silver', 'silver');
-            loyaltyTierNameToBadgeFileName.put('Gold', 'gold');
+            loyaltyTierNameToBadgeFileNamePrefix.put('Bronze', 'bronze');
+            loyaltyTierNameToBadgeFileNamePrefix.put('Silver', 'silver');
+            loyaltyTierNameToBadgeFileNamePrefix.put('Gold', 'gold');
         }
 
         List<BadgeSetting> badgeSettings = new List<BadgeSetting>();
         for (Level__c level : [SELECT Name FROM Level__c WHERE isActive__c = true AND isVisible__c = true ORDER BY Donation_Threshold__c ASC]) {
             BadgeSetting badgeSetting = new BadgeSetting();
             badgeSetting.badgeName = level.Name;
-            badgeSetting.badgeFileName = loyaltyTierNameToBadgeFileName.get(level.Name);
+            badgeSetting.fullBadgeFileName = loyaltyTierNameToBadgeFileNamePrefix.get(level.Name) + '_Full';
+            badgeSetting.noNameBadgeFileName = loyaltyTierNameToBadgeFileNamePrefix.get(level.Name) + '_Centered_Stars';
 
             badgeSettings.add(badgeSetting);
         }
@@ -107,6 +106,9 @@ public without sharing class LoyaltyLevelService {
         public String badgeName;
 
         @AuraEnabled
-        public String badgeFileName;
+        public String fullBadgeFileName;
+
+        @AuraEnabled
+        public String noNameBadgeFileName;
     }
 }

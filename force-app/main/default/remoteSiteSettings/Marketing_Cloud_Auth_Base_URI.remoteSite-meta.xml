@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RemoteSiteSetting xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Marketing cloud&apos;s Auth URI for Proesis.</description>
+    <disableProtocolSecurity>false</disableProtocolSecurity>
+    <isActive>true</isActive>
+    <url>https://mcz2wcvlpvs2mzgp2224p6-lbzk4.auth.marketingcloudapis.com</url>
+</RemoteSiteSetting>

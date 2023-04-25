@@ -19,6 +19,10 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     isPopupConfigured = false;
     popUpDirection;
 
+    get hideName() {
+        return true;
+    }
+
     get donorLoyaltyLevel() {
         return (this.donor.loyaltyTierName);
     }

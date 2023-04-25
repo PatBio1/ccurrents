@@ -82,10 +82,11 @@ public with sharing class NotificationsControllerTest {
 
     @isTest
     static void testViewNotification() {
+        User adminUser = TestUtil.createAdminUser();
         User experienceUser = TestUtil.createExperienceUser();
         Message__c message;
 
-        System.runAs(TestUtil.createAdminUser()) {
+        System.runAs(adminUser) {
             message = new Message__c();
             message.Donor__c = experienceUser.ContactId;
             message.Name = 'Subject';
@@ -99,6 +100,13 @@ public with sharing class NotificationsControllerTest {
 
             System.assertEquals('Subject', notification.subject);
             System.assertEquals('Body', notification.body);
+        }
+
+        System.runAs(adminUser) {
+            Message__c updatedMessage = [SELECT isViewed__c, Viewed_Datetime__c FROM Message__c WHERE Id = :message.Id];
+
+            System.assertEquals(true, updatedMessage.isViewed__c);
+            System.assertNotEquals(null, updatedMessage.Viewed_Datetime__c);
         }
     }
 

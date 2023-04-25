@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>57.0</apiVersion>
+    <assignments>
+        <name>Assign_to_Custom_Notification_Type_Id</name>
+        <label>Assign to Custom Notification Type Id</label>
+        <locationX>176</locationX>
+        <locationY>278</locationY>
+        <assignmentItems>
+            <assignToReference>Custom_Notification_Type_Id</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Proesis_Mobile_Custom_Notification_Type_Id.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Assign_to_Custom_Notification_Type_Record</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_to_Custom_Notification_Type_Record</name>
+        <label>Assign to Custom Notification Type Record</label>
+        <locationX>176</locationX>
+        <locationY>398</locationY>
+        <assignmentItems>
+            <assignToReference>Custom_Notification_Type_Record</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Proesis_Mobile_Custom_Notification_Type_Id</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <description>Enables running in system mode, so this doesn&apos;t fail for mobile notifications. Only system admins can query this Custom Notification Type object.</description>
+    <environments>Default</environments>
+    <interviewLabel>Get Proesis Mobile Custom Notification Type Id {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Get Proesis Mobile Custom Notification Type Id</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Because flow is very, very stupid - we have to call this in a system context for notifications to work (since only admins can query the Custom Notification Type object).</description>
+        <name>Get_Proesis_Mobile_Custom_Notification_Type_Id</name>
+        <label>Get Proesis Mobile Custom Notification Type Id</label>
+        <locationX>176</locationX>
+        <locationY>158</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Assign_to_Custom_Notification_Type_Id</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Proesis_Donor_App_Mobile</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>CustomNotificationType</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>DeveloperName</queriedFields>
+        <queriedFields>CustomNotifTypeName</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <runInMode>SystemModeWithoutSharing</runInMode>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Proesis_Mobile_Custom_Notification_Type_Id</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>Custom_Notification_Type_Id</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <name>Custom_Notification_Type_Record</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>CustomNotificationType</objectType>
+    </variables>
+</Flow>

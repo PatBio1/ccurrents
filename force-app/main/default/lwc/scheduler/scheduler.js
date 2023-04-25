@@ -1,5 +1,5 @@
-import { track, LightningElement } from 'lwc';
-import { NavigationMixin } from 'lightning/navigation';
+import { track, LightningElement, wire } from 'lwc';
+import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import labels from 'c/labelService';
 import util from 'c/util';
 
@@ -8,9 +8,12 @@ import getCurrentDonorVisitCount from '@salesforce/apex/VisitSelector.getCurrent
 import getCenter from '@salesforce/apex/SchedulerController.getCenter';
 import getAppointments from '@salesforce/apex/SchedulerController.getAppointments';
 import scheduleVisit from '@salesforce/apex/SchedulerController.scheduleVisit';
+import rescheduleVisit from '@salesforce/apex/SchedulerController.rescheduleVisit';
 import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsInfo';
 
 export default class Scheduler extends NavigationMixin(LightningElement) {
+
+    @wire(CurrentPageReference) pageRef;
 
     labels = labels;
     currentPage = 'Scheduler';
@@ -25,11 +28,27 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
     existingVisitCount;
     appointmentSelected = false;
 
+    get submitButtonLabel() {
+        if (this.isInRescheduleMode) {
+            return labels.rescheduleAction;
+        }
+
+        return labels.schedule;
+    }
+
+    get isInRescheduleMode() {
+        return (this.pageRef && this.pageRef.state && this.pageRef.state.rescheduleVisitId);
+    }
+
     get hasCenterRateInfo() {
         return (this.centerRateInfo !== undefined);
     }
 
     get screenTitle() {
+        if (this.isInRescheduleMode) {
+            return labels.rescheduleVisitTitle;
+        }
+
         if (!this.existingVisitCount) {
             return labels.scheduleYour1stAppointment;
         }
@@ -60,6 +79,10 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
         this.loadExistingVisitCount();
         this.loadCenter();
         this.loadDonorRewardsInfo();
+    }
+
+    renderedCallback() {
+        console.log(this.pageRef);
     }
 
     onAppointmentDateChange(event) {
@@ -118,21 +141,35 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
             });
         });
 
-        const request = {
-            appointmentId: selectedAppointment.id
-        };
+        const request = { appointmentId: selectedAppointment.id }
+        if (this.isInRescheduleMode) {
+            request.originalVisitId = this.pageRef.state.rescheduleVisitId;
+            console.log('reschedule request', JSON.stringify(request));
 
-        console.log('request', JSON.stringify(request));
+            rescheduleVisit(request).then(response => {
+                console.log('response', response);
 
-        scheduleVisit(request).then(response => {
-            console.log('response', response);
-
-            util.navigateToPage(this, 'Appointments__c');
-        }).catch((error) => {
-            console.log(error);
-        }).finally(() => {
-            this.loading = false;
-        });
+                util.navigateToPage(this, 'Appointments__c');
+            }).catch((error) => {
+                console.log(error);
+            }
+            ).finally(() => {
+                this.loading = false;
+            });
+        }
+        else {
+            console.log('schedule request', JSON.stringify(request));
+    
+            scheduleVisit(request).then(response => {
+                console.log('response', response);
+    
+                util.navigateToPage(this, 'Appointments__c');
+            }).catch((error) => {
+                console.log(error);
+            }).finally(() => {
+                this.loading = false;
+            });
+        }
     }
 
     loadCenter() {

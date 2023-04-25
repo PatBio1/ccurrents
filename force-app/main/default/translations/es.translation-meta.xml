@@ -77,6 +77,10 @@
         <name>Car</name>
     </customLabels>
     <customLabels>
+        <label>Tarifa central</label>
+        <name>Center_Rate_Label</name>
+    </customLabels>
+    <customLabels>
         <label>Video del Centro</label>
         <name>Center_Video</name>
     </customLabels>
@@ -115,6 +119,14 @@
     <customLabels>
         <label>Confirmar contraseña</label>
         <name>Confirm_Password</name>
+    </customLabels>
+    <customLabels>
+        <label>Por favor, confirme a continuación que desea cancelar esta visita.</label>
+        <name>Confirm_Visit_Cancel</name>
+    </customLabels>
+    <customLabels>
+        <label>Confirmar cancelación</label>
+        <name>Confirm_Visit_Cancel_Action</name>
     </customLabels>
     <customLabels>
         <label>Felicidades</label>
@@ -245,6 +257,10 @@
         <name>Mobile_Phone</name>
     </customLabels>
     <customLabels>
+        <label>Acciones de visita</label>
+        <name>Mobile_Visit_Actions</name>
+    </customLabels>
+    <customLabels>
         <label>Lunes</label>
         <name>Monday</name>
     </customLabels>
@@ -365,6 +381,10 @@
         <name>Privacy_Policy_Link</name>
     </customLabels>
     <customLabels>
+        <label>Aquí puedes observar cuantas donaciones necesitas para pasar al siguiente nivel</label>
+        <name>Promotion_Chart_Description</name>
+    </customLabels>
+    <customLabels>
         <label>Recomendado para ti</label>
         <name>Recommended_To_You</name>
     </customLabels>
@@ -375,6 +395,18 @@
     <customLabels>
         <label>Quitar foto</label>
         <name>Remove_Photo</name>
+    </customLabels>
+    <customLabels>
+        <label>Reprogramar</label>
+        <name>Reschedule_Action</name>
+    </customLabels>
+    <customLabels>
+        <label>Reprogramar Visita</label>
+        <name>Reschedule_Visit_Action</name>
+    </customLabels>
+    <customLabels>
+        <label>Reprogramar Visita</label>
+        <name>Reschedule_Visit_Title</name>
     </customLabels>
     <customLabels>
         <label>Reenviar codigo</label>
@@ -569,6 +601,14 @@
         <name>Verify_Phone_Instructions</name>
     </customLabels>
     <customLabels>
+        <label>Cancelar visita</label>
+        <name>Visit_Cancel_Action</name>
+    </customLabels>
+    <customLabels>
+        <label>{0} Donaciones para obtener el estado {1}</label>
+        <name>Visits_Remaining_For_Tier</name>
+    </customLabels>
+    <customLabels>
         <label>Caminando</label>
         <name>Walk</name>
     </customLabels>
@@ -595,6 +635,10 @@
     <customLabels>
         <label>Horarios</label>
         <name>Working_Hours</name>
+    </customLabels>
+    <customLabels>
+        <label>Tu balance</label>
+        <name>Your_Balance_Label</name>
     </customLabels>
     <customLabels>
         <label>Tu salud</label>

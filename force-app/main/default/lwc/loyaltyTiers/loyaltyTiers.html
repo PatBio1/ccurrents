@@ -14,15 +14,16 @@
 
             <div class="slds-m-bottom_x-small"><strong>{rewardsInfo.donorName}</strong></div>
             <div class="slds-m-bottom_x-small" style="font-size: 1.33rem; font-weight: 600; color: #983285;">{rewardsInfo.currentLoyaltyLevel}</div>
-            <!-- <div class="slds-m-bottom_x-small" style="font-weight: 700; color: #8979A9;">{rewardsInfo.donorVisitCount}/{rewardsInfo.nextTierDonationThreshold}</div> -->
-            <div><strong>{rewardsInfo.remainingVisitsForNextTier} Appointments</strong> to get <strong><span style="color: #A18B76;">{rewardsInfo.nextLoyaltyLevel}</span></strong> status</div>
+            
+            <lightning-formatted-rich-text value={getRemainingVisitsForNextTierText}></lightning-formatted-rich-text>
+            <!-- <div><strong>{rewardsInfo.remainingVisitsForNextTier} Appointments</strong> to get <strong><span style="color: #A18B76;">{rewardsInfo.nextLoyaltyLevel}</span></strong> status</div> -->
         </div>
 
         <div class="title-small slds-m-bottom_small">
             {labels.trackYourProgress}
         </div>
         <div class="slds-m-bottom_medium">
-            Here you can observe how much appointments you need to reach the next level:
+            {labels.promotionChartDescription}
         </div>
 
         <div class="legend slds-m-bottom_medium">

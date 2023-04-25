@@ -89,6 +89,49 @@ public without sharing class CoreSchedulerHandler {
         return newVisits;
     }
 
+    public static void cancelVisit(Id visitId) {
+        cancelVisits(new List<Id> { visitId });
+    }
+
+    public static void cancelVisits(List<Id> visitIds) {
+        Map<Id, Appointment__c> appointmentSlotIdToRecord = new Map<Id, Appointment__c>();
+        List<Visit__c> visitsToUpdate = new List<Visit__c>();
+
+        for(Visit__c visit : [
+            SELECT Id, Status__c, Outcome__c, Appointment__c, Appointment__r.Booked__c, Appointment__r.Booked_Loyalty__c, Donor__r.Loyalty_Level__c 
+            FROM Visit__c 
+            WHERE Id IN :visitIds
+        ]) {
+            // Adjust Appointment Booked counts
+            Appointment__c targetAppointmentSlot = appointmentSlotIdToRecord.get(visit.Appointment__c);
+            if (targetAppointmentSlot == null) {
+                targetAppointmentSlot = visit.Appointment__r;
+            }
+
+            if (LoyaltyLevelService.getLoyaltyLevel(visit.Donor__r.Loyalty_Level__c) > 0 && targetAppointmentSlot.Booked_Loyalty__c != null && targetAppointmentSlot.Booked_Loyalty__c > 0) {
+                targetAppointmentSlot.Booked_Loyalty__c -= 1;
+            } else {
+                targetAppointmentSlot.Booked__c -= 1;
+            }
+
+            appointmentSlotIdToRecord.put(targetAppointmentSlot.Id, targetAppointmentSlot);
+
+            // Update Status and Outcome
+            visit.Status__c = 'Complete';
+            visit.Outcome__c = 'Canceled';
+
+            visitsToUpdate.add(visit);
+        }
+
+        if (appointmentSlotIdToRecord.size() > 0) {
+            update appointmentSlotIdToRecord.values();
+        }
+
+        if (visitsToUpdate.size() > 0) {
+            update visitsToUpdate;
+        }
+    }
+
     public class RescheduleBatchRequest {
         public List<RescheduleRequest> rescheduleRequests;
     

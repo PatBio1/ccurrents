@@ -1,6 +1,7 @@
 import { LightningElement } from 'lwc';
 import labels from 'c/labelService';
 import getVisits from '@salesforce/apex/SchedulerController.getVisits';
+import MobileAppointmentActionsModal from 'c/mobileAppointmentActionsModal';
 
 export default class MyRewards extends LightningElement {
 
@@ -53,4 +54,15 @@ export default class MyRewards extends LightningElement {
         this.scheduledView = 'calendar';
     }
 
+    handleOpenVisitActions(event) {
+        let targetVisitId = event.currentTarget.dataset.visitId;
+
+        MobileAppointmentActionsModal.open({
+            visitId: targetVisitId,
+
+            onvisitcancelled: (event) => {
+                this.loadVisits();
+            }
+        });
+    }
 }

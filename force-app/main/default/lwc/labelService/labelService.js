@@ -18,6 +18,7 @@ import bus from '@salesforce/label/c.Bus';
 import cancel from '@salesforce/label/c.Cancel';
 import car from '@salesforce/label/c.Car';
 import centers from '@salesforce/label/c.Centers';
+import centerRateLabel from '@salesforce/label/c.Center_Rate_Label';
 import centerVideo from '@salesforce/label/c.Center_Video';
 import change from '@salesforce/label/c.Change';
 import changeLocation from '@salesforce/label/c.Change_Location';
@@ -27,6 +28,8 @@ import chooseDate from '@salesforce/label/c.Choose_Date';
 import city from '@salesforce/label/c.City';
 import closed from '@salesforce/label/c.Closed';
 import confirmPassword from '@salesforce/label/c.Confirm_Password';
+import confirmVisitCancel from '@salesforce/label/c.Confirm_Visit_Cancel';
+import confirmVisitCancelAction from '@salesforce/label/c.Confirm_Visit_Cancel_Action';
 import congratulations from '@salesforce/label/c.Congratulations';
 import contactAndSupport from '@salesforce/label/c.Contact_And_Support';
 import deleteLabel from '@salesforce/label/c.Delete';
@@ -58,6 +61,7 @@ import marketingCommunicationsOpsText from '@salesforce/label/c.Marketing_Commun
 import message from '@salesforce/label/c.Message';
 import middleName from '@salesforce/label/c.Middle_Name';
 import mobilePhone from '@salesforce/label/c.Mobile_Phone';
+import mobileVisitActions from '@salesforce/label/c.Mobile_Visit_Actions';
 import mondayAbbreviation from '@salesforce/label/c.Monday_Abbreviation';
 import myAppointments from '@salesforce/label/c.My_Appointments';
 import myBalance from '@salesforce/label/c.My_Balance';
@@ -87,9 +91,13 @@ import popularTimes from '@salesforce/label/c.Popular_Times';
 import previous from '@salesforce/label/c.Previous';
 import privacyPolicy from '@salesforce/label/c.Privacy_Policy';
 import privacyPolicyLink from '@salesforce/label/c.Privacy_Policy_Link';
+import promotionChartDescription from '@salesforce/label/c.Promotion_Chart_Description';
 import recommendedToYou from '@salesforce/label/c.Recommended_To_You';
 import rememberMe from '@salesforce/label/c.Remember_Me';
 import removePhoto from '@salesforce/label/c.Remove_Photo';
+import rescheduleAction from '@salesforce/label/c.Reschedule_Action';
+import rescheduleVisitAction from '@salesforce/label/c.Reschedule_Visit_Action';
+import rescheduleVisitTitle from '@salesforce/label/c.Reschedule_Visit_Title';
 import resendCode from '@salesforce/label/c.Resend_Code';
 import resultsFor from '@salesforce/label/c.Results_For';
 import rewardsExplained from '@salesforce/label/c.Rewards_Explained';
@@ -134,12 +142,15 @@ import verifyEmailFailed from '@salesforce/label/c.Verify_Email_Failed';
 import verifyEmailInstructions from '@salesforce/label/c.Verify_Email_Instructions';
 import verifyPhone from '@salesforce/label/c.Verify_Phone';
 import verifyPhoneInstructions from '@salesforce/label/c.Verify_Phone_Instructions';
+import visitCancelAction from '@salesforce/label/c.Visit_Cancel_Action';
+import visitsRemainingForTier from '@salesforce/label/c.Visits_Remaining_For_Tier';
 import walk from '@salesforce/label/c.Walk';
 import walletBalanceTitle from '@salesforce/label/c.Wallet_Balance_Title';
 import watchVideo from '@salesforce/label/c.Watch_Video';
 import wednesdayAbbreviation from '@salesforce/label/c.Wednesday_Abbreviation';
 import welcomeToProesis from '@salesforce/label/c.Welcome_To_Proesis';
 import workingHours from '@salesforce/label/c.Working_Hours';
+import yourBalanceLabel from '@salesforce/label/c.Your_Balance_Label';
 import yourHealth from '@salesforce/label/c.Your_Health';
 import zipCode from '@salesforce/label/c.Zip_Code';
 
@@ -171,6 +182,7 @@ const labels = {
     cancel,
     car,
     centers,
+    centerRateLabel,
     centerVideo,
     change,
     changeLocation,
@@ -180,6 +192,8 @@ const labels = {
     city,
     closed,
     confirmPassword,
+    confirmVisitCancel,
+    confirmVisitCancelAction,
     congratulations,
     contactAndSupport,
     deleteLabel,
@@ -211,6 +225,7 @@ const labels = {
     message,
     middleName,
     mobilePhone,
+    mobileVisitActions,
     mondayAbbreviation,
     myAppointments,
     myBalance,
@@ -240,9 +255,13 @@ const labels = {
     previous,
     privacyPolicy,
     privacyPolicyLink,
+    promotionChartDescription,
     recommendedToYou,
     rememberMe,
     removePhoto,
+    rescheduleAction,
+    rescheduleVisitAction,
+    rescheduleVisitTitle,
     resendCode,
     resultsFor,
     rewardsExplained,
@@ -287,12 +306,15 @@ const labels = {
     verifyEmailInstructions,
     verifyPhone,
     verifyPhoneInstructions,
+    visitCancelAction,
+    visitsRemainingForTier,
     walk,
     walletBalanceTitle,
     watchVideo,
     wednesdayAbbreviation,
     welcomeToProesis,
     workingHours,
+    yourBalanceLabel,
     yourHealth,
     zipCode
 };

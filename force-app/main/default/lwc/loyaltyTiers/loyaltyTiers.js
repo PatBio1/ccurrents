@@ -28,6 +28,19 @@ export default class LoyaltyTiers extends LightningElement {
     areLevelsInitialized = false;
     isChartJsInitialized;
 
+    get getRemainingVisitsForNextTierText() {
+        let remainingVisitsForNextTier = this.rewardsInfo?.remainingVisitsForNextTier || "0";
+        let nextLoyaltyTier = this.rewardsInfo?.nextLoyaltyLevel || "N/A";
+
+        return labels.formatLabel(
+            labels.visitsRemainingForTier, 
+            [
+                `<strong>${remainingVisitsForNextTier}</strong>`,
+                `<strong><span style="color: #A18B76;">${nextLoyaltyTier}</span></strong>`
+            ]
+        );
+    }
+
     @wire(getRecord, { recordId: userId, fields: [userSmallPhotoUrl]}) 
     userDetails({error, data}) {
         if (data) {

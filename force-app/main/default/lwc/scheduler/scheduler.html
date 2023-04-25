@@ -7,7 +7,7 @@
 
             <div class="slds-m-bottom_large">
                 <div class="donor-rewards-panel slds-m-bottom_small" if:true={hasRewardInfo}>
-                    <p><strong>Your Balance:</strong></p>
+                    <p><strong>{labels.yourBalanceLabel}:</strong></p>
     
                     <div style="color: #99429C;">
                         <span><lightning-formatted-number format-style="currency" currency-code="USD" value={donorCurrency}></lightning-formatted-number></span> <span style="margin: 0 0.5rem">/</span> {donorPoints} {labels.pointBrandName}
@@ -15,7 +15,7 @@
                 </div>
     
                 <div class="donor-rewards-panel" if:true={hasCenterRateInfo}>
-                    <p><strong>Center Rate:</strong></p>
+                    <p><strong>{labels.centerRateLabel}:</strong></p>
     
                     <div style="color: #99429C;">
                         <span><lightning-formatted-number format-style="currency" currency-code="USD" value={centerRateInfo.basePayment}></lightning-formatted-number></span> <span style="margin: 0 0.5rem">/</span> {centerRateInfo.basePoints} {labels.pointBrandName}
@@ -86,8 +86,8 @@
                     <lightning-button label={labels.cancel} stretch="true" class="secondary-button" onclick={onCancelButtonClick}></lightning-button>
                 </div>
                 <div class="slds-col slds-size_1-of-2">
-                    <lightning-button if:true={appointmentSelected} label={labels.schedule} variant="brand" stretch="true" class="primary-button" onclick={onScheduleButtonClick}></lightning-button>
-                    <button if:false={appointmentSelected} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.schedule}</button>
+                    <lightning-button if:true={appointmentSelected} label={submitButtonLabel} variant="brand" stretch="true" class="primary-button" onclick={onScheduleButtonClick}></lightning-button>
+                    <button if:false={appointmentSelected} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{submitButtonLabel}</button>
                 </div>
             </div>
         </div>

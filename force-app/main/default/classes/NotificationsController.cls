@@ -38,7 +38,7 @@ public without sharing class NotificationsController {
                     WHERE
                         Donor__c = :user.ContactId
                     AND
-                        Expiration_Date__c > :Date.today()
+                        (Expiration_Date__c = null OR Expiration_Date__c > :Date.today())
                     ORDER BY
                         CreatedDate DESC
                 ];
@@ -54,7 +54,7 @@ public without sharing class NotificationsController {
                     WHERE
                         Center__c = :centerId
                     AND
-                        Expiration_Date__c > :Date.today()
+                        (Expiration_Date__c = null OR Expiration_Date__c > :Date.today())
                     ORDER BY
                         CreatedDate DESC
                 ];

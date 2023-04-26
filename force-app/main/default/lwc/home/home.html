@@ -1,5 +1,7 @@
 <template>
 
+    <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
+
     <template if:true={showHome}>
         <div class="slds-var-p-around_medium" style="background-color: #E5DDF4">
             <div class="slds-grid slds-grid_vertical-align-center slds-gutters">

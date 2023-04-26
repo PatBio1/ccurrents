@@ -15,7 +15,8 @@ public without sharing class DonorEventHelper {
             }
         }
 
-        // Find all donorNumbers that don't have a corresponding Account.DonorId__c reference
+        // Any Donors Left in the runningDonorNumberList are missing from the system
+        // Valid numbers where removed when querying for the related records
         // Create a Task record for each donorNumber with a missing contact
         List<Task> tasksToInsert = new List<Task>();
 
@@ -141,10 +142,19 @@ public without sharing class DonorEventHelper {
             List<Visit__c> visitsToInsert = new List<Visit__c>();
             Map<Id, List<Task>> donorIdToTasksToParent = new Map<Id, List<Task>>();
 
-            for(Appointment__c newAppointmentSlot : [SELECT Id, Datetime__c FROM Appointment__c WHERE Datetime__c IN :targetAppointmentTimeToDonorEvent.keySet() ORDER BY Datetime__c ASC]) {
+            for(Appointment__c newAppointmentSlot : [
+                SELECT Id, Datetime__c 
+                FROM Appointment__c 
+                WHERE Datetime__c IN :targetAppointmentTimeToDonorEvent.keySet() AND 
+                    (Schedule__r.Center__c IN :becsCenterToDevice.keySet() OR Schedule__r.Center__c IN :lastUsedCenterIds)
+                ORDER BY Datetime__c ASC
+            ]) {
                 for(SObject donorEvent : targetAppointmentTimeToDonorEvent.get(newAppointmentSlot.Datetime__c)) {
                     Contact relatedDonor = validDonorNumbersToDonor.get((String)donorEvent.get('Donor_Number__c'));
-                    
+                    if (donorEvent instanceof Donor_CheckIn__e && relatedDonor.Last_Used_Center__c == null) {
+                        continue;
+                    }
+
                     Visit__c missingVisit = new Visit__c(
                         Appointment__c = newAppointmentSlot.Id,
                         Donor__c = relatedDonor.Id

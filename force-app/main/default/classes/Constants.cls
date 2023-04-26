@@ -50,4 +50,7 @@ public with sharing class Constants {
 
     public static final String CENTER_DAY_EXCEPTION_LIMIT_ERROR = 'Center Day limit exceeded for center {0}';
     public static final String CENTER_INDIVIDUAL_EXCEPTION_LIMIT_ERROR = 'Center Individual Payment limit exceeded for center {0}';
+
+    public static final String DONATION_PAYMENT_MESSAGE_HANDLER = 'Donation Payment';
+    public static final String LOYALTY_DONATION_PAYMENT_MESSAGE_HANDLER = 'Donation with Loyalty Promotion Payment';
 }

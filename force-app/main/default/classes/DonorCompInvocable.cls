@@ -103,6 +103,8 @@ public without sharing class DonorCompInvocable {
         List<Account> donorsToUpdate = new List<Account>();
         Map<Id, Transaction__c> donorIdToTransaction = new Map<Id, Transaction__c>();
         Map<Id, List<Txn_Line_Item__c>> donorIdToTxnLineItems = new Map<Id, List<Txn_Line_Item__c>>();
+        Map<Id, List<Message__c>> donorIdToMessages = new Map<Id, List<Message__c>>();
+
         List<Level__c> lowestLoyaltyLevelByThreshold = [
             SELECT Id, Donation_Threshold__c, Threshold_Payment__c, Threshold_Points__c
             FROM Level__c
@@ -137,6 +139,13 @@ public without sharing class DonorCompInvocable {
                 targetVisitRecord.Center_Donation_Type__r.Center__c + '-' + targetVisitRecord.Center_Donation_Type__r.Donation_Type__c
             );
 
+            // create a message object to trigger a payment notification for the donor
+            Message__c paymentMessage = new Message__c(
+                Donor__c = foundContact.Id,
+                Visit__c = targetVisitRecord.Id,
+                Trigger_Marketing_Cloud__c = true
+            );
+
             // Create the parent transaction record
             donorIdToTransaction.put(foundContact.Id, new Transaction__c(
                 Donor__c = foundContact.Id,
@@ -166,10 +175,14 @@ public without sharing class DonorCompInvocable {
             }
             donorIdToTxnLineItems.put(foundContact.Id, txnLineItems);
 
+            Boolean wasPromotionTriggered = false;
+
             // Handle Bonus Level payments (levels that are active but not visible)
             // These levels provide one time payments when the threshold is hit
             for (Decimal bonusLevelThreshold : donationThresholdToBonusLevels.keySet()) {
                 if (totalVisitCount == bonusLevelThreshold) {
+                    wasPromotionTriggered = true;
+
                     for (Level__c bonusLevel : donationThresholdToBonusLevels.get(bonusLevelThreshold)) {
                         if (bonusLevel.Threshold_Points__c != null && bonusLevel.Threshold_Points__c > 0) {
                             donorIdToTxnLineItems.get(foundContact.Id).add(new Txn_Line_Item__c(
@@ -211,6 +224,7 @@ public without sharing class DonorCompInvocable {
                     targetPromotionLevel != null &&
                     totalVisitCount == targetPromotionLevel.Donation_Threshold__c
             ) {
+                wasPromotionTriggered = true;
                 donorsToUpdate.add(new Account(Id = foundContact.AccountId, Loyalty_Level__pc = targetPromotionLevel.Id));
 
                 // Apply New Level Bonuses onto the line items
@@ -234,6 +248,24 @@ public without sharing class DonorCompInvocable {
                     ));
                 }
             }
+
+            if (!wasPromotionTriggered) {
+                paymentMessage.Name = System.Label.Donation_Payment_Message_Title;
+                paymentMessage.Message_Handler_Type__c = Constants.DONATION_PAYMENT_MESSAGE_HANDLER;
+                paymentMessage.Body__c = System.Label.Donation_Payment_Message_Body;
+            } else {
+                paymentMessage.Name = System.Label.Loyalty_Donation_Payment_Message_Title;
+                paymentMessage.Message_Handler_Type__c = Constants.LOYALTY_DONATION_PAYMENT_MESSAGE_HANDLER;
+                paymentMessage.Body__c = System.Label.Loyalty_Donation_Payment_Message_Body;
+            }
+
+            List<Message__c> existingMessages = donorIdToMessages.get(foundContact.Id);
+            if (existingMessages == null) {
+                existingMessages = new List<Message__c>();
+            }
+
+            existingMessages.add(paymentMessage);
+            donorIdToMessages.put(foundContact.Id, existingMessages);
         }
         update donorsToUpdate;
 
@@ -241,6 +273,8 @@ public without sharing class DonorCompInvocable {
         insert donorIdToTransaction.values();
 
         List<Txn_Line_Item__c> txnLineItems = new List<Txn_Line_Item__c>();
+        List<Message__c> messages = new List<Message__c>();
+
         for (Transaction__c transactionRecord : donorIdToTransaction.values()) {
             // Relate the transaction to the line items
             for (Txn_Line_Item__c lineItem : donorIdToTxnLineItems.get(transactionRecord.Donor__c)) {
@@ -248,9 +282,17 @@ public without sharing class DonorCompInvocable {
             }
 
             txnLineItems.addAll(donorIdToTxnLineItems.get(transactionRecord.Donor__c));
+
+            // Relate the transaction to the message
+            for(Message__c message : donorIdToMessages.get(transactionRecord.Donor__c)) {
+                message.Transaction__c = transactionRecord.Id;
+            }
+
+            messages.addAll(donorIdToMessages.get(transactionRecord.Donor__c));
         }
 
         insert txnLineItems;
+        insert messages;
     }
 
     public static void updateCampaignVisitCounter(List<Visit__c> visitsToProcess) {
@@ -263,7 +305,7 @@ public without sharing class DonorCompInvocable {
             donorToCampaignMembers.put(visit.Donor__c, new List<CampaignMember>());
             donorToVisitsInRange.put(visit.Donor__c, new List<Visit__c>());
         }
-
+    
         for (CampaignMember cm : [
             SELECT Id,
                 ContactId,
@@ -280,6 +322,10 @@ public without sharing class DonorCompInvocable {
             donorCMs.add(cm);
             donorToCampaignMembers.put(cm.ContactId, donorCMs);
             datesInRange.add(Date.valueOf(cm.CreatedDate));
+        }
+
+        if (datesInRange.size() == 0) {
+            return;
         }
 
         datesInRange.sort();

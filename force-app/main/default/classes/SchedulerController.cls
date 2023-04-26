@@ -30,7 +30,7 @@ public without sharing class SchedulerController {
 
     @AuraEnabled
     public static List<AppointmentGroup> getAppointments(Id centerId, Date appointmentDate) {
-        User userInfo = [SELECT Id, Contact.Soonest_Next_Visit__c FROM User WHERE Id = :UserInfo.getUserId()];
+        User user = [SELECT Contact.Soonest_Next_Visit__c FROM User WHERE Id = :UserInfo.getUserId()];
 
         try {
             List<AppointmentGroup> appointmentGroups = new List<AppointmentGroup>{
@@ -51,7 +51,7 @@ public without sharing class SchedulerController {
                     WHERE
                         Schedule__r.Center__c = :centerId
                     AND 
-                        Datetime__c >= :userInfo.Contact.Soonest_Next_Visit__c
+                        Datetime__c >= :user.Contact.Soonest_Next_Visit__c
                     AND
                         Datetime__c >= :startTime
                     AND
@@ -92,11 +92,14 @@ public without sharing class SchedulerController {
 
             List<Visit__c> visitRecords = [
                 SELECT
-                    isFirstVisit__c, Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name, Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.First_Visit_Code__c, Outcome__c
+                    isFirstVisit__c, Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name,
+                    Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.First_Visit_Code__c, Outcome__c
                 FROM
                     Visit__c
                 WHERE
-                    Donor__c = :user.ContactId AND (Status__c = 'Scheduled' OR Status__c = 'Complete')
+                    Donor__c = :user.ContactId
+                AND
+                    (Status__c = 'Scheduled' OR Status__c = 'Complete')
                 ORDER BY
                     Appointment__r.Datetime__c ASC
             ];
@@ -124,9 +127,35 @@ public without sharing class SchedulerController {
     }
 
     @AuraEnabled
+    public static Boolean hasFutureVisit() {
+        try {
+            Util.testExceptionHandling();
+
+            User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
+
+            Integer visitCount = [
+                SELECT
+                    COUNT()
+                FROM
+                    Visit__c
+                WHERE
+                    Donor__c = :user.ContactId
+                AND
+                    Appointment__r.Datetime__c > :DateTime.now()
+                AND
+                    Status__c != 'Complete'
+            ];
+
+            return (visitCount > 0);
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
     public static Id scheduleVisit(Id appointmentId) {
         try {
-            Appointment__c appointment = [SELECT Id, Schedule__r.Center__c FROM Appointment__c WHERE Id = :appointmentId LIMIT 1];
+            Appointment__c appointment = [SELECT Schedule__r.Center__c FROM Appointment__c WHERE Id = :appointmentId LIMIT 1];
 
             Visit__c visit = CoreSchedulerHandler.createVisit(new Visit__c(
                 Donor__c = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId() LIMIT 1]?.ContactId,

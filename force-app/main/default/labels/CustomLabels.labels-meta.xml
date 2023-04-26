@@ -1134,4 +1134,32 @@
         <shortDescription>{0} Donations to get {1} status</shortDescription>
         <value>{0} Donations to get {1} status</value>
     </labels>
+    <labels>
+        <fullName>Donation_Payment_Message_Title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donation Payment</shortDescription>
+        <value>Donation Payment</value>
+    </labels>
+    <labels>
+        <fullName>Donation_Payment_Message_Body</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Message Body</shortDescription>
+        <value>Thank you for donating plasma with Proesis Bio. We are grateful for your generosity in helping save the lives of patients who depend on plasma-derived medicines to treat life-threatening conditions. Navigate to My Rewards, Payment History to see details.</value>
+    </labels>
+    <labels>
+        <fullName>Loyalty_Donation_Payment_Message_Title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donation with Loyalty Promotion Payment</shortDescription>
+        <value>Donation with Loyalty Promotion Payment</value>
+    </labels>
+    <labels>
+        <fullName>Loyalty_Donation_Payment_Message_Body</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loyalty Message Body</shortDescription>
+        <value>Thank you for donating plasma with Proesis Bio. Based on your frequent and valued plasma donations, your loyalty status has been upgraded, and you have received a bonus. Navigate to My Rewards, Payment History to see details.</value>
+    </labels>
 </CustomLabels>

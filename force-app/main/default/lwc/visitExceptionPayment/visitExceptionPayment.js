@@ -9,6 +9,7 @@ import createExceptionPayment from '@salesforce/apex/ExceptionPaymentController.
 
 const EXCEPTION_RATE_SELECTION_SCREEN = 'exceptionRateSelection';
 const EXCEPTION_PAYMENT_CONFIRMATION_SCREEN = 'exceptionPaymentConfirmation';
+const LIMIT_EXCEED_ERROR_COLOR = '#f76f6f';
 
 export default class VisitExceptionPayment extends LightningElement {
     _recordId;
@@ -26,6 +27,44 @@ export default class VisitExceptionPayment extends LightningElement {
         this.isLoading = true;
 
         this.getBaseVisitExceptionPaymentInfo();
+    }
+
+    get hasCenterDayLimit() {
+        return this.hasBaseVisitExceptionPaymentInfo && this.baseVisitExceptionPaymentInfo.visitDayRemainingLimit;
+    }
+
+    get hasCenterIndividualLimit() {
+        return this.hasBaseVisitExceptionPaymentInfo && this.baseVisitExceptionPaymentInfo.visitIndividualLimit;
+    }
+
+    get hasCenterLimits() {
+        return this.hasCenterDayLimit || this.hasCenterIndividualLimit;
+    }
+
+    get centerDayLimitBackgroundStyle() {
+        if (
+            !this.hasBaseVisitExceptionPaymentInfo ||
+            !this.baseVisitExceptionPaymentInfo.visitDayRemainingLimit ||
+            !this.selectedRateId ||
+            this.selectedExceptionRateInfo.amount <= this.baseVisitExceptionPaymentInfo.visitDayRemainingLimit
+        ) {
+            return '';
+        }
+
+        return `background: ${LIMIT_EXCEED_ERROR_COLOR}`;
+    }
+    
+    get centerIndividualLimitBackgroundStyle() {
+        if (
+            !this.hasBaseVisitExceptionPaymentInfo ||
+            !this.baseVisitExceptionPaymentInfo.visitIndividualLimit ||
+            !this.selectedRateId ||
+            this.selectedExceptionRateInfo.amount <= this.baseVisitExceptionPaymentInfo.visitIndividualLimit
+        ) {
+            return '';
+        }
+
+        return `background: ${LIMIT_EXCEED_ERROR_COLOR}`;
     }
 
     get recordId() {
@@ -96,6 +135,8 @@ export default class VisitExceptionPayment extends LightningElement {
 
     async getBaseVisitExceptionPaymentInfo() {
         this.baseVisitExceptionPaymentInfo = await getBaseVisitExceptionPaymentInfo({ targetVisitId: this._recordId });
+        console.log(this.baseVisitExceptionPaymentInfo);
+
         this.isLoading = false;
     }
 
@@ -115,8 +156,6 @@ export default class VisitExceptionPayment extends LightningElement {
         this.isLoading = true;
 
         try {
-            console.log(this.baseVisitExceptionPaymentInfo.visitDonorId, this.recordId, this.selectedRateId);
-
             await createExceptionPayment({
                 donorId: this.baseVisitExceptionPaymentInfo.visitDonorId,
                 visitId: this.recordId,
@@ -125,7 +164,11 @@ export default class VisitExceptionPayment extends LightningElement {
         } catch(e) {
             this.isLoading = false;
 
-            console.error(e);
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Create Payment Failed',
+                message: e.body.message,
+                variant: 'error'
+            }));
             return;
         }
 

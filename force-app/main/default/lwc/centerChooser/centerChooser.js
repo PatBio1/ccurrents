@@ -1,4 +1,5 @@
 import { api, track, LightningElement } from 'lwc';
+import { getLocationService } from 'lightning/mobileCapabilities';
 import changeLocationModal from 'c/changeLocationModal';
 import labels from 'c/labelService';
 import util from 'c/util';
@@ -14,7 +15,8 @@ export default class CenterChooser extends LightningElement {
     @api isSignup;
 
     labels = labels;
-    loading = true;
+    hasRendered = false;
+    loading = false;
     centersLoaded = false;
     @track centers = [];
     showCenter = false;
@@ -40,16 +42,23 @@ export default class CenterChooser extends LightningElement {
         }
     }
 
-    connectedCallback() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
+    renderedCallback() {
+        if (this.hasRendered) {
+            return;
+        }
+
+        this.hasRendered = true;
+
+        const locationService = getLocationService();
+
+        if (locationService.isAvailable()) {
+            locationService.getCurrentPosition({enableHighAccuracy: true}).then((position) => {
                 this.location.isCurrent = true;
                 this.location.latitude = position.coords.latitude;
                 this.location.longitude = position.coords.longitude;
 
                 this.loadCenters();
-            },
-            () => {
+            }).catch((error) => {
                 // Denied geolocation - use default location.
                 this.loadCenters();
             });

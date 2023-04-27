@@ -759,6 +759,10 @@ public class OnbeWsPrepaid {
           Dom.XmlNode rootNode = responseDoc.getRootElement();
           Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
           Dom.XmlNode updateAccountStatusReturnNode = bodyNode.getChildElement('updateAccountStatusReturn', uriAccountManagementPrepaidWs);
+
+          // System.debug(updateAccountStatusReturnNode.getAttributeValue('code', uriAccountManagementPrepaidWs));
+          // System.debug(updateAccountStatusReturnNode.getAttributeValue('sub_code', uriAccountManagementPrepaidWs));
+          System.debug(updateAccountStatusReturnNode.getChildElements());
       }
   
       public void updateRegistration_Http(String accessLevel,

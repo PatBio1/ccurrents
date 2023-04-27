@@ -29,15 +29,28 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
         newLink.block = 'NONE';  // either ALL or NONE
         newLink.cardPackageId = cardPackageId;
 
+        Account donorContactRecord;
+        try {
+            donorContactRecord = [
+                SELECT Id, FirstName, LastName, PersonMailingStreet, PersonMailingCity, PersonMailingState, PersonMailingPostalCode, PersonMailingCountry, PersonMobilePhone 
+                FROM Account 
+                WHERE Id IN (SELECT AccountId FROM Contact WHERE Id = :donorId)
+                LIMIT 1
+            ];
+        } catch(Exception e) {
+            System.debug(e.getMessage());
+            return 'error';
+        }
+
         OnbeDomainPrepaid.Registration newReg = new OnbeDomainPrepaid.Registration();
-        newReg.firstName = 'Timothy';
-        newReg.lastName = 'Youngblood';
-        newReg.address1 = '319 Massey Ln';
-        newReg.city = 'Lookout Mountain';
-        newReg.state = 'GA';
-        newReg.postal = '30750';
-        newReg.country = 'US';
-        newReg.homePhone = '423-580-4176';
+        newReg.firstName = donorContactRecord.FirstName;
+        newReg.lastName = donorContactRecord.LastName;
+        newReg.address1 = donorContactRecord.PersonMailingStreet;
+        newReg.city = donorContactRecord.PersonMailingCity;
+        newReg.state = donorContactRecord.PersonMailingState;
+        newReg.postal = donorContactRecord.PersonMailingPostalCode;
+        newReg.country = donorContactRecord.PersonMailingCountry;
+        newReg.homePhone = donorContactRecord.PersonMobilePhone;
 
         OnbeWsPrepaid.AccountManagementApiWebServices createActivateCardRequest = new OnbeWsPrepaid.AccountManagementApiWebServices();
         OnbeResponsePrepaid.CreateAccountResponse createActivateCardResponse = createActivateCardRequest.createAccount_Http(
@@ -50,7 +63,7 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
     }
 
     public String linkPhysicalCard() {
-        return 'success';
+        return 'Onbe Physical Card Link';
     }
 
     public String processPayment(Id donorId, Decimal amount) {
@@ -69,4 +82,10 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
         return 'Onbe Transaction History';
     }
 
+    public String updateAccountStatus(String newAccountStatus) {
+        OnbeWsPrepaid.AccountManagementApiWebServices updateAccountStatusRequest = new OnbeWsPrepaid.AccountManagementApiWebServices();
+        updateAccountStatusRequest.updateAccountStatus_Http(newAccountStatus);
+
+        return '';
+    }
 }

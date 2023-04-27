@@ -616,6 +616,121 @@ public with sharing class ProfileControllerTest {
     }
 
     @isTest
+    static void testGetProfile() {
+        User experienceUser = TestUtil.createExperienceUser();
+
+        System.runAs(TestUtil.createAdminUser()) {
+            Account center = TestUtil.createMiramarCenter();
+            insert center;
+
+            AccountContactRelation accountContactRelation = new AccountContactRelation();
+            accountContactRelation.AccountId = center.Id;
+            accountContactRelation.ContactId = experienceUser.ContactId;
+            accountContactRelation.Roles = 'Donor';
+            insert accountContactRelation;
+        }
+
+        System.runAs(experienceUser) {
+            ProfileController.Profile profile = ProfileController.getProfile();
+
+            System.assertEquals(experienceUser.FirstName, profile.firstName);
+            System.assertEquals(experienceUser.LastName, profile.lastName);
+        }
+    }
+
+    @isTest
+    static void testGetProfileException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.getProfile();
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
+    static void testChangeProfile() {
+        User experienceUser = TestUtil.createExperienceUser();
+        Visit__c visit;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            Account center = TestUtil.createMiramarCenter();
+            insert center;
+
+            AccountContactRelation accountContactRelation = new AccountContactRelation();
+            accountContactRelation.AccountId = center.Id;
+            accountContactRelation.ContactId = experienceUser.ContactId;
+            accountContactRelation.Roles = 'Donor';
+            insert accountContactRelation;
+
+            Schedule__c schedule = new Schedule__c(
+                Center__c = center.Id,
+                Begin_Date__c = Date.today().addDays(-10),
+                End_Date__c = Date.today().addDays(30)
+            );
+            insert schedule;
+
+            Appointment__c appointment = new Appointment__c();
+            appointment.Schedule__c = schedule.Id;
+            appointment.Datetime__c = DateTime.now().addDays(1);
+            appointment.Duration__c = 10;
+            appointment.Capacity__c = 5;
+            insert appointment;
+
+            Donation_Type__c donationType = new Donation_Type__c();
+            insert donationType;
+
+            Center_Donation_Type__c centerDonationType = new Center_Donation_Type__c();
+            centerDonationType.Center__c = center.Id;
+            centerDonationType.Donation_Type__c = donationType.Id;
+            centerDonationType.isActive__c = true;
+            insert centerDonationType;
+
+            visit = new Visit__c();
+            visit.Appointment__c = appointment.Id;
+            visit.Donor__c = experienceUser.ContactId;
+            visit.Status__c = 'Scheduled';
+            visit.Center_Donation_Type__c = centerDonationType.Id;
+            insert visit;
+        }
+
+        System.runAs(experienceUser) {
+            ProfileController.Profile profile = new ProfileController.Profile();
+            
+            ProfileController.changeProfile(profile);
+
+            List<Task> tasks = [SELECT Subject FROM Task WHERE WhoId = :experienceUser.ContactId AND WhatId = :visit.Id];
+
+            System.assertEquals(1, tasks.size());
+            System.assertEquals('Information Change', tasks[0].Subject);
+        }
+    }
+
+    @isTest
+    static void testChangeProfileException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.changeProfile(new ProfileController.Profile());
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
     static void testDeactivateUser() {
         System.runAs(TestUtil.createAdminUser()) {
             User experienceUser = TestUtil.createExperienceUser();

@@ -1,5 +1,7 @@
 <template>
 
+    <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
+
     <div class="slds-var-p-around_medium">
         <div class="title-medium">
             {labels.myProfile}
@@ -8,8 +10,153 @@
 
     <lightning-tabset>
         <lightning-tab label={labels.personalInformation}>
-            <div class="slds-var-p-horizontal_medium">
-                <lightning-button label={labels.deleteProfile} variant="brand" stretch="true" class="primary-button" onclick={onDeleteProfileButtonClick}></lightning-button>
+            <template if:false={isEditing}>
+                <div class="box slds-var-m-horizontal_medium slds-var-p-around_medium">
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-6">
+                        </div>
+                        <div class="slds-col slds-size_4-of-6 title-small slds-text-align_center">
+                            {profile.firstName} {profile.middleName} {profile.lastName}
+                        </div>
+                        <div class="slds-col slds-size_1-of-6 slds-text-align_right">
+                            <lightning-icon icon-name="utility:edit" size="x-small" class="edit-icon" onclick={onEditClick}></lightning-icon>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.prefix}</strong><br/>
+                            {profile.prefix}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.primaryCenter}</strong><br/>
+                            {profile.centerName}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.firstName}</strong><br/>
+                            {profile.firstName}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.howWillYouGetToCenter}</strong><br/>
+                            {profile.howGetToCenter}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.middleName}</strong><br/>
+                            {profile.middleName}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.streetAddress1}</strong><br/>
+                            {profile.street}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.lastName}</strong><br/>
+                            {profile.lastName}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.streetAddress2}</strong><br/>
+                            {profile.street2}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.suffix}</strong><br/>
+                            {profile.suffix}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.city}</strong><br/>
+                            {profile.city}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.email}</strong><br/>
+                            {profile.email}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.state}</strong><br/>
+                            {profile.state}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.mobilePhone}</strong><br/>
+                            {profile.mobilePhone}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.zipCode}</strong><br/>
+                            {profile.postalCode}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.homePhone}</strong><br/>
+                            {profile.homePhone}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.primaryLanguage}</strong><br/>
+                            {profile.language}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.height}</strong><br/>
+                            {profile.height}
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-var-m-top_medium">
+                            <strong>{labels.weight}</strong><br/>
+                            {profile.weight}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-var-m-horizontal_medium slds-var-m-top_medium">
+                    <lightning-button label={labels.deleteProfile} variant="brand" stretch="true" class="primary-button" onclick={onDeleteProfileButtonClick}></lightning-button>
+                </div>
+            </template>
+
+            <div if:true={isEditing} class="slds-var-m-horizontal_medium">
+                <div class="slds-m-bottom_small">
+                    <lightning-combobox label={labels.prefix} options={prefixOptions} value={changedProfile.prefix} data-field="prefix" onchange={onFieldChange}></lightning-combobox>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="text" label={labels.firstName} value={changedProfile.firstName} data-field="firstName" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="text" label={labels.middleName} value={changedProfile.middleName} data-field="middleName" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="text" label={labels.lastName} value={changedProfile.lastName} data-field="lastName" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-combobox label={labels.suffix} options={suffixOptions} value={changedProfile.suffix} data-field="suffix" onchange={onFieldChange}></lightning-combobox>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="email" label={labels.email} value={changedProfile.email} data-field="email" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="tel" label={labels.mobilePhone} value={changedProfile.mobilePhone} data-field="mobilePhone" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="tel" label={labels.homePhone} value={changedProfile.homePhone} data-field="homePhone" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="number" label={labels.height} value={changedProfile.height} step=".1" data-field="height" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="text" label={labels.streetAddress1} value={changedProfile.street} data-field="street" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="text" label={labels.streetAddress2} value={changedProfile.street2} data-field="street2" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="text" label={labels.city} value={changedProfile.city} data-field="city" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-combobox label={labels.state} options={stateOptions} value={changedProfile.state} data-field="state" onchange={onFieldChange}></lightning-combobox>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="text" label={labels.zipCode} value={changedProfile.postalCode} data-field="postalCode" onchange={onFieldChange}></lightning-input>
+                </div>
+                <div class="slds-m-bottom_small">
+                    <lightning-input type="number" label={labels.weight} value={changedProfile.weight} step=".1" data-field="weight" onchange={onFieldChange}></lightning-input>
+                </div>
+
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-button label={labels.cancel} stretch="true" class="secondary-button" onclick={onCancelButtonClick}></lightning-button>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-button if:true={profileValid} label={labels.saveChanges} variant="brand" stretch="true" class="primary-button" onclick={onSaveChangesButtonClick}></lightning-button>
+                        <button if:false={profileValid} class="slds-button slds-button_brand slds-button_stretch primary-button" disabled>{labels.saveChanges}</button>
+                    </div>
+                </div>
             </div>
         </lightning-tab>
         <!--lightning-tab label={labels.yourHealth}>

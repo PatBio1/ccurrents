@@ -69,8 +69,8 @@ public with sharing class TestUtil {
             String experienceUserEmail = 'experience' + userCount + '@' + UserInfo.getOrganizationId() + '.test.com';
 
             Account = new Account(
-                FirstName = 'Test',
-                LastName = 'Last',
+                FirstName = 'Experience',
+                LastName = 'User',
                 PersonEmail = experienceUserEmail,
                 First_Visit_Code__c = ScheduleUtils.createFirstVisitCode(),
                 RecordTypeId = Constants.DONOR_RECORD_TYPE_ID

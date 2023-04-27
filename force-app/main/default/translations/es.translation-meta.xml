@@ -201,6 +201,14 @@
         <name>Goals_Tracker</name>
     </customLabels>
     <customLabels>
+        <label>Altura</label>
+        <name>Height</name>
+    </customLabels>
+    <customLabels>
+        <label>Teléfono de casa</label>
+        <name>Home_Phone</name>
+    </customLabels>
+    <customLabels>
         <label>¿Cómo vas a llegar al centro?</label>
         <name>How_Will_You_Get_To_Center</name>
     </customLabels>
@@ -385,6 +393,10 @@
         <name>Popular_Times</name>
     </customLabels>
     <customLabels>
+        <label>Prefijo</label>
+        <name>Prefix</name>
+    </customLabels>
+    <customLabels>
         <label>Anterior</label>
         <name>Previous</name>
     </customLabels>
@@ -395,6 +407,14 @@
     <customLabels>
         <label>https://proesisbio.com/privacy-policy</label>
         <name>Privacy_Policy_Link</name>
+    </customLabels>
+    <customLabels>
+        <label>Su solicitud ha sido enviada y anotada para su visita programada el {0}. Por favor traiga documentación con prueba de cambio a esta visita para cambiar su información.</label>
+        <name>Profile_Change_Confirmation</name>
+    </customLabels>
+    <customLabels>
+        <label>Debe programar una visita con Proesis para cambiar su perfil. Programe una ahora para hacer cambios en su próxima visita. Puede solicitar cambios una vez que programe una nueva visita.</label>
+        <name>Profile_Change_No_Visit</name>
     </customLabels>
     <customLabels>
         <label>Aquí puedes observar cuantas donaciones necesitas para pasar al siguiente nivel</label>
@@ -447,6 +467,10 @@
     <customLabels>
         <label>Sáb</label>
         <name>Saturday_Abbreviation</name>
+    </customLabels>
+    <customLabels>
+        <label>Guardar cambios</label>
+        <name>Save_Changes</name>
     </customLabels>
     <customLabels>
         <label>Salvado</label>
@@ -639,6 +663,10 @@
     <customLabels>
         <label>Mié</label>
         <name>Wednesday_Abbreviation</name>
+    </customLabels>
+    <customLabels>
+        <label>Peso</label>
+        <name>Weight</name>
     </customLabels>
     <customLabels>
         <label>Bienvenidos a Proesis</label>

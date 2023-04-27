@@ -28,8 +28,16 @@
             <outputField>et4ae5__HasOptedOutOfMobile__c</outputField>
         </mappingFields>
         <mappingFields>
+            <inputField>Preferred_Name__c</inputField>
+            <outputField>Preferred_Name__c</outputField>
+        </mappingFields>
+        <mappingFields>
             <inputField>isSMSVerified__c</inputField>
             <outputField>isSMSVerified__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>Street_Line_2__c</inputField>
+            <outputField>Street_Line_2__c</outputField>
         </mappingFields>
         <mappingFields>
             <inputField>isEmailVerified__c</inputField>
@@ -46,10 +54,6 @@
         <mappingFields>
             <inputField>Enable_Mobile_Push__c</inputField>
             <outputField>Enable_Mobile_Push__c</outputField>
-        </mappingFields>
-        <mappingFields>
-            <inputField>Preferred_Name__c</inputField>
-            <outputField>Preferred_Name__c</outputField>
         </mappingFields>
         <outputObject>Contact</outputObject>
     </objectMapping>

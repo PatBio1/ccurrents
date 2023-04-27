@@ -298,8 +298,22 @@
         <fullName>Goals_Tracker</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Goals_Tracker</shortDescription>
+        <shortDescription>Goals Tracker</shortDescription>
         <value>Goals Tracker</value>
+    </labels>
+    <labels>
+        <fullName>Height</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Height</shortDescription>
+        <value>Height</value>
+    </labels>
+    <labels>
+        <fullName>Home_Phone</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Home Phone</shortDescription>
+        <value>Home Phone</value>
     </labels>
     <labels>
         <fullName>How_Will_You_Get_To_Center</fullName>
@@ -433,6 +447,13 @@
         <protected>true</protected>
         <shortDescription>My Balance</shortDescription>
         <value>My Balance</value>
+    </labels>
+    <labels>
+        <fullName>My_Donations</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>My Donations</shortDescription>
+        <value>My Donations</value>
     </labels>
     <labels>
         <fullName>My_Location</fullName>
@@ -575,11 +596,46 @@
         <value>Popular Times</value>
     </labels>
     <labels>
+        <fullName>Prefix</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Prefix</shortDescription>
+        <value>Prefix</value>
+    </labels>
+    <labels>
         <fullName>Previous</fullName>
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Previous</shortDescription>
         <value>Previous</value>
+    </labels>
+    <labels>
+        <fullName>Primary_Center</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Primary Center</shortDescription>
+        <value>Primary Center</value>
+    </labels>
+    <labels>
+        <fullName>Primary_Language</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Primary Language</shortDescription>
+        <value>Primary Language</value>
+    </labels>
+    <labels>
+        <fullName>Profile_Change_Confirmation</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Profile Change - Confirmation</shortDescription>
+        <value>Your request has been submitted and noted for your Visit scheduled on {0}. Please bring documentation with proof of change to this visit to change your information.</value>
+    </labels>
+    <labels>
+        <fullName>Profile_Change_No_Visit</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Profile Change - No Visit</shortDescription>
+        <value>You must schedule a Visit with Proesis to change your profile. Please schedule one now to make changes at your next Visit. You can request changes once you schedule a new visit.</value>
     </labels>
     <labels>
         <fullName>Recommended_To_You</fullName>
@@ -643,6 +699,13 @@
         <protected>true</protected>
         <shortDescription>Saturday Abbreviation</shortDescription>
         <value>Sat</value>
+    </labels>
+    <labels>
+        <fullName>Save_Changes</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Save Changes</shortDescription>
+        <value>Save Changes</value>
     </labels>
     <labels>
         <fullName>Saved</fullName>
@@ -939,6 +1002,13 @@
         <value>Wed</value>
     </labels>
     <labels>
+        <fullName>Weight</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Weight</shortDescription>
+        <value>Weight</value>
+    </labels>
+    <labels>
         <fullName>Welcome_To_Proesis</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -1035,13 +1105,6 @@
         <protected>true</protected>
         <shortDescription>Schedule Your Appointment</shortDescription>
         <value>Schedule Your Appointment</value>
-    </labels>
-    <labels>
-        <fullName>My_Donations</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>My Donations</shortDescription>
-        <value>My Donations</value>
     </labels>
     <labels>
         <fullName>Per_Donation</fullName>

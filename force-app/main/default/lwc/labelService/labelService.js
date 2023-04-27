@@ -45,6 +45,8 @@ import firstName from '@salesforce/label/c.First_Name';
 import forgotPassword from '@salesforce/label/c.Forgot_Password';
 import fridayAbbreviation from '@salesforce/label/c.Friday_Abbreviation';
 import goalsTracker from '@salesforce/label/c.Goals_Tracker';
+import height from '@salesforce/label/c.Height';
+import homePhone from '@salesforce/label/c.Home_Phone';
 import howWillYouGetToCenter from '@salesforce/label/c.How_Will_You_Get_To_Center';
 import incorrectCode from '@salesforce/label/c.Incorrect_Code';
 import incorrectCodeMessage from '@salesforce/label/c.Incorrect_Code_Message';
@@ -88,9 +90,14 @@ import phone from '@salesforce/label/c.Phone';
 import plasmaDonationSavesLives from '@salesforce/label/c.Plasma_Donation_Saves_Lives';
 import pointBrandName from '@salesforce/label/c.Point_Brand_Name';
 import popularTimes from '@salesforce/label/c.Popular_Times';
+import prefix from '@salesforce/label/c.Prefix';
 import previous from '@salesforce/label/c.Previous';
+import primaryCenter from '@salesforce/label/c.Primary_Center';
+import primaryLanguage from '@salesforce/label/c.Primary_Language';
 import privacyPolicy from '@salesforce/label/c.Privacy_Policy';
 import privacyPolicyLink from '@salesforce/label/c.Privacy_Policy_Link';
+import profileChangeConfirmation from '@salesforce/label/c.Profile_Change_Confirmation';
+import profileChangeNoVisit from '@salesforce/label/c.Profile_Change_No_Visit';
 import promotionChartDescription from '@salesforce/label/c.Promotion_Chart_Description';
 import recommendedToYou from '@salesforce/label/c.Recommended_To_You';
 import rememberMe from '@salesforce/label/c.Remember_Me';
@@ -103,6 +110,7 @@ import resultsFor from '@salesforce/label/c.Results_For';
 import rewardsExplained from '@salesforce/label/c.Rewards_Explained';
 import rewardsExplanation from '@salesforce/label/c.Rewards_Explanation';
 import saturdayAbbreviation from '@salesforce/label/c.Saturday_Abbreviation';
+import saveChanges from '@salesforce/label/c.Save_Changes';
 import saved from '@salesforce/label/c.Saved';
 import schedule from '@salesforce/label/c.Schedule';
 import scheduleAppointment from '@salesforce/label/c.Schedule_Appointment';
@@ -147,6 +155,7 @@ import visitsRemainingForTier from '@salesforce/label/c.Visits_Remaining_For_Tie
 import walk from '@salesforce/label/c.Walk';
 import walletBalanceTitle from '@salesforce/label/c.Wallet_Balance_Title';
 import watchVideo from '@salesforce/label/c.Watch_Video';
+import weight from '@salesforce/label/c.Weight';
 import wednesdayAbbreviation from '@salesforce/label/c.Wednesday_Abbreviation';
 import welcomeToProesis from '@salesforce/label/c.Welcome_To_Proesis';
 import workingHours from '@salesforce/label/c.Working_Hours';
@@ -209,6 +218,8 @@ const labels = {
     forgotPassword,
     fridayAbbreviation,
     goalsTracker,
+    height,
+    homePhone,
     howWillYouGetToCenter,
     incorrectCode,
     incorrectCodeMessage,
@@ -252,9 +263,14 @@ const labels = {
     plasmaDonationSavesLives,
     pointBrandName,
     popularTimes,
+    prefix,
     previous,
+    primaryCenter,
+    primaryLanguage,
     privacyPolicy,
     privacyPolicyLink,
+    profileChangeConfirmation,
+    profileChangeNoVisit,
     promotionChartDescription,
     recommendedToYou,
     rememberMe,
@@ -267,6 +283,7 @@ const labels = {
     rewardsExplained,
     rewardsExplanation,
     saturdayAbbreviation,
+    saveChanges,
     saved,
     schedule,
     scheduleAppointment,
@@ -312,6 +329,7 @@ const labels = {
     walletBalanceTitle,
     watchVideo,
     wednesdayAbbreviation,
+    weight,
     welcomeToProesis,
     workingHours,
     yourBalanceLabel,

@@ -7,19 +7,19 @@ public without sharing class ProfileController {
 
     @AuraEnabled
     public static Id upsertLead(Profile profile) {
-        if (String.isNotEmpty(profile.email)) {
-            List<List<SObject>> matchingEmailSObjects = [FIND :profile.email IN EMAIL FIELDS RETURNING User, Lead];
-            if (matchingEmailSObjects != null && matchingEmailSObjects.size() > 0 && (matchingEmailSObjects[0].size() > 0 || matchingEmailSObjects[1].size() > 0)) {
-                List<Lead> matchingLeads = (List<Lead>) matchingEmailSObjects[1];
-
-                if ((matchingLeads.size() == 1 && matchingLeads[0].Id != profile.id) || matchingLeads.size() > 1) {
-                    throw new AuraHandledException('The provided email address is already in use.');
-                }
-            }
-        }
-
         try {
             Util.testExceptionHandling();
+
+            if (String.isNotEmpty(profile.email)) {
+                List<List<SObject>> matchingEmailSObjects = [FIND :profile.email IN EMAIL FIELDS RETURNING User, Lead];
+                if (matchingEmailSObjects != null && matchingEmailSObjects.size() > 0 && (matchingEmailSObjects[0].size() > 0 || matchingEmailSObjects[1].size() > 0)) {
+                    List<Lead> matchingLeads = (List<Lead>) matchingEmailSObjects[1];
+    
+                    if ((matchingLeads.size() == 1 && matchingLeads[0].Id != profile.id) || matchingLeads.size() > 1) {
+                        throw new AuraHandledException('The provided email address is already in use.');
+                    }
+                }
+            }
 
             Lead lead = new Lead();
             lead.Id = profile.id;
@@ -246,7 +246,8 @@ public without sharing class ProfileController {
             Util.testExceptionHandling();
 
             Database.LeadConvertResult leadConvertResult = convertLead(profile);
-            if (profile.isAcceptingMarketingComms != null && profile.isAcceptingMarketingComms) {
+
+            if (profile.isAcceptingMarketingComms == true) {
                 handleCreateMarketingConsent(leadConvertResult.getLeadId(), leadConvertResult.getContactId());
             }
 
@@ -296,6 +297,126 @@ public without sharing class ProfileController {
             }
 
             assignUserPermissionSet(profile.userId);
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
+    public static Profile getProfile() {
+        try {
+            Util.testExceptionHandling();
+
+            User user = [SELECT ContactId, LanguageLocaleKey FROM User WHERE Id = :UserInfo.getUserId()];
+
+            Contact contact = [
+                SELECT
+                    Salutation, FirstName, MiddleName, LastName, Suffix, Email, MobilePhone, HomePhone,
+                    Height__c, How_will_you_get_to_the_Center__c, MailingStreet, Street_Line_2__c,
+                    MailingCity, MailingState, MailingPostalCode, Weight__c,
+                    (SELECT Account.Name FROM AccountContactRelations WHERE Roles INCLUDES ('Donor'))
+                FROM
+                    Contact
+                WHERE
+                    Id = :user.ContactId
+            ];
+
+            Profile profile = new Profile();
+            profile.prefix = contact.Salutation;
+            profile.firstName = contact.FirstName;
+            profile.middleName = contact.MiddleName;
+            profile.lastName = contact.LastName;
+            profile.suffix = contact.Suffix;
+            profile.email = contact.Email;
+            profile.mobilePhone = contact.MobilePhone;
+            profile.homePhone = contact.HomePhone;
+            profile.height = contact.Height__c;
+            profile.centerName = contact.AccountContactRelations[0].Account.Name;
+            profile.howGetToCenter = contact.How_will_you_get_to_the_Center__c;
+            profile.street = contact.MailingStreet;
+            profile.street2 = contact.Street_Line_2__c;
+            profile.city = contact.MailingCity;
+            profile.state = contact.MailingState;
+            profile.postalCode = contact.MailingPostalCode;
+            profile.language = (user.LanguageLocaleKey.startsWith('es') ? 'es_US' : 'en_US');
+            profile.weight = contact.Weight__c;
+
+            return profile;
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
+    public static String changeProfile(Profile profile) {
+        try {
+            Util.testExceptionHandling();
+
+            User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
+
+            List<Visit__c> visits = [
+                SELECT
+                    Appointment__r.Datetime__c
+                FROM
+                    Visit__c
+                WHERE
+                    Donor__c = :user.ContactId
+                AND
+                    Appointment__r.Datetime__c > :DateTime.now()
+                AND
+                    Status__c != 'Complete'
+                ORDER BY
+                    Appointment__r.Datetime__c ASC
+                LIMIT
+                    1
+            ];
+
+            Map<String,Schema.SObjectField> contactFields = Contact.SObjectType.getDescribe().fields.getMap();
+
+            List<Field> fields = new List<Field>{
+                new Field('prefix', contactFields.get('Salutation').getDescribe().getlabel()),
+                new Field('firstName', contactFields.get('FirstName').getDescribe().getlabel()),
+                new Field('middleName', contactFields.get('MiddleName').getDescribe().getlabel()),
+                new Field('lastName', contactFields.get('LastName').getDescribe().getlabel()),
+                new Field('suffix', contactFields.get('Suffix').getDescribe().getlabel()),
+                new Field('email', contactFields.get('Email').getDescribe().getlabel()),
+                new Field('mobilePhone', contactFields.get('MobilePhone').getDescribe().getlabel()),
+                new Field('homePhone', contactFields.get('HomePhone').getDescribe().getlabel()),
+                new Field('height', contactFields.get('Height__c').getDescribe().getlabel()),
+                new Field('street', contactFields.get('MailingStreet').getDescribe().getlabel()),
+                new Field('street2', contactFields.get('Street_Line_2__c').getDescribe().getlabel()),
+                new Field('city', contactFields.get('MailingCity').getDescribe().getlabel()),
+                new Field('state', contactFields.get('MailingState').getDescribe().getlabel()),
+                new Field('postalCode', contactFields.get('MailingPostalCode').getDescribe().getlabel()),
+                new Field('weight', contactFields.get('Weight__c').getDescribe().getlabel())
+            };
+
+            Profile existingProfile = getProfile();
+
+            Map<String, Object> existingValues = (Map<String,Object>) JSON.deserializeUntyped(JSON.serialize(existingProfile));
+            Map<String, Object> values = (Map<String,Object>) JSON.deserializeUntyped(JSON.serialize(profile));
+
+            List<String> fieldValues = new List<String>();
+
+            for (Field field : fields) {
+                String existingValue = String.valueOf(existingValues.get(field.name));
+                String value = String.valueOf(values.get(field.name));
+                Boolean valuesEqual = (existingValue == value);
+
+                String fieldValue = (valuesEqual ? '' : '*') + field.label + ': ' + value;
+                fieldValues.add(fieldValue);
+            }
+
+            Task task = new Task();
+            task.WhoId = user.ContactId;
+            task.WhatId = visits[0].Id;
+            task.Subject = 'Information Change';
+            task.Description = String.join(fieldValues, '\n');
+            insert task;
+
+            String nextVisitTime = visits[0].Appointment__r.Datetime__c.format('E, d MMM ‘YY h:mm a');
+
+            return String.format(Label.Profile_Change_Confirmation, new List<String>{nextVisitTime});
         } catch (Exception e) {
             throw Util.createAuraHandledException(e);
         }
@@ -412,10 +533,16 @@ public without sharing class ProfileController {
         public Id centerId {get; set;}
 
         @AuraEnabled
+        public String centerName {get; set;}
+
+        @AuraEnabled
         public Id photoContentVersionId {get; set;}
 
         @AuraEnabled
         public String language {get; set;}
+
+        @AuraEnabled
+        public String prefix {get; set;}
 
         @AuraEnabled
         public String firstName {get; set;}
@@ -434,6 +561,15 @@ public without sharing class ProfileController {
 
         @AuraEnabled
         public String mobilePhone {get; set;}
+
+        @AuraEnabled
+        public String homePhone {get; set;}
+
+        @AuraEnabled
+        public Decimal height {get; set;}
+
+        @AuraEnabled
+        public Decimal weight {get; set;}
 
         @AuraEnabled
         public String street {get; set;}
@@ -467,5 +603,19 @@ public without sharing class ProfileController {
 
         @AuraEnabled
         public Boolean isAcceptingMarketingComms {get; set;}
+
     }
+
+    public class Field {
+
+        public String name;
+        public String label;
+
+        public Field(String name, String label) {
+            this.name = name;
+            this.label = label;
+        }
+
+    }
+
 }

@@ -48,6 +48,9 @@ public with sharing class ExceptionPaymentInvocable {
         @InvocableVariable
         public String reason;
 
+        @InvocableVariable
+        public Id transactionId;
+
     }
 
 }

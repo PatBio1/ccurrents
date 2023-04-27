@@ -2,6 +2,63 @@
 public with sharing class NotificationsControllerTest {
 
     @isTest
+    static void testHasUnreadNotificationsTrue() {
+        User experienceUser = TestUtil.createExperienceUser();
+
+        System.runAs(TestUtil.createAdminUser()) {
+            Message__c message = new Message__c();
+            message.Donor__c = experienceUser.ContactId;
+            message.Name = 'Subject';
+            message.Body__c = 'Body';
+            message.Expiration_Date__c = Date.today().addDays(5);
+            insert message;
+        }
+
+        System.runAs(experienceUser) {
+            Boolean hasUnreadNotifications = NotificationsController.hasUnreadNotifications();
+
+            System.assertEquals(true, hasUnreadNotifications);
+        }
+    }
+
+    @isTest
+    static void testHasUnreadNotificationsFalse() {
+        User experienceUser = TestUtil.createExperienceUser();
+
+        System.runAs(TestUtil.createAdminUser()) {
+            Message__c message = new Message__c();
+            message.Donor__c = experienceUser.ContactId;
+            message.Name = 'Subject';
+            message.Body__c = 'Body';
+            message.Expiration_Date__c = Date.today().addDays(-5);
+            insert message;
+        }
+
+        System.runAs(experienceUser) {
+            Boolean hasUnreadNotifications = NotificationsController.hasUnreadNotifications();
+
+            System.assertEquals(false, hasUnreadNotifications);
+        }
+    }
+
+    @isTest
+    static void testHasUnreadNotificationsException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                NotificationsController.hasUnreadNotifications();
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
     static void testGetNotificationsDonor() {
         User experienceUser = TestUtil.createExperienceUser();
 

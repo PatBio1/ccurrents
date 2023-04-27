@@ -455,3 +455,17 @@ ON t.Id = dpeEmail.TransactionId
 WHERE
 dpeEmail.TransactionId IS NULL AND
 DATEDIFF(DAY, DATEADD(DAY, -7, t.CreatedDate), t.CreatedDate) <= 7
+
+-- Post Donation Survey Response Processing
+SELECT p.[Visit Id] AS VisitId,
+p.Rating AS Rating,
+p.Feedback AS Feedback
+
+FROM "Post Donation Survey Responses" as p
+
+LEFT JOIN (Select p2.VisitId AS VisitId
+FROM "Post Donation Survey Response Processing" AS p2)
+AS pdsrp
+ON p.[Visit Id] = pdsrp.VisitId
+
+WHERE pdsrp.VisitId IS NULL

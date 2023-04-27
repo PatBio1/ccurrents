@@ -48,6 +48,10 @@ public with sharing class PromotionPaymentInvocable {
         @InvocableVariable
         public String reason;
 
+        @InvocableVariable
+        public Id transactionId;
+
+
     }
 
 }

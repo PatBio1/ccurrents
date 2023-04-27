@@ -253,6 +253,17 @@ public with sharing class CenterScheduleController {
         addVisit(donorId, soonestNextAvailableAppointment[0].Id, centerId);
     }
 
+    @AuraEnabled
+    public static void linkPaymentCard(String cardId, Id donorId) {
+        OnbePaymentService linkPaymentCardService = new OnbePaymentService();
+
+        try {
+            linkPaymentCardService.setupPaymentServiceAccount(cardId, donorId);
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
     public class RescheduleSlot {
         @AuraEnabled
         public Id appointmentId;

@@ -6,6 +6,8 @@
 public with sharing class DonorCompInvocableTest {
 
     static Integer TEST_DONATION_THRESHOLD = 5;
+    static Integer TEST_DONATION_THRESHOLD_WINDOW = 30;
+    static String TEST_BONUS_LEVEL_NAME = 'Bonus Level 1';
 
     @TestSetup
     static void makeData() {
@@ -36,7 +38,7 @@ public with sharing class DonorCompInvocableTest {
         Level__c testLevel1 = new Level__c(Name = 'Level 1', Donation_Payment__c = 100, Donation_Points__c = 1000, Threshold_Points__c = 500, Threshold_Payment__c = 50, Next_Level__c = testLevel2.Id, isActive__c = true, isVisible__c = true);
         insert testLevel1;
 
-        Level__c bonusLevel1 = new Level__c(Name = 'Bonus Level 1', Donation_Threshold__c = TEST_DONATION_THRESHOLD - 1, Threshold_Points__c = 333, Threshold_Payment__c = 33, isActive__c = true, isVisible__c = false);
+        Level__c bonusLevel1 = new Level__c(Name = TEST_BONUS_LEVEL_NAME, Donation_Threshold__c = TEST_DONATION_THRESHOLD - 1, Threshold_Points__c = 333, Threshold_Payment__c = 33, isActive__c = true, isVisible__c = false);
         insert bonusLevel1;
 
         Account donorAccount1 = TestUtil.createDonor('123456');
@@ -69,6 +71,8 @@ public with sharing class DonorCompInvocableTest {
 
         insert negativeTestCampaign;
 
+        Proesis_Settings__c newSettings = new Proesis_Settings__c(Loyalty_Threshold_Window__c = TEST_DONATION_THRESHOLD_WINDOW);
+        insert newSettings;
     }
 
     @IsTest
@@ -118,10 +122,11 @@ public with sharing class DonorCompInvocableTest {
         List<CampaignMember> cmChecks = [SELECT Id, Eligible_Donation_Count__c FROM CampaignMember WHERE Eligible_Donation_Count__c > 0];
 
         Assert.areEqual(Constants.VISIT_STATUS_COMPLETE, compVisits[0].Status__c);
-        Assert.areEqual(donorCompEvents[0].Timestamp__c, compVisits[0].Donation_Complete__c);
         Assert.areEqual(Constants.VISIT_OUTCOME_DONATION, compVisits[0].Outcome__c);
+        Assert.areEqual(donorCompEvents[0].Timestamp__c, compVisits[0].Donation_Complete__c);
         Assert.areEqual(donorCompEvents[0].Collection_Number__c, compVisits[0].Collection_Number__c);
         Assert.areEqual(donorCompEvents[0].Collection_Volume__c, compVisits[0].Donation_Volume__c);
+
         Assert.areEqual(1, cmChecks.size());
         Assert.areEqual(1, cmChecks[0].Eligible_Donation_Count__c);
     }
@@ -190,6 +195,97 @@ public with sharing class DonorCompInvocableTest {
         // Level 1 Transaction
         Assert.areEqual(233, donors[0].Transactions__r[0].Amount_Currency__c, 'First Transaction should have Amount_Currency__c = 233');
         Assert.areEqual(1333, donors[0].Transactions__r[0].Amount_Points__c, 'First Transaction should have Amount_Points__c = 1333');
+
+        // Level 2 Transaction
+        Assert.areEqual(300, donors[0].Transactions__r[1].Amount_Currency__c, 'Last Transaction should have Amount_Currency__c = 333');
+        Assert.areEqual(2000, donors[0].Transactions__r[1].Amount_Points__c, 'Last Transaction should have Amount_Points__c = 2333');
+    }
+
+    @IsTest 
+    static void testHandleCheckLoyaltyThresholdWindow() {
+        List<Account> donorAccounts = [SELECT Id, PersonContactId, DonorId__c FROM Account WHERE DonorId__c != null LIMIT 1];
+
+        List<Appointment__c> testAppointments = new List<Appointment__c>();
+        Id scheduledId = [SELECT Id FROM Schedule__c LIMIT 1]?.Id;
+        Datetime currentDatetime = Datetime.now().addDays(-14 * TEST_DONATION_THRESHOLD);
+
+        for (Integer i = 0; i < TEST_DONATION_THRESHOLD; i++) {
+            testAppointments.add(TestUtil.createTestAppointment(scheduledId, currentDatetime));
+            currentDatetime = currentDatetime.addDays(14);
+        }
+        insert testAppointments;
+
+        List<Visit__c> testVisits = new List<Visit__c>();
+        Id centerDonationTypeId = [SELECT Id FROM Center_Donation_Type__c LIMIT 1][0].Id;
+
+        for (Integer i = 0; i < TEST_DONATION_THRESHOLD - 1; i++) {
+            Visit__c testVisit = TestUtil.createVisit(donorAccounts[0].PersonContactId, centerDonationTypeId, testAppointments[i].Id);
+            testVisit.Status__c = 'Complete';
+            testVisit.Outcome__c = 'Donation';
+
+            testVisits.add(testVisit);
+        }
+        insert testVisits;
+
+        // Create some promotion transaction line items in order to prevent the donor from receiving a threshold payment
+        List<Transaction__c> testTransactions = new List<Transaction__c>();
+        List<Txn_Line_Item__c> promoLineItems = new List<Txn_Line_Item__c>();
+
+        for(Account donorAccount : donorAccounts) {
+            testTransactions.add(new Transaction__c(Donor__c = donorAccount.PersonContactId, Visit__c = testVisits[testVisits.size() - 1].Id, Type__c = 'Debit'));
+        }
+        insert testTransactions;
+
+        Level__c bonusLevel = [SELECT Id FROM Level__c WHERE Name = :TEST_BONUS_LEVEL_NAME LIMIT 1];
+        for(Transaction__c testTransaction : testTransactions) {
+            promoLineItems.add(new Txn_Line_Item__c(Transaction__c = testTransaction.Id, Promotion_Level__c = bonusLevel.Id));
+        }
+        insert promoLineItems;
+
+        // Set the CreatedDate to be inside the threshold window
+        for(Txn_Line_Item__c promoLineItem : promoLineItems) {
+            Test.setCreatedDate(promoLineItem.Id, Datetime.now().addDays(-TEST_DONATION_THRESHOLD_WINDOW + 1));
+        }
+
+        Visit__c crossDonationThresholdVisit = TestUtil.createVisit(donorAccounts[0].PersonContactId, centerDonationTypeId, testAppointments[TEST_DONATION_THRESHOLD - 1].Id);
+        crossDonationThresholdVisit.Status__c = 'Complete';
+        crossDonationThresholdVisit.Outcome__c = 'Donation';
+
+        Test.startTest();
+        // Should create normal transaction with Level 1 Rates
+        DonorCompInvocable.handleCreateDonationTransactions(new List<List<Donor_Comp__e>>{
+            new List<Donor_Comp__e>{
+                new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now())
+            }
+        });
+
+        insert crossDonationThresholdVisit;
+
+        // Should create transaction with threshold payments
+        DonorCompInvocable.handleCreateDonationTransactions(new List<List<Donor_Comp__e>>{
+            new List<Donor_Comp__e>{
+                new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now())
+            }
+        });
+        Test.stopTest();
+
+        List<Contact> donors = [
+            SELECT Id, Loyalty_Level__r.Name, (
+                SELECT Id, Amount_Currency__c, Amount_Points__c 
+                FROM Transactions__r
+                WHERE Amount_Currency__c > 0 
+                ORDER BY Name ASC
+            )
+            FROM Contact
+            WHERE Id IN (SELECT PersonContactId FROM Account WHERE Id = :donorAccounts[0].Id)
+        ];
+
+        Assert.areEqual('Level 2', donors[0].Loyalty_Level__r.Name, 'Donor should be Level 2 after 5 visits');
+        Assert.areEqual(2, donors[0].Transactions__r.size(), 'Donor should have 2 transactions');
+
+        // Level 1 Transaction
+        Assert.areEqual(200, donors[0].Transactions__r[0].Amount_Currency__c, 'First Transaction should have Amount_Currency__c = 233');
+        Assert.areEqual(1000, donors[0].Transactions__r[0].Amount_Points__c, 'First Transaction should have Amount_Points__c = 1333');
 
         // Level 2 Transaction
         Assert.areEqual(300, donors[0].Transactions__r[1].Amount_Currency__c, 'Last Transaction should have Amount_Currency__c = 333');

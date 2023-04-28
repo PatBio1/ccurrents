@@ -126,8 +126,32 @@ public without sharing class DonorCompInvocable {
             WHERE Account.DonorId__c IN :donorNumbersToQuery
         ];
 
+        Decimal loyaltyThresholdWindow = Proesis_Settings__c.getInstance()?.Loyalty_Threshold_Window__c;
+        if (loyaltyThresholdWindow == null) {
+            loyaltyThresholdWindow = 0;
+        }
+
+        Map<Id, Map<Id, AggregateResult>> donorIdToActiveLastPromotionDatesByTier = new Map<Id, Map<Id, AggregateResult>>();
+        Datetime loyaltyThresholdDate = Datetime.now().addDays(-Integer.valueOf(loyaltyThresholdWindow));
+
+        for(AggregateResult result : [
+            SELECT Transaction__r.Donor__c donor, Promotion_Level__c loyaltyTier, MAX(CreatedDate) lastPromotionDate 
+            FROM Txn_Line_Item__c 
+            WHERE Promotion_Level__c != null AND CreatedDate >= :loyaltyThresholdDate AND Transaction__r.Donor__c IN :targetContacts
+            GROUP BY Transaction__r.Donor__c, Promotion_Level__c
+        ]) {
+            Map<Id, AggregateResult> activeLastPromotionDatesByTier = donorIdToActiveLastPromotionDatesByTier.get((Id)result.get('donor'));
+            if (activeLastPromotionDatesByTier == null) {
+                activeLastPromotionDatesByTier = new Map<Id, AggregateResult>();
+            }
+
+            activeLastPromotionDatesByTier.put((Id)result.get('loyaltyTier'), result);
+            donorIdToActiveLastPromotionDatesByTier.put((Id)result.get('donor'), activeLastPromotionDatesByTier);
+        }
+
         Map<Id, Integer> donorIdToTotalVisitCount = DonorBatchableHelper.calculateDonor365DayVisitTotals(targetContacts);
         for (Contact foundContact : targetContacts) {
+            Map<Id, AggregateResult> activeLastPromotionDatesByTier = donorIdToActiveLastPromotionDatesByTier.get(foundContact.Id);
             Integer totalVisitCount = donorIdToTotalVisitCount.get(foundContact.Id);
 
             if (foundContact.Visits__r == null || foundContact.Visits__r.size() == 0) {
@@ -181,24 +205,38 @@ public without sharing class DonorCompInvocable {
             // These levels provide one time payments when the threshold is hit
             for (Decimal bonusLevelThreshold : donationThresholdToBonusLevels.keySet()) {
                 if (totalVisitCount == bonusLevelThreshold) {
-                    wasPromotionTriggered = true;
-
                     for (Level__c bonusLevel : donationThresholdToBonusLevels.get(bonusLevelThreshold)) {
+                        // Check to make sure the bonus level hasn't be triggered in the last 'Loyalty Threshold Window'
+                        // If it has been triggered, skip it
+                        if (activeLastPromotionDatesByTier != null) {
+                            AggregateResult lastPromotionDate = activeLastPromotionDatesByTier.get(bonusLevel.Id);
+
+                            if (lastPromotionDate != null && lastPromotionDate.get('lastPromotionDate') != null) {
+                                continue;
+                            }
+                        }
+
                         if (bonusLevel.Threshold_Points__c != null && bonusLevel.Threshold_Points__c > 0) {
+                            wasPromotionTriggered = true;
+
                             donorIdToTxnLineItems.get(foundContact.Id).add(new Txn_Line_Item__c(
                                 Item__c = bonusLevel.Name + ' - Bonus Points',
                                 Quantity__c = 1,
                                 Type__c = 'Points',
-                                Unit_Cost__c = bonusLevel.Threshold_Points__c
+                                Unit_Cost__c = bonusLevel.Threshold_Points__c,
+                                Promotion_Level__c = bonusLevel.Id
                             ));
                         }
 
                         if (bonusLevel.Threshold_Payment__c != null && bonusLevel.Threshold_Payment__c > 0) {
+                            wasPromotionTriggered = true;
+
                             donorIdToTxnLineItems.get(foundContact.Id).add(new Txn_Line_Item__c(
                                 Item__c = bonusLevel.Name + ' - Bonus Payment',
                                 Quantity__c = 1,
                                 Type__c = 'Currency',
-                                Unit_Cost__c = bonusLevel.Threshold_Payment__c
+                                Unit_Cost__c = bonusLevel.Threshold_Payment__c,
+                                Promotion_Level__c = bonusLevel.Id
                             ));
                         }
                     }
@@ -221,31 +259,41 @@ public without sharing class DonorCompInvocable {
             // If it is and there is another level, promote the donor!
             if (
                 foundContact.Loyalty_Level__c != null &&
-                    targetPromotionLevel != null &&
-                    totalVisitCount == targetPromotionLevel.Donation_Threshold__c
+                targetPromotionLevel != null &&
+                totalVisitCount == targetPromotionLevel.Donation_Threshold__c
             ) {
                 wasPromotionTriggered = true;
                 donorsToUpdate.add(new Account(Id = foundContact.AccountId, Loyalty_Level__pc = targetPromotionLevel.Id));
 
                 // Apply New Level Bonuses onto the line items
-                List<Txn_Line_Item__c> lineItems = donorIdToTxnLineItems.get(foundContact.Id);
+                // Check to make sure the bonus level hasn't be triggered in the last 'Loyalty Threshold Window'
+                // If it has been triggered, the donor shouldn't receive the bonus
+                if (activeLastPromotionDatesByTier != null) {
+                    AggregateResult lastPromotionDate = activeLastPromotionDatesByTier.get(targetPromotionLevel.Id);
 
-                if (targetPromotionLevel.Threshold_Points__c != null && targetPromotionLevel.Threshold_Points__c > 0) {
-                    lineItems.add(new Txn_Line_Item__c(
-                        Item__c = 'Threshold Points',
-                        Quantity__c = 1,
-                        Type__c = 'Points',
-                        Unit_Cost__c = targetPromotionLevel.Threshold_Points__c
-                    ));
-                }
+                    if (lastPromotionDate == null || lastPromotionDate.get('lastPromotionDate') == null) {
+                        List<Txn_Line_Item__c> lineItems = donorIdToTxnLineItems.get(foundContact.Id);
 
-                if (targetPromotionLevel.Threshold_Payment__c != null && targetPromotionLevel.Threshold_Payment__c > 0) {
-                    lineItems.add(new Txn_Line_Item__c(
-                        Item__c = 'Threshold Payment',
-                        Quantity__c = 1,
-                        Type__c = 'Currency',
-                        Unit_Cost__c = targetPromotionLevel.Threshold_Payment__c
-                    ));
+                        if (targetPromotionLevel.Threshold_Points__c != null && targetPromotionLevel.Threshold_Points__c > 0) {
+                            lineItems.add(new Txn_Line_Item__c(
+                                Item__c = 'Threshold Points',
+                                Quantity__c = 1,
+                                Type__c = 'Points',
+                                Unit_Cost__c = targetPromotionLevel.Threshold_Points__c,
+                                Promotion_Level__c = targetPromotionLevel.Id
+                            ));
+                        }
+
+                        if (targetPromotionLevel.Threshold_Payment__c != null && targetPromotionLevel.Threshold_Payment__c > 0) {
+                            lineItems.add(new Txn_Line_Item__c(
+                                Item__c = 'Threshold Payment',
+                                Quantity__c = 1,
+                                Type__c = 'Currency',
+                                Unit_Cost__c = targetPromotionLevel.Threshold_Payment__c,
+                                Promotion_Level__c = targetPromotionLevel.Id
+                            ));
+                        }
+                    }
                 }
             }
 

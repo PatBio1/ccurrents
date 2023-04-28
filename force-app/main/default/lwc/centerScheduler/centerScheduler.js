@@ -487,6 +487,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appRow.availability = appointment.availability;
             appRow.loyaltyAvailability = appointment.loyaltyAvailability;
             appRow.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability) && !appointment.isInThePast);
+
+            if (this.filters.hasActiveFilters()) {
+                this.applyFilters();
+            }
         }).catch(err => {
             console.log(err.message);
         })

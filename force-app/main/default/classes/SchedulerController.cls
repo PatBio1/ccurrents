@@ -51,7 +51,7 @@ public without sharing class SchedulerController {
             };
 
             if (appointmentDate >= Date.today()) {
-                DateTime startTime = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 0, 0, 0);
+                DateTime startTime = DateTime.newInstanceGmt(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 0, 0, 0);
                 DateTime endTime = startTime.addDays(1).addSeconds(-1);
 
                 List<Appointment__c> appointmentRecords = [

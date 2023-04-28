@@ -6,6 +6,7 @@ import getCenterRate from '@salesforce/apex/RateSelector.getCenterRate';
 import getCurrentDonorVisitCount from '@salesforce/apex/VisitSelector.getCurrentDonorVisitCount';
 import getCenter from '@salesforce/apex/SchedulerController.getCenter';
 import getAppointments from '@salesforce/apex/SchedulerController.getAppointments';
+import getRescheduleAppointments from '@salesforce/apex/SchedulerController.getRescheduleAppointments';
 import scheduleVisit from '@salesforce/apex/SchedulerController.scheduleVisit';
 import rescheduleVisit from '@salesforce/apex/SchedulerController.rescheduleVisit';
 import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsInfo';
@@ -191,25 +192,40 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
             centerId: this.center.id,
             appointmentDate: this.appointmentDate
         };
+    
+        if (!this.isInRescheduleMode) {
+            getAppointments(request).then(response => {
+                this.appointmentGroups = response;
 
-        console.log('request', JSON.stringify(request));
-
-        getAppointments(request).then(response => {
-            console.log('response', response);
-
-            this.appointmentGroups = response;
-
-            this.appointmentGroups.forEach((appointmentGroup) => {
-                appointmentGroup.appointments.forEach((appointment) => {
-                    appointment.classes = 'appointment-button';
-                    appointment.available = (appointment.availability > 0);
+                this.appointmentGroups.forEach((appointmentGroup) => {
+                    appointmentGroup.appointments.forEach((appointment) => {
+                        appointment.classes = 'appointment-button';
+                        appointment.available = (appointment.availability > 0);
+                    });
                 });
+            }).catch((error) => {
+                util.showToast(this, 'error', labels.error, error);
+            }).finally(() => {
+                this.loading = false;
             });
-        }).catch((error) => {
-            util.showToast(this, 'error', labels.error, error);
-        }).finally(() => {
-            this.loading = false;
-        });
+        } else {
+            request.visitToReschedule = this.pageRef.state.rescheduleVisitId;
+
+            getRescheduleAppointments(request).then(response => {
+                this.appointmentGroups = response;
+
+                this.appointmentGroups.forEach((appointmentGroup) => {
+                    appointmentGroup.appointments.forEach((appointment) => {
+                        appointment.classes = 'appointment-button';
+                        appointment.available = (appointment.availability > 0);
+                    });
+                });
+            }).catch((error) => {
+                util.showToast(this, 'error', labels.error, error);
+            }).finally(() => {
+                this.loading = false;
+            });
+        }
     }
 
     async loadDonorRewardsInfo() {

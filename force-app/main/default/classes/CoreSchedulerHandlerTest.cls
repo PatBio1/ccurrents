@@ -238,4 +238,18 @@ public class CoreSchedulerHandlerTest {
             Assert.areEqual(0, updatedAppointment.Booked__c, 'Appointment should be marked as booked.');
         }
     }
+
+    @IsTest
+    static void testGetSoonestNextRescheduleVisitDate() {
+        // Contact targetDonor = [SELECT Id, Soonest_Next_Visit__c FROM Contact WHERE Soonest_Next_Visit__c != null LIMIT 1];
+        // Datetime returnedSoonestNextVisitDate;
+
+        // Test.startTest();
+        // System.runAs(TestUtil.createAdminUser()) {
+        //     returnedSoonestNextVisitDate = CoreSchedulerHandler.getSoonestNextRescheduleVisitDate(targetDonor.Id);
+        // }
+        // Test.stopTest();
+
+        // Assert.areEqual(targetDonor.Soonest_Next_Visit__c, returnedSoonestNextVisitDate, 'The soonest next visit date should be returned');
+    }
 }

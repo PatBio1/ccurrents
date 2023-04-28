@@ -31,7 +31,18 @@ public without sharing class SchedulerController {
     @AuraEnabled
     public static List<AppointmentGroup> getAppointments(Id centerId, Date appointmentDate) {
         User user = [SELECT Contact.Soonest_Next_Visit__c FROM User WHERE Id = :UserInfo.getUserId()];
+        return getAppointmentRecords(centerId, appointmentDate, user.Contact.Soonest_Next_Visit__c.date());
+    }
 
+    @AuraEnabled
+    public static List<AppointmentGroup> getRescheduleAppointments(Id centerId, Id visitToReschedule, Date appointmentDate) {
+        User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
+        Datetime rescheduleSoonestNextVisit = CoreSchedulerHandler.getSoonestNextRescheduleVisitDate(user.ContactId, visitToReschedule);
+
+        return getAppointmentRecords(centerId, appointmentDate, rescheduleSoonestNextVisit.date());
+    }
+
+    private static List<AppointmentGroup> getAppointmentRecords(Id centerId, Date appointmentDate, Date soonestNextVisit) {
         try {
             List<AppointmentGroup> appointmentGroups = new List<AppointmentGroup>{
                 new AppointmentGroup('AM'),
@@ -51,7 +62,7 @@ public without sharing class SchedulerController {
                     WHERE
                         Schedule__r.Center__c = :centerId
                     AND 
-                        Datetime__c >= :user.Contact.Soonest_Next_Visit__c
+                        Datetime__c >= :soonestNextVisit
                     AND
                         Datetime__c >= :startTime
                     AND

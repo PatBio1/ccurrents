@@ -56,7 +56,7 @@ public without sharing class SchedulerController {
 
                 List<Appointment__c> appointmentRecords = [
                     SELECT
-                        Datetime__c, Availability__c
+                        Datetime__c, Availability__c, Availability_Loyalty__c 
                     FROM
                         Appointment__c
                     WHERE
@@ -74,11 +74,18 @@ public without sharing class SchedulerController {
                 DateTime elevenAM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 11, 0, 0);
                 DateTime twoPM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 14, 0, 0);
 
+                Contact targetDonor = [SELECT Id, Loyalty_Level__c FROM Contact WHERE Id IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()) LIMIT 1];
+                Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(targetDonor.Loyalty_Level__c);
+
                 for (Appointment__c appointmentRecord : appointmentRecords) {
                     Appointment appointment = new Appointment();
                     appointment.id = appointmentRecord.Id;
                     appointment.name = appointmentRecord.Datetime__c.format('h:mm');
+
                     appointment.availability = (appointmentRecord.Availability__c == null ? 0 : appointmentRecord.Availability__c.intValue());
+                    if (loyaltyLevel > 0) {
+                        appointment.availability += (appointmentRecord.Availability_Loyalty__c == null ? 0 : appointmentRecord.Availability_Loyalty__c.intValue());
+                    }
 
                     if (appointmentRecord.Datetime__c < elevenAM) {
                         appointmentGroups[0].appointments.add(appointment);

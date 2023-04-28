@@ -7,7 +7,7 @@
         <div if:true={rewardsInfo} class="box slds-text-align_center slds-p-around_small slds-m-bottom_medium">
             <div class="main-avatar-container">
                 <span class="loyalty-badge">
-                    <c-loyalty-tier-badge width="24px" height="24px" loyalty-tier-name={rewardsInfo.currentLoyaltyLevel}></c-loyalty-tier-badge>
+                    <c-loyalty-tier-badge width="24px" height="24px" loyalty-tier-name={rewardsInfo.currentLoyaltyLevel} hide-name></c-loyalty-tier-badge>
                 </span>
                 <lightning-avatar variant="circle" src={photoUrl} fallback-icon-name="standard:user" size="large"></lightning-avatar>
             </div>

@@ -132,6 +132,29 @@ public without sharing class CoreSchedulerHandler {
         }
     }
 
+    @AuraEnabled
+    public static DateTime getSoonestNextRescheduleVisitDate(Id donorId, Id visitToReschedule) {
+        // Create a database savepoint and mark the visit as rescheduled in order to force recalculation
+        Savepoint sp = Database.setSavepoint();
+        Datetime newRescheduleDate = null;
+
+        try {
+            update new Visit__c(
+                Id = visitToReschedule,
+                Status__c = 'Complete',
+                Outcome__c = 'Rescheduled'
+            );
+
+            newRescheduleDate = [SELECT Soonest_Next_Visit__c FROM Contact WHERE Id = :donorId LIMIT 1]?.Soonest_Next_Visit__c;
+        } catch(Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        } finally {
+            Database.rollback(sp);
+        }
+
+        return newRescheduleDate;
+    }
+
     public class RescheduleBatchRequest {
         public List<RescheduleRequest> rescheduleRequests;
     

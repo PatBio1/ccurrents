@@ -17,6 +17,8 @@ import CreateScheduleModal from "c/createScheduleModal";
 import AddVisitModal from "c/addVisitModal";
 import CreateDonorModal from 'c/createDonorModal';
 
+import hasCenterManagerPerms from '@salesforce/customPermission/Center_Manager_Actions';
+
 export default class CenterScheduler extends NavigationMixin(LightningElement) {
     statusOptions;
     outcomeOptions;
@@ -72,6 +74,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
     dateDisabled = true;
     loading = true;
     popYFlipPoint;
+
+    get isCenterManager() {
+        return (hasCenterManagerPerms);
+    }
 
     get cantRefresh() {
         return (this.dateDisabled || !this.selectedDate)
@@ -481,6 +487,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appRow.availability = appointment.availability;
             appRow.loyaltyAvailability = appointment.loyaltyAvailability;
             appRow.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability) && !appointment.isInThePast);
+
+            if (this.filters.hasActiveFilters()) {
+                this.applyFilters();
+            }
         }).catch(err => {
             console.log(err.message);
         })

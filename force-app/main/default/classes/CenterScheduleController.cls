@@ -200,11 +200,6 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
-    public static DateTime getSoonestNextRescheduleVisitDate(Id donorId) {
-        return [SELECT Id, Soonest_Next_Visit__c FROM Contact WHERE Id = :donorId LIMIT 1]?.Soonest_Next_Visit__c;
-    }
-
-    @AuraEnabled
     public static List<RescheduleSlot> getAvailableRescheduleAppointmentRange(Id centerId, DateTime currentDateTime, DateTime soonestNextVisit, DateTime searchStartDateTime, DateTime searchEndDateTime, Boolean isLoyaltyDonor) {
         String appointmentQuery = 'SELECT Id, DateTime__c FROM Appointment__c WHERE Schedule__r.Center__c = :centerId AND  DateTime__c >= :currentDateTime AND DateTime__c >= :soonestNextVisit AND DateTime__c >= :targetStartTime AND DateTime__c <= :targetEndTime';
         if (isLoyaltyDonor) {

@@ -253,6 +253,129 @@ public with sharing class CenterScheduleController {
         addVisit(donorId, soonestNextAvailableAppointment[0].Id, centerId);
     }
 
+    @AuraEnabled
+    public static void updateAppointmentSlotCapacity(Id appointmentId, Decimal capacityChange) {
+        Appointment__c targetAppointmentSlot;
+        try {
+            targetAppointmentSlot = [
+                SELECT Id, Capacity__c, Booked__c, Booked_Loyalty__c, Datetime__c, (
+                    SELECT Id, Donor__c, Donor__r.Loyalty_Level__c 
+                    FROM Appointments__r 
+                    ORDER BY Donor__r.Total_Visits_365d__c ASC NULLS FIRST
+                ) 
+                FROM Appointment__c 
+                WHERE Id = :appointmentId
+                LIMIT 1
+            ];
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+
+        targetAppointmentSlot.Capacity__c += capacityChange;
+        if (targetAppointmentSlot.Capacity__c < 0) {
+            targetAppointmentSlot.Capacity__c = 0;
+        }
+
+        Decimal bookedValue = (targetAppointmentSlot.Booked__c != null) ? targetAppointmentSlot.Booked__c : 0;
+        Decimal bookedLoyaltyValue = (targetAppointmentSlot.Booked_Loyalty__c != null) ? targetAppointmentSlot.Booked_Loyalty__c : 0;
+        Decimal capacityValue = (targetAppointmentSlot.Capacity__c != null) ? targetAppointmentSlot.Capacity__c : 0;
+
+        Decimal capacityVsBookedDiff = capacityValue - (bookedValue + bookedLoyaltyValue);
+        if (capacityVsBookedDiff < 0) {
+            Decimal amountOfVisitsToReschedule = capacityVsBookedDiff * -1;
+
+            List<Visit__c> visitsToReschedule = new List<Visit__c>();
+            Boolean areLoyaltyDonorsIncluded = false;
+
+            for (Visit__c visit : targetAppointmentSlot.Appointments__r) {
+                if (amountOfVisitsToReschedule == 0) {
+                    break;
+                }
+
+                visitsToReschedule.add(visit);
+                amountOfVisitsToReschedule--;
+
+                if (!areLoyaltyDonorsIncluded && LoyaltyLevelService.getLoyaltyLevel(visit.Donor__r.Loyalty_Level__c) > 0) {
+                    areLoyaltyDonorsIncluded = true;
+                }
+            }
+
+            List<Appointment__c> appointmentsToRescheduleTo;
+            if (areLoyaltyDonorsIncluded) {
+                appointmentsToRescheduleTo = [
+                    SELECT Id
+                    FROM Appointment__c
+                    WHERE (Availability__c > 0 OR  Availability_Loyalty__c > 0) AND
+                        Datetime__c > :targetAppointmentSlot.Datetime__c
+                    ORDER BY Datetime__c ASC
+                    LIMIT :visitsToReschedule.size()
+                ];
+            } else {
+                appointmentsToRescheduleTo = [
+                    SELECT Id, Availability__c, Availability_Loyalty__c
+                    FROM Appointment__c
+                    WHERE Availability__c > 0 AND 
+                        Datetime__c > :targetAppointmentSlot.Datetime__c
+                    ORDER BY Datetime__c ASC
+                    LIMIT :visitsToReschedule.size()
+                ];
+            }
+            
+            if (appointmentsToRescheduleTo.size() == 0) {
+                throw new AuraHandledException('There are no available appointments to reschedule overflow donors to.');
+            }
+
+            List<CoreSchedulerHandler.RescheduleRequest> rescheduleRequests = new List<CoreSchedulerHandler.RescheduleRequest>();
+            Map<Id, Decimal> appointmentIdToAdjustedAvailability = new Map<Id, Decimal>();
+            Map<Id, Decimal> appointmentIdToAdjustedLoyaltyAvailability = new Map<Id, Decimal>();
+
+            for (Integer i = 0; i < visitsToReschedule.size(); i++) {
+                Appointment__c targetAppointment;
+
+                for(Appointment__c appointment : appointmentsToRescheduleTo) {
+                    // Since formula fields aren't writeable and we aren't updating the slots (reschedule function does that), we need to locally track the adjusted availability
+                    Decimal adjustedAvailability = appointmentIdToAdjustedAvailability.get(appointment.Id);
+                    if (adjustedAvailability == null) {
+                        adjustedAvailability = appointment.Availability__c;
+                    }
+
+                    Decimal adjustedLoyaltyAvailability = appointmentIdToAdjustedLoyaltyAvailability.get(appointment.Id);
+                    if (adjustedLoyaltyAvailability == null) {
+                        adjustedLoyaltyAvailability = appointment.Availability_Loyalty__c;
+                    }
+
+                    if (LoyaltyLevelService.getLoyaltyLevel(visitsToReschedule[i].Donor__r.Loyalty_Level__c) > 0 && adjustedAvailability > 0) {
+                        targetAppointment = appointment;
+                        appointmentIdToAdjustedAvailability.put(appointment.Id, adjustedAvailability - 1);
+
+                        break;
+                    } else if (adjustedLoyaltyAvailability > 0) {
+                        targetAppointment = appointment;
+                        appointmentIdToAdjustedLoyaltyAvailability.put(appointment.Id, adjustedLoyaltyAvailability - 1);
+
+                        break;
+                    }
+                }
+
+                if (targetAppointment == null) {
+                    throw new AuraHandledException('There are not enough appointments to reschedule overflow donors to.');
+                }
+
+                rescheduleRequests.add(new CoreSchedulerHandler.RescheduleRequest(visitsToReschedule[i].Id, targetAppointment.Id));
+            }
+
+            if (rescheduleRequests.size() > 0) {
+                CoreSchedulerHandler.rescheduleVisits(new CoreSchedulerHandler.RescheduleBatchRequest(rescheduleRequests));
+            }
+        }
+
+        try {
+            update targetAppointmentSlot;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
     public class RescheduleSlot {
         @AuraEnabled
         public Id appointmentId;

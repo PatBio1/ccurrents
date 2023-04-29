@@ -9,6 +9,7 @@ import OUTCOME_FIELD from '@salesforce/schema/Visit__c.Outcome__c';
 import getCenters from '@salesforce/apex/CenterScheduleController.getCenters';
 import getAppointments from '@salesforce/apex/CenterScheduleController.getAppointments';
 import getAppointmentSlot from '@salesforce/apex/CenterScheduleController.getAppointmentSlot';
+import updateAppointmentSlotCapacity from '@salesforce/apex/CenterScheduleController.updateAppointmentSlotCapacity';
 import ChangeVisitAppointment from '@salesforce/apex/CenterScheduleController.changeVisitAppointment';
 import cancelVisit from '@salesforce/apex/CenterScheduleController.cancelVisit';
 
@@ -371,6 +372,10 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         for(let appointment of queriedAppointments) {
             // Used to show/hide Add Visit on per row basis
             appointment.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability > 0) && !appointment.isInThePast);
+
+            appointment.incrementDisabled = !!appointment.isInThePast;
+            appointment.decrementDisabled = appointment.isInThePast || appointment.availability <= 0;
+
             console.log(`${appointment.timeString}: ${appointment.booked}`);
 
             generateUrlPromises.push(
@@ -573,5 +578,29 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
                 }
             }
         });
+    }
+
+    incrementSlotAvailability(event) {
+        this.updateSlotAvailability(event.currentTarget.dataset.appointment, 1);
+    }
+
+    decrementSlotAvailability(event) {
+        this.updateSlotAvailability(event.currentTarget.dataset.appointment, -1);
+    }
+
+    async updateSlotAvailability(appointmentId, capacityChange) {
+        let appointment = this.appointments.find(appointment => appointment.Id === appointmentId);
+
+        // Temporarily disable the button to prevent double-clicks
+        appointment.incrementDisabled = true;
+        appointment.decrementDisabled = true;
+
+        await updateAppointmentSlotCapacity({ appointmentId: appointmentId, capacityChange: capacityChange });
+        await this.refreshAppointmentSlot(appointmentId, appointment);
+
+        appointment.incrementDisabled = false;
+        if (appointment.availability > 0) {
+            appointment.decrementDisabled = false;
+        }
     }
 }

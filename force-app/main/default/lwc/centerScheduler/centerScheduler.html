@@ -147,12 +147,12 @@
             </div>
 
             <div key={appointment.key} if:false={appointment.filtered} style="justify-content: space-evenly;" class="appointment-data-cell">
-              <lightning-button-icon icon-name="utility:dash" size="x-small" variant="brand" onclick={minusAvailable}>
+              <lightning-button-icon if:true={isCenterManager} icon-name="utility:dash" size="x-small" variant="brand" onclick={decrementSlotAvailability} data-appointment={appointment.Id} disabled={appointment.decrementDisabled}>
               </lightning-button-icon>
               
               <p>{appointment.availability} / {appointment.loyaltyAvailability}</p>
 
-              <lightning-button-icon icon-name="utility:add" size="x-small" variant="brand" onclick={plusAvailable}>
+              <lightning-button-icon if:true={isCenterManager} icon-name="utility:add" size="x-small" variant="brand" onclick={incrementSlotAvailability} data-appointment={appointment.Id} disabled={appointment.incrementDisabled}>
               </lightning-button-icon>          
             </div>
 

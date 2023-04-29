@@ -238,4 +238,27 @@ public class CoreSchedulerHandlerTest {
             Assert.areEqual(0, updatedAppointment.Booked__c, 'Appointment should be marked as booked.');
         }
     }
+
+    @IsTest
+    static void testGetSoonestNextRescheduleVisitDate() {
+        List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c LIMIT 1];
+        List<Contact> targetDonors = [SELECT Id, Soonest_Next_Visit__c FROM Contact LIMIT 1];
+        Center_Donation_Type__c targetCenterDonationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        Datetime startingSoonestNextVisit = targetDonors[0].Soonest_Next_Visit__c;
+        Datetime rescheduleSoonestNextVisit;
+
+        Visit__c testVisit = CoreSchedulerHandler.createVisit(new Visit__c(
+            Appointment__c = targetAppointments[0].Id,
+            Donor__c = targetDonors[0].Id,
+            Center_Donation_Type__c = targetCenterDonationType.Id,
+            Status__c = 'Scheduled'
+        ));
+
+        Test.startTest();
+        rescheduleSoonestNextVisit = CoreSchedulerHandler.getSoonestNextRescheduleVisitDate(targetDonors[0].Id, testVisit.Id);
+        Test.stopTest();
+
+        Assert.areEqual(startingSoonestNextVisit, rescheduleSoonestNextVisit, 'The soonest next visit date should have recalculate to the original date');
+    }
 }

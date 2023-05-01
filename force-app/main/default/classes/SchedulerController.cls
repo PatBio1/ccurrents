@@ -31,7 +31,18 @@ public without sharing class SchedulerController {
     @AuraEnabled
     public static List<AppointmentGroup> getAppointments(Id centerId, Date appointmentDate) {
         User user = [SELECT Contact.Soonest_Next_Visit__c FROM User WHERE Id = :UserInfo.getUserId()];
+        return getAppointmentRecords(centerId, appointmentDate, user.Contact.Soonest_Next_Visit__c.date());
+    }
 
+    @AuraEnabled
+    public static List<AppointmentGroup> getRescheduleAppointments(Id centerId, Id visitToReschedule, Date appointmentDate) {
+        User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
+        Datetime rescheduleSoonestNextVisit = CoreSchedulerHandler.getSoonestNextRescheduleVisitDate(user.ContactId, visitToReschedule);
+
+        return getAppointmentRecords(centerId, appointmentDate, rescheduleSoonestNextVisit.date());
+    }
+
+    private static List<AppointmentGroup> getAppointmentRecords(Id centerId, Date appointmentDate, Date soonestNextVisit) {
         try {
             List<AppointmentGroup> appointmentGroups = new List<AppointmentGroup>{
                 new AppointmentGroup('AM'),
@@ -40,18 +51,18 @@ public without sharing class SchedulerController {
             };
 
             if (appointmentDate >= Date.today()) {
-                DateTime startTime = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 0, 0, 0);
+                DateTime startTime = DateTime.newInstanceGmt(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 0, 0, 0);
                 DateTime endTime = startTime.addDays(1).addSeconds(-1);
 
                 List<Appointment__c> appointmentRecords = [
                     SELECT
-                        Datetime__c, Availability__c
+                        Datetime__c, Availability__c, Availability_Loyalty__c 
                     FROM
                         Appointment__c
                     WHERE
                         Schedule__r.Center__c = :centerId
                     AND 
-                        Datetime__c >= :user.Contact.Soonest_Next_Visit__c
+                        Datetime__c >= :soonestNextVisit
                     AND
                         Datetime__c >= :startTime
                     AND
@@ -63,11 +74,18 @@ public without sharing class SchedulerController {
                 DateTime elevenAM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 11, 0, 0);
                 DateTime twoPM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 14, 0, 0);
 
+                Contact targetDonor = [SELECT Id, Loyalty_Level__c FROM Contact WHERE Id IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()) LIMIT 1];
+                Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(targetDonor.Loyalty_Level__c);
+
                 for (Appointment__c appointmentRecord : appointmentRecords) {
                     Appointment appointment = new Appointment();
                     appointment.id = appointmentRecord.Id;
                     appointment.name = appointmentRecord.Datetime__c.format('h:mm');
+
                     appointment.availability = (appointmentRecord.Availability__c == null ? 0 : appointmentRecord.Availability__c.intValue());
+                    if (loyaltyLevel > 0) {
+                        appointment.availability += (appointmentRecord.Availability_Loyalty__c == null ? 0 : appointmentRecord.Availability_Loyalty__c.intValue());
+                    }
 
                     if (appointmentRecord.Datetime__c < elevenAM) {
                         appointmentGroups[0].appointments.add(appointment);

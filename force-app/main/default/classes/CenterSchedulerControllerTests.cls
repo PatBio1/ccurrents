@@ -426,18 +426,4 @@ public with sharing class CenterSchedulerControllerTests {
             Assert.isTrue(createdVisit.Appointment__r.Availability__c >= 0, 'The visit shouldn\'t have been added to an appointment slot with no availability');
         }
     }
-
-    @IsTest
-    static void testGetSoonestNextRescheduleVisitDate() {
-        Contact targetDonor = [SELECT Id, Soonest_Next_Visit__c FROM Contact WHERE Soonest_Next_Visit__c != null LIMIT 1];
-        Datetime returnedSoonestNextVisitDate;
-
-        Test.startTest();
-        System.runAs(TestUtil.createAdminUser()) {
-            returnedSoonestNextVisitDate = CenterScheduleController.getSoonestNextRescheduleVisitDate(targetDonor.Id);
-        }
-        Test.stopTest();
-
-        Assert.areEqual(targetDonor.Soonest_Next_Visit__c, returnedSoonestNextVisitDate, 'The soonest next visit date should be returned');
-    }
 }

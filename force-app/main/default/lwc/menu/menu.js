@@ -26,10 +26,6 @@ export default class Menu extends NavigationMixin(LightningElement) {
     doesUserHaveUnreadNotifications = false;
     photoUrl;
 
-    get displayLoyaltyLevel() {
-        return (this.userLoyaltyLevel || 'Donor (Default)');
-    }
-
     async renderedCallback() {
         if (!this.isInitialied && !this.isGuest) {
             this.isInitialied = true;
@@ -38,6 +34,7 @@ export default class Menu extends NavigationMixin(LightningElement) {
 
             this.doesUserHaveUnreadNotifications = doesHaveUnreadNotifications;
             if (donorRewardsInfo && donorRewardsInfo.currentLoyaltyLevel) {
+                console.log(donorRewardsInfo);
                 this.userLoyaltyLevel = donorRewardsInfo.currentLoyaltyLevel;
             }
         }

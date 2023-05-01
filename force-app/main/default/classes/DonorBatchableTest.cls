@@ -1,16 +1,24 @@
 @IsTest
 public class DonorBatchableTest {
     static final Integer EXPECTED_VISIT_PER_CONTACT = 3;
+    static final String VIP_LEVEL_NAME = 'VIP';
 
     @TestSetup
     static void makeTestData() {
+        Level__c vipLevel = new Level__c(Name = VIP_LEVEL_NAME, Donation_Threshold__c = (EXPECTED_VISIT_PER_CONTACT - 1), isActive__c = true, isVisible__c = true);
+        insert vipLevel;
+
+        Level__c baseLevel = new Level__c(Name = 'Base Level', Donation_Threshold__c = 0, isActive__c = true, isVisible__c = true, Next_Level__c = vipLevel.Id);
+        insert baseLevel;
+
         String targetCenterRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Center').getRecordTypeId();
 
         List<Contact> contacts = new List<Contact>();
         for(Integer i = 0; i < 200; i++) {
             contacts.add(new Contact(
                 FirstName = 'Test' + i,
-                LastName = 'Contact' + i
+                LastName = 'Contact' + i,
+                Loyalty_Level__c = baseLevel.Id
             ));
         }
         insert contacts;
@@ -68,8 +76,9 @@ public class DonorBatchableTest {
         Database.executeBatch(new DonorBatchable());
         Test.stopTest();
 
-        for(Contact contact : [SELECT Id, Total_Visits_365d__c FROM Contact]) {
-            System.assertEquals(contact.Total_Visits_365d__c, EXPECTED_VISIT_PER_CONTACT, 'Each contact should have ' + EXPECTED_VISIT_PER_CONTACT + ' visits in the last 365 days.');
+        for(Contact contact : [SELECT Id, Total_Visits_365d__c, Loyalty_Level__r.Name FROM Contact]) {
+            Assert.areEqual(EXPECTED_VISIT_PER_CONTACT, contact.Total_Visits_365d__c, 'Each contact should have ' + EXPECTED_VISIT_PER_CONTACT + ' visits in the last 365 days.');
+            Assert.areEqual(VIP_LEVEL_NAME, contact.Loyalty_Level__r.Name, 'Each contact should have a loyalty level of ' + VIP_LEVEL_NAME);
         }
     }
 

@@ -34,7 +34,10 @@ public with sharing class ProfileControllerTest {
             profile.middleName = 'Middle';
             profile.lastName = 'Last';
             profile.email = 'test123@test.com';
-            ProfileController.upsertLead(profile);
+            Id initialLeadId = ProfileController.upsertLead(profile);
+
+            // Set static test results to ensure SOSL query returns duplicate
+            Test.setFixedSearchResults(new List<Id> { initialLeadId });
 
             profile = new ProfileController.Profile();
             profile.firstName = 'First2';

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Promotion_Level__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>This tracks the loyalty tier that triggered the transaction line item to be created (either for loyalty tier promotion or a bonus loyalty level)</description>
+    <externalId>false</externalId>
+    <inlineHelpText>This tracks the loyalty tier that triggered the transaction line item to be created (either for loyalty tier promotion or a bonus loyalty level)</inlineHelpText>
+    <label>Promotion Level</label>
+    <referenceTo>Level__c</referenceTo>
+    <relationshipLabel>Txn Line Items</relationshipLabel>
+    <relationshipName>Loyalty_Txn_Line_Items</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

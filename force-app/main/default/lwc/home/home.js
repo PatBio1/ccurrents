@@ -4,6 +4,8 @@ import labels from 'c/labelService';
 import util from 'c/util';
 import proesisDonor from '@salesforce/resourceUrl/ProesisDonor';
 import hasFutureVisit from '@salesforce/apex/SchedulerController.hasFutureVisit';
+import language from '@salesforce/i18n/lang';
+import locale from '@salesforce/i18n/locale';
 
 const PAGE_HOME = 'Home';
 const PAGE_ARTICLE = 'Article';
@@ -11,6 +13,7 @@ const PAGE_ARTICLE = 'Article';
 export default class Home extends NavigationMixin(LightningElement) {
 
     labels = labels;
+    hasRendered = false;
     loading = true;
     currentPage;
 
@@ -48,19 +51,34 @@ export default class Home extends NavigationMixin(LightningElement) {
         return (this.currentPage === PAGE_ARTICLE);
     }
 
-    connectedCallback() {
-        hasFutureVisit().then(response => {
-            // Navigate to the schedule page if there aren't any future visits scheduled.
-            if (response === true) {
-                this.currentPage = PAGE_HOME;
-            } else {
-                util.navigateToPage(this, 'Schedule__c');
-            }
-        }).catch((error) => {
-            util.showToast(this, 'error', labels.error, error);
-        }).finally(() => {
+    renderedCallback() {
+        if (this.hasRendered) {
+            return;
+        }
+
+        this.hasRendered = true;
+
+        // If current language doesn't match the user's locale,
+        // reload the page with the language from the locale.
+        if (language !== locale) {
+            const url = location.href + '?language=' + (locale.indexOf('es') === -1 ? 'en_US' : 'es_US');
+            location.href = url;
+
             this.loading = false;
-        });
+        } else {
+            hasFutureVisit().then(response => {
+                // Navigate to the schedule page if there aren't any future visits scheduled.
+                if (response === true) {
+                    this.currentPage = PAGE_HOME;
+                } else {
+                    util.navigateToPage(this, 'Schedule__c');
+                }
+            }).catch((error) => {
+                util.showToast(this, 'error', labels.error, error);
+            }).finally(() => {
+                this.loading = false;
+            });
+        }
     }
 
     onBookmarkClick(event) {

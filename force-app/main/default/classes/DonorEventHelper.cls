@@ -36,6 +36,7 @@ public without sharing class DonorEventHelper {
         Map<Datetime, List<SObject>> targetAppointmentTimeToDonorEvent = new Map<Datetime, List<SObject>>();
         Set<String> becsDeviceNumbers = new Set<String>();
         Set<Id> lastUsedCenterIds = new Set<Id>();
+        Set<Id> allRescheduleVisitIds = new Set<Id>();
         
         for (Contact validDonor : [
             SELECT Id, Account.DonorId__c, Last_Used_Center__c, (
@@ -54,9 +55,13 @@ public without sharing class DonorEventHelper {
             for (Visit__c visit : validDonor.Visits__r) {
                 // If we find a visit on the day of then we exit happy!
                 if (visit.Appointment_Datetime__c.date() == donorCompTimestamp.date()) {
+                    System.debug('Found Visit ' + visit.Id + ' on the same day as the DonorComp Timestamp ' + donorCompTimestamp.date() + ' for Donor ' + validDonor.Id);
+
                     foundVisit = true;
                     continue;
                 } else if (visit.Appointment_Datetime__c.date() == donorCompTimestamp.date().addDays(1)) {
+                    System.debug('Found Visit ' + visit.Id + ' on the next day as the DonorComp Timestamp ' + donorCompTimestamp.date() + ' for Donor ' + validDonor.Id);
+
                     // If we find it the next day of, then we reschedule the visit to the target date using CenterScheduleController.changeVisit(visitId, newAppointmentId)
                     List<Id> visitIds = targetAppointmentTimeToRescheduleVisitId.get(donorCompTimestamp);
                     if (visitIds == null) {
@@ -65,13 +70,16 @@ public without sharing class DonorEventHelper {
                     
                     visitIds.add(visit.Id);
                     targetAppointmentTimeToRescheduleVisitId.put(donorCompTimestamp, visitIds);
-
+                    
+                    allRescheduleVisitIds.add(visit.Id);
                     foundVisit = true;
                 }
             }
 
             // If we don't find a visit on the day of or next day of, we need to find the next available appointment slot using Datetime__c and create a Visit for that slot
             // The Center for the visit (Visit__c.Center_Donation_Type__c.Center__c) can be queried using the BECS_Device_Id__c to find a related BECS_Device__c child record, the center would be the parent of that record
+            System.debug('foundVisit: ' + foundVisit);
+
             if (!foundVisit) {
                 List<SObject> donorComps = targetAppointmentTimeToDonorEvent.get(donorCompTimestamp);
                 if (donorComps == null) {
@@ -94,11 +102,53 @@ public without sharing class DonorEventHelper {
 
         // Reschedule visits that need to be rescheduled
         if (targetAppointmentTimeToRescheduleVisitId.size() > 0) {
-            List<CoreSchedulerHandler.RescheduleRequest> rescheduleRequests = new List<CoreSchedulerHandler.RescheduleRequest>();
+            Set<Id> rescheduleVisitCenterIds = new Set<Id>();
+            for(Visit__c targetVisit : [SELECT Center_Donation_Type__r.Center__c FROM Visit__c WHERE Id IN :allRescheduleVisitIds]) {
+                rescheduleVisitCenterIds.add(targetVisit.Center_Donation_Type__r.Center__c);
+            }
 
-            for(Appointment__c rescheduleAppointmentSlot : [SELECT Id, Datetime__c FROM Appointment__c WHERE Datetime__c IN :targetAppointmentTimeToRescheduleVisitId.keySet() ORDER BY Datetime__c ASC]) {
-                for (Id visitId : targetAppointmentTimeToRescheduleVisitId.get(rescheduleAppointmentSlot.Datetime__c)) {
-                    rescheduleRequests.add(new CoreSchedulerHandler.RescheduleRequest(visitId, rescheduleAppointmentSlot.Id));
+            // Sort the appointment times in ascending order so we know what time range to search for replacement appointments
+            List<Datetime> rescheduleAppointmentTimes = new List<Datetime>(targetAppointmentTimeToRescheduleVisitId.keySet());
+            rescheduleAppointmentTimes.sort();
+
+            Datetime targetSearchStartTime = rescheduleAppointmentTimes[0].addHours(-12);
+            Datetime targetSearchEndTime = rescheduleAppointmentTimes[rescheduleAppointmentTimes.size() - 1].addHours(12);
+
+            Map<Datetime, Appointment__c> eligibleAppointmentSlots = new Map<Datetime, Appointment__c>();
+            for(Appointment__c rescheduleAppointmentSlot : [
+                SELECT Id, Datetime__c 
+                FROM Appointment__c 
+                WHERE Schedule__r.Center__c IN :rescheduleVisitCenterIds AND 
+                    Datetime__c >= :targetSearchStartTime AND
+                    Datetime__c <= :targetSearchEndTime
+                ORDER BY Datetime__c ASC
+            ]) {
+                System.debug('rescheduleAppointmentSlot: ' + rescheduleAppointmentSlot);
+                eligibleAppointmentSlots.put(rescheduleAppointmentSlot.Datetime__c, rescheduleAppointmentSlot);
+            }
+
+            List<CoreSchedulerHandler.RescheduleRequest> rescheduleRequests = new List<CoreSchedulerHandler.RescheduleRequest>();
+            for(Datetime targetVisitRescheduleDatetime : targetAppointmentTimeToRescheduleVisitId.keySet()) {
+                List<Id> visitIds = targetAppointmentTimeToRescheduleVisitId.get(targetVisitRescheduleDatetime);
+
+                for(Id visitId : visitIds) {
+                    Appointment__c targetAppointment;
+
+                    for(Datetime appointmentSlotDatetime : eligibleAppointmentSlots.keySet()) {
+                        Decimal diff1 = Math.abs(appointmentSlotDatetime.getTime() - targetVisitRescheduleDatetime.getTime());
+                        Decimal diff2 = targetAppointment != null ? Math.abs(targetAppointment.Datetime__c.getTime() - targetVisitRescheduleDatetime.getTime()) : null;
+
+                        if (targetAppointment == null || diff1 < diff2) {
+                            targetAppointment = eligibleAppointmentSlots.get(appointmentSlotDatetime);
+                        }
+                    }
+
+                    if (targetAppointment == null) {
+                        System.debug('No eligible appointment slot found for visit ' + visitId);
+                        continue;
+                    }
+
+                    rescheduleRequests.add(new CoreSchedulerHandler.RescheduleRequest(visitId, targetAppointment.Id));
                 }
             }
 
@@ -138,26 +188,55 @@ public without sharing class DonorEventHelper {
                 centerQueueNameToId.put(centerQueue.DeveloperName, centerQueue.Id);
             }
 
+            // Get the target Datetimes
+            List<Datetime> targetAppointmentTimes = new List<Datetime>(targetAppointmentTimeToDonorEvent.keySet());
+            targetAppointmentTimes.sort();
+
+            Datetime targetSearchStartTime = targetAppointmentTimes[0].addHours(-12);
+            Datetime targetSearchEndTime = targetSearchStartTime.addHours(12);
+
             // Create visits for donors that need to be scheduled
             List<Visit__c> visitsToInsert = new List<Visit__c>();
             Map<Id, List<Task>> donorIdToTasksToParent = new Map<Id, List<Task>>();
+            Map<SObject, Appointment__c> donorEventToTargetAppointmentTime = new Map<SObject, Appointment__c>();
 
             for(Appointment__c newAppointmentSlot : [
                 SELECT Id, Datetime__c 
                 FROM Appointment__c 
-                WHERE Datetime__c IN :targetAppointmentTimeToDonorEvent.keySet() AND 
+                WHERE Datetime__c >= :targetSearchStartTime AND
+                    Datetime__c <= :targetSearchEndTime AND 
                     (Schedule__r.Center__c IN :becsCenterToDevice.keySet() OR Schedule__r.Center__c IN :lastUsedCenterIds)
                 ORDER BY Datetime__c ASC
             ]) {
-                for(SObject donorEvent : targetAppointmentTimeToDonorEvent.get(newAppointmentSlot.Datetime__c)) {
+                for(List<SObject> donorEventByAppointmentTime : targetAppointmentTimeToDonorEvent.values()) {
+                    for(SObject donorEvent : donorEventByAppointmentTime) {
+                        Datetime donorEventTimestamp = (Datetime)donorEvent.get('Timestamp__c');
+
+                        Appointment__c currentTargetAppointment = donorEventToTargetAppointmentTime.get(donorEvent);
+                        Datetime currentTargetAppointmentTime = currentTargetAppointment != null ? currentTargetAppointment.Datetime__c : null;
+
+                        Decimal diff1 = Math.abs(newAppointmentSlot.Datetime__c.getTime() - donorEventTimestamp.getTime());
+                        Decimal diff2 = currentTargetAppointmentTime != null ? Math.abs(currentTargetAppointmentTime.getTime() - donorEventTimestamp.getTime()) : null;
+
+                        if ( currentTargetAppointmentTime == null || diff1 < diff2) {
+                            donorEventToTargetAppointmentTime.put(donorEvent, newAppointmentSlot);
+                        }
+                    }
+                }
+            }
+
+            for(List<SObject> donorEventByAppointmentTime : targetAppointmentTimeToDonorEvent.values()) {
+                for(SObject donorEvent : donorEventByAppointmentTime) {
                     Contact relatedDonor = validDonorNumbersToDonor.get((String)donorEvent.get('Donor_Number__c'));
                     if (donorEvent instanceof Donor_CheckIn__e && relatedDonor.Last_Used_Center__c == null) {
+                        System.debug('Couldn\'t create visit for donor ' + relatedDonor.Id + ' because they don\'t have a Last_Used_Center__c');
                         continue;
                     }
 
                     Visit__c missingVisit = new Visit__c(
-                        Appointment__c = newAppointmentSlot.Id,
-                        Donor__c = relatedDonor.Id
+                        Appointment__c = donorEventToTargetAppointmentTime.get(donorEvent).Id,
+                        Donor__c = relatedDonor.Id,
+                        Status__c = 'Scheduled'
                     );
 
                     String becsNumber = (donorEvent instanceof Donor_Comp__e) ? (String)donorEvent.get('BECS_Device__c') : '';

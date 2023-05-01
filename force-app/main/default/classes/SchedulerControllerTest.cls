@@ -57,6 +57,53 @@ public with sharing class SchedulerControllerTest {
     }
 
     @isTest
+    static void testGetRescheduleAppointments() {
+        User testExperienceUser = TestUtil.createExperienceUser();
+
+        Account center;
+        Visit__c createdVisit;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            center = TestUtil.createMiramarCenter();
+            insert center;
+
+            Schedule__c schedule = new Schedule__c(
+                Center__c = center.Id,
+                Begin_Date__c = Date.today().addDays(-10),
+                End_Date__c = Date.today().addDays(30)
+            );
+            insert schedule;
+
+            Appointment__c createdAppointment = new Appointment__c();
+            createdAppointment.Schedule__c = schedule.Id;
+            createdAppointment.Datetime__c = DateTime.newInstance(Date.today().year(), Date.today().month(), Date.today().day(), 10, 0, 0);
+            createdAppointment.Duration__c = 10;
+            createdAppointment.Capacity__c = 5;
+            insert createdAppointment;
+
+            Center_Donation_Type__c centerDonationType = TestUtil.createCenterDonationType(center.Id);
+            insert centerDonationType; 
+
+            // Create a visit for the donor to make sure rescheduleAppointments is recalculating soonestNextVisit
+            createdVisit = new Visit__c();
+            createdVisit.Appointment__c = createdAppointment.Id;
+            createdVisit.Donor__c = testExperienceUser.ContactId;
+            createdVisit.Status__c = 'Scheduled';
+            createdVisit.Center_Donation_Type__c = centerDonationType.Id;
+            insert createdVisit;
+        }
+
+        System.runAs(testExperienceUser) {
+            List<SchedulerController.AppointmentGroup> appointmentGroups = SchedulerController.getRescheduleAppointments(center.Id, createdVisit.Id, Date.today());
+
+            System.assertEquals(3, appointmentGroups.size());
+            System.assertEquals(1, appointmentGroups[0].appointments.size());
+            System.assertEquals(0, appointmentGroups[1].appointments.size());
+            System.assertEquals(0, appointmentGroups[2].appointments.size());
+        }
+    }
+
+    @isTest
     static void testGetAppointmentsInPast() {
         Account center;
         Date yesterday = Date.today().addDays(-1);

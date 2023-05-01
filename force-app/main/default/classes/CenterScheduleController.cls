@@ -200,11 +200,6 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
-    public static DateTime getSoonestNextRescheduleVisitDate(Id donorId) {
-        return [SELECT Id, Soonest_Next_Visit__c FROM Contact WHERE Id = :donorId LIMIT 1]?.Soonest_Next_Visit__c;
-    }
-
-    @AuraEnabled
     public static List<RescheduleSlot> getAvailableRescheduleAppointmentRange(Id centerId, DateTime currentDateTime, DateTime soonestNextVisit, DateTime searchStartDateTime, DateTime searchEndDateTime, Boolean isLoyaltyDonor) {
         String appointmentQuery = 'SELECT Id, DateTime__c FROM Appointment__c WHERE Schedule__r.Center__c = :centerId AND  DateTime__c >= :currentDateTime AND DateTime__c >= :soonestNextVisit AND DateTime__c >= :targetStartTime AND DateTime__c <= :targetEndTime';
         if (isLoyaltyDonor) {
@@ -251,6 +246,139 @@ public with sharing class CenterScheduleController {
         }
 
         addVisit(donorId, soonestNextAvailableAppointment[0].Id, centerId);
+    }
+
+    @AuraEnabled
+    public static UpdateCapacityResult updateAppointmentSlotCapacity(Id appointmentId, Decimal capacityChange) {
+        Appointment__c targetAppointmentSlot;
+
+        try {
+            targetAppointmentSlot = [
+                SELECT Id, Schedule__r.Center__c, Capacity__c, Booked__c, Booked_Loyalty__c, Datetime__c, (
+                    SELECT Id, Donor__c, Donor__r.Loyalty_Level__c 
+                    FROM Appointments__r
+                    WHERE Status__c IN ('New', 'Scheduled') AND Outcome__c = null
+                    ORDER BY Donor__r.Total_Visits_365d__c ASC NULLS FIRST, Donor__r.CreatedDate DESC
+                ) 
+                FROM Appointment__c 
+                WHERE Id = :appointmentId
+                LIMIT 1
+            ];
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+
+        targetAppointmentSlot.Capacity__c += capacityChange;
+        if (targetAppointmentSlot.Capacity__c < 0) {
+            targetAppointmentSlot.Capacity__c = 0;
+        }
+
+        Decimal bookedValue = (targetAppointmentSlot.Booked__c != null) ? targetAppointmentSlot.Booked__c : 0;
+        Decimal bookedLoyaltyValue = (targetAppointmentSlot.Booked_Loyalty__c != null) ? targetAppointmentSlot.Booked_Loyalty__c : 0;
+        Decimal capacityValue = (targetAppointmentSlot.Capacity__c != null) ? targetAppointmentSlot.Capacity__c : 0;
+
+        List<CoreSchedulerHandler.RescheduleRequest> rescheduleRequests = new List<CoreSchedulerHandler.RescheduleRequest>();
+        List<Id> appointmentSlotsRescheduledTo = new List<Id>();
+        Decimal capacityVsBookedDiff = capacityValue - (bookedValue + bookedLoyaltyValue);
+        Boolean shouldRescheduleDonors = capacityVsBookedDiff < 0;
+
+        if (shouldRescheduleDonors) {
+            Decimal amountOfVisitsToReschedule = capacityVsBookedDiff * -1;
+
+            List<Visit__c> visitsToReschedule = new List<Visit__c>();
+            Boolean areLoyaltyDonorsIncluded = false;
+
+            for (Visit__c visit : targetAppointmentSlot.Appointments__r) {
+                if (amountOfVisitsToReschedule == 0) {
+                    break;
+                }
+
+                visitsToReschedule.add(visit);
+                amountOfVisitsToReschedule--;
+
+                if (!areLoyaltyDonorsIncluded && LoyaltyLevelService.getLoyaltyLevel(visit.Donor__r.Loyalty_Level__c) > 0) {
+                    areLoyaltyDonorsIncluded = true;
+                }
+            }
+
+            List<Appointment__c> appointmentsToRescheduleTo;
+            if (areLoyaltyDonorsIncluded) {
+                appointmentsToRescheduleTo = [
+                    SELECT Id, Availability__c, Availability_Loyalty__c
+                    FROM Appointment__c
+                    WHERE (Availability__c > 0 OR Availability_Loyalty__c > 0) AND
+                        Datetime__c > :targetAppointmentSlot.Datetime__c AND 
+                        Schedule__r.Center__c = :targetAppointmentSlot.Schedule__r.Center__c
+                    ORDER BY Datetime__c ASC
+                    LIMIT :visitsToReschedule.size()
+                ];
+            } else {
+                appointmentsToRescheduleTo = [
+                    SELECT Id, Availability__c, Availability_Loyalty__c
+                    FROM Appointment__c
+                    WHERE Availability__c > 0 AND 
+                        Datetime__c > :targetAppointmentSlot.Datetime__c AND
+                        Schedule__r.Center__c = :targetAppointmentSlot.Schedule__r.Center__c
+                    ORDER BY Datetime__c ASC
+                    LIMIT :visitsToReschedule.size()
+                ];
+            }
+            
+            if (appointmentsToRescheduleTo.size() == 0) {
+                throw new AuraHandledException('There are no available appointments to reschedule overflow donors to.');
+            }
+
+            Map<Id, Decimal> appointmentIdToAdjustedAvailability = new Map<Id, Decimal>();
+            Map<Id, Decimal> appointmentIdToAdjustedLoyaltyAvailability = new Map<Id, Decimal>();
+
+            for (Integer i = 0; i < visitsToReschedule.size(); i++) {
+                Appointment__c targetAppointment;
+
+                for(Appointment__c appointment : appointmentsToRescheduleTo) {
+                    // Since formula fields aren't writeable and we aren't updating the slots (reschedule function does that), we need to locally track the adjusted availability
+                    Decimal adjustedAvailability = appointmentIdToAdjustedAvailability.get(appointment.Id);
+                    if (adjustedAvailability == null) {
+                        adjustedAvailability = appointment.Availability__c;
+                    }
+
+                    Decimal adjustedLoyaltyAvailability = appointmentIdToAdjustedLoyaltyAvailability.get(appointment.Id);
+                    if (adjustedLoyaltyAvailability == null) {
+                        adjustedLoyaltyAvailability = appointment.Availability_Loyalty__c;
+                    }
+
+                    if (adjustedAvailability > 0) {
+                        targetAppointment = appointment;
+                        appointmentIdToAdjustedAvailability.put(appointment.Id, adjustedAvailability - 1);
+
+                        break;
+                    } else if (LoyaltyLevelService.getLoyaltyLevel(visitsToReschedule[i].Donor__r.Loyalty_Level__c) > 0 && adjustedLoyaltyAvailability > 0) {
+                        targetAppointment = appointment;
+                        appointmentIdToAdjustedLoyaltyAvailability.put(appointment.Id, adjustedLoyaltyAvailability - 1);
+
+                        break;
+                    }
+                }
+
+                if (targetAppointment == null) {
+                    throw new AuraHandledException('There are not enough appointments to reschedule overflow donors to.');
+                }
+
+                appointmentSlotsRescheduledTo.add(targetAppointment.Id);
+                rescheduleRequests.add(new CoreSchedulerHandler.RescheduleRequest(visitsToReschedule[i].Id, targetAppointment.Id));
+            }
+        }
+
+        try {
+            update targetAppointmentSlot;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+
+        if (rescheduleRequests.size() > 0) {
+            CoreSchedulerHandler.rescheduleVisits(new CoreSchedulerHandler.RescheduleBatchRequest(rescheduleRequests));
+        }
+
+        return new UpdateCapacityResult(shouldRescheduleDonors, appointmentSlotsRescheduledTo);
     }
 
     public class RescheduleSlot {
@@ -426,6 +554,19 @@ public with sharing class CenterScheduleController {
             this.visitNoteId = taskRecord.Id;
             this.visitNoteSubject = taskRecord.Subject;
             this.visitNoteDescription = taskRecord.Description;
+        }
+    }
+
+    public class UpdateCapacityResult {
+        @AuraEnabled
+        public Boolean wasDonorRescheduled {get;set;}
+
+        @AuraEnabled
+        public List<Id> appointmentSlotsRescheduledTo {get;set;}
+
+        public UpdateCapacityResult(Boolean wasDonorRescheduled, List<Id> appointmentSlotsRescheduledTo) {
+            this.wasDonorRescheduled = wasDonorRescheduled;
+            this.appointmentSlotsRescheduledTo = appointmentSlotsRescheduledTo;
         }
     }
 }    

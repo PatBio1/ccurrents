@@ -18,11 +18,15 @@ public with sharing class Util {
     }
 
     public static AuraHandledException createAuraHandledException(Exception e) {
-        String message = e.getMessage() + ' -- ' + e.getStackTraceString();
+        if (e instanceof AuraHandledException) {
+            return (AuraHandledException) e;
+        } else {
+            String message = e.getMessage() + ' -- ' + e.getStackTraceString();
 
-        AuraHandledException ahe = new AuraHandledException(message);
-        ahe.setMessage(message);
-        return ahe;
+            AuraHandledException ahe = new AuraHandledException(message);
+            ahe.setMessage(message);
+            return ahe;
+        }
     }
 
     public static void testExceptionHandling() {

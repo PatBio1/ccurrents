@@ -249,14 +249,16 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
-    public static void updateAppointmentSlotCapacity(Id appointmentId, Decimal capacityChange) {
+    public static UpdateCapacityResult updateAppointmentSlotCapacity(Id appointmentId, Decimal capacityChange) {
         Appointment__c targetAppointmentSlot;
+
         try {
             targetAppointmentSlot = [
-                SELECT Id, Capacity__c, Booked__c, Booked_Loyalty__c, Datetime__c, (
+                SELECT Id, Schedule__r.Center__c, Capacity__c, Booked__c, Booked_Loyalty__c, Datetime__c, (
                     SELECT Id, Donor__c, Donor__r.Loyalty_Level__c 
-                    FROM Appointments__r 
-                    ORDER BY Donor__r.Total_Visits_365d__c ASC NULLS FIRST
+                    FROM Appointments__r
+                    WHERE Status__c IN ('New', 'Scheduled') AND Outcome__c = null
+                    ORDER BY Donor__r.Total_Visits_365d__c ASC NULLS FIRST, Donor__r.CreatedDate DESC
                 ) 
                 FROM Appointment__c 
                 WHERE Id = :appointmentId
@@ -275,8 +277,12 @@ public with sharing class CenterScheduleController {
         Decimal bookedLoyaltyValue = (targetAppointmentSlot.Booked_Loyalty__c != null) ? targetAppointmentSlot.Booked_Loyalty__c : 0;
         Decimal capacityValue = (targetAppointmentSlot.Capacity__c != null) ? targetAppointmentSlot.Capacity__c : 0;
 
+        List<CoreSchedulerHandler.RescheduleRequest> rescheduleRequests = new List<CoreSchedulerHandler.RescheduleRequest>();
+        List<Id> appointmentSlotsRescheduledTo = new List<Id>();
         Decimal capacityVsBookedDiff = capacityValue - (bookedValue + bookedLoyaltyValue);
-        if (capacityVsBookedDiff < 0) {
+        Boolean shouldRescheduleDonors = capacityVsBookedDiff < 0;
+
+        if (shouldRescheduleDonors) {
             Decimal amountOfVisitsToReschedule = capacityVsBookedDiff * -1;
 
             List<Visit__c> visitsToReschedule = new List<Visit__c>();
@@ -298,10 +304,11 @@ public with sharing class CenterScheduleController {
             List<Appointment__c> appointmentsToRescheduleTo;
             if (areLoyaltyDonorsIncluded) {
                 appointmentsToRescheduleTo = [
-                    SELECT Id
+                    SELECT Id, Availability__c, Availability_Loyalty__c
                     FROM Appointment__c
-                    WHERE (Availability__c > 0 OR  Availability_Loyalty__c > 0) AND
-                        Datetime__c > :targetAppointmentSlot.Datetime__c
+                    WHERE (Availability__c > 0 OR Availability_Loyalty__c > 0) AND
+                        Datetime__c > :targetAppointmentSlot.Datetime__c AND 
+                        Schedule__r.Center__c = :targetAppointmentSlot.Schedule__r.Center__c
                     ORDER BY Datetime__c ASC
                     LIMIT :visitsToReschedule.size()
                 ];
@@ -310,7 +317,8 @@ public with sharing class CenterScheduleController {
                     SELECT Id, Availability__c, Availability_Loyalty__c
                     FROM Appointment__c
                     WHERE Availability__c > 0 AND 
-                        Datetime__c > :targetAppointmentSlot.Datetime__c
+                        Datetime__c > :targetAppointmentSlot.Datetime__c AND
+                        Schedule__r.Center__c = :targetAppointmentSlot.Schedule__r.Center__c
                     ORDER BY Datetime__c ASC
                     LIMIT :visitsToReschedule.size()
                 ];
@@ -320,7 +328,6 @@ public with sharing class CenterScheduleController {
                 throw new AuraHandledException('There are no available appointments to reschedule overflow donors to.');
             }
 
-            List<CoreSchedulerHandler.RescheduleRequest> rescheduleRequests = new List<CoreSchedulerHandler.RescheduleRequest>();
             Map<Id, Decimal> appointmentIdToAdjustedAvailability = new Map<Id, Decimal>();
             Map<Id, Decimal> appointmentIdToAdjustedLoyaltyAvailability = new Map<Id, Decimal>();
 
@@ -339,12 +346,12 @@ public with sharing class CenterScheduleController {
                         adjustedLoyaltyAvailability = appointment.Availability_Loyalty__c;
                     }
 
-                    if (LoyaltyLevelService.getLoyaltyLevel(visitsToReschedule[i].Donor__r.Loyalty_Level__c) > 0 && adjustedAvailability > 0) {
+                    if (adjustedAvailability > 0) {
                         targetAppointment = appointment;
                         appointmentIdToAdjustedAvailability.put(appointment.Id, adjustedAvailability - 1);
 
                         break;
-                    } else if (adjustedLoyaltyAvailability > 0) {
+                    } else if (LoyaltyLevelService.getLoyaltyLevel(visitsToReschedule[i].Donor__r.Loyalty_Level__c) > 0 && adjustedLoyaltyAvailability > 0) {
                         targetAppointment = appointment;
                         appointmentIdToAdjustedLoyaltyAvailability.put(appointment.Id, adjustedLoyaltyAvailability - 1);
 
@@ -356,11 +363,8 @@ public with sharing class CenterScheduleController {
                     throw new AuraHandledException('There are not enough appointments to reschedule overflow donors to.');
                 }
 
+                appointmentSlotsRescheduledTo.add(targetAppointment.Id);
                 rescheduleRequests.add(new CoreSchedulerHandler.RescheduleRequest(visitsToReschedule[i].Id, targetAppointment.Id));
-            }
-
-            if (rescheduleRequests.size() > 0) {
-                CoreSchedulerHandler.rescheduleVisits(new CoreSchedulerHandler.RescheduleBatchRequest(rescheduleRequests));
             }
         }
 
@@ -369,6 +373,12 @@ public with sharing class CenterScheduleController {
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
+
+        if (rescheduleRequests.size() > 0) {
+            CoreSchedulerHandler.rescheduleVisits(new CoreSchedulerHandler.RescheduleBatchRequest(rescheduleRequests));
+        }
+
+        return new UpdateCapacityResult(shouldRescheduleDonors, appointmentSlotsRescheduledTo);
     }
 
     public class RescheduleSlot {
@@ -544,6 +554,19 @@ public with sharing class CenterScheduleController {
             this.visitNoteId = taskRecord.Id;
             this.visitNoteSubject = taskRecord.Subject;
             this.visitNoteDescription = taskRecord.Description;
+        }
+    }
+
+    public class UpdateCapacityResult {
+        @AuraEnabled
+        public Boolean wasDonorRescheduled {get;set;}
+
+        @AuraEnabled
+        public List<Id> appointmentSlotsRescheduledTo {get;set;}
+
+        public UpdateCapacityResult(Boolean wasDonorRescheduled, List<Id> appointmentSlotsRescheduledTo) {
+            this.wasDonorRescheduled = wasDonorRescheduled;
+            this.appointmentSlotsRescheduledTo = appointmentSlotsRescheduledTo;
         }
     }
 }    

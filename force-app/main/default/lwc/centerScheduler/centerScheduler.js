@@ -380,7 +380,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appointment.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability > 0) && !appointment.isInThePast);
 
             appointment.incrementDisabled = !!appointment.isInThePast;
-            appointment.decrementDisabled = appointment.isInThePast || appointment.availability <= 0;
+            appointment.decrementDisabled = appointment.isInThePast || appointment.capacity <= 0;
 
             console.log(`${appointment.timeString}: ${appointment.booked}`);
 
@@ -491,7 +491,12 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appRow.totalBooked = appointment.totalBooked;
             appRow.availability = appointment.availability;
             appRow.loyaltyAvailability = appointment.loyaltyAvailability;
+            appRow.capacity = appointment.capacity;
+            appRow.loyaltyCapacity = appointment.loyaltyCapacity;
+
             appRow.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability) && !appointment.isInThePast);
+            appointment.incrementDisabled = !!appointment.isInThePast;
+            appointment.decrementDisabled = appointment.isInThePast || appointment.capacity <= 0;
 
             if (this.filters.hasActiveFilters()) {
                 this.applyFilters();
@@ -605,11 +610,23 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         appointment.incrementDisabled = true;
         appointment.decrementDisabled = true;
 
-        await updateAppointmentSlotCapacity({ appointmentId: appointmentId, capacityChange: capacityChange });
-        await this.refreshAppointmentSlot(appointmentId, appointment);
+        let updateCapacityResult = await updateAppointmentSlotCapacity({ appointmentId: appointmentId, capacityChange: capacityChange });
+        let refreshSlotPromises = [this.refreshAppointmentSlot(appointmentId, appointment)];
+
+        if (updateCapacityResult.wasDonorRescheduled && updateCapacityResult.appointmentSlotsRescheduledTo) {
+            for(let appointment of this.appointments) {
+                if (!updateCapacityResult.appointmentSlotsRescheduledTo.includes(appointment.Id)) {
+                    continue;
+                }
+
+                refreshSlotPromises.push(this.refreshAppointmentSlot(appointment.Id, appointment));
+            }
+        }
+
+        await Promise.all(refreshSlotPromises);
 
         appointment.incrementDisabled = false;
-        if (appointment.availability > 0) {
+        if (appointment.capacity > 0) {
             appointment.decrementDisabled = false;
         }
     }

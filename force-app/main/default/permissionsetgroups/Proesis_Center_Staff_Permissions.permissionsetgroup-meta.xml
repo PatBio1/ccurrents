@@ -3,6 +3,7 @@
     <description>Set of permissions for the center staff user.</description>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Proesis Center Staff Permissions</label>
+    <permissionSets>Proesis_Case_Access_Platform</permissionSets>
     <permissionSets>Proesis_Center_Staff_Platform</permissionSets>
     <status>Updated</status>
 </PermissionSetGroup>

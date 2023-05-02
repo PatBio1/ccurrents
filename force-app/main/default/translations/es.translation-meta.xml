@@ -117,6 +117,18 @@
         <name>Closed</name>
     </customLabels>
     <customLabels>
+        <label>Confirmar</label>
+        <name>Confirm</name>
+    </customLabels>
+    <customLabels>
+        <label>¿Está seguro de que desea eliminar su perfil?</label>
+        <name>Confirm_Delete_Profile</name>
+    </customLabels>
+    <customLabels>
+        <label>¿Está seguro de que desea desactivar su perfil?</label>
+        <name>Confirm_Inactivate_Profile</name>
+    </customLabels>
+    <customLabels>
         <label>Confirmar contraseña</label>
         <name>Confirm_Password</name>
     </customLabels>
@@ -145,8 +157,12 @@
         <name>Delete_Profile</name>
     </customLabels>
     <customLabels>
-        <label>Confirme que desea eliminar su perfil escribiendo su apellido {0} a continuación.</label>
+        <label>Escriba su apellido {0} a continuación para confirmar la realización de esta acción.</label>
         <name>Delete_Profile_Confirmation</name>
+    </customLabels>
+    <customLabels>
+        <label>Eliminar su perfil lo eliminará por completo del sistema, mientras que desactivar su perfil le ahorrará tiempo si decide inscribirse nuevamente.</label>
+        <name>Delete_Profile_Instructions</name>
     </customLabels>
     <customLabels>
         <label>Gracias por donar plasma con Proesis Bio. Estamos agradecidos por su generosidad para ayudar a salvar las vidas de los pacientes que dependen de los medicamentos derivados del plasma para tratar afecciones potencialmente mortales. Navegue a Mis Recompensas, Historial de pagos para ver los detalles.</label>

@@ -149,6 +149,10 @@
         <name>Contact_And_Support</name>
     </customLabels>
     <customLabels>
+        <label>© {0} Proesis Limited. Reservados todos los derechos.</label>
+        <name>Copyright</name>
+    </customLabels>
+    <customLabels>
         <label>Borrar</label>
         <name>Delete</name>
     </customLabels>

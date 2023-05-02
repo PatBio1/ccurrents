@@ -225,6 +225,13 @@
         <value>Contact &amp; Support</value>
     </labels>
     <labels>
+        <fullName>Copyright</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Copyright</shortDescription>
+        <value>© {0} Proesis Limited. All rights reserved.</value>
+    </labels>
+    <labels>
         <fullName>Delete</fullName>
         <language>en_US</language>
         <protected>true</protected>

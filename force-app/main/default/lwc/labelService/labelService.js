@@ -35,6 +35,7 @@ import confirmVisitCancel from '@salesforce/label/c.Confirm_Visit_Cancel';
 import confirmVisitCancelAction from '@salesforce/label/c.Confirm_Visit_Cancel_Action';
 import congratulations from '@salesforce/label/c.Congratulations';
 import contactAndSupport from '@salesforce/label/c.Contact_And_Support';
+import copyright from '@salesforce/label/c.Copyright';
 import deleteLabel from '@salesforce/label/c.Delete';
 import deleteProfile from '@salesforce/label/c.Delete_Profile';
 import deleteProfileConfirmation from '@salesforce/label/c.Delete_Profile_Confirmation';
@@ -212,6 +213,7 @@ const labels = {
     confirmVisitCancelAction,
     congratulations,
     contactAndSupport,
+    copyright,
     deleteLabel,
     deleteProfile,
     deleteProfileConfirmation,

@@ -2,11 +2,11 @@ import { track, LightningElement, wire } from 'lwc';
 import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import labels from 'c/labelService';
 import util from 'c/util';
-
 import getCenterRate from '@salesforce/apex/RateSelector.getCenterRate';
 import getCurrentDonorVisitCount from '@salesforce/apex/VisitSelector.getCurrentDonorVisitCount';
 import getCenter from '@salesforce/apex/SchedulerController.getCenter';
 import getAppointments from '@salesforce/apex/SchedulerController.getAppointments';
+import getRescheduleAppointments from '@salesforce/apex/SchedulerController.getRescheduleAppointments';
 import scheduleVisit from '@salesforce/apex/SchedulerController.scheduleVisit';
 import rescheduleVisit from '@salesforce/apex/SchedulerController.rescheduleVisit';
 import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsInfo';
@@ -151,21 +151,19 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
 
                 util.navigateToPage(this, 'Appointments__c');
             }).catch((error) => {
-                console.log(error);
-            }
-            ).finally(() => {
+                util.showToast(this, 'error', labels.error, error);
+            }).finally(() => {
                 this.loading = false;
             });
-        }
-        else {
+        } else {
             console.log('schedule request', JSON.stringify(request));
-    
+
             scheduleVisit(request).then(response => {
                 console.log('response', response);
-    
+
                 util.navigateToPage(this, 'Appointments__c');
             }).catch((error) => {
-                console.log(error);
+                util.showToast(this, 'error', labels.error, error);
             }).finally(() => {
                 this.loading = false;
             });
@@ -175,19 +173,14 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
     loadCenter() {
         this.loading = true;
 
-        const request = {
-        };
-
-        console.log('request', JSON.stringify(request));
-
-        getCenter(request).then(response => {
+        getCenter().then(response => {
             console.log('response', response);
             this.center = response;
 
             this.loadCenterRate();
             this.loadAppointments();
         }).catch((error) => {
-            console.log(error);
+            util.showToast(this, 'error', labels.error, error);
             this.loading = false;
         });
     }
@@ -199,25 +192,40 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
             centerId: this.center.id,
             appointmentDate: this.appointmentDate
         };
+    
+        if (!this.isInRescheduleMode) {
+            getAppointments(request).then(response => {
+                this.appointmentGroups = response;
 
-        console.log('request', JSON.stringify(request));
-
-        getAppointments(request).then(response => {
-            console.log('response', response);
-
-            this.appointmentGroups = response;
-
-            this.appointmentGroups.forEach((appointmentGroup) => {
-                appointmentGroup.appointments.forEach((appointment) => {
-                    appointment.classes = 'appointment-button';
-                    appointment.available = (appointment.availability > 0);
+                this.appointmentGroups.forEach((appointmentGroup) => {
+                    appointmentGroup.appointments.forEach((appointment) => {
+                        appointment.classes = 'appointment-button';
+                        appointment.available = (appointment.availability > 0);
+                    });
                 });
+            }).catch((error) => {
+                util.showToast(this, 'error', labels.error, error);
+            }).finally(() => {
+                this.loading = false;
             });
-        }).catch((error) => {
-            console.log(error);
-        }).finally(() => {
-            this.loading = false;
-        });
+        } else {
+            request.visitToReschedule = this.pageRef.state.rescheduleVisitId;
+
+            getRescheduleAppointments(request).then(response => {
+                this.appointmentGroups = response;
+
+                this.appointmentGroups.forEach((appointmentGroup) => {
+                    appointmentGroup.appointments.forEach((appointment) => {
+                        appointment.classes = 'appointment-button';
+                        appointment.available = (appointment.availability > 0);
+                    });
+                });
+            }).catch((error) => {
+                util.showToast(this, 'error', labels.error, error);
+            }).finally(() => {
+                this.loading = false;
+            });
+        }
     }
 
     async loadDonorRewardsInfo() {
@@ -230,7 +238,7 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
             this.donorCurrency = response.donorBalance;
             this.donorPoints = response.donorPoints;
         } catch (error) {
-            console.log(error);
+            util.showToast(this, 'error', labels.error, error);
         } finally {
             this.loading = false;
         }
@@ -242,7 +250,7 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
         try {
             this.existingVisitCount = await getCurrentDonorVisitCount();
         } catch (error) {
-            console.log(error);
+            util.showToast(this, 'error', labels.error, error);
         } finally {
             this.loading = false;
         }
@@ -251,8 +259,9 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
     async loadCenterRate() {
         try {
             this.centerRateInfo = await getCenterRate({ centerId: this.center.id, targetDonationType: 'Normal Source Plasma' });
-        } catch(e) {
-            console.error(e);
+        } catch (error) {
+            util.showToast(this, 'error', labels.error, error);
         }
     }
+
 }

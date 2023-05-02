@@ -1,19 +1,21 @@
 import { track, LightningElement } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import labels from 'c/labelService';
+import util from 'c/util';
 import proesisDonor from '@salesforce/resourceUrl/ProesisDonor';
+import hasFutureVisit from '@salesforce/apex/SchedulerController.hasFutureVisit';
+import language from '@salesforce/i18n/lang';
+import locale from '@salesforce/i18n/locale';
 
-export default class MyRewards extends LightningElement {
+const PAGE_HOME = 'Home';
+const PAGE_ARTICLE = 'Article';
+
+export default class Home extends NavigationMixin(LightningElement) {
 
     labels = labels;
-    currentPage = 'Home';
-
-    get showHome() {
-        return (this.currentPage === 'Home');
-    }
-
-    get showArticle() {
-        return (this.currentPage === 'Article');
-    }
+    hasRendered = false;
+    loading = true;
+    currentPage;
 
     @track articleCategories = [
         {
@@ -41,6 +43,44 @@ export default class MyRewards extends LightningElement {
         }
     ];
 
+    get showHome() {
+        return (this.currentPage === PAGE_HOME);
+    }
+
+    get showArticle() {
+        return (this.currentPage === PAGE_ARTICLE);
+    }
+
+    renderedCallback() {
+        if (this.hasRendered) {
+            return;
+        }
+
+        this.hasRendered = true;
+
+        // If current language doesn't match the user's locale,
+        // reload the page with the language from the locale.
+        if (language !== locale) {
+            const url = location.href + '?language=' + (locale.indexOf('es') === -1 ? 'en_US' : 'es_US');
+            location.href = url;
+
+            this.loading = false;
+        } else {
+            hasFutureVisit().then(response => {
+                // Navigate to the schedule page if there aren't any future visits scheduled.
+                if (response === true) {
+                    this.currentPage = PAGE_HOME;
+                } else {
+                    util.navigateToPage(this, 'Schedule__c');
+                }
+            }).catch((error) => {
+                util.showToast(this, 'error', labels.error, error);
+            }).finally(() => {
+                this.loading = false;
+            });
+        }
+    }
+
     onBookmarkClick(event) {
         let categoryIndex = event.target.dataset.category;
         let articleIndex = event.target.dataset.article;
@@ -51,11 +91,11 @@ export default class MyRewards extends LightningElement {
     }
 
     onArticleClick() {
-        this.currentPage = 'Article';
+        this.currentPage = PAGE_ARTICLE;
     }
 
     onArticleBackButtonClick() {
-        this.currentPage = 'Home';
+        this.currentPage = PAGE_HOME;
     }
 
 }

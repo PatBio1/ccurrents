@@ -34,6 +34,8 @@ export default class Profile extends LightningElement {
     maxPasswordCharacters = constants.maxPasswordCharacters;
 
     labels = labels;
+    suffixOptions = constants.suffixOptions;
+    stateOptions = constants.stateOptions;
     loading = false;
     currentPage = PAGE_BASIC_PROFILE;
     @track profile = {
@@ -118,73 +120,6 @@ export default class Profile extends LightningElement {
 
     get hasPhoto() {
         return util.isNotBlank(this.profile.photoUrl);
-    }
-
-    get suffixOptions() {
-        return [
-            {label: 'Jr', value: 'Jr'},
-            {label: 'II', value: 'II'},
-            {label: 'Sr', value: 'Sr'},
-            {label: 'III', value: 'III'},
-            {label: 'IV', value: 'IV'},
-            {label: 'V', value: 'V'}
-        ];
-    }
-
-    get stateOptions() {
-        return [
-            {label: 'AK', value: 'AK'},
-            {label: 'AL', value: 'AL'},
-            {label: 'AR', value: 'AR'},
-            {label: 'AZ', value: 'AZ'},
-            {label: 'CA', value: 'CA'},
-            {label: 'CO', value: 'CO'},
-            {label: 'CT', value: 'CT'},
-            {label: 'DC', value: 'DC'},
-            {label: 'DE', value: 'DE'},
-            {label: 'FL', value: 'FL'},
-            {label: 'GA', value: 'GA'},
-            {label: 'HI', value: 'HI'},
-            {label: 'IA', value: 'IA'},
-            {label: 'ID', value: 'ID'},
-            {label: 'IL', value: 'IL'},
-            {label: 'IN', value: 'IN'},
-            {label: 'KS', value: 'KS'},
-            {label: 'KY', value: 'KY'},
-            {label: 'LA', value: 'LA'},
-            {label: 'MA', value: 'MA'},
-            {label: 'MD', value: 'MD'},
-            {label: 'ME', value: 'ME'},
-            {label: 'MI', value: 'MI'},
-            {label: 'MN', value: 'MN'},
-            {label: 'MO', value: 'MO'},
-            {label: 'MS', value: 'MS'},
-            {label: 'MT', value: 'MT'},
-            {label: 'NC', value: 'NC'},
-            {label: 'ND', value: 'ND'},
-            {label: 'NE', value: 'NE'},
-            {label: 'NH', value: 'NH'},
-            {label: 'NJ', value: 'NJ'},
-            {label: 'NM', value: 'NM'},
-            {label: 'NV', value: 'NV'},
-            {label: 'NY', value: 'NY'},
-            {label: 'OH', value: 'OH'},
-            {label: 'OK', value: 'OK'},
-            {label: 'OR', value: 'OR'},
-            {label: 'PA', value: 'PA'},
-            {label: 'RI', value: 'RI'},
-            {label: 'SC', value: 'SC'},
-            {label: 'SD', value: 'SD'},
-            {label: 'TN', value: 'TN'},
-            {label: 'TX', value: 'TX'},
-            {label: 'UT', value: 'UT'},
-            {label: 'VA', value: 'VA'},
-            {label: 'VT', value: 'VT'},
-            {label: 'WA', value: 'WA'},
-            {label: 'WI', value: 'WI'},
-            {label: 'WV', value: 'WV'},
-            {label: 'WY', value: 'WY'}
-        ];
     }
 
     get basicProfileValid() {
@@ -304,7 +239,7 @@ export default class Profile extends LightningElement {
 
             this.profile.centerId = this.center.id;
             createUserFromScheduler({ profile: this.profile }).then(response => {
-                console.log('createUserFromScheduler Response', response);
+                console.log('createUserFromScheduler response', response);
 
                 this.dispatchEvent(new CustomEvent('schedulerdonorcreate', {
                     detail: {

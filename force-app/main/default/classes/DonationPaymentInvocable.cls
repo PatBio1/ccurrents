@@ -34,6 +34,9 @@ public with sharing class DonationPaymentInvocable {
         @InvocableVariable
         public Id visitId;
 
+        @InvocableVariable
+        public Id transactionId;
+
     }
 
 }

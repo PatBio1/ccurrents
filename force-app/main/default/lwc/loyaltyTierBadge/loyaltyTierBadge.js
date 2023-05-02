@@ -33,6 +33,8 @@ export default class LoyaltyTierBadge extends LightningElement {
         if (!this.isInitialized) {
             try {
                 this.badgeSettings = await getLoyaltyBadgeDisplaySettings();
+                console.log(this.badgeSettings);
+
                 this.isInitialized = true;
             } catch(e) {
                 console.error(e);

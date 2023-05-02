@@ -32,7 +32,7 @@ public without sharing class DonorCheckinInvocable {
         for (Visit__c visit : VisitSelector.getVisitsInRangeForDonorNumbers(dateTimesToProcess,donorNumbersToQuery)) {
             Donor_CheckIn__e checkin = donorNumberToPEs.get(visit.Donor__r.Account.DonorId__c);
             // Assuming FDA 48 Hour rule mandates (at least) 24 hours between visits, check if this event is within 12 hours of the Visit (Appointment) Date Time
-            if (checkin.Timestamp__c <= visit.Appointment__r.Datetime__c.addHours(12) && checkin.Timestamp__c >= visit.Appointment__r.Datetime__c.addHours(-12)) {
+            if (checkin.Timestamp__c <= visit.Appointment__r.Datetime__c.addHours(12) && checkin.Timestamp__c >= visit.Appointment__r.Datetime__c.addHours(-12) && visit.Status__c != 'Complete') {
                 Visit__c visitUpdate = new Visit__c(Id = visit.Id);
                 visitUpdate.Status__c = Constants.VISIT_STATUS_CHECKEDIN;
                 visitUpdate.Check_In__c = checkin.Timestamp__c;

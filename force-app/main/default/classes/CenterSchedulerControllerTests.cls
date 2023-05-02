@@ -49,6 +49,12 @@ public with sharing class CenterSchedulerControllerTests {
 
         upsert centers CenterId__c;
 
+        List<Center_Donation_Type__c> centerDonationTypes = new List<Center_Donation_Type__c>{
+            TestUtil.createCenterDonationType(centers[0].Id),
+            TestUtil.createCenterDonationType(centers[1].Id),
+            TestUtil.createCenterDonationType(centers[2].Id)
+        };
+        insert centerDonationTypes;
 
         Schedule__c[] schedules = new Schedule__c[]{
             new Schedule__c(
@@ -427,17 +433,61 @@ public with sharing class CenterSchedulerControllerTests {
         }
     }
 
-    @IsTest
-    static void testGetSoonestNextRescheduleVisitDate() {
-        Contact targetDonor = [SELECT Id, Soonest_Next_Visit__c FROM Contact WHERE Soonest_Next_Visit__c != null LIMIT 1];
-        Datetime returnedSoonestNextVisitDate;
+    @IsTest 
+    static void testPositiveAppointmentSlotCapacityUpdate() {
+        Appointment__c targetAppointmentSlot = [SELECT Id, Booked__c, Capacity__c FROM Appointment__c LIMIT 1];
+        Decimal startingCapacity = targetAppointmentSlot.Capacity__c;
 
         Test.startTest();
-        System.runAs(TestUtil.createAdminUser()) {
-            returnedSoonestNextVisitDate = CenterScheduleController.getSoonestNextRescheduleVisitDate(targetDonor.Id);
-        }
+        CenterScheduleController.updateAppointmentSlotCapacity(targetAppointmentSlot.Id, 1);
         Test.stopTest();
 
-        Assert.areEqual(targetDonor.Soonest_Next_Visit__c, returnedSoonestNextVisitDate, 'The soonest next visit date should be returned');
+        Appointment__c updatedAppointmentSlot = [SELECT Id, Booked__c, Capacity__c FROM Appointment__c WHERE Id = :targetAppointmentSlot.Id LIMIT 1];
+        Assert.areEqual(startingCapacity + 1, updatedAppointmentSlot.Capacity__c, 'The capacity should have been incremented by 1');
+    }
+
+    @IsTest 
+    static void testNegativeAppointmentSlotCapacityUpdate() {
+        final Integer CAPACITY_CHANGE = 1;
+
+        Appointment__c targetAppointmentSlot = [SELECT Id, Booked__c, Capacity__c, Availability__c, Schedule__r.Center__c FROM Appointment__c ORDER BY Datetime__c ASC LIMIT 1];
+        Decimal startingCapacity = targetAppointmentSlot.Capacity__c;
+        
+        Integer capacityAsInteger = (Integer)startingCapacity;
+        List<Contact> donors = [SELECT Id FROM Contact LIMIT :capacityAsInteger];
+
+        // Create Temp donors if there wasn't enough already created
+        if (targetAppointmentSlot.Availability__c > 0 && donors.size() < targetAppointmentSlot.Availability__c) {
+            List<Contact> newDonors = new List<Contact>();
+
+            for (Integer i = donors.size(); i < (targetAppointmentSlot.Availability__c - donors.size()); i++) {
+                newDonors.add(new Contact(FirstName = 'Test', LastName = 'Donor ' + (i + 1)));
+            }
+            insert newDonors;
+        }
+
+        Center_Donation_Type__c targetCenterDonationType = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :targetAppointmentSlot.Schedule__r.Center__c LIMIT 1];
+
+        List<Visit__c> visits = new List<Visit__c>();
+        for (Contact donor : donors) {
+            visits.add(new Visit__c(
+                Appointment__c = targetAppointmentSlot.Id,
+                Center_Donation_Type__c = targetCenterDonationType.Id,
+                Donor__c = donor.Id,
+                Status__c = 'Scheduled'
+            ));
+        }
+        CoreSchedulerHandler.createVisits(visits);
+
+        Test.startTest();
+        CenterScheduleController.updateAppointmentSlotCapacity(targetAppointmentSlot.Id, -CAPACITY_CHANGE);
+        Test.stopTest();
+
+        Appointment__c updatedAppointmentSlot = [SELECT Id, Booked__c, Capacity__c, (SELECT Id FROM Appointments__r WHERE Outcome__c = null) FROM Appointment__c WHERE Id = :targetAppointmentSlot.Id LIMIT 1];
+        Assert.areEqual(startingCapacity - 1, updatedAppointmentSlot.Capacity__c, 'The capacity should have been decremented by ' + CAPACITY_CHANGE);
+        Assert.areEqual(updatedAppointmentSlot.Capacity__c, updatedAppointmentSlot.Appointments__r.size(), 'The appointment slot should have one less appointment');
+
+        Appointment__c expectedRescheduleSlot = [SELECT Id, Booked__c, Capacity__c, Availability__c, Schedule__r.Center__c FROM Appointment__c ORDER BY Datetime__c ASC LIMIT 1 OFFSET 1];
+        Assert.areEqual(CAPACITY_CHANGE, [SELECT count() FROM Visit__c WHERE Appointment__c = :expectedRescheduleSlot.Id AND Donor__c IN :donors], 'There should be ' + CAPACITY_CHANGE + ' visit rescheduled to the next appointment slot');
     }
 }

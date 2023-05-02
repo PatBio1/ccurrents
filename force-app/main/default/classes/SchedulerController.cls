@@ -30,8 +30,19 @@ public without sharing class SchedulerController {
 
     @AuraEnabled
     public static List<AppointmentGroup> getAppointments(Id centerId, Date appointmentDate) {
-        User userInfo = [SELECT Id, Contact.Soonest_Next_Visit__c FROM User WHERE Id = :UserInfo.getUserId()];
+        User user = [SELECT Contact.Soonest_Next_Visit__c FROM User WHERE Id = :UserInfo.getUserId()];
+        return getAppointmentRecords(centerId, appointmentDate, user.Contact.Soonest_Next_Visit__c.date());
+    }
 
+    @AuraEnabled
+    public static List<AppointmentGroup> getRescheduleAppointments(Id centerId, Id visitToReschedule, Date appointmentDate) {
+        User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
+        Datetime rescheduleSoonestNextVisit = CoreSchedulerHandler.getSoonestNextRescheduleVisitDate(user.ContactId, visitToReschedule);
+
+        return getAppointmentRecords(centerId, appointmentDate, rescheduleSoonestNextVisit.date());
+    }
+
+    private static List<AppointmentGroup> getAppointmentRecords(Id centerId, Date appointmentDate, Date soonestNextVisit) {
         try {
             List<AppointmentGroup> appointmentGroups = new List<AppointmentGroup>{
                 new AppointmentGroup('AM'),
@@ -40,18 +51,18 @@ public without sharing class SchedulerController {
             };
 
             if (appointmentDate >= Date.today()) {
-                DateTime startTime = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 0, 0, 0);
+                DateTime startTime = DateTime.newInstanceGmt(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 0, 0, 0);
                 DateTime endTime = startTime.addDays(1).addSeconds(-1);
 
                 List<Appointment__c> appointmentRecords = [
                     SELECT
-                        Datetime__c, Availability__c
+                        Datetime__c, Availability__c, Availability_Loyalty__c 
                     FROM
                         Appointment__c
                     WHERE
                         Schedule__r.Center__c = :centerId
                     AND 
-                        Datetime__c >= :userInfo.Contact.Soonest_Next_Visit__c
+                        Datetime__c >= :soonestNextVisit
                     AND
                         Datetime__c >= :startTime
                     AND
@@ -63,11 +74,18 @@ public without sharing class SchedulerController {
                 DateTime elevenAM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 11, 0, 0);
                 DateTime twoPM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 14, 0, 0);
 
+                Contact targetDonor = [SELECT Id, Loyalty_Level__c FROM Contact WHERE Id IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()) LIMIT 1];
+                Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(targetDonor.Loyalty_Level__c);
+
                 for (Appointment__c appointmentRecord : appointmentRecords) {
                     Appointment appointment = new Appointment();
                     appointment.id = appointmentRecord.Id;
                     appointment.name = appointmentRecord.Datetime__c.format('h:mm');
+
                     appointment.availability = (appointmentRecord.Availability__c == null ? 0 : appointmentRecord.Availability__c.intValue());
+                    if (loyaltyLevel > 0) {
+                        appointment.availability += (appointmentRecord.Availability_Loyalty__c == null ? 0 : appointmentRecord.Availability_Loyalty__c.intValue());
+                    }
 
                     if (appointmentRecord.Datetime__c < elevenAM) {
                         appointmentGroups[0].appointments.add(appointment);
@@ -92,11 +110,14 @@ public without sharing class SchedulerController {
 
             List<Visit__c> visitRecords = [
                 SELECT
-                    isFirstVisit__c, Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name, Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.First_Visit_Code__c, Outcome__c
+                    isFirstVisit__c, Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name,
+                    Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.First_Visit_Code__c, Outcome__c
                 FROM
                     Visit__c
                 WHERE
-                    Donor__c = :user.ContactId AND (Status__c = 'Scheduled' OR Status__c = 'Complete')
+                    Donor__c = :user.ContactId
+                AND
+                    (Status__c = 'Scheduled' OR Status__c = 'Complete')
                 ORDER BY
                     Appointment__r.Datetime__c ASC
             ];
@@ -124,9 +145,35 @@ public without sharing class SchedulerController {
     }
 
     @AuraEnabled
+    public static Boolean hasFutureVisit() {
+        try {
+            Util.testExceptionHandling();
+
+            User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
+
+            Integer visitCount = [
+                SELECT
+                    COUNT()
+                FROM
+                    Visit__c
+                WHERE
+                    Donor__c = :user.ContactId
+                AND
+                    Appointment__r.Datetime__c > :DateTime.now()
+                AND
+                    Status__c != 'Complete'
+            ];
+
+            return (visitCount > 0);
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
     public static Id scheduleVisit(Id appointmentId) {
         try {
-            Appointment__c appointment = [SELECT Id, Schedule__r.Center__c FROM Appointment__c WHERE Id = :appointmentId LIMIT 1];
+            Appointment__c appointment = [SELECT Schedule__r.Center__c FROM Appointment__c WHERE Id = :appointmentId LIMIT 1];
 
             Visit__c visit = CoreSchedulerHandler.createVisit(new Visit__c(
                 Donor__c = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId() LIMIT 1]?.ContactId,

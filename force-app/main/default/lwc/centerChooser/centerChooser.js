@@ -52,7 +52,7 @@ export default class CenterChooser extends LightningElement {
         const locationService = getLocationService();
 
         if (locationService.isAvailable()) {
-            locationService.getCurrentPosition({enableHighAccuracy: true}).then((position) => {
+            locationService.getCurrentPosition({enableHighAccuracy: false}).then((position) => {
                 this.location.isCurrent = true;
                 this.location.latitude = position.coords.latitude;
                 this.location.longitude = position.coords.longitude;

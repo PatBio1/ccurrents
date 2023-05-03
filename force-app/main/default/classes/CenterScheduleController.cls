@@ -249,16 +249,16 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
-    public static void linkPaymentCard(String cardId, Id donorId) {
+    public static void linkPaymentCard(String cardId, Id donorId, String initalPIN) {
         OnbePaymentService linkPaymentCardService = new OnbePaymentService();
 
         try {
-            linkPaymentCardService.setupPaymentServiceAccount(cardId, donorId);
+            linkPaymentCardService.setupPaymentServiceAccount(cardId, donorId, 0, initalPIN);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
-    
+
     public static UpdateCapacityResult updateAppointmentSlotCapacity(Id appointmentId, Decimal capacityChange) {
         Appointment__c targetAppointmentSlot;
 

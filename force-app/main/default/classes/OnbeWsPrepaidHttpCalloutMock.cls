@@ -8,6 +8,8 @@ global class OnbeWsPrepaidHttpCalloutMock implements HttpCalloutMock {
     private static final String uriAccountManagementMainEndpoint = 'https://webservice-qa.northlane.com:4005/accountmanagementapiws/services/AccountManagementApiWebServices';
     private static final String uriAccountManagementPrepaidWs = 'http://ws.accountmanagementapi.prepaid.citi.com';
 
+	public static final String TEST_ACCOUNT_NUMBER = '1234567890123456';
+
 	global HTTPResponse respond(HTTPRequest req){
 		HttpResponse res = new HttpResponse();
 		res.setHeader('Content-Type', 'application/json');

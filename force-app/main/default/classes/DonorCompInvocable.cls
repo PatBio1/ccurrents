@@ -104,6 +104,8 @@ public without sharing class DonorCompInvocable {
         Map<Id, Transaction__c> donorIdToTransaction = new Map<Id, Transaction__c>();
         Map<Id, List<Txn_Line_Item__c>> donorIdToTxnLineItems = new Map<Id, List<Txn_Line_Item__c>>();
         Map<Id, List<Message__c>> donorIdToMessages = new Map<Id, List<Message__c>>();
+        List<AddFundsRequest> addFundsRequests = new List<AddFundsRequest>();
+        List<Task> missingPaymentMethodTasks = new List<Task>();
 
         List<Level__c> lowestLoyaltyLevelByThreshold = [
             SELECT Id, Donation_Threshold__c, Threshold_Payment__c, Threshold_Points__c
@@ -115,13 +117,20 @@ public without sharing class DonorCompInvocable {
         ];
 
         List<Contact> targetContacts = [
-            SELECT Id, AccountId, Loyalty_Level__c, Loyalty_Level__r.Donation_Points__c, Loyalty_Level__r.Donation_Payment__c, Total_Visits_365d__c,
-                Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, Loyalty_Level__r.Next_Level__c, Loyalty_Level__r.Next_Level__r.Threshold_Payment__c, Loyalty_Level__r.Next_Level__r.Threshold_Points__c, (
-                SELECT Id, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c
-                FROM Visits__r
-                WHERE Status__c = 'Complete' AND Outcome__c = 'Donation'
-                ORDER BY Appointment_Datetime__c DESC
-            )
+            SELECT Id, Name, AccountId, Loyalty_Level__c, Loyalty_Level__r.Donation_Points__c, Loyalty_Level__r.Donation_Payment__c, Total_Visits_365d__c,
+                Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, Loyalty_Level__r.Next_Level__c, Loyalty_Level__r.Next_Level__r.Threshold_Payment__c, Loyalty_Level__r.Next_Level__r.Threshold_Points__c,
+                (
+                    SELECT Id, Name, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c
+                    FROM Visits__r
+                    WHERE Status__c = 'Complete' AND Outcome__c = 'Donation'
+                    ORDER BY Appointment_Datetime__c DESC
+                ),
+                (
+                    SELECT Id, Account_Number__c
+                    FROM Payment_Methods__r
+                    WHERE Is_Active__c = true AND Days_Until_Expiration__c > 0 AND isDefault__c = true
+                    LIMIT 1
+                )
             FROM Contact
             WHERE Account.DonorId__c IN :donorNumbersToQuery
         ];
@@ -151,6 +160,20 @@ public without sharing class DonorCompInvocable {
 
         Map<Id, Integer> donorIdToTotalVisitCount = DonorBatchableHelper.calculateDonor365DayVisitTotals(targetContacts);
         for (Contact foundContact : targetContacts) {
+            AddFundsRequest addFundsRequest;
+
+            // If there isn't a payment method that is active/not expired, then we need to notify the center managers that a donation couldn't be processed
+            if (foundContact.Payment_Methods__r == null || foundContact.Payment_Methods__r.size() == 0) {
+                missingPaymentMethodTasks.add(new Task(
+                    WhoId = foundContact.Id,
+                    Subject = Constants.MISSING_PAYMENT_METHOD_TASK_SUBJECT,
+                    Description = 'Donor ' + foundContact.Name + ' is missing an active payment method and could not be paid for visit ' + foundContact.Visits__r[0].Name
+                ));
+            } else {
+                addFundsRequest = new AddFundsRequest(foundContact.Payment_Methods__r[0].Account_Number__c);
+                addFundsRequests.add(addFundsRequest);
+            }
+
             Map<Id, AggregateResult> activeLastPromotionDatesByTier = donorIdToActiveLastPromotionDatesByTier.get(foundContact.Id);
             Integer totalVisitCount = donorIdToTotalVisitCount.get(foundContact.Id);
 
@@ -190,12 +213,19 @@ public without sharing class DonorCompInvocable {
 
             Decimal loyaltyLevelPaymentBonus = (foundContact.Loyalty_Level__r.Donation_Payment__c != null) ? foundContact.Loyalty_Level__r.Donation_Payment__c : 0;
             if (targetRateRecord != null && targetRateRecord.Base_Payment__c != null && targetRateRecord.Base_Payment__c > 0) {
+                Decimal donationPaymentTotal = targetRateRecord.Base_Payment__c + loyaltyLevelPaymentBonus;                
+                
                 txnLineItems.add(new Txn_Line_Item__c(
                     Item__c = 'Donation Payment',
                     Quantity__c = 1,
                     Type__c = 'Currency',
-                    Unit_Cost__c = targetRateRecord.Base_Payment__c + loyaltyLevelPaymentBonus
+                    Unit_Cost__c = donationPaymentTotal
                 ));
+
+                if (addFundsRequest != null) {
+                    addFundsRequest.comments.add('Donation Payment');
+                    addFundsRequest.total += donationPaymentTotal;
+                }
             }
             donorIdToTxnLineItems.put(foundContact.Id, txnLineItems);
 
@@ -238,6 +268,11 @@ public without sharing class DonorCompInvocable {
                                 Unit_Cost__c = bonusLevel.Threshold_Payment__c,
                                 Promotion_Level__c = bonusLevel.Id
                             ));
+
+                            if (addFundsRequest != null) {
+                                addFundsRequest.comments.add(bonusLevel.Name + ' - Bonus Payment');
+                                addFundsRequest.total += bonusLevel.Threshold_Payment__c;
+                            }
                         }
                     }
 
@@ -292,6 +327,11 @@ public without sharing class DonorCompInvocable {
                                 Unit_Cost__c = targetPromotionLevel.Threshold_Payment__c,
                                 Promotion_Level__c = targetPromotionLevel.Id
                             ));
+
+                            if (addFundsRequest != null) {
+                                addFundsRequest.comments.add('Threshold Payment');
+                                addFundsRequest.total += targetPromotionLevel.Threshold_Payment__c;
+                            }
                         }
                     }
                 }
@@ -341,6 +381,13 @@ public without sharing class DonorCompInvocable {
 
         insert txnLineItems;
         insert messages;
+
+        if (missingPaymentMethodTasks.size() > 0) {
+            insert missingPaymentMethodTasks;
+        }
+
+        // Process the add fund requests in an async context to avoid callout exception
+        Database.executeBatch(new AddFundsBatchable(addFundsRequests));
     }
 
     public static void updateCampaignVisitCounter(List<Visit__c> visitsToProcess) {
@@ -418,6 +465,19 @@ public without sharing class DonorCompInvocable {
         }
         if (!finalCampaignMemberUpdates.isEmpty()) {
             update finalCampaignMemberUpdates;
+        }
+    }
+
+    public class AddFundsRequest {
+        public String accountNumber;
+        public List<String> comments;
+        public Decimal total;
+
+        public AddFundsRequest(String accountNumber) {
+            this.accountNumber = accountNumber;
+
+            this.comments = new List<String>();
+            this.total = 0;
         }
     }
 }

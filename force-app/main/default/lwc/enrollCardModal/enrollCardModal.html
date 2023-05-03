@@ -10,6 +10,9 @@
 
             <lightning-input style="width: 33%;" label="Card Package Id" value={cardPackageId} onchange={handleCardPackageIdChange}>
             </lightning-input>
+
+            <lightning-input style="width: 33%;" label="Card PIN" value={initalPIN} onchange={handlePINChange} type="text" min-length="4" max-length="4" data-pin-input>
+            </lightning-input>
         </div>
     </lightning-modal-body>
 

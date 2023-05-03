@@ -6,20 +6,34 @@ import linkPaymentCard from '@salesforce/apex/CenterScheduleController.linkPayme
 
 export default class EnrollCardModal extends LightningModal {
     @api donorId;
+
     cardPackageId;
+    initalPIN;
+    loading = false;
     
     get isInputInvalid() {
-        return (!this.cardPackageId);
+        let pinInputField = this.template.querySelector('lightning-input[data-pin-input]');
+
+        let pinAsIntValue = !this.initalPIN ? 0 : parseInt(this.initalPIN);
+        let isValidPin = pinInputField?.checkValidity() && !isNaN(pinAsIntValue) && pinAsIntValue >= 1000;
+
+        return (
+            !this.cardPackageId || !this.initalPIN || !isValidPin
+        );
     }
 
     handleCardPackageIdChange(event) {
         this.cardPackageId = event.detail.value;
     }
 
+    handlePINChange(event) {
+        this.initalPIN = event.detail.value;
+    }
+
     async handleSubmitCardEnrollment() {
         try {
-            console.log(this.cardPackageId);
-            await linkPaymentCard({ cardId: this.cardPackageId, donorId: this.donorId });
+            this.loading = true;
+            await linkPaymentCard({ cardId: this.cardPackageId, donorId: this.donorId, initalPIN: this.initalPIN });
         } catch (error) {
             this.dispatchEvent(new ShowToastEvent({
                 title: 'Error',
@@ -28,6 +42,8 @@ export default class EnrollCardModal extends LightningModal {
             }));
 
             return;   
+        } finally {
+            this.loading = false;
         }
 
         this.dispatchEvent(new ShowToastEvent({

@@ -235,7 +235,7 @@ private class OnbeWsPrepaidTest {
 	@isTest static void coverCodeForaddFunds_Http(){
 		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
-		System.assertNotEquals(null, testObject.addFunds_Http(null));		
+		System.assertNotEquals(null, testObject.addFunds_Http('', '', '', '', '', null));		
 	}
 
 	@isTest static void coverCodeForassignPackage_Http(){
@@ -279,7 +279,7 @@ private class OnbeWsPrepaidTest {
 	@isTest static void coverCodeForsetPin_Http(){
 		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
-		testObject.setPin_Http(null);		
+		testObject.setPin_Http(null, null, null, null, null);		
 	}
 
 	@isTest static void coverCodeForupdateAccountStatus_Http(){

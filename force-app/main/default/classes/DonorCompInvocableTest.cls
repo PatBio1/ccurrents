@@ -134,6 +134,16 @@ public with sharing class DonorCompInvocableTest {
     @IsTest
     static void testHandleCreateDonationTransactions() {
         List<Account> donorAccounts = [SELECT Id, PersonContactId, DonorId__c FROM Account WHERE DonorId__c != null LIMIT 1];
+
+        // Create Active Payment Methods for the selected donor to ensure the addFunds method is called
+        List<Payment_Method__c> testPaymentMethods = new List<Payment_Method__c>();
+        for(Account donorAccount : donorAccounts) {
+            testPaymentMethods.add(new Payment_Method__c(
+                Name = 'Onbe Test Card', Donor__c = donorAccount.PersonContactId, Account_Number__c = '1234567890', Is_Active__c = true, isDefault__c = true, Expiration__c = Date.today().addYears(1)
+            ));
+        }
+        insert testPaymentMethods;
+
         Id scheduledId = [SELECT Id FROM Schedule__c LIMIT 1]?.Id;
 
         List<Appointment__c> testAppointments = new List<Appointment__c>();
@@ -160,6 +170,9 @@ public with sharing class DonorCompInvocableTest {
         Visit__c crossDonationThresholdVisit = TestUtil.createVisit(donorAccounts[0].PersonContactId, centerDonationTypeId, testAppointments[TEST_DONATION_THRESHOLD - 1].Id);
         crossDonationThresholdVisit.Status__c = 'Complete';
         crossDonationThresholdVisit.Outcome__c = 'Donation';
+
+        // Set mock for the 'addFunds' callout
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 
         Test.startTest();
         // Should create normal transaction with Level 1 Rates
@@ -400,5 +413,46 @@ public with sharing class DonorCompInvocableTest {
         Assert.isNotNull(donors[0].Messages__r[0].Transaction__c, 'Message should have Transaction__c');
         Assert.areEqual(testVisits[testVisits.size() - 1].Id, donors[0].Messages__r[0].Transaction__r.Visit__c, 'The linked transaction should be the transaction linked to the last visit');
         Assert.isTrue(donors[0].Messages__r[0].Trigger_Marketing_Cloud__c, 'Message should have Trigger_Marketing_Cloud__c = true');
+    }
+
+    @IsTest 
+    static void testMissingPaymentTask() {
+        List<Account> donorAccounts = [SELECT Id, PersonContactId, DonorId__c FROM Account WHERE DonorId__c != null LIMIT 1];
+        Id scheduledId = [SELECT Id FROM Schedule__c LIMIT 1]?.Id;
+
+        List<Appointment__c> testAppointments = new List<Appointment__c>();
+        Datetime currentDatetime = Datetime.now().addDays(-14 * TEST_DONATION_THRESHOLD);
+
+        for (Integer i = 0; i < TEST_DONATION_THRESHOLD; i++) {
+            testAppointments.add(TestUtil.createTestAppointment(scheduledId, currentDatetime));
+            currentDatetime = currentDatetime.addDays(14);
+        }
+        insert testAppointments;
+
+        List<Visit__c> testVisits = new List<Visit__c>();
+        Id centerDonationTypeId = [SELECT Id FROM Center_Donation_Type__c LIMIT 1][0].Id;
+
+        for (Integer i = 0; i < TEST_DONATION_THRESHOLD - 1; i++) {
+            Visit__c testVisit = TestUtil.createVisit(donorAccounts[0].PersonContactId, centerDonationTypeId, testAppointments[i].Id);
+            testVisit.Status__c = 'Complete';
+            testVisit.Outcome__c = 'Donation';
+
+            testVisits.add(testVisit);
+        }
+        insert testVisits;
+
+        // Set mock for the 'addFunds' callout
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+
+        Test.startTest();
+        // Should create normal transaction with Level 1 Rates
+        DonorCompInvocable.handleCreateDonationTransactions(new List<List<Donor_Comp__e>>{
+            new List<Donor_Comp__e>{
+                new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now())
+            }
+        });
+        Test.stopTest();
+
+        Assert.areEqual(donorAccounts.size(), [SELECT count() FROM Task WHERE Subject = :Constants.MISSING_PAYMENT_METHOD_TASK_SUBJECT], 'Should have created a Missing Payment Task');
     }
 }

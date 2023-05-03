@@ -3,7 +3,7 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
     private static final String PROGRAM_ID = '04011223';
     private static final String PARTNER_USER_ID = '0012';
     private static final String PROMOTION_ID = '2';
-    private static final String ACCESS_LEVEL = '01';
+    private static final String ACCESS_LEVEL = '02';
 
     public OnbePaymentService() {
 
@@ -17,22 +17,26 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
         return 'Onbe Payment Service supports stored value card transfers.';
     }
 
-    public String setupPaymentServiceAccount(String cardPackageId, Id donorId) {
+    public String setupPaymentServiceAccount(String cardPackageId, Id donorId, Decimal initialAccountLoad, String initialPIN) {
         OnbeDomainPrepaid.Card newCard = new OnbeDomainPrepaid.Card();
         newCard.cardAccessLevel = ACCESS_LEVEL;
 
-        OnbeDomainPrepaid.Load newLoad = new OnbeDomainPrepaid.Load();
-        newLoad.amount = 200;
-        newLoad.comment = 'Add funds';
+        OnbeDomainPrepaid.Load newLoad;
+        if (initialAccountLoad != null && initialAccountLoad > 0) {
+            newLoad = new OnbeDomainPrepaid.Load();
+            newLoad.amount = (Long)initialAccountLoad;
+            newLoad.comment = 'Initial Account Funds';
+        }
 
         OnbeDomainPrepaid.Link newLink = new OnbeDomainPrepaid.Link();
         newLink.block = 'NONE';  // either ALL or NONE
         newLink.cardPackageId = cardPackageId;
 
-        Account donorContactRecord;
+        Account donorRecord;
         try {
-            donorContactRecord = [
-                SELECT Id, FirstName, LastName, PersonMailingStreet, PersonMailingCity, PersonMailingState, PersonMailingPostalCode, PersonMailingCountry, PersonMobilePhone 
+            donorRecord = [
+                SELECT Id, FirstName, LastName, PersonContactId, PersonMailingStreet,
+                    PersonMailingCity, PersonMailingState, PersonMailingPostalCode, PersonMailingCountry, PersonMobilePhone 
                 FROM Account 
                 WHERE Id IN (SELECT AccountId FROM Contact WHERE Id = :donorId)
                 LIMIT 1
@@ -43,22 +47,54 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
         }
 
         OnbeDomainPrepaid.Registration newReg = new OnbeDomainPrepaid.Registration();
-        newReg.firstName = donorContactRecord.FirstName;
-        newReg.lastName = donorContactRecord.LastName;
-        newReg.address1 = donorContactRecord.PersonMailingStreet;
-        newReg.city = donorContactRecord.PersonMailingCity;
-        newReg.state = donorContactRecord.PersonMailingState;
-        newReg.postal = donorContactRecord.PersonMailingPostalCode;
-        newReg.country = donorContactRecord.PersonMailingCountry;
-        newReg.homePhone = donorContactRecord.PersonMobilePhone;
+        newReg.firstName = donorRecord.FirstName;
+        newReg.lastName = donorRecord.LastName;
+        newReg.address1 = donorRecord.PersonMailingStreet;
+        newReg.city = donorRecord.PersonMailingCity;
+        newReg.state = donorRecord.PersonMailingState;
+        newReg.postal = donorRecord.PersonMailingPostalCode;
+        newReg.country = donorRecord.PersonMailingCountry;
+        newReg.homePhone = donorRecord.PersonMobilePhone;
 
-        OnbeWsPrepaid.AccountManagementApiWebServices createActivateCardRequest = new OnbeWsPrepaid.AccountManagementApiWebServices();
-        OnbeResponsePrepaid.CreateAccountResponse createActivateCardResponse = createActivateCardRequest.createAccount_Http(
-            PROGRAM_ID, PROMOTION_ID, donorId, PARTNER_USER_ID, ACCESS_LEVEL, true, newCard, newLoad, newLink, newReg
+        OnbeWsPrepaid.AccountManagementApiWebServices accountManagementAPI = new OnbeWsPrepaid.AccountManagementApiWebServices();
+        OnbeResponsePrepaid.CreateAccountResponse createActivateCardResponse = accountManagementAPI.createAccount_Http(
+            PROGRAM_ID, PROMOTION_ID, donorId + '-' + String.valueOf(System.currentTimeMillis()), PARTNER_USER_ID, ACCESS_LEVEL, true, newCard, newLoad, newLink, newReg
         );
 
-        System.debug(createActivateCardResponse.code);
-        System.debug(createActivateCardResponse.sub_code);
+        if (createActivateCardResponse.code != 0) {
+            if (Test.isRunningTest() && TestUtil.throwException) {
+                throw new OnbeServiceException('Error received from Onbe: ' + createActivateCardResponse.code + '-' + createActivateCardResponse.sub_code);
+            }
+        }
+
+        if (!String.isEmpty(createActivateCardResponse.accountNumber) && !String.isEmpty(initialPIN)) {
+            accountManagementAPI.setPin_Http(
+                PROGRAM_ID, PROMOTION_ID, createActivateCardResponse.accountNumber, donorId + '-' + String.valueOf(System.currentTimeMillis()), initialPIN
+            );
+        }
+
+        String expirationMMYY = createActivateCardResponse.cardExpiryDateMMYY;
+        Date expirationDate;
+
+        if (!String.isEmpty(expirationMMYY)) {
+            Integer expirationMonth = Integer.valueOf(expirationMMYY.substring(0, 2));
+            Integer expirationYear = Integer.valueOf(expirationMMYY.substring(2, 4));
+
+            expirationDate = Date.newInstance(expirationYear, expirationMonth, 1);
+        } else {
+            expirationDate = Date.today().addYears(1);
+        }
+
+        Payment_Method__c newPaymentMethod = new Payment_Method__c();
+        newPaymentMethod.Name = PaymentService__mdt.getInstance('OnbePaymentService').PaymentServiceLabel__c;
+        newPaymentMethod.Account_Number__c = createActivateCardResponse.accountNumber;
+        newPaymentMethod.Card_Number__c = !String.isEmpty(createActivateCardResponse.accountNumber) ? createActivateCardResponse.accountNumber.right(4) : null;
+        newPaymentMethod.Expiration__c = expirationDate;
+        newPaymentMethod.Is_Active__c = true;
+        newPaymentMethod.isDefault__c = true;
+        newPaymentMethod.Donor__c = donorRecord.PersonContactId;
+        insert newPaymentMethod;
+
         return '';
     }
 
@@ -66,8 +102,19 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
         return 'Onbe Physical Card Link';
     }
 
-    public String processPayment(Id donorId, Decimal amount) {
-        return 'Onbe Pay';
+    public String processPayment(String accountNumber, String comment, Long amount) {
+        String transactionId = accountNumber + '-' + String.valueOf(System.currentTimeMillis());
+        
+        OnbeDomainPrepaid.Load addFundsLoad = new OnbeDomainPrepaid.Load();
+        addFundsLoad.amount = amount;
+        addFundsLoad.comment = comment;
+        
+        OnbeWsPrepaid.AccountManagementApiWebServices accountManagementServices = new OnbeWsPrepaid.AccountManagementApiWebServices();
+        OnbeResponsePrepaid.AddFundsResponse addFundsReponse = accountManagementServices.addFunds_Http(
+            accountNumber, null, PROGRAM_ID, PROMOTION_ID, transactionId, addFundsLoad
+        );
+
+        return '';
     }
     
     public String getBalance() {
@@ -88,4 +135,6 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
 
         return '';
     }
+
+    public class OnbeServiceException extends Exception {}
 }

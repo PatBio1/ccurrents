@@ -3,6 +3,7 @@
     <description>Set of permission groups for the center management users.</description>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Proesis Center Management Permissions</label>
+    <permissionSets>Proesis_Case_Access_Platform</permissionSets>
     <permissionSets>Proesis_Center_Management_Platform</permissionSets>
     <permissionSets>Proesis_Center_Staff_Platform</permissionSets>
     <status>Updated</status>

@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import { getRecord } from 'lightning/uiRecordApi';
 import isGuest from '@salesforce/user/isGuest';
 import userId from '@salesforce/user/Id';
+import userContactId from '@salesforce/schema/User.ContactId';
 import userSmallPhotoUrl from '@salesforce/schema/User.SmallPhotoUrl';
 import proesisDonor from '@salesforce/resourceUrl/ProesisDonor';
 import logoutModal from 'c/logoutModal';
@@ -24,6 +25,7 @@ export default class Menu extends NavigationMixin(LightningElement) {
 
     userLoyaltyLevel;
     doesUserHaveUnreadNotifications = false;
+    contactId;
     photoUrl;
 
     async renderedCallback() {
@@ -40,9 +42,10 @@ export default class Menu extends NavigationMixin(LightningElement) {
         }
     }
 
-    @wire(getRecord, { recordId: userId, fields: [userSmallPhotoUrl]}) 
+    @wire(getRecord, { recordId: userId, fields: [userContactId, userSmallPhotoUrl]}) 
     userDetails({error, data}) {
         if (data) {
+            this.contactId = data.fields.ContactId.value;
             this.photoUrl = data.fields.SmallPhotoUrl.value;
         }
     }
@@ -68,7 +71,8 @@ export default class Menu extends NavigationMixin(LightningElement) {
     }
 
     onBuddyRewardsButtonClick() {
-        window.open('https://proesisbio.com/', '_self');
+        const url = 'https://cloud.m.proesisbio.com/buddy-referral?referrer=' + this.contactId;
+        window.open(url, '_self');
     }
 
     onSupportButtonClick() {

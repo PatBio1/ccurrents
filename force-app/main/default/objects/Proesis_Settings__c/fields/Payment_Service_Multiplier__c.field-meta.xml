@@ -5,9 +5,9 @@
     <externalId>false</externalId>
     <inlineHelpText>Multiplier factor for retry strategy</inlineHelpText>
     <label>Payment Service Multiplier</label>
-    <precision>3</precision>
+    <precision>5</precision>
     <required>false</required>
-    <scale>0</scale>
+    <scale>2</scale>
     <trackTrending>false</trackTrending>
     <type>Number</type>
     <unique>false</unique>

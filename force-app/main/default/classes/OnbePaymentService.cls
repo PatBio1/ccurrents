@@ -62,7 +62,7 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
         );
 
         if (createActivateCardResponse.code != 0) {
-            if (Test.isRunningTest() && TestUtil.throwException) {
+            if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
                 throw new OnbeServiceException('Error received from Onbe: ' + createActivateCardResponse.code + '-' + createActivateCardResponse.sub_code);
             }
         }

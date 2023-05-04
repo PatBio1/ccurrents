@@ -797,9 +797,11 @@ public class OnbeRequestPrepaid {
 			}
 			
 			OnbeDomainPrepaid.Load loadObj = this.load;
-			Dom.XmlNode loadNode = outerNode.addChildElement('load', uriAccountManagementPrepaidRequest, '');
-			if(loadObj != null){
-				loadObj.populateXmlNode(loadNode);
+			if (this.load != null) {
+				Dom.XmlNode loadNode = outerNode.addChildElement('load', uriAccountManagementPrepaidRequest, '');
+				if(loadObj != null){
+					loadObj.populateXmlNode(loadNode);
+				}
 			}
 			
 			OnbeDomainPrepaid.Link linkObj = this.link;

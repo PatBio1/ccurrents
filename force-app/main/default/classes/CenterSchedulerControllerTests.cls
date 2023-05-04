@@ -434,6 +434,21 @@ public with sharing class CenterSchedulerControllerTests {
     }
 
     @IsTest 
+    static void testLinkPaymentCard() {
+        Contact targetDonor = [SELECT Id FROM Contact LIMIT 1];
+        String testCardPackage = '0123';
+        String initialPIN = '1111';
+
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+
+        Test.startTest();
+        CenterScheduleController.linkPaymentCard(testCardPackage, targetDonor.Id, initialPIN);
+        Test.stopTest();
+
+        Assert.areEqual(1, [SELECT count() FROM Payment_Method__c WHERE Donor__c = :targetDonor.Id], 'The payment method should have been created');
+    }
+
+    @IsTest 
     static void testPositiveAppointmentSlotCapacityUpdate() {
         Appointment__c targetAppointmentSlot = [SELECT Id, Booked__c, Capacity__c FROM Appointment__c LIMIT 1];
         Decimal startingCapacity = targetAppointmentSlot.Capacity__c;

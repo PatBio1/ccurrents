@@ -10,4 +10,8 @@
         <field>Program_ID__c</field>
         <value xsi:type="xsd:string">04011223</value>
     </values>
+    <values>
+        <field>PaymentServiceLabel__c</field>
+        <value xsi:type="xsd:string">Onbe Payment</value>
+    </values>
 </CustomMetadata>

@@ -100,6 +100,10 @@ public with sharing class DonorCompInvocableTest {
 
         insert newCampaignMembers;
 
+        for(CampaignMember newCampaignMember : newCampaignMembers) {
+            Test.setCreatedDate(newCampaignMember.Id, Datetime.now().addDays(-1));
+        }
+
         List<Donor_Comp__e> donorCompEvents = new List<Donor_Comp__e>{
             new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now().addHours(1), Collection_Volume__c = 555, Collection_Number__c = 'collection number', hasException__c = 0),
             new Donor_Comp__e(Donor_Number__c = donorAccounts[1].DonorId__c, Timestamp__c = Datetime.now().addDays(-2), hasException__c = 0),

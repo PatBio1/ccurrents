@@ -259,6 +259,7 @@ public with sharing class CenterScheduleController {
         }
     }
 
+    @AuraEnabled
     public static UpdateCapacityResult updateAppointmentSlotCapacity(Id appointmentId, Decimal capacityChange) {
         Appointment__c targetAppointmentSlot;
 

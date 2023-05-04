@@ -1,6 +1,13 @@
 import { wire, LightningElement } from 'lwc';
 import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
 import labels from 'c/labelService';
+import termsOfServiceModal from 'c/termsOfServiceModal';
+
+const PAGE_HOME = 'Home';
+const PAGE_ABOUT = 'About';
+const PAGE_CHOOSE_CENTER = 'Choose Center';
+const PAGE_PROFILE = 'Profile';
+const PAGE_LOGIN = 'Login';
 
 export default class Welcome extends NavigationMixin(LightningElement) {
 
@@ -17,23 +24,23 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     }
 
     get showHome() {
-        return (this.currentPage === 'Home');
+        return (this.currentPage === PAGE_HOME);
     }
 
     get showAbout() {
-        return (this.currentPage === 'About');
+        return (this.currentPage === PAGE_ABOUT);
     }
 
     get showChooseCenter() {
-        return (this.currentPage === 'Choose Center');
+        return (this.currentPage === PAGE_CHOOSE_CENTER);
     }
 
     get showProfile() {
-        return (this.currentPage === 'Profile');
+        return (this.currentPage === PAGE_PROFILE);
     }
 
     get showLogin() {
-        return (this.currentPage === 'Login');
+        return (this.currentPage === PAGE_LOGIN);
     }
 
     get languageOptions() {
@@ -52,16 +59,16 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     }
 
     onAboutButtonClick() {
-        this.currentPage = 'About';
+        this.currentPage = PAGE_ABOUT;
     }
 
     onBackButtonClick() {
-        this.currentPage = 'Home';
+        this.currentPage = PAGE_HOME;
     }
 
     onNextButtonClick(event) {
         this.center = event.detail.selectedCenter;
-        this.currentPage = 'Profile';
+        this.currentPage = PAGE_PROFILE;
     }
 
     onLanguageChange(event) {
@@ -79,15 +86,15 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     }
 
     onJoinUsButtonClick() {
-        this.currentPage = 'Choose Center';
+        termsOfServiceModal.open().then((confirmed) => {
+            if (confirmed) {
+                this.currentPage = PAGE_CHOOSE_CENTER;
+            }
+        });
     }
 
     onLoginButtonClick() {
-        this.currentPage = 'Login';
-    }
-
-    onSignUpButtonClick() {
-        this.currentPage = 'Choose Center';
+        this.currentPage = PAGE_LOGIN;
     }
 
 }

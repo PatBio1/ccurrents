@@ -8,12 +8,6 @@
     --lwc-colorTextIconDefault: #e5ddf4;
 }
 
-.linked-checkbox-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
 .legal-and-marketing-opts-container {
     display: flex;
     flex-direction: column;

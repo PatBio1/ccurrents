@@ -47,7 +47,6 @@ export default class Profile extends LightningElement {
     emailVerificationsExhausted = false;
     resendSmsCodeEnabled = true;
     smsVerificationsExhausted = false;
-    areTosAndPrivacyPoliciesAccepted = false;
     startURL;
 
     @api center;
@@ -165,10 +164,6 @@ export default class Profile extends LightningElement {
         Promise.all([
             loadStyle(this, fileUploadStyles)
         ]);
-    }
-
-    onTosAndPrivacyChange(event) {
-        this.areTosAndPrivacyPoliciesAccepted = event.target.checked;
     }
 
     onAcceptMarketingCommsChange(event) {
@@ -303,11 +298,6 @@ export default class Profile extends LightningElement {
     }
 
     onPictureNextButtonClick() {
-        if (!this.areTosAndPrivacyPoliciesAccepted) {
-            util.showGuestToast(this, 'error', labels.acceptTOSPrivacyTitle, labels.acceptTOSPrivacyMessage);
-            return;
-        }
-
         this.saveProfile(PAGE_PASSWORD);
     }
 

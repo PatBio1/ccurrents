@@ -1,4 +1,5 @@
 <template>
+
     <div class="slds-var-p-around_medium">
         <div class="title-medium slds-m-bottom_medium">
             {labels.myRewards}
@@ -6,8 +7,7 @@
 
         <lightning-tabset class="main-tabs">
             <lightning-tab onactive={initMyBalanceTab} label={labels.myBalance}>
-                <lightning-spinner if:true={isLoading}>
-                </lightning-spinner>
+                <lightning-spinner if:true={isLoading}></lightning-spinner>
 
                 <div class="title-small slds-m-bottom_medium">
                     My Proesis Wallet
@@ -73,8 +73,7 @@
             </lightning-tab>
 
             <lightning-tab onactive={initPaymentHistoryTab} label={labels.paymentHistory}>
-                <lightning-spinner if:true={isLoading}>
-                </lightning-spinner>
+                <lightning-spinner if:true={isLoading}></lightning-spinner>
 
                 <div if:true={userHasCard} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_medium">
                     <div class="slds-col slds-size_1-of-2 title-small">
@@ -91,8 +90,9 @@
                         <use xlink:href={visaLogo}></use>
                     </svg>
                     
-                    <div class="slds-card__body slds-card__body_inner">
-                        Ending in <strong>0264</strong> expiring <strong>01/2023</strong>
+                    <div class="slds-card__body slds-card__body_inner slds-text-align_right">
+                        Ending in <strong>0264</strong> expiring <strong>01/2023</strong><br/>
+                        <a href="#" onclick={onAtmLocatorLinkClick}>{labels.atmLocator}</a>
                     </div>
                 </article>
 

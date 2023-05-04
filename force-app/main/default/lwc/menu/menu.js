@@ -68,7 +68,7 @@ export default class Menu extends NavigationMixin(LightningElement) {
     }
 
     onBuddyRewardsButtonClick() {
-        window.open('https://proesisbio.com/', '_blank');
+        window.open('https://proesisbio.com/', '_self');
     }
 
     onSupportButtonClick() {

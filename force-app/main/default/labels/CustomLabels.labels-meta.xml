@@ -183,6 +183,27 @@
         <value>Closed</value>
     </labels>
     <labels>
+        <fullName>Confirm</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Confirm</shortDescription>
+        <value>Confirm</value>
+    </labels>
+    <labels>
+        <fullName>Confirm_Delete_Profile</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Confirm Delete Profile</shortDescription>
+        <value>Are you sure you would like to delete your Profile?</value>
+    </labels>
+    <labels>
+        <fullName>Confirm_Inactivate_Profile</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Confirm Inactivate Profile</shortDescription>
+        <value>Are you sure you would like to inactivate your Profile?</value>
+    </labels>
+    <labels>
         <fullName>Confirm_Password</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -204,6 +225,13 @@
         <value>Contact &amp; Support</value>
     </labels>
     <labels>
+        <fullName>Copyright</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Copyright</shortDescription>
+        <value>© {0} Proesis Limited. All rights reserved.</value>
+    </labels>
+    <labels>
         <fullName>Delete</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -222,7 +250,14 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Delete Profile Confirmation</shortDescription>
-        <value>Please confirm you want to delete your profile by typing your last name {0} below.</value>
+        <value>Please type your last name {0} below for confirmation to take this action.</value>
+    </labels>
+    <labels>
+        <fullName>Delete_Profile_Instructions</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Delete Profile Instructions</shortDescription>
+        <value>Deleting your Profile will remove you completely from the system, while inactivating your Profile will save time should you decide to enroll again.</value>
     </labels>
     <labels>
         <fullName>Donor_Tips</fullName>

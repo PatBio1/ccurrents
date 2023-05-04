@@ -193,6 +193,8 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     handleInitEnrollCard(event) {
-        EnrollCardModal.open();
+        EnrollCardModal.open({
+            donorId: this.donor.donorId
+        });
     }
 }

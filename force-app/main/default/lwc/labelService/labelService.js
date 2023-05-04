@@ -27,14 +27,19 @@ import chooseAnotherCenter from '@salesforce/label/c.Choose_Another_Center';
 import chooseDate from '@salesforce/label/c.Choose_Date';
 import city from '@salesforce/label/c.City';
 import closed from '@salesforce/label/c.Closed';
+import confirm from '@salesforce/label/c.Confirm';
+import confirmDeleteProfile from '@salesforce/label/c.Confirm_Delete_Profile';
+import confirmInactivateProfile from '@salesforce/label/c.Confirm_Inactivate_Profile';
 import confirmPassword from '@salesforce/label/c.Confirm_Password';
 import confirmVisitCancel from '@salesforce/label/c.Confirm_Visit_Cancel';
 import confirmVisitCancelAction from '@salesforce/label/c.Confirm_Visit_Cancel_Action';
 import congratulations from '@salesforce/label/c.Congratulations';
 import contactAndSupport from '@salesforce/label/c.Contact_And_Support';
+import copyright from '@salesforce/label/c.Copyright';
 import deleteLabel from '@salesforce/label/c.Delete';
 import deleteProfile from '@salesforce/label/c.Delete_Profile';
 import deleteProfileConfirmation from '@salesforce/label/c.Delete_Profile_Confirmation';
+import deleteProfileInstructions from '@salesforce/label/c.Delete_Profile_Instructions';
 import donorTips from '@salesforce/label/c.Donor_Tips';
 import email from '@salesforce/label/c.Email';
 import english from '@salesforce/label/c.English';
@@ -200,14 +205,19 @@ const labels = {
     chooseDate,
     city,
     closed,
+    confirm,
+    confirmDeleteProfile,
+    confirmInactivateProfile,
     confirmPassword,
     confirmVisitCancel,
     confirmVisitCancelAction,
     congratulations,
     contactAndSupport,
+    copyright,
     deleteLabel,
     deleteProfile,
     deleteProfileConfirmation,
+    deleteProfileInstructions,
     donorTips,
     email,
     english,

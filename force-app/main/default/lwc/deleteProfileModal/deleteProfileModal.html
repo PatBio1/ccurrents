@@ -2,7 +2,15 @@
 
     <lightning-modal-header label={labels.deleteProfile}></lightning-modal-header>
     <lightning-modal-body>
-        <lightning-formatted-rich-text value={confirmationLabel}></lightning-formatted-rich-text>
+        <div class="slds-m-bottom_small">
+            {labels.deleteProfileInstructions}
+        </div>
+        <div class="slds-m-bottom_small">
+            <lightning-radio-group type="radio" options={typeOptions} value={type} onchange={onTypeChange}></lightning-radio-group>
+        </div>
+        <div class="slds-m-bottom_small">
+            <lightning-formatted-rich-text value={confirmationLabel}></lightning-formatted-rich-text>
+        </div>
         <lightning-input if:false={loading} type="text" label={labels.lastName} value={confirmLastName} onchange={onConfirmLastNameChange}></lightning-input>
         <lightning-input if:true={loading} type="text" label={labels.lastName} value={confirmLastName} disabled></lightning-input>
     </lightning-modal-body>

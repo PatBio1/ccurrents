@@ -506,11 +506,21 @@ public class OnbeWsPrepaid {
           return response_x;
       }
   
-      public OnbeResponsePrepaid.AddFundsResponse addFunds_Http(OnbeDomainPrepaid.Load load) {
+      public OnbeResponsePrepaid.AddFundsResponse addFunds_Http(
+        String accountNumber,
+        String partner_user_id,
+        String program_id,
+        String promotion_id,
+        String transaction_id,
+        OnbeDomainPrepaid.Load load
+      ) {
           DOM.Document doc = new DOM.Document();
           DOM.XmlNode body = populateDoc(doc);
           DOM.XmlNode methodNode = body.addChildElement('addFunds', uriAccountManagementPrepaidWs, '');			
-          OnbeRequestPrepaid.AddFundsRequest request_x = new OnbeRequestPrepaid.AddFundsRequest(load);
+
+          OnbeRequestPrepaid.AddFundsRequest request_x = new OnbeRequestPrepaid.AddFundsRequest(
+            accountNumber, null, partner_user_id, program_id, promotion_id, transaction_id, load
+          );
           request_x.populateXmlNode(methodNode);
           
           HttpRequest req = new HttpRequest();
@@ -623,6 +633,9 @@ public class OnbeWsPrepaid {
           Dom.XmlNode createAccountReturnNode = bodyNode.getChildElement('createAccountReturn', uriAccountManagementPrepaidWs);
 
           OnbeResponsePrepaid.CreateAccountResponse response_x = new OnbeResponsePrepaid.CreateAccountResponse(createAccountReturnNode);
+          System.debug(response_x.code);
+          System.debug(response_x.sub_code);
+
           return response_x;
       }
   
@@ -713,11 +726,19 @@ public class OnbeWsPrepaid {
           Dom.XmlNode linkCardReturnNode = bodyNode.getChildElement('linkCardReturn', uriAccountManagementPrepaidWs);
       }
   
-      public void setPin_Http(String new_pin) {
+      public void setPin_Http(
+        String program_id,
+        String promotion_id,  
+        String accountNumber,
+        String transaction_id,
+        String new_pin
+      ) {
           DOM.Document doc = new DOM.Document();
           DOM.XmlNode body = populateDoc(doc);
           DOM.XmlNode methodNode = body.addChildElement('setPin', uriAccountManagementPrepaidWs, '');			
-          OnbeRequestPrepaid.SetPinRequest request_x = new OnbeRequestPrepaid.SetPinRequest(new_pin);
+          OnbeRequestPrepaid.SetPinRequest request_x = new OnbeRequestPrepaid.SetPinRequest(
+            accountNumber, null, null, program_id, promotion_id, transaction_id, new_pin
+          );
           request_x.populateXmlNode(methodNode);
           
           HttpRequest req = new HttpRequest();
@@ -735,6 +756,9 @@ public class OnbeWsPrepaid {
           Dom.XmlNode rootNode = responseDoc.getRootElement();
           Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
           Dom.XmlNode setPinReturnNode = bodyNode.getChildElement('setPinReturn', uriAccountManagementPrepaidWs);
+
+          System.debug(setPinReturnNode.getAttributeValue('code', uriAccountManagementPrepaidWs));
+          System.debug(setPinReturnNode.getAttributeValue('sub_code', uriAccountManagementPrepaidWs));
       }
   
       public void updateAccountStatus_Http(String accountStatus) {
@@ -759,6 +783,9 @@ public class OnbeWsPrepaid {
           Dom.XmlNode rootNode = responseDoc.getRootElement();
           Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
           Dom.XmlNode updateAccountStatusReturnNode = bodyNode.getChildElement('updateAccountStatusReturn', uriAccountManagementPrepaidWs);
+
+          System.debug(updateAccountStatusReturnNode.getAttributeValue('code', uriAccountManagementPrepaidWs));
+          System.debug(updateAccountStatusReturnNode.getAttributeValue('sub_code', uriAccountManagementPrepaidWs));
       }
   
       public void updateRegistration_Http(String accessLevel,

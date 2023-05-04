@@ -53,4 +53,6 @@ public with sharing class Constants {
 
     public static final String DONATION_PAYMENT_MESSAGE_HANDLER = 'Donation Payment';
     public static final String LOYALTY_DONATION_PAYMENT_MESSAGE_HANDLER = 'Donation with Loyalty Promotion Payment';
+
+    public static final String MISSING_PAYMENT_METHOD_TASK_SUBJECT = 'Missing Payment Method';
 }

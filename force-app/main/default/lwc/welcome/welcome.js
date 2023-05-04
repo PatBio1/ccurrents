@@ -11,6 +11,11 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     startURL;
     center;
 
+    get copyrightLabel() {
+        const currentYear = new Date().getFullYear();
+        return labels.formatLabel(labels.copyright, [currentYear]);
+    }
+
     get showHome() {
         return (this.currentPage === 'Home');
     }

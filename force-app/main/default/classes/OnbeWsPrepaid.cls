@@ -761,11 +761,19 @@ public class OnbeWsPrepaid {
           System.debug(setPinReturnNode.getAttributeValue('sub_code', uriAccountManagementPrepaidWs));
       }
   
-      public void updateAccountStatus_Http(String accountStatus) {
+      public OnbeResponsePrepaid.UpdateAccountStatusResponse updateAccountStatus_Http(
+        String accountNumber,
+        String program_id,
+        String promotion_id,
+        String transaction_id,
+        String accountStatus
+      ) {
           DOM.Document doc = new DOM.Document();
           DOM.XmlNode body = populateDoc(doc);
           DOM.XmlNode methodNode = body.addChildElement('updateAccountStatus', uriAccountManagementPrepaidWs, '');			
-          OnbeRequestPrepaid.UpdateAccountStatusRequest request_x = new OnbeRequestPrepaid.UpdateAccountStatusRequest(accountStatus);
+          OnbeRequestPrepaid.UpdateAccountStatusRequest request_x = new OnbeRequestPrepaid.UpdateAccountStatusRequest(
+            accountNumber, null, null, program_id, promotion_id, transaction_id, accountStatus
+          );
           request_x.populateXmlNode(methodNode);
           
           HttpRequest req = new HttpRequest();
@@ -784,8 +792,7 @@ public class OnbeWsPrepaid {
           Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
           Dom.XmlNode updateAccountStatusReturnNode = bodyNode.getChildElement('updateAccountStatusReturn', uriAccountManagementPrepaidWs);
 
-          System.debug(updateAccountStatusReturnNode.getAttributeValue('code', uriAccountManagementPrepaidWs));
-          System.debug(updateAccountStatusReturnNode.getAttributeValue('sub_code', uriAccountManagementPrepaidWs));
+          return new OnbeResponsePrepaid.UpdateAccountStatusResponse(updateAccountStatusReturnNode);
       }
   
       public void updateRegistration_Http(String accessLevel,

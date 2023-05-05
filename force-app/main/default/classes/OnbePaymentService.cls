@@ -1,7 +1,6 @@
 public with sharing class OnbePaymentService implements PaymentServiceInterface {
     
     private static final String PROGRAM_ID = '04011223';
-    private static final String PARTNER_USER_ID = '0012';
     private static final String PROMOTION_ID = '2';
     private static final String ACCESS_LEVEL = '02';
 
@@ -18,6 +17,8 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
     }
 
     public String setupPaymentServiceAccount(String cardPackageId, Id donorId, Decimal initialAccountLoad, String initialPIN) {
+        String partnerUserId = (String)donorId;
+        
         OnbeDomainPrepaid.Card newCard = new OnbeDomainPrepaid.Card();
         newCard.cardAccessLevel = ACCESS_LEVEL;
 
@@ -58,7 +59,7 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
 
         OnbeWsPrepaid.AccountManagementApiWebServices accountManagementAPI = new OnbeWsPrepaid.AccountManagementApiWebServices();
         OnbeResponsePrepaid.CreateAccountResponse createActivateCardResponse = accountManagementAPI.createAccount_Http(
-            PROGRAM_ID, PROMOTION_ID, donorId + '-' + String.valueOf(System.currentTimeMillis()), PARTNER_USER_ID, ACCESS_LEVEL, true, newCard, newLoad, newLink, newReg
+            PROGRAM_ID, PROMOTION_ID, donorId + '-' + String.valueOf(System.currentTimeMillis()), partnerUserId, ACCESS_LEVEL, true, newCard, newLoad, newLink, newReg
         );
 
         if (createActivateCardResponse.code != 0) {
@@ -114,10 +115,18 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
             accountNumber, null, PROGRAM_ID, PROMOTION_ID, transactionId, addFundsLoad
         );
 
+        if (addFundsReponse.code != 0) {
+            if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
+                throw new OnbeServiceException('Error received from Onbe: ' + addFundsReponse.code + '-' + addFundsReponse.sub_code);
+            }
+        }
+
         return '';
     }
     
     public String getBalance() {
+        
+
         return 'Onbe Balance';
     }
 
@@ -129,12 +138,35 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
         return 'Onbe Transaction History';
     }
 
-    public String updateAccountStatus(String newAccountStatus) {
+    public String updateAccountStatus(String paymentMethodId, String newAccountStatus) {
+        Payment_Method__c targetPaymentMethod;
+
+        try {
+            targetPaymentMethod = [
+                SELECT Id, Donor__c, Account_Number__c
+                FROM Payment_Method__c
+                WHERE Id = :paymentMethodId
+                LIMIT 1
+            ];
+        } catch(Exception e) {
+            throw new AuraHandledException('Error while retrieving active/default payment method ' + paymentMethodId + ' - ' + e.getMessage());
+        }
+
         OnbeWsPrepaid.AccountManagementApiWebServices updateAccountStatusRequest = new OnbeWsPrepaid.AccountManagementApiWebServices();
-        updateAccountStatusRequest.updateAccountStatus_Http(newAccountStatus);
+        String transactionId = targetPaymentMethod.Donor__c + '-' + String.valueOf(System.currentTimeMillis());
+
+        OnbeResponsePrepaid.UpdateAccountStatusResponse updateAccountStatusResponse = updateAccountStatusRequest.updateAccountStatus_Http(
+            targetPaymentMethod.Account_Number__c, PROGRAM_ID, PROMOTION_ID, transactionId, newAccountStatus
+        );
+
+        if (updateAccountStatusResponse.code != 0) {
+            if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
+                throw new OnbeServiceException('Error received from Onbe: ' + updateAccountStatusResponse.code + '-' + updateAccountStatusResponse.sub_code);
+            }
+        }
 
         return '';
-    }
+    } 
 
     public class OnbeServiceException extends Exception {}
 }

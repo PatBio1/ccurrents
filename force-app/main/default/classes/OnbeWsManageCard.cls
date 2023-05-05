@@ -113,7 +113,7 @@ public with sharing class OnbeWsManageCard {
 		// public Integer start_date;  // year, month, day. Example: 20090213 would be passed for February 13, 2009. Can pass 0 if you don't want a start date.
 		// public Integer end_date; // Same as above. Can pass 0 if you don't want a end date.
 		// public Integer max_items; 
-		public void accountInquiry_Http( String application_id,
+		public AccountInquiryResponse accountInquiry_Http( String application_id,
 			String card_number,
 			String puid,
 		 	String ppd, 
@@ -148,7 +148,9 @@ public with sharing class OnbeWsManageCard {
 			Dom.Document responseDoc = res.getBodyDocument();
 			Dom.XmlNode rootNode = responseDoc.getRootElement();
 			Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
-			Dom.XmlNode Node = bodyNode.getChildElement('', uriCardManagementMainEndpoint);			
+			Dom.XmlNode Node = bodyNode.getChildElement('', uriCardManagementMainEndpoint);		
+			
+			return new AccountInquiryResponse(Node);
 		}
  
 		public void payoutAccountInquiry_Http() {
@@ -303,6 +305,10 @@ public with sharing class OnbeWsManageCard {
 			// public Datetime ship_date;  // Date card shipped in the mail.
 			// public String expiration;  // Expiration date of card. (Example:"02/2010")
 			// public String account_status;  //  Possible Values: Active Canceled  Frozen  Lost/Stolen Contact us for Status 
+
+		public AccountInquiryResponse(Dom.XmlNode node) {
+			System.debug(node);
+		}
 	}
 
 }

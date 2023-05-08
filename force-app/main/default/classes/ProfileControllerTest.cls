@@ -331,6 +331,46 @@ public with sharing class ProfileControllerTest {
     }
 
     @isTest
+    static void testSmsVerificationEnabled() {
+        User guestUser = TestUtil.createExperienceGuestUser();
+
+        System.runAs(guestUser) {
+            Boolean enabled = ProfileController.smsVerificationEnabled();
+
+            System.assertEquals(false, enabled);
+        }
+        
+        System.runAs(TestUtil.createAdminUser()) {
+            Proesis_Settings__c proesisSettings = Proesis_Settings__c.getOrgDefaults();
+            proesisSettings.SMS_Verification_Enabled__c = true;
+            upsert proesisSettings;
+        }
+
+        System.runAs(guestUser) {
+            Boolean enabled = ProfileController.smsVerificationEnabled();
+
+            System.assertEquals(true, enabled);
+        }
+    }
+
+    @isTest
+    static void testSmsVerificationEnabledException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.smsVerificationEnabled();
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
     static void testSendVerificationSms() {
         System.runAs(TestUtil.createExperienceGuestUser()) {
             Lead lead = new Lead();
@@ -846,4 +886,5 @@ public with sharing class ProfileControllerTest {
         Assert.areEqual(Constants.DEFAULT_MARKETING_CONSENT_SOURCE, marketingConsents[0].Source__c, 'The marketing consent\'s source should be ' + Constants.DEFAULT_MARKETING_CONSENT_SOURCE);
         Assert.areEqual(Constants.DEFAULT_MARKETING_CONSENT_TYPE, marketingConsents[0].Type_of_Consent__c, 'The marketing consent\'s type should be ' + Constants.DEFAULT_MARKETING_CONSENT_TYPE);
     }
+
 }

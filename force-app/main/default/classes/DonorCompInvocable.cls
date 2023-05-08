@@ -100,7 +100,7 @@ public without sharing class DonorCompInvocable {
         }
 
         // Iterate all relevant donors and update loyalty level/create donation transactions
-        List<Account> donorsToUpdate = new List<Account>();
+        Map<Id, Account> donorsToUpdate = new Map<Id, Account>();
         Map<Id, Transaction__c> donorIdToTransaction = new Map<Id, Transaction__c>();
         Map<Id, List<Txn_Line_Item__c>> donorIdToTxnLineItems = new Map<Id, List<Txn_Line_Item__c>>();
         Map<Id, List<Message__c>> donorIdToMessages = new Map<Id, List<Message__c>>();
@@ -117,7 +117,7 @@ public without sharing class DonorCompInvocable {
         ];
 
         List<Contact> targetContacts = [
-            SELECT Id, Name, AccountId, Loyalty_Level__c, Loyalty_Level__r.Donation_Points__c, Loyalty_Level__r.Donation_Payment__c, Total_Visits_365d__c,
+            SELECT Id, Name, AccountId, Account.Last_Used_Center__pc, Loyalty_Level__c, Loyalty_Level__r.Donation_Points__c, Loyalty_Level__r.Donation_Payment__c, Total_Visits_365d__c,
                 Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, Loyalty_Level__r.Next_Level__c, Loyalty_Level__r.Next_Level__r.Threshold_Payment__c, Loyalty_Level__r.Next_Level__r.Threshold_Points__c,
                 (
                     SELECT Id, Name, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c
@@ -298,7 +298,14 @@ public without sharing class DonorCompInvocable {
                 totalVisitCount == targetPromotionLevel.Donation_Threshold__c
             ) {
                 wasPromotionTriggered = true;
-                donorsToUpdate.add(new Account(Id = foundContact.AccountId, Loyalty_Level__pc = targetPromotionLevel.Id));
+
+                Account targetDonorToUpdate = donorsToUpdate.get(foundContact.AccountId);
+                if (targetDonorToUpdate == null) {
+                    targetDonorToUpdate = new Account(Id = foundContact.AccountId);
+                }
+                targetDonorToUpdate.Loyalty_Level__pc = targetPromotionLevel.Id;
+
+                donorsToUpdate.put(foundContact.AccountId, targetDonorToUpdate);
 
                 // Apply New Level Bonuses onto the line items
                 // Check to make sure the bonus level hasn't be triggered in the last 'Loyalty Threshold Window'
@@ -354,8 +361,22 @@ public without sharing class DonorCompInvocable {
 
             existingMessages.add(paymentMessage);
             donorIdToMessages.put(foundContact.Id, existingMessages);
+
+            // Check if there needs to be an update to the last used center
+            if (foundContact.Account.Last_Used_Center__pc == null || foundContact.Account.Last_Used_Center__pc != targetVisitRecord.Center_Donation_Type__r.Center__c) {
+                Account donorToUpdate = donorsToUpdate.get(foundContact.AccountId);
+                if (donorToUpdate == null) {
+                    donorToUpdate = new Account(Id = foundContact.AccountId);
+                }
+
+                donorToUpdate.Last_Used_Center__pc = targetVisitRecord.Center_Donation_Type__r.Center__c;
+                donorsToUpdate.put(foundContact.AccountId, donorToUpdate);
+            }
         }
-        update donorsToUpdate;
+
+        if (donorsToUpdate.size() > 0) {
+            update donorsToUpdate.values();
+        }
 
         // Inserting the transactions and line items
         insert donorIdToTransaction.values();

@@ -279,6 +279,17 @@ public without sharing class ProfileController {
         try {
             Database.LeadConvertResult leadConvertResult = convertLead(profile);
 
+            // Update the account record with the address info from the profile
+            // This issue doesn't happen on the mobile app, perhaps because of the createExternalUser call?
+            update new Account(
+                Id = leadConvertResult.getAccountId(),
+                PersonMailingStreet = profile.street,
+                PersonMailingCity = profile.city,
+                PersonMailingState = profile.state,
+                PersonMailingPostalCode = profile.postalCode,
+                PersonMailingCountry = 'US' // We are hard coding US as that is what the Onbe API requires for the createAccount callout
+            );
+
             commitUserFromScheduler(leadConvertResult.getAccountId(), profile.language);
 
             return leadConvertResult.getAccountId();
@@ -491,7 +502,8 @@ public without sharing class ProfileController {
             RecordTypeId = Constants.DONOR_RECORD_TYPE_ID,
             Loyalty_Level__pc = LoyaltyLevelService.getDefault().Id,
             First_Visit_Code__c = ScheduleUtils.createFirstVisitCode(),
-            Status__pc = 'Registered'
+            Status__pc = 'Registered',
+            Last_Used_Center__pc = profile.centerId
         );
 
         AccountContactRelation accountContactRelation = new AccountContactRelation();

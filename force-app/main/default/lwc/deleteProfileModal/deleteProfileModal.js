@@ -60,18 +60,18 @@ export default class DeleteProfileModal extends NavigationMixin(LightningModal) 
             if (confirmed) {
                 this.errorMessage = undefined;
                 this.loading = true;
-        
+
                 const request = {
                     userId: userId
                 };
-        
+
                 console.log('deactivateUser request', JSON.stringify(request));
-        
+
                 deactivateUser(request).then(response => {
                     console.log('deactivateUser response', response);
-        
+
                     this.close();
-        
+
                     util.logout(this);
                 }).catch((error) => {
                     this.errorMessage = util.getFilteredErrorMessage(error);

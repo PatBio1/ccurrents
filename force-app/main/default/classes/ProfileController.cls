@@ -431,8 +431,35 @@ public without sharing class ProfileController {
             user.Id = userId;
             user.IsActive = false;
             update user;
+
+            cancelFutureVisits(userId);
         } catch (Exception e) {
             throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @future
+    private static void cancelFutureVisits(Id userid) {
+        User user = [SELECT ContactId FROM User WHERE Id = :userId];
+
+        List<Visit__c> visits = [
+            SELECT
+                Id
+            FROM
+                Visit__c
+            WHERE
+                Donor__c = :user.ContactId
+            AND
+                Appointment__r.Datetime__c > :DateTime.now()
+        ];
+
+        if (visits.size() > 0) {
+            for (Visit__c visit : visits) {
+                visit.Status__c = 'Complete';
+                visit.Outcome__c = 'Canceled';
+            }
+
+            update visits;
         }
     }
 

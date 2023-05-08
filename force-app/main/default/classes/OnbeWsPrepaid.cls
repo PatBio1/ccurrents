@@ -623,6 +623,7 @@ public class OnbeWsPrepaid {
           req.setHeader('SOAPAction', 'blank');
           //System.debug(doc.toXmlString());
           req.setBodyDocument(doc);
+          req.setTimeout(60000);
           System.debug(req.getBody());
           Http http = new Http();
           HTTPResponse res = http.send(req);

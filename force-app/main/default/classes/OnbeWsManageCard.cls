@@ -138,7 +138,8 @@ public with sharing class OnbeWsManageCard {
 			req.setEndpoint(endpoint_x);
 			req.setMethod('POST');
 			req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
-			req.setHeader('SOAPAction', 'blank');
+          	req.setHeader('SOAPAction', 'blank');
+
 			//System.debug(doc.toXmlString());
 			req.setBodyDocument(doc);
 			//System.debug(req.getBody());
@@ -148,9 +149,8 @@ public with sharing class OnbeWsManageCard {
 			Dom.Document responseDoc = res.getBodyDocument();
 			Dom.XmlNode rootNode = responseDoc.getRootElement();
 			Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
-			Dom.XmlNode Node = bodyNode.getChildElement('', uriCardManagementMainEndpoint);		
 			
-			return new AccountInquiryResponse(Node);
+			return new AccountInquiryResponse(bodyNode);
 		}
  
 		public void payoutAccountInquiry_Http() {
@@ -307,7 +307,34 @@ public with sharing class OnbeWsManageCard {
 			// public String account_status;  //  Possible Values: Active Canceled  Frozen  Lost/Stolen Contact us for Status 
 
 		public AccountInquiryResponse(Dom.XmlNode node) {
-			System.debug(node);
+			for(Dom.XmlNode childNode : node.getChildElements()) {
+				System.debug('node child - ' + childNode.getName());
+			}
+
+			// Dom.XmlNode multiRefNode = node.getChildElement('multiRef', null);
+			// for(Dom.XmlNode multiRefChildNode : multiRefNode.getChildElements()) {
+			// 	System.debug('node/multiref child - ' + multiRefChildNode.getName());
+			// }
+
+			// Dom.XmlNode multiRefNode = node.getChildElement('multiRef', uriCardManagementMainEndpoint);
+			// for(Dom.XmlNode multiRefChildNode : multiRefNode.getChildElements()) {
+			// 	System.debug('node/multiref child - ' + multiRefChildNode.getName());
+			// }
+
+			// Dom.XmlNode multiRefMultiRefNode = multiRefNode.getChildElement('multiRef', uriCardManagementMainEndpoint);
+			// for(Dom.XmlNode multiRefMultiRefChildNode : multiRefMultiRefNode.getChildElements()) {
+			// 	System.debug('node/multiref/multiref child - ' + multiRefMultiRefChildNode.getName());
+			// }
+
+			Dom.XmlNode inquiryNode = node.getChildElement('accountInquiryResponse', uriCardManagementMainEndpoint);
+			for(Dom.XmlNode inquiryChildNode : inquiryNode.getChildElements()) {
+				System.debug('node/inquiry child - ' + inquiryChildNode.getName());
+			}
+
+			Dom.XmlNode inquiryReturnNode = inquiryNode.getChildElement('accountInquiryReturn', null);
+			for(Dom.XmlNode inquiryReturnChildNode : inquiryReturnNode.getChildElements()) {
+				System.debug('node/inquiry/inquiryReturn child - ' + inquiryReturnChildNode.getName());
+			}
 		}
 	}
 

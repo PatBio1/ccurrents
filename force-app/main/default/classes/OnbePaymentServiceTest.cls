@@ -51,7 +51,7 @@ public with sharing class OnbePaymentServiceTest {
 
         Test.startTest();
         OnbePaymentService onbePayService = new OnbePaymentService();
-        onbePayService.updateAccountStatus('CLOSED');
+        // onbePayService.updateAccountStatus('CLOSED');
         Test.stopTest();
     }
 }

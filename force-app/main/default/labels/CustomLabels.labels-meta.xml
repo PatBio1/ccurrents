@@ -1267,4 +1267,18 @@
         <shortDescription>Loyalty Message Body</shortDescription>
         <value>Thank you for donating plasma with Proesis Bio. Based on your frequent and valued plasma donations, your loyalty status has been upgraded, and you have received a bonus. Navigate to My Rewards, Payment History to see details.</value>
     </labels>
+    <labels>
+        <fullName>Rewards_Video_Title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Rewards Video</shortDescription>
+        <value>Rewards Video</value>
+    </labels>
+    <labels>
+        <fullName>Rewards_Video_Link</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Rewards Video Link</shortDescription>
+        <value>https://www.youtube.com/embed/</value>
+    </labels>
 </CustomLabels>

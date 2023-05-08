@@ -115,6 +115,8 @@ import resendCode from '@salesforce/label/c.Resend_Code';
 import resultsFor from '@salesforce/label/c.Results_For';
 import rewardsExplained from '@salesforce/label/c.Rewards_Explained';
 import rewardsExplanation from '@salesforce/label/c.Rewards_Explanation';
+import rewardsVideoTitle from '@salesforce/label/c.Rewards_Video_Title';
+import rewardsVideoLink from '@salesforce/label/c.Rewards_Video_Link';
 import saturdayAbbreviation from '@salesforce/label/c.Saturday_Abbreviation';
 import saveChanges from '@salesforce/label/c.Save_Changes';
 import saved from '@salesforce/label/c.Saved';
@@ -294,6 +296,8 @@ const labels = {
     resultsFor,
     rewardsExplained,
     rewardsExplanation,
+    rewardsVideoTitle,
+    rewardsVideoLink,
     saturdayAbbreviation,
     saveChanges,
     saved,

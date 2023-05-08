@@ -2,6 +2,8 @@ import { LightningElement, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 
 import LostMyCardModal from 'c/lostMyCardModal';
+import RewardsVideoModal from 'c/rewardsVideoModal';
+
 import labels from 'c/labelService';
 import util from 'c/util';
 
@@ -133,7 +135,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     onWatchVideoButtonClick() {
-
+        RewardsVideoModal.open();
     }
 
     navigateToLoyaltyTiers(event) {

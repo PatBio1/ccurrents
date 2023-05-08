@@ -1,0 +1,8 @@
+<template>
+    <lightning-modal-header label={modalTitle}>
+    </lightning-modal-header>
+
+    <lightning-modal-body>
+        <iframe if:true={hasVideoLink} width="100%" height="100%" src={videoLink}></iframe>
+    </lightning-modal-body>
+</template>

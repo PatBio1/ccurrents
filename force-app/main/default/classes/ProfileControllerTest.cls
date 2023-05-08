@@ -775,14 +775,75 @@ public with sharing class ProfileControllerTest {
 
     @isTest
     static void testDeactivateUser() {
-        System.runAs(TestUtil.createAdminUser()) {
-            User experienceUser = TestUtil.createExperienceUser();
+        User experienceUser = TestUtil.createExperienceUser();
 
+        System.runAs(TestUtil.createAdminUser()) {
             System.assertEquals(true, [SELECT IsActive FROM User WHERE Id = :experienceUser.Id].IsActive);
+
+            Account center = TestUtil.createMiramarCenter();
+            insert center;
+
+            Donation_Type__c donationType = new Donation_Type__c();
+            insert donationType;
+
+            Center_Donation_Type__c centerDonationType = new Center_Donation_Type__c();
+            centerDonationType.Center__c = center.Id;
+            centerDonationType.Donation_Type__c = donationType.Id;
+            centerDonationType.isActive__c = true;
+            insert centerDonationType;
+
+            Schedule__c schedule = new Schedule__c(
+                Center__c = center.Id,
+                Begin_Date__c = Date.today().addDays(-10),
+                End_Date__c = Date.today().addDays(30)
+            );
+            insert schedule;
+
+            Appointment__c pastAppointment = new Appointment__c();
+            pastAppointment.Schedule__c = schedule.Id;
+            pastAppointment.Datetime__c = DateTime.now().addDays(-1);
+            pastAppointment.Duration__c = 10;
+            pastAppointment.Capacity__c = 5;
+
+            Appointment__c futureAppointment = new Appointment__c();
+            futureAppointment.Schedule__c = schedule.Id;
+            futureAppointment.Datetime__c = DateTime.now().addDays(1);
+            futureAppointment.Duration__c = 10;
+            futureAppointment.Capacity__c = 5;
+
+            insert new List<Appointment__c>{pastAppointment, futureAppointment};
+
+            Visit__c pastVisit = new Visit__c();
+            pastVisit.Appointment__c = pastAppointment.Id;
+            pastVisit.Donor__c = experienceUser.ContactId;
+            pastVisit.Status__c = 'Scheduled';
+            pastVisit.Center_Donation_Type__c = centerDonationType.Id;
+
+            Visit__c futureVisit = new Visit__c();
+            futureVisit.Appointment__c = futureAppointment.Id;
+            futureVisit.Donor__c = experienceUser.ContactId;
+            futureVisit.Status__c = 'Scheduled';
+            futureVisit.Center_Donation_Type__c = centerDonationType.Id;
+
+            insert new List<Visit__c>{pastVisit, futureVisit};
+
+            Test.startTest();
 
             ProfileController.deactivateUser(experienceUser.Id);
 
+            Test.stopTest();
+
+            // Validate user was deactivated.
             System.assertEquals(false, [SELECT IsActive FROM User WHERE Id = :experienceUser.Id].IsActive);
+
+            // Validate past visit wasn't modified.
+            System.assertEquals('Scheduled', [SELECT Status__c FROM Visit__c WHERE Id = :pastVisit.Id].Status__c);
+
+            // Validate future visit was canceled.
+            Visit__c updatedFutureVisit = [SELECT Status__c, Outcome__c FROM Visit__c WHERE Id = :futureVisit.Id];
+
+            System.assertEquals('Complete', updatedFutureVisit.Status__c);
+            System.assertEquals('Canceled', updatedFutureVisit.Outcome__c);
         }
     }
 

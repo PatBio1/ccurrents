@@ -50,6 +50,13 @@
         <value>Apply</value>
     </labels>
     <labels>
+        <fullName>ATM_Locator</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>ATM Locator</shortDescription>
+        <value>ATM Locator</value>
+    </labels>
+    <labels>
         <fullName>Back</fullName>
         <language>en_US</language>
         <protected>true</protected>

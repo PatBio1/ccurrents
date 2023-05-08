@@ -7,6 +7,7 @@ import address from '@salesforce/label/c.Address';
 import all from '@salesforce/label/c.All';
 import alreadyHaveAnAccount from '@salesforce/label/c.Already_Have_An_Account';
 import apply from '@salesforce/label/c.Apply';
+import atmLocator from '@salesforce/label/c.ATM_Locator';
 import back from '@salesforce/label/c.Back';
 import backToCenters from '@salesforce/label/c.Back_To_Centers';
 import backToDonorTips from '@salesforce/label/c.Back_To_Donor_Tips';
@@ -185,6 +186,7 @@ const labels = {
     all,
     alreadyHaveAnAccount,
     apply,
+    atmLocator,
     back,
     backToCenters,
     backToDonorTips,

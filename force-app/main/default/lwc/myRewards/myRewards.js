@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 
 import LostMyCardModal from 'c/lostMyCardModal';
 import labels from 'c/labelService';
+import util from 'c/util';
 
 import PAYMENT_METHOD_LOGOS from '@salesforce/resourceUrl/Payment_Method_Logos';
 
@@ -11,6 +12,7 @@ import userTimezone from '@salesforce/i18n/timezone';
 import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsInfo';
 import getLoyaltyLevelDisplayInfo from '@salesforce/apex/LoyaltyLevelService.getLoyaltyLevelDisplayInfo';
 import getUserTransactions from '@salesforce/apex/TransactionSelector.getUserTransactions';
+import getProfile from '@salesforce/apex/ProfileController.getProfile';
 
 const LOYALTY_TIER_NAME_TO_DISPLAY_PROPS = new Map([
     ["Normal Donor", { displayName: 'Normal', style: 'background: rgba(152, 50, 133, 0.2);'}],
@@ -75,7 +77,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
         } catch(e) {
             console.error(e);
         }
-        
+
         console.log(this.donorRewardsInfo, this.loyaltyLevelsInfo);
 
         this.isLoading = false;
@@ -97,7 +99,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
         } catch(e) {
             console.error(e);
         }
-        
+
         console.log(this.paymentHistory);
         this.isLoading = false;
     }
@@ -108,9 +110,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     onGoalAmountChange(event) {
-        console.log('onGoalAmountChange', event.data.value);
         this.goalAmount = event.data.value;
-        console.log('onGoalAmountChange', this.goalAmount);
     }
 
     onSetGoalCancelButtonClick() {
@@ -137,20 +137,32 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     navigateToLoyaltyTiers(event) {
-        this.navigateToCommunityPage('loyalty-tiers');
+        util.navigateToPage('loyalty-tiers');
+    }
+
+    onAtmLocatorLinkClick(event) {
+        event.preventDefault();
+
+        this.loading = true;
+
+        getProfile().then(response => {
+            console.log('getProfile response', response);
+
+            let url = 'http://citiprepaid.geoserve.com/scripts/esrimap.dll?Name=L&Com=adr&Db=DLRCiti1&Ds=&RT=lo&LIM=200&UIn1=380&Dsource=380&Filt=User8%3D4';
+            if (response.postalCode) {
+                url += '&Zp=' + response.postalCode;
+            }
+
+            window.open(url, '_self');
+        }).catch((error) => {
+            util.showToast(this, 'error', labels.error, error);
+        }).finally(() => {
+            this.loading = false;
+        });
     }
 
     navigateToScheduleAppointment(event) {
-        this.navigateToCommunityPage('schedule');
-    }
-
-    navigateToCommunityPage(pageName) {
-        this[NavigationMixin.Navigate]({
-            type: 'comm__namedPage',
-            attributes: {
-                pageName: pageName
-            }
-        });
+        util.navigateToPage('schedule');
     }
 
     togglePaymentDetails(event) {
@@ -162,4 +174,5 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
             transaction.displayIcon = transaction.displayDetails ? "utility:down" : "utility:right";
         }
     }
+
 }

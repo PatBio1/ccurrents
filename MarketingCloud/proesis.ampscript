@@ -1,0 +1,12 @@
+// Buddy Referral Cloud Page
+%%[
+var @referrer
+var @referrerContact
+var @referrerEmail
+var @referrerFirstName
+set @referrer = RequestParameter("referrer")
+set @referrerContact = LookupRows("Contact_Salesforce", "Id", @referrer)
+set @row = row(@referrerContact, 1)
+set @referrerEmail = field(@row, "Email")
+set @referrerFirstName = field(@row, "FirstName")
+]%%

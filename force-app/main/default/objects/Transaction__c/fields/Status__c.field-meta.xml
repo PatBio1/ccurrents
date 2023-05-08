@@ -22,6 +22,11 @@
                 <label>Processing</label>
             </value>
             <value>
+                <fullName>Error</fullName>
+                <default>false</default>
+                <label>Error</label>
+            </value>
+            <value>
                 <fullName>Complete</fullName>
                 <default>false</default>
                 <label>Complete</label>

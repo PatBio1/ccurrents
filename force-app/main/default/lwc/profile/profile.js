@@ -12,6 +12,7 @@ import setupPhoto from '@salesforce/apex/ProfileController.setupPhoto';
 import removePhoto from '@salesforce/apex/ProfileController.removePhoto';
 import sendVerificationEmail from '@salesforce/apex/ProfileController.sendVerificationEmail';
 import verifyEmailCode from '@salesforce/apex/ProfileController.verifyEmailCode';
+import smsVerificationEnabled from '@salesforce/apex/ProfileController.smsVerificationEnabled';
 import sendVerificationSms from '@salesforce/apex/ProfileController.sendVerificationSms';
 import verifySmsCode from '@salesforce/apex/ProfileController.verifySmsCode';
 import login from '@salesforce/apex/LoginController.login';
@@ -47,7 +48,6 @@ export default class Profile extends LightningElement {
     emailVerificationsExhausted = false;
     resendSmsCodeEnabled = true;
     smsVerificationsExhausted = false;
-    areTosAndPrivacyPoliciesAccepted = false;
     startURL;
 
     @api center;
@@ -57,13 +57,6 @@ export default class Profile extends LightningElement {
         if (currentPageReference) {
             this.startURL = currentPageReference.state?.startURL;
         }
-    }
-
-    get formattedTosAndPrivacyPoliciesOptText() {
-        return labels.formatLabel(labels.tOSPrivacyPolicyOpsText, [
-            `<a href=${labels.privacyPolicyLink} target='_blank'>${labels.privacyPolicy}</a>`,
-            `<a href=${labels.termsOfServiceLink} target='_blank'>${labels.termsOfService}</a>`
-        ]);
     }
 
     get verifyEmailInstructionsLabel() {
@@ -165,10 +158,6 @@ export default class Profile extends LightningElement {
         Promise.all([
             loadStyle(this, fileUploadStyles)
         ]);
-    }
-
-    onTosAndPrivacyChange(event) {
-        this.areTosAndPrivacyPoliciesAccepted = event.target.checked;
     }
 
     onAcceptMarketingCommsChange(event) {
@@ -303,11 +292,6 @@ export default class Profile extends LightningElement {
     }
 
     onPictureNextButtonClick() {
-        if (!this.areTosAndPrivacyPoliciesAccepted) {
-            util.showGuestToast(this, 'error', labels.acceptTOSPrivacyTitle, labels.acceptTOSPrivacyMessage);
-            return;
-        }
-
         this.saveProfile(PAGE_PASSWORD);
     }
 
@@ -359,22 +343,7 @@ export default class Profile extends LightningElement {
     }
 
     onVerifyEmailSkipButtonClick() {
-        this.loading = true;
-
-        const request = {
-            profile: this.profile
-        };
-
-        console.log('sendVerificationSms request', JSON.stringify(request));
-
-        sendVerificationSms(request).then(response => {
-            console.log('sendVerificationSms response', response);
-            this.currentPage = PAGE_VERIFY_PHONE;
-        }).catch((error) => {
-            util.showGuestToast(this, 'error', labels.error, error);
-        }).finally(() => {
-            this.loading = false;
-        });
+        this.verifySMS();
     }
 
     onVerifyEmailButtonClick() {
@@ -391,14 +360,7 @@ export default class Profile extends LightningElement {
             const result = response.replaceAll('"', '');
 
             if (result === 'Success') {
-                sendVerificationSms(request).then(response => {
-                    console.log('sendVerificationSms response', response);
-                    this.currentPage = PAGE_VERIFY_PHONE;
-                }).catch((error) => {
-                    util.showGuestToast(this, 'error', labels.error, error);
-                }).finally(() => {
-                    this.loading = false;
-                });
+                this.verifySMS();
             } else if (result === 'Incorrect') {
                 this.loading = false;
 
@@ -411,6 +373,36 @@ export default class Profile extends LightningElement {
             this.loading = false;
 
             util.showGuestToast(this, 'error', labels.error, error);
+        });
+    }
+
+    verifySMS() {
+        this.loading = true;
+
+        smsVerificationEnabled().then(response => {
+            console.log('smsVerificationEnabled response', response);
+
+            if (response === true) {
+                const request = {
+                    profile: this.profile
+                };
+
+                console.log('sendVerificationSms request', request);
+
+                sendVerificationSms(request).then(response => {
+                    console.log('sendVerificationSms response', response);
+                    this.currentPage = PAGE_VERIFY_PHONE;
+                }).catch((error) => {
+                    util.showGuestToast(this, 'error', labels.error, error);
+                }).finally(() => {
+                    this.loading = false;
+                });
+            } else {
+                this.phoneVerified();
+            }
+        }).catch((error) => {
+            util.showGuestToast(this, 'error', labels.error, error);
+            this.loading = false;
         });
     }
 

@@ -37,6 +37,10 @@
         <name>Apply</name>
     </customLabels>
     <customLabels>
+        <label>Localizador de cajeros automáticos</label>
+        <name>ATM_Locator</name>
+    </customLabels>
+    <customLabels>
         <label>Atrás</label>
         <name>Back</name>
     </customLabels>

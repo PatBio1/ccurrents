@@ -182,6 +182,19 @@ public without sharing class ProfileController {
     }
 
     @AuraEnabled
+    public static Boolean smsVerificationEnabled() {
+        try {
+            Util.testExceptionHandling();
+
+            Proesis_Settings__c proesisSettings = Proesis_Settings__c.getOrgDefaults();
+
+            return (proesisSettings?.SMS_Verification_Enabled__c == true);
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
     public static Boolean sendVerificationSms(Profile profile) {
         try {
             Util.testExceptionHandling();

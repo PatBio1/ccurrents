@@ -469,3 +469,38 @@ AS pdsrp
 ON p.[Visit Id] = pdsrp.VisitId
 
 WHERE pdsrp.VisitId IS NULL
+
+-- Buddy Referral Lead Email
+SELECT cm.LeadOrContactId AS SubscriberKey,
+l.FirstName AS FirstName,
+l.Email AS Email,
+cm.Referring_Contact__c AS ReferringContactId,
+cm.Id AS CampaignMemberId,
+cm.CampaignId AS CampaignId
+
+FROM CampaignMember_Salesforce AS cm
+
+INNER JOIN (
+SELECT Id AS Id,
+FirstName AS FirstName,
+Email AS Email
+FROM Lead_Salesforce)
+AS l
+ON cm.LeadOrContactId = l.Id
+
+INNER JOIN (
+SELECT Id,
+External_Id__c
+FROM Campaign_Salesforce)
+AS c
+ON cm.CampaignId = c.Id
+
+LEFT JOIN (
+SELECT CampaignMemberId
+FROM "Buddy Referral New Lead Emails")
+AS br
+ON cm.Id = br.CampaignMemberId
+
+WHERE
+br.CampaignMemberId IS NULL AND
+c.External_Id__c = "1"

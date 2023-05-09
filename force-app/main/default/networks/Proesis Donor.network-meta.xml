@@ -44,7 +44,7 @@
     <picassoSite>Proesis_Donor1</picassoSite>
     <selfRegProfile>ProesisCustomerLoginMinimumAccess</selfRegProfile>
     <selfRegistration>true</selfRegistration>
-    <sendWelcomeEmail>true</sendWelcomeEmail>
+    <sendWelcomeEmail>false</sendWelcomeEmail>
     <site>Proesis_Donor</site>
     <siteArchiveStatus>NotArchived</siteArchiveStatus>
     <status>Live</status>

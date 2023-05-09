@@ -52,6 +52,7 @@ import forgotPassword from '@salesforce/label/c.Forgot_Password';
 import fridayAbbreviation from '@salesforce/label/c.Friday_Abbreviation';
 import goalsTracker from '@salesforce/label/c.Goals_Tracker';
 import height from '@salesforce/label/c.Height';
+import home from '@salesforce/label/c.Home';
 import homePhone from '@salesforce/label/c.Home_Phone';
 import howWillYouGetToCenter from '@salesforce/label/c.How_Will_You_Get_To_Center';
 import incorrectCode from '@salesforce/label/c.Incorrect_Code';
@@ -231,6 +232,7 @@ const labels = {
     fridayAbbreviation,
     goalsTracker,
     height,
+    home,
     homePhone,
     howWillYouGetToCenter,
     incorrectCode,

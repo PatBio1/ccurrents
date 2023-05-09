@@ -44,6 +44,24 @@
 
         <div class="slds-align_absolute-center" style="height: calc(100% - 70px);">
             <div>
+                <div if:true={isDesktop} class="slds-p-bottom_large">
+                    <div class="slds-m-bottom_large slds-text-align_center">
+                        <button class="slds-button menu-option-button" onclick={onHomeButtonClick}>{labels.home}</button>
+                    </div>
+                    <div class="slds-m-bottom_large slds-text-align_center">
+                        <button class="slds-button menu-option-button" onclick={onMyAppointmentsButtonClick}>{labels.myAppointments}</button>
+                    </div>
+                    <div class="slds-m-bottom_large slds-text-align_center">
+                        <button class="slds-button menu-option-button" onclick={onScheduleButtonClick}>{labels.schedule}</button>
+                    </div>
+                    <div class="slds-m-bottom_large slds-text-align_center">
+                        <button class="slds-button menu-option-button" onclick={onMyRewardsButtonClick}>{labels.myRewards}</button>
+                    </div>
+                    <div class="slds-m-bottom_large slds-text-align_center">
+                        <button class="slds-button menu-option-button" onclick={onCentersButtonClick}>{labels.centers}</button>
+                    </div>
+                </div>
+
                 <div class="slds-m-bottom_large slds-text-align_center">
                     <button class="slds-button menu-option-button" onclick={onLoyaltyTiersButtonClick}>{labels.loyaltyTiers}</button>
                 </div>

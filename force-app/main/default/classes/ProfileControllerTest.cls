@@ -867,6 +867,7 @@ public with sharing class ProfileControllerTest {
     @isTest
     static void testCreateUserFromScheduler() {
         Id accountId;
+        Id expectedLastUsedCenterId;
 
         System.runAs(TestUtil.createAdminUser()) {
             Level__c level = new Level__c();
@@ -877,6 +878,8 @@ public with sharing class ProfileControllerTest {
 
             Account account = TestUtil.createMiramarCenter();
             insert account;
+
+            expectedLastUsedCenterId = account.Id;
 
             Lead lead = new Lead();
             lead.FirstName = 'Test First';
@@ -889,13 +892,24 @@ public with sharing class ProfileControllerTest {
             profile.centerId = account.Id;
             profile.nickname = 'testnick';
             profile.language = 'en_US';
+            profile.street = '123 Test St';
+            profile.city = 'Test City';
+            profile.state = 'Test State';
+            profile.postalCode = '12345';
 
             Test.startTest();
             accountId = ProfileController.createUserFromScheduler(profile);
             Test.stopTest();
         }
 
-        Assert.areEqual(1, [SELECT count() FROM Account WHERE Id = :accountId], 'A Valid account id should have been created and returned');
+        Account createdAccount = [SELECT Id, Last_Used_Center__pc, PersonMailingStreet, PersonMailingCity, PersonMailingState, PersonMailingPostalCode, PersonMailingCountry FROM Account WHERE Id = :accountId LIMIT 1];
+        Assert.isNotNull(createdAccount, 'A Valid account id should have been created and returned');
+        Assert.areEqual(expectedLastUsedCenterId, createdAccount.Last_Used_Center__pc, 'The account\'s last used center should have been set to the center id passed in');
+        Assert.areEqual('123 Test St', createdAccount.PersonMailingStreet, 'The account\'s mailing street should have been set to 123 Test St');
+        Assert.areEqual('Test City', createdAccount.PersonMailingCity, 'The account\'s mailing city should have been set to Test City');
+        Assert.areEqual('Test State', createdAccount.PersonMailingState, 'The account\'s mailing state should have been set to Test State');
+        Assert.areEqual('12345', createdAccount.PersonMailingPostalCode, 'The account\'s mailing postal code should have been set to 12345');
+        Assert.areEqual('US', createdAccount.PersonMailingCountry, 'The account\'s mailing country should have been set to US');
 
         User targetUserRecord = [SELECT Id, Email, FirstName, LastName FROM User WHERE AccountId = :accountId LIMIT 1];
         Assert.isNotNull(targetUserRecord, 'A user record linked to the returned account should have been created');

@@ -459,4 +459,32 @@ public with sharing class DonorCompInvocableTest {
 
         Assert.areEqual(donorAccounts.size(), [SELECT count() FROM Task WHERE Subject = :Constants.MISSING_PAYMENT_METHOD_TASK_SUBJECT], 'Should have created a Missing Payment Task');
     }
+
+    @IsTest 
+    static void testSetLastUsedCenter() {
+        List<Account> donorAccounts = [SELECT Id, PersonContactId, DonorId__c FROM Account WHERE DonorId__c != null LIMIT 1];
+        Center_Donation_Type__c centerDonationType = [SELECT Id, Center__c FROM Center_Donation_Type__c LIMIT 1];
+        Appointment__c targetAppointment = [SELECT Id FROM Appointment__c LIMIT 1];
+
+        Visit__c testVisit = TestUtil.createVisit(donorAccounts[0].PersonContactId, centerDonationType.Id, targetAppointment.Id);
+        testVisit.Status__c = 'Complete';
+        testVisit.Outcome__c = 'Donation';
+        insert testVisit;
+
+        // Set mock for the 'addFunds' callout
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+
+        Test.startTest();
+        DonorCompInvocable.handleCreateDonationTransactions(new List<List<Donor_Comp__e>>{
+            new List<Donor_Comp__e>{
+                new Donor_Comp__e(Donor_Number__c = donorAccounts[0].DonorId__c, Timestamp__c = Datetime.now())
+            }
+        });
+        Test.stopTest();
+
+        List<Account> updatedDonorAccounts = [SELECT Id, Last_Used_Center__pc FROM Account WHERE Id IN :donorAccounts];
+        for(Account donorAccount : updatedDonorAccounts) {
+            Assert.areEqual(centerDonationType.Center__c, donorAccount.Last_Used_Center__pc, 'Donor should have Last_Used_Center__c = ' + centerDonationType.Center__c);
+        }
+    }
 }

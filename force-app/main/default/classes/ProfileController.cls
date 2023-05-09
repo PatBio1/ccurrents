@@ -182,6 +182,19 @@ public without sharing class ProfileController {
     }
 
     @AuraEnabled
+    public static Boolean smsVerificationEnabled() {
+        try {
+            Util.testExceptionHandling();
+
+            Proesis_Settings__c proesisSettings = Proesis_Settings__c.getOrgDefaults();
+
+            return (proesisSettings?.SMS_Verification_Enabled__c == true);
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
     public static Boolean sendVerificationSms(Profile profile) {
         try {
             Util.testExceptionHandling();
@@ -265,6 +278,17 @@ public without sharing class ProfileController {
     public static Id createUserFromScheduler(Profile profile) {
         try {
             Database.LeadConvertResult leadConvertResult = convertLead(profile);
+
+            // Update the account record with the address info from the profile
+            // This issue doesn't happen on the mobile app, perhaps because of the createExternalUser call?
+            update new Account(
+                Id = leadConvertResult.getAccountId(),
+                PersonMailingStreet = profile.street,
+                PersonMailingCity = profile.city,
+                PersonMailingState = profile.state,
+                PersonMailingPostalCode = profile.postalCode,
+                PersonMailingCountry = 'US' // We are hard coding US as that is what the Onbe API requires for the createAccount callout
+            );
 
             commitUserFromScheduler(leadConvertResult.getAccountId(), profile.language);
 
@@ -431,8 +455,35 @@ public without sharing class ProfileController {
             user.Id = userId;
             user.IsActive = false;
             update user;
+
+            cancelFutureVisits(userId);
         } catch (Exception e) {
             throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @future
+    private static void cancelFutureVisits(Id userid) {
+        User user = [SELECT ContactId FROM User WHERE Id = :userId];
+
+        List<Visit__c> visits = [
+            SELECT
+                Id
+            FROM
+                Visit__c
+            WHERE
+                Donor__c = :user.ContactId
+            AND
+                Appointment__r.Datetime__c > :DateTime.now()
+        ];
+
+        if (visits.size() > 0) {
+            for (Visit__c visit : visits) {
+                visit.Status__c = 'Complete';
+                visit.Outcome__c = 'Canceled';
+            }
+
+            update visits;
         }
     }
 
@@ -450,7 +501,9 @@ public without sharing class ProfileController {
             Id = leadConvertResult.getAccountId(),
             RecordTypeId = Constants.DONOR_RECORD_TYPE_ID,
             Loyalty_Level__pc = LoyaltyLevelService.getDefault().Id,
-            First_Visit_Code__c = ScheduleUtils.createFirstVisitCode()
+            First_Visit_Code__c = ScheduleUtils.createFirstVisitCode(),
+            Status__pc = 'Registered',
+            Last_Used_Center__pc = profile.centerId
         );
 
         AccountContactRelation accountContactRelation = new AccountContactRelation();

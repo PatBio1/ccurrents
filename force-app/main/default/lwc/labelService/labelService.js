@@ -52,6 +52,7 @@ import forgotPassword from '@salesforce/label/c.Forgot_Password';
 import fridayAbbreviation from '@salesforce/label/c.Friday_Abbreviation';
 import goalsTracker from '@salesforce/label/c.Goals_Tracker';
 import height from '@salesforce/label/c.Height';
+import home from '@salesforce/label/c.Home';
 import homePhone from '@salesforce/label/c.Home_Phone';
 import howWillYouGetToCenter from '@salesforce/label/c.How_Will_You_Get_To_Center';
 import incorrectCode from '@salesforce/label/c.Incorrect_Code';
@@ -115,6 +116,8 @@ import resendCode from '@salesforce/label/c.Resend_Code';
 import resultsFor from '@salesforce/label/c.Results_For';
 import rewardsExplained from '@salesforce/label/c.Rewards_Explained';
 import rewardsExplanation from '@salesforce/label/c.Rewards_Explanation';
+import rewardsVideoTitle from '@salesforce/label/c.Rewards_Video_Title';
+import rewardsVideoLink from '@salesforce/label/c.Rewards_Video_Link';
 import saturdayAbbreviation from '@salesforce/label/c.Saturday_Abbreviation';
 import saveChanges from '@salesforce/label/c.Save_Changes';
 import saved from '@salesforce/label/c.Saved';
@@ -231,6 +234,7 @@ const labels = {
     fridayAbbreviation,
     goalsTracker,
     height,
+    home,
     homePhone,
     howWillYouGetToCenter,
     incorrectCode,
@@ -294,6 +298,8 @@ const labels = {
     resultsFor,
     rewardsExplained,
     rewardsExplanation,
+    rewardsVideoTitle,
+    rewardsVideoLink,
     saturdayAbbreviation,
     saveChanges,
     saved,

@@ -1,6 +1,7 @@
 import { wire, LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { getRecord } from 'lightning/uiRecordApi';
+import formFactor from '@salesforce/client/formFactor';
 import isGuest from '@salesforce/user/isGuest';
 import userId from '@salesforce/user/Id';
 import userContactId from '@salesforce/schema/User.ContactId';
@@ -16,6 +17,7 @@ import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsI
 export default class Menu extends NavigationMixin(LightningElement) {
 
     isGuest = isGuest;
+    isDesktop = (formFactor === 'Large');
     isInitialied = false;
 
     labels = labels;
@@ -55,6 +57,36 @@ export default class Menu extends NavigationMixin(LightningElement) {
     }
 
     onCloseClick() {
+        this.showMenu = false;
+    }
+
+    onHomeButtonClick() {
+        util.navigateToPage(this, 'Home');
+
+        this.showMenu = false;
+    }
+
+    onMyAppointmentsButtonClick() {
+        util.navigateToPage(this, 'Appointments__c');
+
+        this.showMenu = false;
+    }
+
+    onScheduleButtonClick() {
+        util.navigateToPage(this, 'Schedule__c');
+
+        this.showMenu = false;
+    }
+
+    onMyRewardsButtonClick() {
+        util.navigateToPage(this, 'Rewards__c');
+
+        this.showMenu = false;
+    }
+
+    onCentersButtonClick() {
+        util.navigateToPage(this, 'Centers__c');
+
         this.showMenu = false;
     }
 
@@ -102,4 +134,5 @@ export default class Menu extends NavigationMixin(LightningElement) {
     onTermsOfServiceSelect() {
         window.open(this.labels.termsOfServiceLink);
     }
+
 }

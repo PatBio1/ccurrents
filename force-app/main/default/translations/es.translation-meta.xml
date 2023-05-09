@@ -229,6 +229,10 @@
         <name>Height</name>
     </customLabels>
     <customLabels>
+        <label>Hogar</label>
+        <name>Home</name>
+    </customLabels>
+    <customLabels>
         <label>Teléfono de casa</label>
         <name>Home_Phone</name>
     </customLabels>
@@ -483,6 +487,10 @@
     <customLabels>
         <label>Presentamos el programa de regalías. Realice un seguimiento de sus donaciones anuales con la aplicación y gane más recompensas. Alcance el estado Gold y gane la mayor cantidad de puntos y reciba los mejores puntos de tiempo.</label>
         <name>Rewards_Explanation</name>
+    </customLabels>
+    <customLabels>
+        <label>Video de recompensas</label>
+        <name>Rewards_Video_Title</name>
     </customLabels>
     <customLabels>
         <label>Sábado</label>

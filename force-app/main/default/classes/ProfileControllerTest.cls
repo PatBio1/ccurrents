@@ -331,6 +331,46 @@ public with sharing class ProfileControllerTest {
     }
 
     @isTest
+    static void testSmsVerificationEnabled() {
+        User guestUser = TestUtil.createExperienceGuestUser();
+
+        System.runAs(guestUser) {
+            Boolean enabled = ProfileController.smsVerificationEnabled();
+
+            System.assertEquals(false, enabled);
+        }
+        
+        System.runAs(TestUtil.createAdminUser()) {
+            Proesis_Settings__c proesisSettings = Proesis_Settings__c.getOrgDefaults();
+            proesisSettings.SMS_Verification_Enabled__c = true;
+            upsert proesisSettings;
+        }
+
+        System.runAs(guestUser) {
+            Boolean enabled = ProfileController.smsVerificationEnabled();
+
+            System.assertEquals(true, enabled);
+        }
+    }
+
+    @isTest
+    static void testSmsVerificationEnabledException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.smsVerificationEnabled();
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
     static void testSendVerificationSms() {
         System.runAs(TestUtil.createExperienceGuestUser()) {
             Lead lead = new Lead();
@@ -735,14 +775,75 @@ public with sharing class ProfileControllerTest {
 
     @isTest
     static void testDeactivateUser() {
-        System.runAs(TestUtil.createAdminUser()) {
-            User experienceUser = TestUtil.createExperienceUser();
+        User experienceUser = TestUtil.createExperienceUser();
 
+        System.runAs(TestUtil.createAdminUser()) {
             System.assertEquals(true, [SELECT IsActive FROM User WHERE Id = :experienceUser.Id].IsActive);
+
+            Account center = TestUtil.createMiramarCenter();
+            insert center;
+
+            Donation_Type__c donationType = new Donation_Type__c();
+            insert donationType;
+
+            Center_Donation_Type__c centerDonationType = new Center_Donation_Type__c();
+            centerDonationType.Center__c = center.Id;
+            centerDonationType.Donation_Type__c = donationType.Id;
+            centerDonationType.isActive__c = true;
+            insert centerDonationType;
+
+            Schedule__c schedule = new Schedule__c(
+                Center__c = center.Id,
+                Begin_Date__c = Date.today().addDays(-10),
+                End_Date__c = Date.today().addDays(30)
+            );
+            insert schedule;
+
+            Appointment__c pastAppointment = new Appointment__c();
+            pastAppointment.Schedule__c = schedule.Id;
+            pastAppointment.Datetime__c = DateTime.now().addDays(-1);
+            pastAppointment.Duration__c = 10;
+            pastAppointment.Capacity__c = 5;
+
+            Appointment__c futureAppointment = new Appointment__c();
+            futureAppointment.Schedule__c = schedule.Id;
+            futureAppointment.Datetime__c = DateTime.now().addDays(1);
+            futureAppointment.Duration__c = 10;
+            futureAppointment.Capacity__c = 5;
+
+            insert new List<Appointment__c>{pastAppointment, futureAppointment};
+
+            Visit__c pastVisit = new Visit__c();
+            pastVisit.Appointment__c = pastAppointment.Id;
+            pastVisit.Donor__c = experienceUser.ContactId;
+            pastVisit.Status__c = 'Scheduled';
+            pastVisit.Center_Donation_Type__c = centerDonationType.Id;
+
+            Visit__c futureVisit = new Visit__c();
+            futureVisit.Appointment__c = futureAppointment.Id;
+            futureVisit.Donor__c = experienceUser.ContactId;
+            futureVisit.Status__c = 'Scheduled';
+            futureVisit.Center_Donation_Type__c = centerDonationType.Id;
+
+            insert new List<Visit__c>{pastVisit, futureVisit};
+
+            Test.startTest();
 
             ProfileController.deactivateUser(experienceUser.Id);
 
+            Test.stopTest();
+
+            // Validate user was deactivated.
             System.assertEquals(false, [SELECT IsActive FROM User WHERE Id = :experienceUser.Id].IsActive);
+
+            // Validate past visit wasn't modified.
+            System.assertEquals('Scheduled', [SELECT Status__c FROM Visit__c WHERE Id = :pastVisit.Id].Status__c);
+
+            // Validate future visit was canceled.
+            Visit__c updatedFutureVisit = [SELECT Status__c, Outcome__c FROM Visit__c WHERE Id = :futureVisit.Id];
+
+            System.assertEquals('Complete', updatedFutureVisit.Status__c);
+            System.assertEquals('Canceled', updatedFutureVisit.Outcome__c);
         }
     }
 
@@ -766,6 +867,7 @@ public with sharing class ProfileControllerTest {
     @isTest
     static void testCreateUserFromScheduler() {
         Id accountId;
+        Id expectedLastUsedCenterId;
 
         System.runAs(TestUtil.createAdminUser()) {
             Level__c level = new Level__c();
@@ -776,6 +878,8 @@ public with sharing class ProfileControllerTest {
 
             Account account = TestUtil.createMiramarCenter();
             insert account;
+
+            expectedLastUsedCenterId = account.Id;
 
             Lead lead = new Lead();
             lead.FirstName = 'Test First';
@@ -788,13 +892,24 @@ public with sharing class ProfileControllerTest {
             profile.centerId = account.Id;
             profile.nickname = 'testnick';
             profile.language = 'en_US';
+            profile.street = '123 Test St';
+            profile.city = 'Test City';
+            profile.state = 'Test State';
+            profile.postalCode = '12345';
 
             Test.startTest();
             accountId = ProfileController.createUserFromScheduler(profile);
             Test.stopTest();
         }
 
-        Assert.areEqual(1, [SELECT count() FROM Account WHERE Id = :accountId], 'A Valid account id should have been created and returned');
+        Account createdAccount = [SELECT Id, Last_Used_Center__pc, PersonMailingStreet, PersonMailingCity, PersonMailingState, PersonMailingPostalCode, PersonMailingCountry FROM Account WHERE Id = :accountId LIMIT 1];
+        Assert.isNotNull(createdAccount, 'A Valid account id should have been created and returned');
+        Assert.areEqual(expectedLastUsedCenterId, createdAccount.Last_Used_Center__pc, 'The account\'s last used center should have been set to the center id passed in');
+        Assert.areEqual('123 Test St', createdAccount.PersonMailingStreet, 'The account\'s mailing street should have been set to 123 Test St');
+        Assert.areEqual('Test City', createdAccount.PersonMailingCity, 'The account\'s mailing city should have been set to Test City');
+        Assert.areEqual('Test State', createdAccount.PersonMailingState, 'The account\'s mailing state should have been set to Test State');
+        Assert.areEqual('12345', createdAccount.PersonMailingPostalCode, 'The account\'s mailing postal code should have been set to 12345');
+        Assert.areEqual('US', createdAccount.PersonMailingCountry, 'The account\'s mailing country should have been set to US');
 
         User targetUserRecord = [SELECT Id, Email, FirstName, LastName FROM User WHERE AccountId = :accountId LIMIT 1];
         Assert.isNotNull(targetUserRecord, 'A user record linked to the returned account should have been created');
@@ -846,4 +961,5 @@ public with sharing class ProfileControllerTest {
         Assert.areEqual(Constants.DEFAULT_MARKETING_CONSENT_SOURCE, marketingConsents[0].Source__c, 'The marketing consent\'s source should be ' + Constants.DEFAULT_MARKETING_CONSENT_SOURCE);
         Assert.areEqual(Constants.DEFAULT_MARKETING_CONSENT_TYPE, marketingConsents[0].Type_of_Consent__c, 'The marketing consent\'s type should be ' + Constants.DEFAULT_MARKETING_CONSENT_TYPE);
     }
+
 }

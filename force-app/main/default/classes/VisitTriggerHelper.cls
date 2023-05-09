@@ -1,8 +1,9 @@
 public without sharing class VisitTriggerHelper {
+
     public static void updateAppointmentDateTime(List<Visit__c> visits) {
         Map<Id, List<Visit__c>> appointmentIdToVisitRecord = new Map<Id, List<Visit__c>>(); 
-        
-        for(Visit__c targetVisit : visits) {
+
+        for (Visit__c targetVisit : visits) {
             if (targetVisit.Appointment__c != null) {
                 List<Visit__c> existingVisits = appointmentIdToVisitRecord.get(targetVisit.Appointment__c);
                 if (existingVisits == null) {
@@ -20,7 +21,7 @@ public without sharing class VisitTriggerHelper {
         }
 
         for (Appointment__c queriedAppointment : [
-            SELECT Id, Datetime__c
+            SELECT Datetime__c
             FROM Appointment__c
             WHERE Id IN :appointmentIdToVisitRecord.keyset()
         ]) {
@@ -33,7 +34,7 @@ public without sharing class VisitTriggerHelper {
                 continue;
             }
 
-            for(Visit__c relatedVisit : relatedVisits) {
+            for (Visit__c relatedVisit : relatedVisits) {
                 relatedVisit.Appointment_Datetime__c = queriedAppointment.Datetime__c;
             }
         }
@@ -61,16 +62,16 @@ public without sharing class VisitTriggerHelper {
             for (Visit__c visit : visits) {
                 Contact donor = visitIdToDonorRecord.get(visit.Donor__c);
                 Appointment__c appointment = visitIdToAppointmentRecord.get(visit.Appointment__c);
-                
+
                 if (donor != null && appointment != null && appointment.DateTime__c != null) {
                     if (visit.Physical_Exam__c) {
                         donor.Last_Physical_Exam_Date__c = appointment.DateTime__c.date();
                     }
-                    
+
                     if (visit.SPE_Analysis__c) {
                         donor.Last_SPE_Sample_Date__c = appointment.DateTime__c.date();
                     }
-                    
+
                     visitIdToDonorRecord.put(donor.Id, donor);
                 }
             }
@@ -88,7 +89,7 @@ public without sharing class VisitTriggerHelper {
         }
 
         if (donorIds.size() > 0) {
-            Set<String> acceptableFirstVisitOutcomes = new Set<String> {
+            Set<String> acceptableFirstVisitOutcomes = new Set<String>{
                 null, 'Donation', 'No Donation'
             };
 
@@ -101,8 +102,8 @@ public without sharing class VisitTriggerHelper {
 
             // Handle First Visit Flags and Tasks
             // This is handled by a second query in order to reduce looping and heap size (in the event of a large visit backlog for a donor)
-            for(Contact donor : [
-                SELECT Id, Account.First_Visit_Code__c, (
+            for (Contact donor : [
+                SELECT Account.First_Visit_Code__c, (
                     SELECT Id, isFirstVisit__c, Outcome__c
                     FROM Visits__r 
                     WHERE Outcome__c IN :acceptableFirstVisitOutcomes OR 
@@ -172,9 +173,9 @@ public without sharing class VisitTriggerHelper {
                 }
             }
 
-            for(Contact donor : [
-                SELECT Id, Account.Days_Until_Annum__pc, Account.Days_until_Triannum__pc, (
-                    SELECT Id, Name, Donor__c, Appointment_Datetime__c, Physical_Exam__c, SPE_Analysis__c 
+            for (Contact donor : [
+                SELECT Account.Days_Until_Annum__pc, Account.Days_until_Triannum__pc, (
+                    SELECT Name, Donor__c, Appointment_Datetime__c, Physical_Exam__c, SPE_Analysis__c 
                     FROM Visits__r 
                     ORDER BY Appointment_Datetime__c ASC
                 ) 
@@ -288,7 +289,7 @@ public without sharing class VisitTriggerHelper {
 
     public static void updateLastPreviousFields(List<Visit__c> visits) {
         Set<Id> donorIds = new Set<Id>();
-        for(Visit__c visit : visits) {
+        for (Visit__c visit : visits) {
             donorIds.add(visit.Donor__c);
         }
 
@@ -296,8 +297,8 @@ public without sharing class VisitTriggerHelper {
         Map<Id, Boolean> donorIdToFoundLastDonation = new Map<Id, Boolean>(), donorIdToFoundLastPreviousDonation = new Map<Id, Boolean>();
         Map<Id, Boolean> donorIdToFoundLastScheduled = new Map<Id, Boolean>(), donorIdToFoundLastPreviousScheduled = new Map<Id, Boolean>();
 
-        for(Contact donor : [
-            SELECT Id, Last_Previous_Donation__c, Last_Previous_Scheduled_Visit__c, (
+        for (Contact donor : [
+            SELECT Last_Previous_Donation__c, Last_Previous_Scheduled_Visit__c, (
                 SELECT Id, Status__c, Outcome__c 
                 FROM Visits__r 
                 WHERE (Status__c = 'Complete' AND Outcome__c IN ('Donation', 'No Donation')) OR 
@@ -309,7 +310,7 @@ public without sharing class VisitTriggerHelper {
             WHERE Id IN :donorIds
         ]) {
             if (donor.Visits__r != null && donor.Visits__r.size() >= 2) {
-                for(Visit__c visit : donor.Visits__r) {
+                for (Visit__c visit : donor.Visits__r) {
                     // Last Previous Scheduled Visit can be set by any visit that isn't canceled or rescheduled
                     Boolean foundLastScheduled = donorIdToFoundLastScheduled.get(donor.Id);
                     Boolean foundLastPreviousScheduled = donorIdToFoundLastPreviousScheduled.get(donor.Id);
@@ -378,4 +379,83 @@ public without sharing class VisitTriggerHelper {
             update donorsToUpdate.values();
         }
     }
+
+    public static void shareRecords(List<Visit__c> visits) {
+        visits = [
+            SELECT
+                Appointment__r.Schedule__r.Center__c, Donor__r.AccountId
+            FROM
+                Visit__c
+            WHERE
+                Id IN :visits
+        ];
+
+        Set<Id> centerAccountIds = new Set<Id>();
+        Set<Id> donorAccountIds = new Set<Id>();
+
+        for (Visit__c visit : visits) {
+            centerAccountIds.add(visit.Appointment__r.Schedule__r.Center__c);
+            donorAccountIds.add(visit.Donor__r.AccountId);
+        }
+
+        List<AccountShare> accountShares = [
+            SELECT
+                AccountId, UserOrGroupId, AccountAccessLevel, CaseAccessLevel, OpportunityAccessLevel
+            FROM
+                AccountShare
+            WHERE
+                (AccountId IN :centerAccountIds OR AccountId IN :donorAccountIds)
+            AND
+                RowCause = 'Manual'
+        ];
+
+        Map<Id, List<AccountShare>> centerAccountShares = new Map<Id, List<AccountShare>>();
+        Set<String> accountUserOrGroupIds = new Set<String>();
+
+        for (AccountShare accountShare : accountShares) {
+            if (centerAccountIds.contains(accountShare.AccountId)) {
+                List<AccountShare> accountShareList = centerAccountShares.get(accountShare.AccountId);
+                if (accountShareList == null) {
+                    accountShareList = new List<AccountShare>();
+                    centerAccountShares.put(accountShare.AccountId, accountShareList);
+                }
+
+                accountShareList.add(accountShare);
+            } else {
+                String accountUserOrGroupId = accountShare.AccountId + '-' + accountShare.UserOrGroupId;
+                accountUserOrGroupIds.add(accountUserOrGroupId);
+            }
+        }
+
+        List<AccountShare> accountSharesToInsert = new List<AccountShare>();
+
+        for (Visit__c visit : visits) {
+            List<AccountShare> centerAccountShareList = centerAccountShares.get(visit.Appointment__r.Schedule__r.Center__c);
+            List<AccountShare> donorAccountShareList = centerAccountShares.get(visit.Donor__r.AccountId);
+
+            if (centerAccountShareList != null) {
+                for (AccountShare centerAccountShare : centerAccountShareList) {
+                    String accountUserOrGroupId = visit.Donor__r.AccountId + '-' + centerAccountShare.UserOrGroupId;
+
+                    if (!accountUserOrGroupIds.contains(accountUserOrGroupId)) {
+                        AccountShare accountShare = new AccountShare();
+                        accountShare.AccountId = visit.Donor__r.AccountId;
+                        accountShare.UserOrGroupId = centerAccountShare.UserOrGroupId;
+                        accountShare.RowCause = 'Manual';
+                        accountShare.AccountAccessLevel = centerAccountShare.AccountAccessLevel;
+                        accountShare.CaseAccessLevel = centerAccountShare.CaseAccessLevel;
+                        accountShare.OpportunityAccessLevel = centerAccountShare.OpportunityAccessLevel;
+                        accountSharesToInsert.add(accountShare);
+
+                        accountUserOrGroupIds.add(accountUserOrGroupId);
+                    }
+                }
+            }
+        }
+
+        if (accountSharesToInsert.size() > 0) {
+            insert accountSharesToInsert;
+        }
+    }
+
 }

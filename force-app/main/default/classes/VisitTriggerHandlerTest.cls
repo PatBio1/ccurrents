@@ -1,5 +1,6 @@
 @IsTest
 public class VisitTriggerHandlerTest {
+
     static final Integer AMOUNT_OF_VISITS = 99;
 
     @TestSetup
@@ -568,4 +569,50 @@ public class VisitTriggerHandlerTest {
             Assert.isNull(testVisit.Donor__r.Last_Previous_Scheduled_Visit__c, 'The donor\'s last previous scheduled visit was updated');
         }
     }
+
+    @isTest
+    static void testShareRecords() {
+        System.runAs(TestUtil.createAdminUser()) {
+            Group centerAdminGroup = new Group();
+            centerAdminGroup.Name = 'Admin';
+
+            Group centerStaffGroup = new Group();
+            centerStaffGroup.Name = 'Staff';
+
+            insert new List<Group>{centerAdminGroup, centerStaffGroup};
+
+            Account center = [SELECT Id FROM Account WHERE Name = 'Proesis Miramar'];
+
+            AccountShare centerAdminAccountShare = new AccountShare();
+            centerAdminAccountShare.AccountId = center.Id;
+            centerAdminAccountShare.UserOrGroupId = centerAdminGroup.Id;
+            centerAdminAccountShare.RowCause = 'Manual';
+            centerAdminAccountShare.AccountAccessLevel = 'Edit';
+            centerAdminAccountShare.OpportunityAccessLevel = 'Read';
+
+            AccountShare centerStaffAccountShare = new AccountShare();
+            centerStaffAccountShare.AccountId = center.Id;
+            centerStaffAccountShare.UserOrGroupId = centerStaffGroup.Id;
+            centerStaffAccountShare.RowCause = 'Manual';
+            centerStaffAccountShare.AccountAccessLevel = 'Read';
+            centerStaffAccountShare.OpportunityAccessLevel = 'Read';
+
+            insert new List<AccountShare>{centerAdminAccountShare, centerStaffAccountShare};
+
+            Center_Donation_Type__c centerDonationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+            Account donor = [SELECT PersonContactId FROM Account WHERE DonorId__c != NULL LIMIT 1];
+            Appointment__c appointment = [SELECT Id FROM Appointment__c LIMIT 1];
+
+            Visit__c visit = new Visit__c();
+            visit.Appointment__c = appointment.Id;
+            visit.Donor__c = donor.PersonContactId;
+            visit.Status__c = 'Scheduled';
+            visit.Center_Donation_Type__c = centerDonationType.Id;
+            insert visit;
+
+            System.assertEquals(1, [SELECT COUNT() FROM AccountShare WHERE AccountId = :donor.Id AND UserOrGroupId = :centerAdminGroup.Id]);
+            System.assertEquals(1, [SELECT COUNT() FROM AccountShare WHERE AccountId = :donor.Id AND UserOrGroupId = :centerStaffGroup.Id]);
+        }
+    }
+
 }

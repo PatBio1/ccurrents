@@ -489,6 +489,10 @@
         <name>Rewards_Explanation</name>
     </customLabels>
     <customLabels>
+        <label>Video de recompensas</label>
+        <name>Rewards_Video_Title</name>
+    </customLabels>
+    <customLabels>
         <label>Sábado</label>
         <name>Saturday</name>
     </customLabels>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Date_Migrated__c</fullName>
+    <description>This is the date the donor was migrated into the CRM.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>This is the date the donor was migrated into the CRM.</inlineHelpText>
+    <label>Date Migrated</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Date</type>
+</CustomField>

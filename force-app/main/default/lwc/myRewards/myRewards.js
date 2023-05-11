@@ -143,12 +143,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     navigateToLoyaltyTiers(event) {
-        this[NavigationMixin.Navigate]({
-            type: 'comm__namedPage',
-            attributes: {
-                pageName: 'loyalty-tiers'
-            }
-        });
+        util.navigateToPage(this, 'Loyalty_Tiers__c');
     }
 
     onAtmLocatorLinkClick(event) {
@@ -173,12 +168,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     navigateToScheduleAppointment(event) {
-        this[NavigationMixin.Navigate]({
-            type: 'comm__namedPage',
-            attributes: {
-                pageName: 'schedule'
-            }
-        });
+        util.navigateToPage(this, 'Schedule__c');
     }
 
     togglePaymentDetails(event) {

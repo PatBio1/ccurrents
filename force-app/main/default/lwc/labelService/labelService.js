@@ -68,6 +68,7 @@ import marketingCommunicationsOpsText from '@salesforce/label/c.Marketing_Commun
 import message from '@salesforce/label/c.Message';
 import middleName from '@salesforce/label/c.Middle_Name';
 import mobilePhone from '@salesforce/label/c.Mobile_Phone';
+import mobilePhoneRequirements from '@salesforce/label/c.Mobile_Phone_Requirements';
 import mobileVisitActions from '@salesforce/label/c.Mobile_Visit_Actions';
 import mondayAbbreviation from '@salesforce/label/c.Monday_Abbreviation';
 import myAppointments from '@salesforce/label/c.My_Appointments';
@@ -248,6 +249,7 @@ const labels = {
     message,
     middleName,
     mobilePhone,
+    mobilePhoneRequirements,
     mobileVisitActions,
     mondayAbbreviation,
     myAppointments,

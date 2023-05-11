@@ -35,6 +35,7 @@ public without sharing class ProfileController {
             lead.City = profile.city;
             lead.State = profile.state;
             lead.PostalCode = profile.postalCode;
+            lead.Country = 'US';
             lead.How_will_you_get_to_the_Center__c = profile.howGetToCenter;
             upsert lead;
 

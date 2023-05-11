@@ -50,6 +50,8 @@ export default class Profile extends LightningElement {
     smsVerificationsExhausted = false;
     startURL;
 
+    phoneRegex = new RegExp("^[0-9]{3}-[0-9]{3}-[0-9]{4}$");
+
     @api center;
 
     @wire(CurrentPageReference)
@@ -120,7 +122,8 @@ export default class Profile extends LightningElement {
             util.isNotBlank(this.profile.firstName) &&
             util.isNotBlank(this.profile.lastName) &&
             util.isNotBlank(this.profile.email) &&
-            util.isNotBlank(this.profile.mobilePhone)
+            util.isNotBlank(this.profile.mobilePhone) &&
+            this.phoneRegex.test(this.profile.mobilePhone)
         );
     }
 
@@ -168,6 +171,20 @@ export default class Profile extends LightningElement {
         let field = event.target?.dataset?.field;
 
         this.profile[field] = event.detail?.value;
+    }
+
+    onMobilePhoneChange(event) {
+        this.onFieldChange(event);
+
+        let mobilePhoneInput = this.template.querySelector('lightning-input[data-field="mobilePhone"]');
+
+        if (!this.phoneRegex.test(this.profile.mobilePhone)) {
+            mobilePhoneInput.setCustomValidity(labels.mobilePhoneRequirements);
+        } else {
+            mobilePhoneInput.setCustomValidity('');
+        }
+
+        mobilePhoneInput.reportValidity();
     }
 
     onPasswordChange(event) {

@@ -470,6 +470,13 @@
         <value>Mobile Phone</value>
     </labels>
     <labels>
+        <fullName>Mobile_Phone_Requirements</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Mobile Phone Requirements</shortDescription>
+        <value>Phone must be numeric only and in the format: xxx-xxx-xxxx.</value>
+    </labels>
+    <labels>
         <fullName>Monday</fullName>
         <language>en_US</language>
         <protected>true</protected>

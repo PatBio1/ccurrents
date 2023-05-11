@@ -1,11 +1,14 @@
 String application_id = '3037c66b967c3d338751f95d2cdac566';
-String puid = '003DE00002RgKDjYAN'; // Expects ContactId
-String block_code = 'lost';
+String puid = '003DE00002RgKDNYA3'; // Expects ContactId
+String block_code = Constants.ONBE_REISSUE_CARD_REVOKED_CODE;
 
 OnbeWsManageCard.AccountManagement onbeManageCardBaseObject = new OnbeWsManageCard.AccountManagement();
-onbeManageCardBaseObject.reissueCard_Http(application_id, puid, block_code);
+OnbeWsManageCard.ReissueCardResponse reissueResponse = onbeManageCardBaseObject.reissueCard_Http(application_id, puid, block_code);
+
+System.debug('reissueResponse: ' + reissueResponse);
 
 // Example XML Response - Waiting for Onbe to get back on why this is happening
+// They came back and said it was because the account was getting registered with two cards and their system didn't like that
 /*
     <?xml version="1.0" encoding="UTF-8"?>
     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

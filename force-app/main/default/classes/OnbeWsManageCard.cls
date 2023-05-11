@@ -304,32 +304,69 @@ public with sharing class OnbeWsManageCard {
 		public AccountInquiryResponse(Dom.XmlNode node) {
 			// See the Test_GetBalance_Request_OnbePayment.apex test script for an example success return
 
+			Dom.XmlNode responseNode = node.getChildElement('accountInquiryResponse', uriCardManagementMainEndpoint);
+			Dom.XmlNode returnNode = responseNode.getChildElement('accountInquiryReturn', null);
+
+			String responseBodyNodeId = returnNode.getAttribute('href', null);
+
+			Map<String, Dom.XmlNode> nodeIdToNode = new Map<String, Dom.XmlNode>();
 			for(Dom.XmlNode childNode : node.getChildElements()) {
-				if (childNode.getName() == 'multiRef') {
-					String id = childNode.getAttribute('id', null);
+				if (childNode.getAttribute('id', null) != null) {
+					nodeIdToNode.put('#' + childNode.getAttribute('id', null), childNode);
+				}	
+			}
 
-					if (id == 'id4') {
-						String codeString = childNode.getChildElement('code', null)?.getText();
-						if (!String.isEmpty(codeString)) {
-							this.code = Integer.valueOf(codeString);
-						}
+			Dom.XmlNode responseBodyNode = nodeIdToNode.get(responseBodyNodeId);
+			if (responseBodyNode == null) {
+				this.message = 'Response body node not found';
+				return;
+			}
 
-						this.message = childNode.getChildElement('message', null)?.getText();
-					} else if (id == 'id6') {
-						this.balance = Decimal.valueOf(childNode?.getText());
+			String balanceNodeId = responseBodyNode.getChildElement('balance', null)?.getAttribute('href', null);
+			String cardNodeId = responseBodyNode.getChildElement('card', null)?.getAttribute('href', null);
+			String responseNodeId = responseBodyNode.getChildElement('response', null)?.getAttribute('href', null);
 
-						if (this.balance != null) {
-							// Balance comes back in cents, so we need to convert it to dollars
-							this.balance = (this.balance / 100).setScale(2);
-						}
-					} else if (id == 'id2') {
-						this.expirationMMYYYY = childNode.getChildElement('expiration', null)?.getText();
-						this.cardNumber4Digits = childNode.getChildElement('card_number', null)?.getText();
+			Dom.XmlNode diagResponseNode = nodeIdToNode.get(responseNodeId);
+			String codeResponseNodeId;
 
-						if (!String.isEmpty(this.cardNumber4Digits)) {
-							this.cardNumber4Digits = this.cardNumber4Digits.right(4);
-						}
+			if (diagResponseNode != null) {
+				this.message = diagResponseNode.getChildElement('message', null)?.getText();
+				codeResponseNodeId = diagResponseNode.getChildElement('code', null)?.getAttribute('href', null);
+
+				Dom.XmlNode codeResponseNode = nodeIdToNode.get(codeResponseNodeId);
+				if (codeResponseNode != null) {
+					String codeString = codeResponseNode.getText();
+
+					if (!String.isEmpty(codeString)) {
+						this.code = Integer.valueOf(codeString);
 					}
+				}
+			}
+
+			if ((this.code != null && this.code != 0) || (this.message != null && this.message != Constants.ONBE_CUSTOMER_SERVICE_SUCCESS_MESSAGE)) {
+				// This indicates an error, so no need to parse the rest of the response, we'll just throw the error in the service class
+				return;
+			}
+
+			Dom.XmlNode balanceNode = nodeIdToNode.get(balanceNodeId);
+			String availableBalanceNodeId = balanceNode.getChildElement('balance_available', null)?.getAttribute('href', null);
+
+			Dom.XmlNode availableBalanceNode = nodeIdToNode.get(availableBalanceNodeId);
+			if (availableBalanceNode != null) {
+				String balanceString = availableBalanceNode.getText();
+
+				if (!String.isEmpty(balanceString)) {
+					this.balance = Decimal.valueOf(balanceString);
+				}
+			}
+
+			Dom.XmlNode cardNode = nodeIdToNode.get(cardNodeId);
+			if (cardNode != null) {
+				this.cardNumber4Digits = cardNode.getChildElement('card_number', null)?.getText();
+				this.expirationMMYYYY = cardNode.getChildElement('expiration', null)?.getText();
+
+				if (!String.isEmpty(this.cardNumber4Digits)) {
+					this.cardNumber4Digits = this.cardNumber4Digits.right(4);
 				}
 			}
 		}
@@ -369,30 +406,61 @@ public with sharing class OnbeWsManageCard {
 	}
 
 	public class ReissueCardResponse {
-		Integer code;
-		String message;
+		public Integer code;
+		public String message;
 
-		/*
-		card_number N STRING Card number will always be masked (except last eight digits)
-		puid N STRING Partner user identifier.
-		program_id Y INT Program ID associated with cardholder’s card.
-		created_date N DATETIME Creation date of account.
-		last_plastic_dat
-		e
-		N DATETIME Date of last plastic issued.
-		ship_date N DATETIME Date card shipped in the mail.
-		expiration N STRING Expiration date of card. (Example:"02/2010")
-		account_status N STRING Possibilities are:
-			Active
-			Canceled
-			Frozen
-			Lost/Stolen
-			Contact us for Status
-		*/
+		String cardNumber4Digits;
+		String expirationMMYYYY;
+		String accountStatus;
 
 		public ReissueCardResponse(Dom.XmlNode node) {
+			Dom.XmlNode responseNode = node.getChildElement('reissueCardResponse', uriCardManagementMainEndpoint);
+			Dom.XmlNode returnNode = responseNode.getChildElement('reissueCardReturn', null);
+
+			String responseBodyNodeId = returnNode.getAttribute('href', null);
+
+			Map<String, Dom.XmlNode> nodeIdToNode = new Map<String, Dom.XmlNode>();
 			for(Dom.XmlNode childNode : node.getChildElements()) {
-				System.debug('node child - ' + childNode.getName());
+				if (childNode.getAttribute('id', null) != null) {
+					nodeIdToNode.put('#' + childNode.getAttribute('id', null), childNode);
+				}	
+			}
+
+			Dom.XmlNode responseBodyNode = nodeIdToNode.get(responseBodyNodeId);
+			if (responseBodyNode == null) {
+				this.message = 'Response body node not found';
+				return;
+			}
+
+			this.message = responseBodyNode.getChildElement('message', null)?.getText();
+			String codeResponseNodeId = responseBodyNode.getChildElement('code', null)?.getAttribute('href', null);
+			String cardResponseNodeId = responseBodyNode.getChildElement('cardDetail', null)?.getAttribute('href', null);
+
+			Dom.XmlNode codeResponseNode = nodeIdToNode.get(codeResponseNodeId);
+			if (codeResponseNode != null) {
+				String codeString = codeResponseNode.getText();
+
+				if (!String.isEmpty(codeString)) {
+					this.code = Integer.valueOf(codeString);
+				}
+			}
+
+			if (this.code != null && this.code != 0) {
+				// This indicates an error, so no need to parse the rest of the response, we'll just throw the error in the service class
+				return;
+			}
+
+			if (!String.isEmpty(cardResponseNodeId)) {
+				Dom.XmlNode cardResponseNode = nodeIdToNode.get(cardResponseNodeId);
+				if (cardResponseNode != null) {
+					this.cardNumber4Digits = cardResponseNode.getChildElement('card_number', null)?.getText();
+					if (!String.isEmpty(this.cardNumber4Digits)) {
+						this.cardNumber4Digits = this.cardNumber4Digits.right(4);
+					}
+
+					this.expirationMMYYYY = cardResponseNode.getChildElement('expiration', null)?.getText();
+					this.accountStatus = cardResponseNode.getChildElement('account_status', null)?.getText();
+				}
 			}
 		}
 	}

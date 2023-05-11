@@ -21,6 +21,8 @@ System.debug(accountInquiryResponse);
 
 // What does the XML look like?
 // The balance properties don't actually return anything, the balance should be pulled from the multiRef with the id of id6
+// Based on convos with the Onbe team, values are gonna be stored in multiRef nodes, the ids of the multiRef nodes are stored in attributes on the related named node
+// So for example, the balance node has an attribute of href="#id6", so the balance value is stored in the multiRef node with the id of id6
 /*
 	<?xml version="1.0" encoding="UTF-8"?>
 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

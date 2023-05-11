@@ -22,9 +22,6 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
 
     public String setupPaymentServiceAccount(String cardPackageId, Id donorId, Decimal initialAccountLoad, String initialPIN) {
         String partnerUserId = (String)donorId;
-        
-        OnbeDomainPrepaid.Card newCard = new OnbeDomainPrepaid.Card();
-        newCard.cardAccessLevel = ACCESS_LEVEL;
 
         OnbeDomainPrepaid.Load newLoad;
         if (initialAccountLoad != null && initialAccountLoad > 0) {
@@ -77,7 +74,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
 
         OnbeWsPrepaid.AccountManagementApiWebServices accountManagementAPI = new OnbeWsPrepaid.AccountManagementApiWebServices();
         OnbeResponsePrepaid.CreateAccountResponse createActivateCardResponse = accountManagementAPI.createAccount_Http(
-            PROGRAM_ID, PROMOTION_ID, donorId + '-' + String.valueOf(System.currentTimeMillis()), partnerUserId, ACCESS_LEVEL, true, newCard, newLoad, newLink, newReg
+            PROGRAM_ID, PROMOTION_ID, donorId + '-' + String.valueOf(System.currentTimeMillis()), partnerUserId, ACCESS_LEVEL, true, null, newLoad, newLink, newReg
         );
 
         if (createActivateCardResponse.code != 0) {

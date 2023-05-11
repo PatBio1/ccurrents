@@ -1288,4 +1288,18 @@
         <shortDescription>Rewards Video Link</shortDescription>
         <value>https://www.youtube.com/embed/</value>
     </labels>
+    <labels>
+        <fullName>Missing_Card_Message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Missing Card Message</shortDescription>
+        <value>No card has been set up for your account. Please schedule a visit to a center to get a payment card.</value>
+    </labels>
+    <labels>
+        <fullName>Schedule_Visit_Action</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Schedule Visit Action Label</shortDescription>
+        <value>Schedule Visit</value>
+    </labels>
 </CustomLabels>

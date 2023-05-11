@@ -176,12 +176,39 @@ public with sharing class SchedulerControllerTest {
             visit.Status__c = 'Scheduled';
             visit.Center_Donation_Type__c = centerDonationType.Id;
             insert visit;
+
+            Transaction__c transactionRecord = new Transaction__c();
+            transactionRecord.Visit__c = visit.Id;
+            transactionRecord.Donor__c = experienceUser.ContactId;
+            transactionRecord.Type__c = 'Credit';
+            insert transactionRecord;
+
+            List<Txn_Line_Item__c> lineItems = new List<Txn_Line_Item__c> {
+                new Txn_Line_Item__c(
+                    Transaction__c = transactionRecord.Id,
+                    Item__c = 'Donation Points',
+                    Quantity__c = 1,
+                    Unit_Cost__c = 500,
+                    Type__c = 'Points'
+                ),
+                new Txn_Line_Item__c(
+                    Transaction__c = transactionRecord.Id,
+                    Item__c = 'Donation Currency',
+                    Quantity__c = 1,
+                    Unit_Cost__c = 50,
+                    Type__c = 'Currency'
+                )
+            };
+            insert lineItems;
+
         }
 
         System.runAs(experienceUser) {
             List<SchedulerController.Visit> visits = SchedulerController.getVisits();
 
-            System.assertEquals(1, visits.size());
+            Assert.areEqual(1, visits.size(), 'There should be 1 visit returned.');
+            Assert.areEqual(500, visits[0].totalPointReward, 'The donation currency should be 500.');
+            Assert.areEqual(50, visits[0].totalCurrencyReward, 'The donation currency should be 50.');
         }
     }
 

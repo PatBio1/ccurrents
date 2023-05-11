@@ -69,6 +69,7 @@ import loyaltyTiers from '@salesforce/label/c.Loyalty_Tiers';
 import marketingCommunicationsOpsText from '@salesforce/label/c.Marketing_Communications_Ops_Text';
 import message from '@salesforce/label/c.Message';
 import middleName from '@salesforce/label/c.Middle_Name';
+import missingCardMessage from '@salesforce/label/c.Missing_Card_Message';
 import mobilePhone from '@salesforce/label/c.Mobile_Phone';
 import mobileVisitActions from '@salesforce/label/c.Mobile_Visit_Actions';
 import mondayAbbreviation from '@salesforce/label/c.Monday_Abbreviation';
@@ -126,6 +127,7 @@ import scheduleAppointment from '@salesforce/label/c.Schedule_Appointment';
 import scheduled from '@salesforce/label/c.Scheduled';
 import scheduleYourAppointment from '@salesforce/label/c.Schedule_Your_Appointment';
 import scheduleYour1stAppointment from '@salesforce/label/c.Schedule_Your_1st_Appointment';
+import scheduleVisitAction from '@salesforce/label/c.Schedule_Visit_Action';
 import selectTimeSlot from '@salesforce/label/c.Select_Time_Slot';
 import setGoal from '@salesforce/label/c.Set_Goal';
 import setNewPassword from '@salesforce/label/c.Set_New_Password';
@@ -251,6 +253,7 @@ const labels = {
     marketingCommunicationsOpsText,
     message,
     middleName,
+    missingCardMessage,
     mobilePhone,
     mobileVisitActions,
     mondayAbbreviation,
@@ -308,6 +311,7 @@ const labels = {
     scheduled,
     scheduleYourAppointment,
     scheduleYour1stAppointment,
+    scheduleVisitAction,
     selectTimeSlot,
     setGoal,
     setNewPassword,

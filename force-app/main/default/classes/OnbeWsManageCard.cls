@@ -102,17 +102,6 @@ public with sharing class OnbeWsManageCard {
 		private void AddHeader(DOM.XmlNode header){
 		}
 
-		// String application_id;
-		// public String card_number;  //Card Number string, or pass an empty string if you do not want to pass.
-		// public String puid;  //PUID string, or pass an empty string if you do not want to pass.
-		// public String ppd;   //PPD string, or pass an empty string if you do not want to pass.
-		// public String mobile_phone;  // Phone Number string, or pass an empty string if you do not want to pass.
-		// public Integer balance_detail;  // INT 0 indicates no balance information to be returned. 1 to have it returned.
-		// public Integer journal_detail;  // 0 have it returned indicates no transaction history and 2 to have it returned and to set to be returned. 1 to PPID, if any, in the transaction_details response field.
-		// public Integer registration_detail; // Pass 0 for no registration information to be returned, or 1 to have it returned.
-		// public Integer start_date;  // year, month, day. Example: 20090213 would be passed for February 13, 2009. Can pass 0 if you don't want a start date.
-		// public Integer end_date; // Same as above. Can pass 0 if you don't want a end date.
-		// public Integer max_items; 
 		public AccountInquiryResponse accountInquiry_Http( String application_id,
 			String card_number,
 			String puid,
@@ -139,14 +128,14 @@ public with sharing class OnbeWsManageCard {
 			req.setMethod('POST');
 			req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
           	req.setHeader('SOAPAction', 'blank');
-
-			//System.debug(doc.toXmlString());
 			req.setBodyDocument(doc);
-			//System.debug(req.getBody());
+			
 			Http http = new Http();
 			HttpResponse res = http.send(req);
-			//System.debug(res.getBody());
+			
 			Dom.Document responseDoc = res.getBodyDocument();
+			System.debug(responseDoc.toXmlString());
+
 			Dom.XmlNode rootNode = responseDoc.getRootElement();
 			Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
 			
@@ -173,6 +162,37 @@ public with sharing class OnbeWsManageCard {
 			Dom.XmlNode rootNode = responseDoc.getRootElement();
 			Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
 			Dom.XmlNode Node = bodyNode.getChildElement('', uriCardManagementMainEndpoint);
+		}
+
+		public ReissueCardResponse reissueCard_Http(
+			String application_id,
+			String puid,
+		 	String block_code
+		) {
+			DOM.Document doc = new DOM.Document();
+			DOM.XmlNode body = populateDoc(doc);
+			DOM.XmlNode methodNode = body.addChildElement('reissueCard', uriCardManagementMainEndpoint, '');			
+			
+			OnbeWsManageCard.ReissueCardRequest request_x = new OnbeWsManageCard.ReissueCardRequest(application_id, puid, block_code);
+			request_x.populateXmlNode(methodNode);
+
+			HttpRequest req = new HttpRequest();
+			req.setEndpoint(endpoint_x);
+			req.setMethod('POST');
+			req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          	req.setHeader('SOAPAction', 'blank');
+			req.setBodyDocument(doc);
+
+			Http http = new Http();
+			HttpResponse res = http.send(req);
+
+			Dom.Document responseDoc = res.getBodyDocument();
+			System.debug(responseDoc.toXmlString());
+
+			Dom.XmlNode rootNode = responseDoc.getRootElement();
+			Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+			
+			return new ReissueCardResponse(bodyNode);
 		}
  	}
 
@@ -219,7 +239,6 @@ public with sharing class OnbeWsManageCard {
 		}
 
 		public void populateXmlNode(Dom.XmlNode outerNode){
-			
 			//System.assertEquals('accountInquiry', outerNode.getName());
 			Dom.XmlNode applicationIdNode = outerNode.addChildElement('application_id', uriCardManagementMainEndpoint, '');
 			if(this.application_id != null){
@@ -272,70 +291,109 @@ public with sharing class OnbeWsManageCard {
 			// 	linkObj.populateXmlNode(linkNode);
 			// }
 		}
-
 	}
 
 	public class AccountInquiryResponse {
+		public Integer code; // Code doesn't seem to be returned either. If it's null, we'll just assume it's successful
+		public String message; // OK is returned in the message if successful, otherwise an error message is returned.
 
-		public Integer code; // 0 Request Processed Successfully
-		public String message; // Diagnostic message (80 Characters max)
-			// > Registration - populated only if 1 was passed in registration_detail
-			// public String first_name;  // First name of cardholder.
-			// public String last_name;  // Last name of cardholder.
-			// public String email;  // Email Address of cardholder.
-			// public String address_1;  // Address 1 field of cardholder address.
-			// public String address_2;  // Address 2 field of cardholder address.
-			// public String city;  // City field of cardholder address.
-			// public String state; // State field of cardholder address.
-			// public String zip;  //Postal code field of cardholder address
-			// public String home_phone;  // Home phone number of cardholder.
-			// public String business_phone;   //Business phone number of cardholder.
-			// public String mobile_phone;  // Mobile (Cell) phone number of cardholder.
-			// > Balance - populated only if 1 was passed in balance_detail
-			// public Integer balance_available;  // Available balance after deducting any pending transactions.
-			// public Integer balance_ledger;  // Balance of settled transactions (without deducting pending).
-			// public Integer balance_pending;  // Amount pending on the account,Not yet settled.
-			// public Datetime balance_date;  // May be null. Date of last sync of balance.
-			// > Card Detail
-			// public String card_number; // Card number will always be masked (except last eight digits).
-			// public String puid;  // Partner user identifier.
-			// public Integer program_id;  // Program ID associated with cardholder’s card.
-			// public Datetime created_date;  // Creation date of account.
-			// public Datetime last_plastic_date;  //  Date of last plastic issued.
-			// public Datetime ship_date;  // Date card shipped in the mail.
-			// public String expiration;  // Expiration date of card. (Example:"02/2010")
-			// public String account_status;  //  Possible Values: Active Canceled  Frozen  Lost/Stolen Contact us for Status 
+		public Decimal balance;
+		public String cardNumber4Digits;
+		public String expirationMMYYYY;
 
 		public AccountInquiryResponse(Dom.XmlNode node) {
+			// See the Test_GetBalance_Request_OnbePayment.apex test script for an example success return
+
 			for(Dom.XmlNode childNode : node.getChildElements()) {
-				System.debug('node child - ' + childNode.getName());
-			}
+				if (childNode.getName() == 'multiRef') {
+					String id = childNode.getAttribute('id', null);
 
-			// Dom.XmlNode multiRefNode = node.getChildElement('multiRef', null);
-			// for(Dom.XmlNode multiRefChildNode : multiRefNode.getChildElements()) {
-			// 	System.debug('node/multiref child - ' + multiRefChildNode.getName());
-			// }
+					if (id == 'id4') {
+						String codeString = childNode.getChildElement('code', null)?.getText();
+						if (!String.isEmpty(codeString)) {
+							this.code = Integer.valueOf(codeString);
+						}
 
-			// Dom.XmlNode multiRefNode = node.getChildElement('multiRef', uriCardManagementMainEndpoint);
-			// for(Dom.XmlNode multiRefChildNode : multiRefNode.getChildElements()) {
-			// 	System.debug('node/multiref child - ' + multiRefChildNode.getName());
-			// }
+						this.message = childNode.getChildElement('message', null)?.getText();
+					} else if (id == 'id6') {
+						this.balance = Decimal.valueOf(childNode?.getText());
 
-			// Dom.XmlNode multiRefMultiRefNode = multiRefNode.getChildElement('multiRef', uriCardManagementMainEndpoint);
-			// for(Dom.XmlNode multiRefMultiRefChildNode : multiRefMultiRefNode.getChildElements()) {
-			// 	System.debug('node/multiref/multiref child - ' + multiRefMultiRefChildNode.getName());
-			// }
+						if (this.balance != null) {
+							// Balance comes back in cents, so we need to convert it to dollars
+							this.balance = (this.balance / 100).setScale(2);
+						}
+					} else if (id == 'id2') {
+						this.expirationMMYYYY = childNode.getChildElement('expiration', null)?.getText();
+						this.cardNumber4Digits = childNode.getChildElement('card_number', null)?.getText();
 
-			Dom.XmlNode inquiryNode = node.getChildElement('accountInquiryResponse', uriCardManagementMainEndpoint);
-			for(Dom.XmlNode inquiryChildNode : inquiryNode.getChildElements()) {
-				System.debug('node/inquiry child - ' + inquiryChildNode.getName());
-			}
-
-			Dom.XmlNode inquiryReturnNode = inquiryNode.getChildElement('accountInquiryReturn', null);
-			for(Dom.XmlNode inquiryReturnChildNode : inquiryReturnNode.getChildElements()) {
-				System.debug('node/inquiry/inquiryReturn child - ' + inquiryReturnChildNode.getName());
+						if (!String.isEmpty(this.cardNumber4Digits)) {
+							this.cardNumber4Digits = this.cardNumber4Digits.right(4);
+						}
+					}
+				}
 			}
 		}
 	}
 
+	public class ReissueCardRequest {
+		public String application_id;
+		public String puid;
+		public String block_code;
+
+		public ReissueCardRequest(
+			String application_id,
+			String puid,
+			String block_code
+		){
+			this.application_id = application_id;
+			this.puid = puid;
+			this.block_code = block_code;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode) {
+			Dom.XmlNode applicationIdNode = outerNode.addChildElement('application_id', uriCardManagementMainEndpoint, '');
+			if (this.application_id != null){
+				applicationIdNode.addTextNode(this.application_id);
+			}
+			
+			Dom.XmlNode puidNode = outerNode.addChildElement('puid', uriCardManagementMainEndpoint, '');
+			if (this.puid != null){
+				puidNode.addTextNode(this.puid);
+			}
+
+			Dom.XmlNode blockCodeNode = outerNode.addChildElement('block_code', uriCardManagementMainEndpoint, '');
+			if (this.block_code != null){
+				blockCodeNode.addTextNode(this.block_code);
+			}
+		}
+	}
+
+	public class ReissueCardResponse {
+		Integer code;
+		String message;
+
+		/*
+		card_number N STRING Card number will always be masked (except last eight digits)
+		puid N STRING Partner user identifier.
+		program_id Y INT Program ID associated with cardholder’s card.
+		created_date N DATETIME Creation date of account.
+		last_plastic_dat
+		e
+		N DATETIME Date of last plastic issued.
+		ship_date N DATETIME Date card shipped in the mail.
+		expiration N STRING Expiration date of card. (Example:"02/2010")
+		account_status N STRING Possibilities are:
+			Active
+			Canceled
+			Frozen
+			Lost/Stolen
+			Contact us for Status
+		*/
+
+		public ReissueCardResponse(Dom.XmlNode node) {
+			for(Dom.XmlNode childNode : node.getChildElements()) {
+				System.debug('node child - ' + childNode.getName());
+			}
+		}
+	}
 }

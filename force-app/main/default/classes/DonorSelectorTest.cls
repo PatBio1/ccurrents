@@ -176,6 +176,8 @@ public with sharing class DonorSelectorTest {
         DonorSelector.DonorRewardsInfo donorRewardsInfo;
         User testExperienceUser = TestUtil.createExperienceUserFromContactId([SELECT Id FROM Contact WHERE LastName = 'WithRewards' LIMIT 1].Id);
 
+        Test.setMock(HttpCalloutMock.class, new OnbeWsManageCardHttpCalloutMock());
+
         Test.startTest();
         System.runAs(testExperienceUser) {
             donorRewardsInfo = DonorSelector.getDonorRewardsInfo();
@@ -184,7 +186,7 @@ public with sharing class DonorSelectorTest {
 
         Assert.isNotNull(donorRewardsInfo, 'Expected to find donor rewards info');
         Assert.areEqual('Donor WithRewards', donorRewardsInfo.donorName, 'Expected to find donor name as Donor WithRewards');
-        Assert.areEqual(10, donorRewardsInfo.donorBalance, 'Expected to find donor balance of $10');
+        Assert.areEqual(0, donorRewardsInfo.donorBalance, 'Expected to find donor balance of $0'); // If nothing is returned in the callout, the balance is 0
         Assert.areEqual(1000, donorRewardsInfo.donorPoints, 'Expected to find donor points worth 1000P');
         Assert.areEqual('Level 1', donorRewardsInfo.currentLoyaltyLevel, 'Expected to find donor current level as Level 1');
         Assert.areEqual('Level 2', donorRewardsInfo.nextLoyaltyLevel, 'Expected to find donor next level as Level 2');

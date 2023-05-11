@@ -1,7 +1,5 @@
 import about from '@salesforce/label/c.About';
 import aboutDonationExperience from '@salesforce/label/c.About_Donation_Experience';
-import acceptTOSPrivacyTitle from '@salesforce/label/c.Accept_TOS_Privacy_Title';
-import acceptTOSPrivacyMessage from '@salesforce/label/c.Accept_TOS_Privacy_Message';
 import accountVerifiedSuccess from '@salesforce/label/c.Account_Verified_Success';
 import address from '@salesforce/label/c.Address';
 import all from '@salesforce/label/c.All';
@@ -116,8 +114,8 @@ import resendCode from '@salesforce/label/c.Resend_Code';
 import resultsFor from '@salesforce/label/c.Results_For';
 import rewardsExplained from '@salesforce/label/c.Rewards_Explained';
 import rewardsExplanation from '@salesforce/label/c.Rewards_Explanation';
-import rewardsVideoTitle from '@salesforce/label/c.Rewards_Video_Title';
 import rewardsVideoLink from '@salesforce/label/c.Rewards_Video_Link';
+import rewardsVideoTitle from '@salesforce/label/c.Rewards_Video_Title';
 import saturdayAbbreviation from '@salesforce/label/c.Saturday_Abbreviation';
 import saveChanges from '@salesforce/label/c.Save_Changes';
 import saved from '@salesforce/label/c.Saved';
@@ -147,9 +145,9 @@ import taxi from '@salesforce/label/c.Taxi';
 import tellUsAboutYou from '@salesforce/label/c.Tell_Us_About_You';
 import termsOfService from '@salesforce/label/c.Terms_of_Service';
 import termsOfServiceLink from '@salesforce/label/c.Terms_of_Service_Link';
+import termsOfServicePrivacyPolicyLink from '@salesforce/label/c.Terms_of_Service_Privacy_Policy_Link';
 import thursdayAbbreviation from '@salesforce/label/c.Thursday_Abbreviation';
 import trackYourProgress from '@salesforce/label/c.Track_Your_Progress';
-import tOSPrivacyPolicyOpsText from '@salesforce/label/c.TOS_Privacy_Policy_Ops_Text';
 import tuesdayAbbreviation from '@salesforce/label/c.Tuesday_Abbreviation';
 import updatesAndAppointments from '@salesforce/label/c.Updates_And_Appointments';
 import uploadAnotherPhoto from '@salesforce/label/c.Upload_Another_Photo';
@@ -182,8 +180,6 @@ const labels = {
     // Alphabetical Order
     about,
     aboutDonationExperience,
-    acceptTOSPrivacyTitle,
-    acceptTOSPrivacyMessage,
     accountVerifiedSuccess,
     address,
     all,
@@ -298,8 +294,8 @@ const labels = {
     resultsFor,
     rewardsExplained,
     rewardsExplanation,
-    rewardsVideoTitle,
     rewardsVideoLink,
+    rewardsVideoTitle,
     saturdayAbbreviation,
     saveChanges,
     saved,
@@ -329,9 +325,9 @@ const labels = {
     tellUsAboutYou,
     termsOfService,
     termsOfServiceLink,
+    termsOfServicePrivacyPolicyLink,
     thursdayAbbreviation,
     trackYourProgress,
-    tOSPrivacyPolicyOpsText,
     tuesdayAbbreviation,
     updatesAndAppointments,
     uploadAnotherPhoto,

@@ -268,6 +268,11 @@ public without sharing class ProfileController {
 
             Id userId = Site.createExternalUser(user, leadConvertResult.getAccountId(), profile.password, false);
 
+            update new Account(
+                Id = leadConvertResult.getAccountId(),
+                User__pc = userId
+            );
+
             return userId;
         } catch (Exception e) {
             throw Util.createAuraHandledException(e);
@@ -570,6 +575,11 @@ public without sharing class ProfileController {
         User user = createUser(accountId, language);
         user.setOptions(userEmailOptions);
         insert user;
+
+        update new Account(
+            Id = accountId,
+            User__pc = user.Id
+        );
 
         assignUserPermissionSet(user.Id);
     }

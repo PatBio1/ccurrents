@@ -301,6 +301,10 @@
         <name>Mobile_Phone</name>
     </customLabels>
     <customLabels>
+        <label>El teléfono debe ser solo numérico y tener el formato: xxx-xxx-xxxx.</label>
+        <name>Mobile_Phone_Requirements</name>
+    </customLabels>
+    <customLabels>
         <label>Acciones de visita</label>
         <name>Mobile_Visit_Actions</name>
     </customLabels>

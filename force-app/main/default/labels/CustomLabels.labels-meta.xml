@@ -932,6 +932,27 @@
         <value>Tell us About You</value>
     </labels>
     <labels>
+        <fullName>Terms_of_Service</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Terms of Service</shortDescription>
+        <value>Terms of Service</value>
+    </labels>
+    <labels>
+        <fullName>Terms_of_Service_Link</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Terms of Service Link</shortDescription>
+        <value>https://proesisbio.com/terms-of-use</value>
+    </labels>
+    <labels>
+        <fullName>Terms_of_Service_Privacy_Policy_Link</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Terms of Service &amp; Privacy Policy Link</shortDescription>
+        <value>http://cloud.m.proesisbio.com/combined</value>
+    </labels>
+    <labels>
         <fullName>Thursday</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -1096,22 +1117,8 @@
         <fullName>Privacy_Policy_Link</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>https://proesisbio.com/privacy-policy</shortDescription>
         <value>https://proesisbio.com/privacy-policy</value>
-    </labels>
-    <labels>
-        <fullName>Terms_of_Service</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Terms of Service</shortDescription>
-        <value>Terms of Service</value>
-    </labels>
-    <labels>
-        <fullName>Terms_of_Service_Link</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>https://proesisbio.com/terms-of-use</shortDescription>
-        <value>https://proesisbio.com/terms-of-use</value>
+        <shortDescription>Privacy Policy Link</shortDescription>
     </labels>
     <labels>
         <fullName>Point_Brand_Name</fullName>
@@ -1126,27 +1133,6 @@
         <protected>true</protected>
         <shortDescription>I agree to receive marketing communications from Proesis</shortDescription>
         <value>I agree to receive marketing communications from Proesis</value>
-    </labels>
-    <labels>
-        <fullName>TOS_Privacy_Policy_Ops_Text</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>I agree to the {0} and {1}</shortDescription>
-        <value>I agree to the {0} and {1}</value>
-    </labels>
-    <labels>
-        <fullName>Accept_TOS_Privacy_Title</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Accept Terms of Service and Privacy Policy</shortDescription>
-        <value>Accept Terms of Service and Privacy Policy</value>
-    </labels>
-    <labels>
-        <fullName>Accept_TOS_Privacy_Message</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Please review and accept the terms of service and privacy policy.</shortDescription>
-        <value>Please review and accept the terms of service and privacy policy.</value>
     </labels>
     <labels>
         <fullName>Schedule_Your_Appointment</fullName>

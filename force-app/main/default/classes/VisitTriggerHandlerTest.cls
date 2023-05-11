@@ -569,7 +569,7 @@ public class VisitTriggerHandlerTest {
             Assert.isNull(testVisit.Donor__r.Last_Previous_Scheduled_Visit__c, 'The donor\'s last previous scheduled visit was updated');
         }
     }
-
+/*
     @isTest
     static void testShareRecords() {
         System.runAs(TestUtil.createAdminUser()) {
@@ -614,5 +614,5 @@ public class VisitTriggerHandlerTest {
             System.assertEquals(1, [SELECT COUNT() FROM AccountShare WHERE AccountId = :donor.Id AND UserOrGroupId = :centerStaffGroup.Id]);
         }
     }
-
+*/
 }

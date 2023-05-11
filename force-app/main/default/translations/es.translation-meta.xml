@@ -17,14 +17,6 @@
         <name>Address</name>
     </customLabels>
     <customLabels>
-        <label>Por favor revise y acepte los términos de servicio y la política de privacidad.</label>
-        <name>Accept_TOS_Privacy_Message</name>
-    </customLabels>
-    <customLabels>
-        <label>Acepto los Términos de servicio y la Política de privacidad</label>
-        <name>Accept_TOS_Privacy_Title</name>
-    </customLabels>
-    <customLabels>
         <label>Todo</label>
         <name>All</name>
     </customLabels>
@@ -621,6 +613,10 @@
         <name>Terms_of_Service_Link</name>
     </customLabels>
     <customLabels>
+        <label>http://cloud.m.proesisbio.com/combined</label>
+        <name>Terms_of_Service_Privacy_Policy_Link</name>
+    </customLabels>
+    <customLabels>
         <label>Cuéntanos acerca de ti</label>
         <name>Tell_Us_About_You</name>
     </customLabels>
@@ -631,10 +627,6 @@
     <customLabels>
         <label>Jue</label>
         <name>Thursday_Abbreviation</name>
-    </customLabels>
-    <customLabels>
-        <label>Acepto las {0} y {1}</label>
-        <name>TOS_Privacy_Policy_Ops_Text</name>
     </customLabels>
     <customLabels>
         <label>Seguimiento de su progreso</label>

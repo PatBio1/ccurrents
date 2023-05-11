@@ -1,10 +1,10 @@
 import { wire, LightningElement } from 'lwc';
 import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
 import labels from 'c/labelService';
-import termsOfServiceModal from 'c/termsOfServiceModal';
 
 const PAGE_HOME = 'Home';
 const PAGE_ABOUT = 'About';
+const PAGE_TERMS_OF_SERVICE = 'Terms of Service';
 const PAGE_CHOOSE_CENTER = 'Choose Center';
 const PAGE_PROFILE = 'Profile';
 const PAGE_LOGIN = 'Login';
@@ -29,6 +29,10 @@ export default class Welcome extends NavigationMixin(LightningElement) {
 
     get showAbout() {
         return (this.currentPage === PAGE_ABOUT);
+    }
+
+    get showTermsOfService() {
+        return (this.currentPage === PAGE_TERMS_OF_SERVICE);
     }
 
     get showChooseCenter() {
@@ -86,11 +90,15 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     }
 
     onJoinUsButtonClick() {
-        termsOfServiceModal.open().then((confirmed) => {
-            if (confirmed) {
-                this.currentPage = PAGE_CHOOSE_CENTER;
-            }
-        });
+        this.currentPage = PAGE_TERMS_OF_SERVICE;
+    }
+
+    onTermsOfServiceCancelButtonClick() {
+        this.currentPage = PAGE_HOME;
+    }
+
+    onTermsOfServiceConfirmButtonClick() {
+        this.currentPage = PAGE_CHOOSE_CENTER;
     }
 
     onLoginButtonClick() {

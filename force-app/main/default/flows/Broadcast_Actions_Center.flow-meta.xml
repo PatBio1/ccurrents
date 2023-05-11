@@ -4,7 +4,7 @@
         <name>Execute_Broadcast_Action</name>
         <label>Execute Broadcast Action</label>
         <locationX>182</locationX>
-        <locationY>998</locationY>
+        <locationY>890</locationY>
         <actionName>BroadcastActionInvocable</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -39,7 +39,7 @@
         <name>Add_Center_Message_to_Collection</name>
         <label>Add Center Message to Collection</label>
         <locationX>182</locationX>
-        <locationY>1478</locationY>
+        <locationY>1322</locationY>
         <assignmentItems>
             <assignToReference>Message_Records</assignToReference>
             <operator>Add</operator>
@@ -55,7 +55,7 @@
         <name>Add_to_Broadcast_Action_Collection</name>
         <label>Add to Broadcast Action Collection</label>
         <locationX>182</locationX>
-        <locationY>878</locationY>
+        <locationY>782</locationY>
         <assignmentItems>
             <assignToReference>Broadcast_Action_Configurations</assignToReference>
             <operator>Add</operator>
@@ -71,7 +71,7 @@
         <name>Assign_Center_Message_Record</name>
         <label>Assign Center Message Record</label>
         <locationX>182</locationX>
-        <locationY>1358</locationY>
+        <locationY>1214</locationY>
         <assignmentItems>
             <assignToReference>Center_Message_Record.Center__c</assignToReference>
             <operator>Assign</operator>
@@ -100,6 +100,13 @@
                 <elementReference>Send_Date_Time</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Center_Message_Record.Expiration_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Message_Expiration</elementReference>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>Add_Center_Message_to_Collection</targetReference>
         </connector>
@@ -108,7 +115,7 @@
         <name>Assign_Message_Configuration_Values</name>
         <label>Assign Message Configuration Values</label>
         <locationX>182</locationX>
-        <locationY>758</locationY>
+        <locationY>674</locationY>
         <assignmentItems>
             <assignToReference>Broadcast_Message_Configuration.Audience</assignToReference>
             <operator>Assign</operator>
@@ -226,7 +233,7 @@
         <name>Check_Record_Type_Decision</name>
         <label>Check Record Type Decision</label>
         <locationX>611</locationX>
-        <locationY>278</locationY>
+        <locationY>242</locationY>
         <defaultConnector>
             <targetReference>Launch_from_Center</targetReference>
         </defaultConnector>
@@ -251,7 +258,7 @@
         <name>Have_Donor_Ids_Decision</name>
         <label>Have Donor Ids Decision</label>
         <locationX>182</locationX>
-        <locationY>1718</locationY>
+        <locationY>1538</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Have_Donor_Ids</name>
@@ -273,7 +280,7 @@
         <name>Running_User_Permission_Decision</name>
         <label>Running User Permission Decision</label>
         <locationX>380</locationX>
-        <locationY>398</locationY>
+        <locationY>350</locationY>
         <defaultConnector>
             <targetReference>Missing_Permission</targetReference>
         </defaultConnector>
@@ -326,7 +333,7 @@
         <name>Get_Center_Record_Details</name>
         <label>Get Center Record Details</label>
         <locationX>611</locationX>
-        <locationY>158</locationY>
+        <locationY>134</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Check_Record_Type_Decision</targetReference>
@@ -347,7 +354,7 @@
         <name>Get_Custom_Notification_Id</name>
         <label>Get Custom Notification Id</label>
         <locationX>182</locationX>
-        <locationY>1598</locationY>
+        <locationY>1430</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Have_Donor_Ids_Decision</targetReference>
@@ -368,7 +375,7 @@
         <name>Get_Flow_User_Detail</name>
         <label>Get Flow User Detail</label>
         <locationX>182</locationX>
-        <locationY>638</locationY>
+        <locationY>566</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Assign_Message_Configuration_Values</targetReference>
@@ -393,7 +400,7 @@
         <name>Broadcast_Actions_Screen</name>
         <label>Broadcast Actions Screen</label>
         <locationX>182</locationX>
-        <locationY>518</locationY>
+        <locationY>458</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -593,7 +600,7 @@
         <name>Confirmation_Screen</name>
         <label>Confirmation Screen</label>
         <locationX>182</locationX>
-        <locationY>1118</locationY>
+        <locationY>998</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -653,7 +660,7 @@
         <name>Final_Confirmation_Screen</name>
         <label>Final Confirmation Screen</label>
         <locationX>182</locationX>
-        <locationY>1238</locationY>
+        <locationY>1106</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>
@@ -684,7 +691,7 @@
         <name>Launch_from_Center</name>
         <label>Launch from Center</label>
         <locationX>842</locationX>
-        <locationY>398</locationY>
+        <locationY>350</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -700,7 +707,7 @@
         <name>Missing_Permission</name>
         <label>Missing Permission</label>
         <locationX>578</locationX>
-        <locationY>518</locationY>
+        <locationY>458</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -724,7 +731,7 @@
         <name>Send_Messages</name>
         <label>Send Messages</label>
         <locationX>50</locationX>
-        <locationY>1838</locationY>
+        <locationY>1646</locationY>
         <flowName>Send_Broadcast_Action_Messages</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id</name>

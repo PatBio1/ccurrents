@@ -5,5 +5,6 @@
     <label>Proesis Center Staff Permissions</label>
     <permissionSets>Proesis_Case_Access_Platform</permissionSets>
     <permissionSets>Proesis_Center_Staff_Platform</permissionSets>
+    <permissionSets>et4ae5__ExactTarget_Integration</permissionSets>
     <status>Updated</status>
 </PermissionSetGroup>

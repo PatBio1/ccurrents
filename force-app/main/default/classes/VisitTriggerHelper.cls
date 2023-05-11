@@ -379,7 +379,7 @@ public without sharing class VisitTriggerHelper {
             update donorsToUpdate.values();
         }
     }
-
+/*
     public static void shareRecords(List<Visit__c> visits) {
         visits = [
             SELECT
@@ -457,5 +457,5 @@ public without sharing class VisitTriggerHelper {
             insert accountSharesToInsert;
         }
     }
-
+*/
 }

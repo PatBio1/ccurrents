@@ -1,1 +1,27 @@
 @import 'c/sharedCss';
+
+.logoContainer {
+    background-image: var(--lwc-brandLogoImage);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 50px;
+}
+
+.buttons {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+}
+
+:host .confirm-button {
+    --sds-c-button-text-color: white;
+    --sds-c-button-text-color-hover: white;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.confirm-icon {
+    --lwc-colorTextIconDefault: white;
+    line-height: 0;
+}

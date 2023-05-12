@@ -14,7 +14,7 @@
     --slds-c-avatar-initials-text-color-hover : #d1c7e4;
     --slds-c-avatar-radius-border: 1rem;
 
-    --appointment-grid-column-template: 7fr 7fr 7fr 78fr;
+    --appointment-grid-column-template: 125px 150px 125px 1fr;
 }
 
 .scheduler-container {

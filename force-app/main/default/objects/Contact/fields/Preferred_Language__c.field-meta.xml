@@ -3,7 +3,7 @@
     <fullName>Preferred_Language__c</fullName>
     <description>Language from User setting; only exists for Contacts/PersonAccounts that have an associated User (Exp Cloud)</description>
     <externalId>false</externalId>
-    <formula>TEXT($User.LanguageLocaleKey)</formula>
+    <formula>TEXT(User__r.LanguageLocaleKey)</formula>
     <label>Preferred Language</label>
     <required>false</required>
     <type>Text</type>

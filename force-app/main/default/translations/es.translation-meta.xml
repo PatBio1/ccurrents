@@ -17,14 +17,6 @@
         <name>Address</name>
     </customLabels>
     <customLabels>
-        <label>Por favor revise y acepte los términos de servicio y la política de privacidad.</label>
-        <name>Accept_TOS_Privacy_Message</name>
-    </customLabels>
-    <customLabels>
-        <label>Acepto los Términos de servicio y la Política de privacidad</label>
-        <name>Accept_TOS_Privacy_Title</name>
-    </customLabels>
-    <customLabels>
         <label>Todo</label>
         <name>All</name>
     </customLabels>
@@ -305,8 +297,16 @@
         <name>Middle_Name</name>
     </customLabels>
     <customLabels>
+        <label>No se ha configurado ninguna tarjeta para su cuenta. Programe una visita a un centro para obtener una tarjeta de pago.</label>
+        <name>Missing_Card_Message</name>
+    </customLabels>
+    <customLabels>
         <label>Teléfono móvil</label>
         <name>Mobile_Phone</name>
+    </customLabels>
+    <customLabels>
+        <label>El teléfono debe ser solo numérico y tener el formato: xxx-xxx-xxxx.</label>
+        <name>Mobile_Phone_Requirements</name>
     </customLabels>
     <customLabels>
         <label>Acciones de visita</label>
@@ -525,6 +525,10 @@
         <name>Schedule_Your_1st_Appointment</name>
     </customLabels>
     <customLabels>
+        <label>Programar Visita</label>
+        <name>Schedule_Visit_Action</name>
+    </customLabels>
+    <customLabels>
         <label>Programado</label>
         <name>Scheduled</name>
     </customLabels>
@@ -613,6 +617,10 @@
         <name>Terms_of_Service_Link</name>
     </customLabels>
     <customLabels>
+        <label>http://cloud.m.proesisbio.com/combined</label>
+        <name>Terms_of_Service_Privacy_Policy_Link</name>
+    </customLabels>
+    <customLabels>
         <label>Cuéntanos acerca de ti</label>
         <name>Tell_Us_About_You</name>
     </customLabels>
@@ -623,10 +631,6 @@
     <customLabels>
         <label>Jue</label>
         <name>Thursday_Abbreviation</name>
-    </customLabels>
-    <customLabels>
-        <label>Acepto las {0} y {1}</label>
-        <name>TOS_Privacy_Policy_Ops_Text</name>
     </customLabels>
     <customLabels>
         <label>Seguimiento de su progreso</label>

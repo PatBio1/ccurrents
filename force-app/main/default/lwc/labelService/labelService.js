@@ -1,7 +1,5 @@
 import about from '@salesforce/label/c.About';
 import aboutDonationExperience from '@salesforce/label/c.About_Donation_Experience';
-import acceptTOSPrivacyTitle from '@salesforce/label/c.Accept_TOS_Privacy_Title';
-import acceptTOSPrivacyMessage from '@salesforce/label/c.Accept_TOS_Privacy_Message';
 import accountVerifiedSuccess from '@salesforce/label/c.Account_Verified_Success';
 import address from '@salesforce/label/c.Address';
 import all from '@salesforce/label/c.All';
@@ -69,7 +67,9 @@ import loyaltyTiers from '@salesforce/label/c.Loyalty_Tiers';
 import marketingCommunicationsOpsText from '@salesforce/label/c.Marketing_Communications_Ops_Text';
 import message from '@salesforce/label/c.Message';
 import middleName from '@salesforce/label/c.Middle_Name';
+import missingCardMessage from '@salesforce/label/c.Missing_Card_Message';
 import mobilePhone from '@salesforce/label/c.Mobile_Phone';
+import mobilePhoneRequirements from '@salesforce/label/c.Mobile_Phone_Requirements';
 import mobileVisitActions from '@salesforce/label/c.Mobile_Visit_Actions';
 import mondayAbbreviation from '@salesforce/label/c.Monday_Abbreviation';
 import myAppointments from '@salesforce/label/c.My_Appointments';
@@ -116,8 +116,8 @@ import resendCode from '@salesforce/label/c.Resend_Code';
 import resultsFor from '@salesforce/label/c.Results_For';
 import rewardsExplained from '@salesforce/label/c.Rewards_Explained';
 import rewardsExplanation from '@salesforce/label/c.Rewards_Explanation';
-import rewardsVideoTitle from '@salesforce/label/c.Rewards_Video_Title';
 import rewardsVideoLink from '@salesforce/label/c.Rewards_Video_Link';
+import rewardsVideoTitle from '@salesforce/label/c.Rewards_Video_Title';
 import saturdayAbbreviation from '@salesforce/label/c.Saturday_Abbreviation';
 import saveChanges from '@salesforce/label/c.Save_Changes';
 import saved from '@salesforce/label/c.Saved';
@@ -126,6 +126,7 @@ import scheduleAppointment from '@salesforce/label/c.Schedule_Appointment';
 import scheduled from '@salesforce/label/c.Scheduled';
 import scheduleYourAppointment from '@salesforce/label/c.Schedule_Your_Appointment';
 import scheduleYour1stAppointment from '@salesforce/label/c.Schedule_Your_1st_Appointment';
+import scheduleVisitAction from '@salesforce/label/c.Schedule_Visit_Action';
 import selectTimeSlot from '@salesforce/label/c.Select_Time_Slot';
 import setGoal from '@salesforce/label/c.Set_Goal';
 import setNewPassword from '@salesforce/label/c.Set_New_Password';
@@ -147,9 +148,9 @@ import taxi from '@salesforce/label/c.Taxi';
 import tellUsAboutYou from '@salesforce/label/c.Tell_Us_About_You';
 import termsOfService from '@salesforce/label/c.Terms_of_Service';
 import termsOfServiceLink from '@salesforce/label/c.Terms_of_Service_Link';
+import termsOfServicePrivacyPolicyLink from '@salesforce/label/c.Terms_of_Service_Privacy_Policy_Link';
 import thursdayAbbreviation from '@salesforce/label/c.Thursday_Abbreviation';
 import trackYourProgress from '@salesforce/label/c.Track_Your_Progress';
-import tOSPrivacyPolicyOpsText from '@salesforce/label/c.TOS_Privacy_Policy_Ops_Text';
 import tuesdayAbbreviation from '@salesforce/label/c.Tuesday_Abbreviation';
 import updatesAndAppointments from '@salesforce/label/c.Updates_And_Appointments';
 import uploadAnotherPhoto from '@salesforce/label/c.Upload_Another_Photo';
@@ -182,8 +183,6 @@ const labels = {
     // Alphabetical Order
     about,
     aboutDonationExperience,
-    acceptTOSPrivacyTitle,
-    acceptTOSPrivacyMessage,
     accountVerifiedSuccess,
     address,
     all,
@@ -251,7 +250,9 @@ const labels = {
     marketingCommunicationsOpsText,
     message,
     middleName,
+    missingCardMessage,
     mobilePhone,
+    mobilePhoneRequirements,
     mobileVisitActions,
     mondayAbbreviation,
     myAppointments,
@@ -298,8 +299,8 @@ const labels = {
     resultsFor,
     rewardsExplained,
     rewardsExplanation,
-    rewardsVideoTitle,
     rewardsVideoLink,
+    rewardsVideoTitle,
     saturdayAbbreviation,
     saveChanges,
     saved,
@@ -308,6 +309,7 @@ const labels = {
     scheduled,
     scheduleYourAppointment,
     scheduleYour1stAppointment,
+    scheduleVisitAction,
     selectTimeSlot,
     setGoal,
     setNewPassword,
@@ -329,9 +331,9 @@ const labels = {
     tellUsAboutYou,
     termsOfService,
     termsOfServiceLink,
+    termsOfServicePrivacyPolicyLink,
     thursdayAbbreviation,
     trackYourProgress,
-    tOSPrivacyPolicyOpsText,
     tuesdayAbbreviation,
     updatesAndAppointments,
     uploadAnotherPhoto,

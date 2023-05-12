@@ -5,7 +5,7 @@ global Interface PaymentServiceInterface {
     String setupPaymentServiceAccount(String cardPackageId, Id donorId, Decimal initialAccountLoad, String initialPIN);
     String linkPhysicalCard();
     String processPayment(String accountNumber, String comment, Long amount);
-    String getBalance();
+    Decimal getBalance(String donorId);
     String getTransaction();
     String getTransactionHistory();
 

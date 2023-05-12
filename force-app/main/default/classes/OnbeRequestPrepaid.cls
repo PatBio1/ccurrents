@@ -791,8 +791,8 @@ public class OnbeRequestPrepaid {
 			}
 			
 			OnbeDomainPrepaid.Card cardObj = this.card;
-			Dom.XmlNode cardNode = outerNode.addChildElement('card', uriAccountManagementPrepaidRequest, '');
-			if(cardObj != null){
+			if(cardObj != null) {
+				Dom.XmlNode cardNode = outerNode.addChildElement('card', uriAccountManagementPrepaidRequest, '');
 				cardObj.populateXmlNode(cardNode);
 			}
 			

@@ -14,7 +14,7 @@ public with sharing class VisitTriggerHandler extends TriggerFactory.BaseHandler
     public override void afterInsert(Map<Id, SObject> newMap) {
         VisitTriggerHelper.manageVisitSpecialNotes((List<Visit__c>) newMap.values());
         VisitTriggerHelper.updateLastPreviousFields((List<Visit__c>) newMap.values());
-        VisitTriggerHelper.shareRecords((List<Visit__c>) newMap.values());
+        //VisitTriggerHelper.shareRecords((List<Visit__c>) newMap.values());
     }
 
     public override void afterUpdate(Map<Id, SObject> oldMap, Map<Id, SObject> newMap) {

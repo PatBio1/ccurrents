@@ -36,7 +36,7 @@ System.debug('createActivateCardRequest : ' + JSON.serializePretty(createActivat
 
 
 createActivateCardResponse = createActivateCardRequest.createAccount_Http(PROGRAM_ID, 
-    PROMOTION_ID, TRANSACTION_ID, '', ACCESS_LEVEL, true, newCard, newLoad, newLink, newReg);
+    PROMOTION_ID, TRANSACTION_ID, '', ACCESS_LEVEL, true, newCard, null, null, newReg);
 
 
 System.debug('createActivateCardResponse : ' +  JSON.serializePretty(createActivateCardResponse));

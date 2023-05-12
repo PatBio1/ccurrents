@@ -35,6 +35,7 @@ public without sharing class ProfileController {
             lead.City = profile.city;
             lead.State = profile.state;
             lead.PostalCode = profile.postalCode;
+            lead.Country = 'US';
             lead.How_will_you_get_to_the_Center__c = profile.howGetToCenter;
             upsert lead;
 
@@ -267,6 +268,11 @@ public without sharing class ProfileController {
             User user = createUser(leadConvertResult.getAccountId(), profile.language);
 
             Id userId = Site.createExternalUser(user, leadConvertResult.getAccountId(), profile.password, false);
+
+            update new Account(
+                Id = leadConvertResult.getAccountId(),
+                User__pc = userId
+            );
 
             return userId;
         } catch (Exception e) {
@@ -570,6 +576,11 @@ public without sharing class ProfileController {
         User user = createUser(accountId, language);
         user.setOptions(userEmailOptions);
         insert user;
+
+        update new Account(
+            Id = accountId,
+            User__pc = user.Id
+        );
 
         assignUserPermissionSet(user.Id);
     }

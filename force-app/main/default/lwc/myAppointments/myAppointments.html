@@ -41,12 +41,14 @@
                                     <lightning-icon icon-name="utility:company" size="x-small" class="visit-icon slds-var-m-right_x-small"></lightning-icon>
                                     <span style="color: #8979a9;">{visit.centerName}, {visit.centerAddress}</span>
                                 </div>
-                                <div class="slds-m-top_small slds-col slds-size_2-of-3">
+                                <!-- <div class="slds-m-top_small slds-col slds-size_2-of-3">
                                     <lightning-icon icon-name="utility:currency" size="x-small" class="visit-icon slds-var-m-right_x-small"></lightning-icon>
-                                    <strong style="color: #99429C;">$25, 150 {labels.pointBrandName}</strong>
-                                </div>
-                                <div class="slds-m-top_small slds-col slds-size_1-of-3 slds-text-align_right">
-                                    <strong if:true={visit.isFirstVisit} style="color: #99429C;">{visit.firstVisitCode}</strong>
+                                    <strong style="font-size: 14px; color: #99429C;">
+                                        <lightning-formatted-number value={visit.totalCurrencyReward} format-style="currency" currency-code={currencyCode}></lightning-formatted-number> + {visit.totalPointReward} {labels.pointBrandName}
+                                    </strong>
+                                </div> -->
+                                <div if:true={visit.isFirstVisit} class="slds-m-top_small slds-col slds-size_1-of-1 slds-text-align_right">
+                                    <strong style="color: #99429C;">{visit.firstVisitCode}</strong>
                                 </div>
                             </div>
                         </div>
@@ -81,9 +83,11 @@
                                     <lightning-icon icon-name="utility:company" size="x-small" class="visit-icon slds-var-m-right_x-small"></lightning-icon>
                                     <span style="color: #8979a9;">{visit.centerName}, {visit.centerAddress}</span>
                                 </div>
-                                <div class="slds-m-top_small slds-col slds-size_1-of-1">
+                                <div class="rewards-info-row slds-m-top_small slds-col slds-size_1-of-1">
                                     <lightning-icon icon-name="utility:currency" size="x-small" class="visit-icon slds-var-m-right_x-small"></lightning-icon>
-                                    <strong style="color: #99429C;">150 points, $25</strong>
+                                    <strong style="font-size: 14px; color: #99429C;">
+                                        <lightning-formatted-number value={visit.totalCurrencyReward} format-style="currency" currency-code={currencyCode}></lightning-formatted-number> + {visit.totalPointReward} {labels.pointBrandName}
+                                    </strong>
                                 </div>
                             </div>
                         </div>

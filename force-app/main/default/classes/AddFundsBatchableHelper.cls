@@ -76,8 +76,11 @@ public with sharing class AddFundsBatchableHelper {
 
             if (request.isSuccessfullyProcessed) {
                 transactionRecord.Status__c = 'Completed';
+                transactionRecord.Service__c = 'Onbe';
             } else {
                 transactionRecord.Status__c = 'Error';
+                transactionRecord.Service__c = 'Onbe';
+                
                 transactionLogs.add(new Transaction_Log__c(
                     Transaction__c = transactionRecord.Id,
                     Datetime__c = System.now(),

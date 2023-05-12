@@ -10,17 +10,11 @@ public without sharing class AddFundsBatchable implements Database.Batchable<Don
     }
 
     public void execute(Database.BatchableContext info, List<DonorCompInvocable.AddFundsRequest> scope) {
-        OnbePaymentService paymentService = new OnbePaymentService();
+        Map<DonorCompInvocable.AddFundsRequest, Transaction__c> debitTransactions = AddFundsBatchableHelper.createDebitTransactions(scope);
+        AddFundsBatchableHelper.createDebitTransactionLineItems(debitTransactions);
+        AddFundsBatchableHelper.processAddFundsCallouts(new List<DonorCompInvocable.AddFundsRequest>(debitTransactions.keySet()));
 
-        for(DonorCompInvocable.AddFundsRequest addFundsRequest : scope) {
-            String completeComment = String.join(addFundsRequest.comments, ', ');
-            if (completeComment.length() > 128) {
-                completeComment = completeComment.leftPad(125, '...');
-            }
-
-            // We are multiplying by 100 because the payment service expects the amount in cents
-            paymentService.processPayment(addFundsRequest.accountNumber, completeComment, (Long)(addFundsRequest.total * 100));
-        }
+        AddFundsBatchableHelper.handleAddFundsResponses(debitTransactions);
     }
 
     public void finish(Database.BatchableContext bc) { }

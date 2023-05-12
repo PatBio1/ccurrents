@@ -114,6 +114,12 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
             accountNumber, null, PROGRAM_ID, PROMOTION_ID, transactionId, addFundsLoad
         );
 
+        if (addFundsReponse.code != 0) {
+            if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
+                throw new OnbeServiceException('Error received from Onbe: ' + addFundsReponse.code + '-' + addFundsReponse.sub_code);
+            }
+        }
+
         return '';
     }
     

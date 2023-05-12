@@ -305,6 +305,11 @@ public with sharing class OnbeWsManageCard {
 			// See the Test_GetBalance_Request_OnbePayment.apex test script for an example success return
 
 			Dom.XmlNode responseNode = node.getChildElement('accountInquiryResponse', uriCardManagementMainEndpoint);
+			if (responseNode == null) {
+				this.message = 'Response node not found';
+				return;
+			}
+
 			Dom.XmlNode returnNode = responseNode.getChildElement('accountInquiryReturn', null);
 
 			String responseBodyNodeId = returnNode.getAttribute('href', null);

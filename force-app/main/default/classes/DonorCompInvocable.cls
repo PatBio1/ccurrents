@@ -310,35 +310,36 @@ public without sharing class DonorCompInvocable {
                 // Apply New Level Bonuses onto the line items
                 // Check to make sure the bonus level hasn't be triggered in the last 'Loyalty Threshold Window'
                 // If it has been triggered, the donor shouldn't receive the bonus
-                if (activeLastPromotionDatesByTier != null) {
-                    AggregateResult lastPromotionDate = activeLastPromotionDatesByTier.get(targetPromotionLevel.Id);
+                AggregateResult lastPromotionDate = activeLastPromotionDatesByTier?.get(targetPromotionLevel.Id);
+                if (
+                    activeLastPromotionDatesByTier == null ||
+                    lastPromotionDate == null ||
+                    lastPromotionDate.get('lastPromotionDate') == null
+                ) {
+                    List<Txn_Line_Item__c> lineItems = donorIdToTxnLineItems.get(foundContact.Id);
 
-                    if (lastPromotionDate == null || lastPromotionDate.get('lastPromotionDate') == null) {
-                        List<Txn_Line_Item__c> lineItems = donorIdToTxnLineItems.get(foundContact.Id);
+                    if (targetPromotionLevel.Threshold_Points__c != null && targetPromotionLevel.Threshold_Points__c > 0) {
+                        lineItems.add(new Txn_Line_Item__c(
+                            Item__c = 'Threshold Points',
+                            Quantity__c = 1,
+                            Type__c = 'Points',
+                            Unit_Cost__c = targetPromotionLevel.Threshold_Points__c,
+                            Promotion_Level__c = targetPromotionLevel.Id
+                        ));
+                    }
 
-                        if (targetPromotionLevel.Threshold_Points__c != null && targetPromotionLevel.Threshold_Points__c > 0) {
-                            lineItems.add(new Txn_Line_Item__c(
-                                Item__c = 'Threshold Points',
-                                Quantity__c = 1,
-                                Type__c = 'Points',
-                                Unit_Cost__c = targetPromotionLevel.Threshold_Points__c,
-                                Promotion_Level__c = targetPromotionLevel.Id
-                            ));
-                        }
+                    if (targetPromotionLevel.Threshold_Payment__c != null && targetPromotionLevel.Threshold_Payment__c > 0) {
+                        lineItems.add(new Txn_Line_Item__c(
+                            Item__c = 'Threshold Payment',
+                            Quantity__c = 1,
+                            Type__c = 'Currency',
+                            Unit_Cost__c = targetPromotionLevel.Threshold_Payment__c,
+                            Promotion_Level__c = targetPromotionLevel.Id
+                        ));
 
-                        if (targetPromotionLevel.Threshold_Payment__c != null && targetPromotionLevel.Threshold_Payment__c > 0) {
-                            lineItems.add(new Txn_Line_Item__c(
-                                Item__c = 'Threshold Payment',
-                                Quantity__c = 1,
-                                Type__c = 'Currency',
-                                Unit_Cost__c = targetPromotionLevel.Threshold_Payment__c,
-                                Promotion_Level__c = targetPromotionLevel.Id
-                            ));
-
-                            if (addFundsRequest != null) {
-                                addFundsRequest.comments.add('Threshold Payment');
-                                addFundsRequest.total += targetPromotionLevel.Threshold_Payment__c;
-                            }
+                        if (addFundsRequest != null) {
+                            addFundsRequest.comments.add('Threshold Payment');
+                            addFundsRequest.total += targetPromotionLevel.Threshold_Payment__c;
                         }
                     }
                 }

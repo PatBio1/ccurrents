@@ -12,6 +12,14 @@
     <objectMapping>
         <inputObject>Lead</inputObject>
         <mappingFields>
+            <inputField>Date_Migrated__c</inputField>
+            <outputField>Date_Migrated__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>Donations_Last_365_Days_Migrated__c</inputField>
+            <outputField>Donations_Last_365_Days_Migrated__c</outputField>
+        </mappingFields>
+        <mappingFields>
             <inputField>isEmailVerified__c</inputField>
             <outputField>isEmailVerified__c</outputField>
         </mappingFields>
@@ -38,6 +46,14 @@
         <mappingFields>
             <inputField>How_will_you_get_to_the_Center__c</inputField>
             <outputField>How_will_you_get_to_the_Center__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>IsLegacyDonor__c</inputField>
+            <outputField>isLegacyDonor__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>Last_Donation_Date_Migrated__c</inputField>
+            <outputField>Last_Donation_Date_Migrated__c</outputField>
         </mappingFields>
         <mappingFields>
             <inputField>Last_Used_Center__c</inputField>

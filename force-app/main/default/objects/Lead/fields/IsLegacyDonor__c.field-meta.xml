@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>IsLegacyDonor__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indicates if the donor is a Legacy Donor or not.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Indicates if the donor is a Legacy Donor or not.</inlineHelpText>
+    <label>Is Legacy Donor</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

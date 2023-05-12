@@ -1,4 +1,5 @@
 import { LightningElement } from 'lwc';
+import currencyCode from '@salesforce/i18n/currency';
 import labels from 'c/labelService';
 import getVisits from '@salesforce/apex/SchedulerController.getVisits';
 import MobileAppointmentActionsModal from 'c/mobileAppointmentActionsModal';
@@ -6,6 +7,7 @@ import MobileAppointmentActionsModal from 'c/mobileAppointmentActionsModal';
 export default class MyRewards extends LightningElement {
 
     labels = labels;
+    currencyCode = currencyCode;
 
     scheduledVisits;
     pastVisits;

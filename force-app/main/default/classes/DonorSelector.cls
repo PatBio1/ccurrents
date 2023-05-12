@@ -44,20 +44,42 @@ public without sharing class DonorSelector {
 
     @AuraEnabled
     public static DonorRewardsInfo getDonorRewardsInfo() {
-        List<Contact> targetDonor = [
-            SELECT Name, Balance_Currency__c, Balance_Points__c, Total_Visits_365d__c,
+        List<Contact> targetDonors = [
+            SELECT Id, Name, Last_Onbe_Balance_Update__c, Onbe_Balance__c, Balance_Points__c, Total_Visits_365d__c,
                 Loyalty_Level__r.Name, Loyalty_Level__r.Donation_Threshold__c, 
-                Loyalty_Level__r.Next_Level__r.Name, Loyalty_Level__r.Next_Level__r.Donation_Threshold__c
+                Loyalty_Level__r.Next_Level__r.Name, Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, (
+                    SELECT Id, Expiration__c, Card_Number__c
+                    FROM Payment_Methods__r
+                    WHERE Is_Active__c = true AND isDefault__c = true AND Is_Expired__c = false
+                    LIMIT 1
+                )
             FROM Contact 
             WHERE Id IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId())
             LIMIT 1
         ];
 
-        if (targetDonor == null || targetDonor.isEmpty()) {
+        if (targetDonors == null || targetDonors.isEmpty()) {
             return null;
         }
 
-        return new DonorRewardsInfo(targetDonor[0]);
+        Contact targetDonor = targetDonors[0];
+        if (targetDonor.Last_Onbe_Balance_Update__c == null || targetDonor.Last_Onbe_Balance_Update__c <= Date.today().addDays(-1)) {
+            OnbePaymentService paymentService = new OnbePaymentService();
+            Decimal donorOnbeBalance;
+
+            try {
+                donorOnbeBalance = paymentService.getBalance(targetDonor.Id);
+            } catch(Exception e) {
+                throw new AuraHandledException('Unable to retrieve donor balance. Please try again later.');
+            }
+
+            targetDonor.Onbe_Balance__c = donorOnbeBalance == null ? 0 : donorOnbeBalance;
+            targetDonor.Last_Onbe_Balance_Update__c = Date.today();
+
+            update targetDonor;
+        }
+
+        return new DonorRewardsInfo(targetDonor);
     }
 
     public class DonorSearchResult {
@@ -115,9 +137,15 @@ public without sharing class DonorSelector {
         @AuraEnabled
         public Decimal remainingVisitsForNextTier;
 
+        @AuraEnabled
+        public String cardNumber4Digits;
+
+        @AuraEnabled 
+        public String cardNumberExpiration;
+
         public DonorRewardsInfo(Contact donorInfo) {
             this.donorName = donorInfo.Name;
-            this.donorBalance = donorInfo.Balance_Currency__c;
+            this.donorBalance = donorInfo.Onbe_Balance__c == null ? 0 : donorInfo.Onbe_Balance__c;
             this.donorPoints = donorInfo.Balance_Points__c;
             this.currentLoyaltyLevel = !String.isEmpty(donorInfo.Loyalty_Level__r.Name) ? donorInfo.Loyalty_Level__r.Name : 'Donor (Default)';
             this.donorVisitCount = (donorInfo.Total_Visits_365d__c != null) ? donorInfo.Total_Visits_365d__c : 0;
@@ -130,6 +158,18 @@ public without sharing class DonorSelector {
             if (donorInfo.Loyalty_Level__r.Next_Level__r != null) {
                 this.nextLoyaltyLevel = donorInfo.Loyalty_Level__r.Next_Level__r.Name;
                 this.remainingVisitsForNextTier = donorInfo.Loyalty_Level__r.Next_Level__r.Donation_Threshold__c - this.donorVisitCount;
+            }
+
+            Payment_Method__c defaultPaymentMethod = donorInfo.Payment_Methods__r != null && !donorInfo.Payment_Methods__r.isEmpty() ? donorInfo.Payment_Methods__r[0] : null;
+            if (defaultPaymentMethod != null) {
+                this.cardNumber4Digits = defaultPaymentMethod.Card_Number__c;
+
+                if (defaultPaymentMethod.Expiration__c != null) {
+                    String expirationDate = defaultPaymentMethod.Expiration__c.month() < 10 ? '0' + defaultPaymentMethod.Expiration__c.month() : String.valueOf(defaultPaymentMethod.Expiration__c.month());
+                    expirationDate += '/' + String.valueOf(defaultPaymentMethod.Expiration__c.year());
+
+                    this.cardNumberExpiration = expirationDate;
+                }
             }
         }
     }

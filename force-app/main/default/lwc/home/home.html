@@ -6,12 +6,12 @@
         <div class="slds-var-p-around_medium" style="background-color: #E5DDF4">
             <div class="slds-grid slds-grid_vertical-align-center slds-gutters">
                 <div class="slds-col slds-size_1-of-2">
-                    My Balance:
+                    {labels.myBalance}:
                 </div>
-                <div class="slds-col slds-size_1-of-2 slds-text-align_right">
+                <div if:true={donorRewardsInfo} class="slds-col slds-size_1-of-2 slds-text-align_right">
                     <strong>
-                        $0<br/>
-                        0 points
+                        ${donorRewardsInfo.donorBalance}<br/>
+                        {donorRewardsInfo.donorPoints} points
                     </strong>
                 </div>
             </div>

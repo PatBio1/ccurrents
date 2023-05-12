@@ -139,9 +139,8 @@ export default class Menu extends LightningElement {
 
         console.log('login request', JSON.stringify(request));
 
-        login(request).then(response => {
-            console.log('login response', response);
-            window.location.href = response;
+        login(request).then(loginResponse => {
+            window.location.href = loginResponse;
         }).catch((error) => {
             util.showGuestToast(this, 'error', labels.error, error);
         }).finally(() => {

@@ -2,7 +2,10 @@
     <lightning-modal-header label="Lost My Card">
     </lightning-modal-header>
 
-    <lightning-modal-body>
+    <lightning-modal-body class="slds-is-relative">
+        <lightning-spinner if:true={isLoading}>
+        </lightning-spinner>
+        
         <div class="lost-my-card-container">
             <p>You must schedule an appointment and come to a Proesis Center to get a new card.</p>
 

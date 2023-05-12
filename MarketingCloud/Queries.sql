@@ -529,3 +529,42 @@ AS l
 ON c.Level__c = l.LevelId
 
 WHERE Level__c IS NOT NULL
+
+-- Welcome New Donor, v2 (off User)
+SELECT u.Id AS UserId,
+u.UserName AS UserName,
+u.FirstName AS FirstName,
+u.Email AS Email,
+u.IsActive AS IsActive,
+u.ContactId AS SubscriberKey,
+p.Name AS ProfileName,
+IIF(v.VisitCount > 0, 1, 0) AS HasVisit
+
+FROM User_Salesforce AS u
+
+INNER JOIN (
+SELECT Id,
+Name
+FROM Profile_Salesforce)
+AS p
+ON u.ProfileId = p.Id
+
+LEFT JOIN
+(SELECT SubscriberKey
+FROM "Welcome New Donor"
+)
+AS wnd
+ON u.ContactId = wnd.SubscriberKey
+
+LEFT JOIN
+(SELECT Donor__c AS Donor,
+COUNT(Id) AS VisitCount
+FROM Visit__c_Salesforce
+GROUP BY Donor__c)
+AS v
+ON u.ContactId = v.Donor
+
+WHERE
+p.Name LIKE 'ProesisCustomer%' AND
+u.IsActive = 1 AND
+wnd.SubscriberKey IS NULL

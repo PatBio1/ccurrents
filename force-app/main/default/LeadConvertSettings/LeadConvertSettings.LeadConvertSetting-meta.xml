@@ -4,6 +4,30 @@
     <objectMapping>
         <inputObject>Lead</inputObject>
         <mappingFields>
+            <inputField>DonorId__c</inputField>
+            <outputField>DonorId__c</outputField>
+        </mappingFields>
+        <outputObject>Account</outputObject>
+    </objectMapping>
+    <objectMapping>
+        <inputObject>Lead</inputObject>
+        <mappingFields>
+            <inputField>isEmailVerified__c</inputField>
+            <outputField>isEmailVerified__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>Enable_Appointment_Reminders__c</inputField>
+            <outputField>Enable_Appointment_Reminders__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>Enable_Email__c</inputField>
+            <outputField>Enable_Email__c</outputField>
+        </mappingFields>
+        <mappingFields>
+            <inputField>Enable_Mobile_Push__c</inputField>
+            <outputField>Enable_Mobile_Push__c</outputField>
+        </mappingFields>
+        <mappingFields>
             <inputField>Enable_Payment_Notifications__c</inputField>
             <outputField>Enable_Payment_Notifications__c</outputField>
         </mappingFields>
@@ -38,22 +62,6 @@
         <mappingFields>
             <inputField>Street_Line_2__c</inputField>
             <outputField>Street_Line_2__c</outputField>
-        </mappingFields>
-        <mappingFields>
-            <inputField>isEmailVerified__c</inputField>
-            <outputField>isEmailVerified__c</outputField>
-        </mappingFields>
-        <mappingFields>
-            <inputField>Enable_Appointment_Reminders__c</inputField>
-            <outputField>Enable_Appointment_Reminders__c</outputField>
-        </mappingFields>
-        <mappingFields>
-            <inputField>Enable_Email__c</inputField>
-            <outputField>Enable_Email__c</outputField>
-        </mappingFields>
-        <mappingFields>
-            <inputField>Enable_Mobile_Push__c</inputField>
-            <outputField>Enable_Mobile_Push__c</outputField>
         </mappingFields>
         <outputObject>Contact</outputObject>
     </objectMapping>

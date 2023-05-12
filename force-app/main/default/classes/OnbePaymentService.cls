@@ -1,7 +1,10 @@
-public with sharing class OnbePaymentService implements PaymentServiceInterface {
+public without sharing class OnbePaymentService implements PaymentServiceInterface {
     
+    // Customer Service Static Values
+    private static final String CUSTOMER_SERVICE_APPLICATION_ID = '3037c66b967c3d338751f95d2cdac566';
+
+    // Account Management Static Values
     private static final String PROGRAM_ID = '04011223';
-    private static final String PARTNER_USER_ID = '0012';
     private static final String PROMOTION_ID = '2';
     private static final String ACCESS_LEVEL = '02';
 
@@ -18,8 +21,7 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
     }
 
     public String setupPaymentServiceAccount(String cardPackageId, Id donorId, Decimal initialAccountLoad, String initialPIN) {
-        OnbeDomainPrepaid.Card newCard = new OnbeDomainPrepaid.Card();
-        newCard.cardAccessLevel = ACCESS_LEVEL;
+        String partnerUserId = (String)donorId;
 
         OnbeDomainPrepaid.Load newLoad;
         if (initialAccountLoad != null && initialAccountLoad > 0) {
@@ -54,11 +56,25 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
         newReg.state = donorRecord.PersonMailingState;
         newReg.postal = donorRecord.PersonMailingPostalCode;
         newReg.country = donorRecord.PersonMailingCountry;
-        newReg.homePhone = donorRecord.PersonMobilePhone;
+
+        if (!String.isEmpty(donorRecord.PersonMobilePhone)) {
+            // Collect all phone number digits, and reconstruct the number using the expected format (xxx-xxx-xxxx)
+            String phoneDigits = donorRecord.PersonMobilePhone.replaceAll('[^0-9]', '');
+            if (phoneDigits.length() == 10) {
+                newReg.homePhone = phoneDigits.substring(0, 3) + '-' + phoneDigits.substring(3, 6) + '-' + phoneDigits.substring(6, 10);
+            } else if (phoneDigits.length() == 11 && phoneDigits.substring(0, 1) == '1') {
+                newReg.homePhone = phoneDigits.substring(1, 4) + '-' + phoneDigits.substring(4, 7) + '-' + phoneDigits.substring(7, 11);
+            } else {
+                throw new OnbeServiceException('Invalid phone number format: ' + donorRecord.PersonMobilePhone);
+            }
+        } else {
+            newReg.homePhone = '';
+        }
+        
 
         OnbeWsPrepaid.AccountManagementApiWebServices accountManagementAPI = new OnbeWsPrepaid.AccountManagementApiWebServices();
         OnbeResponsePrepaid.CreateAccountResponse createActivateCardResponse = accountManagementAPI.createAccount_Http(
-            PROGRAM_ID, PROMOTION_ID, donorId + '-' + String.valueOf(System.currentTimeMillis()), PARTNER_USER_ID, ACCESS_LEVEL, true, newCard, newLoad, newLink, newReg
+            PROGRAM_ID, PROMOTION_ID, donorId + '-' + String.valueOf(System.currentTimeMillis()), partnerUserId, ACCESS_LEVEL, true, null, newLoad, newLink, newReg
         );
 
         if (createActivateCardResponse.code != 0) {
@@ -73,12 +89,17 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
             );
         }
 
-        String expirationMMYY = createActivateCardResponse.cardExpiryDateMMYY;
+        // Make an account inquiry call to get the card number/expiration
+        OnbeWsManageCard.AccountInquiryResponse accountInquiryResponse = executeAccountInquiry(donorId);
+
+        String expirationDateMMYYYY = accountInquiryResponse.expirationMMYYYY;
         Date expirationDate;
 
-        if (!String.isEmpty(expirationMMYY)) {
-            Integer expirationMonth = Integer.valueOf(expirationMMYY.substring(0, 2));
-            Integer expirationYear = Integer.valueOf(expirationMMYY.substring(2, 4));
+        if (!String.isEmpty(expirationDateMMYYYY)) {
+            List<String> expirationMMYYParts = expirationDateMMYYYY.split('/');
+
+            Integer expirationMonth = Integer.valueOf(expirationMMYYParts[0]);
+            Integer expirationYear = Integer.valueOf(expirationMMYYParts[1]);
 
             expirationDate = Date.newInstance(expirationYear, expirationMonth, 1);
         } else {
@@ -87,8 +108,9 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
 
         Payment_Method__c newPaymentMethod = new Payment_Method__c();
         newPaymentMethod.Name = PaymentService__mdt.getInstance('OnbePaymentService').PaymentServiceLabel__c;
+        newPaymentMethod.Account_Token__c = cardPackageId;
         newPaymentMethod.Account_Number__c = createActivateCardResponse.accountNumber;
-        newPaymentMethod.Card_Number__c = !String.isEmpty(createActivateCardResponse.accountNumber) ? createActivateCardResponse.accountNumber.right(4) : null;
+        newPaymentMethod.Card_Number__c = accountInquiryResponse.cardNumber4Digits;
         newPaymentMethod.Expiration__c = expirationDate;
         newPaymentMethod.Is_Active__c = true;
         newPaymentMethod.isDefault__c = true;
@@ -123,8 +145,9 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
         return '';
     }
     
-    public String getBalance() {
-        return 'Onbe Balance';
+    public Decimal getBalance(Id donorId) {
+        OnbeWsManageCard.AccountInquiryResponse accountInquiryResponse = executeAccountInquiry(donorId);
+        return accountInquiryResponse.balance;
     }
 
     public String getTransaction() {
@@ -135,11 +158,102 @@ public with sharing class OnbePaymentService implements PaymentServiceInterface 
         return 'Onbe Transaction History';
     }
 
-    public String updateAccountStatus(String newAccountStatus) {
+    public OnbeWsManageCard.ReissueCardResponse reissueCard(String paymentMethodId, String blockCode) {
+        Payment_Method__c targetPaymentMethod;
+
+        try {
+            targetPaymentMethod = [
+                SELECT Id, Donor__c, Account_Number__c
+                FROM Payment_Method__c
+                WHERE Id = :paymentMethodId
+                LIMIT 1
+            ];
+        } catch(Exception e) {
+            throw new OnbeServiceException('Error while retrieving active/default payment method ' + paymentMethodId + ' - ' + e.getMessage());
+        }
+
+        Set<String> validBlockCodes = new Set<String>{ 
+            Constants.ONBE_REISSUE_CARD_LOST_CODE, Constants.ONBE_REISSUE_CARD_STOLEN_CODE, Constants.ONBE_REISSUE_CARD_REVOKED_CODE 
+        };
+
+        if (!validBlockCodes.contains(blockCode)) {
+            throw new OnbeServiceException('Invalid block code: ' + blockCode);
+        }
+
+        OnbeWsManageCard.AccountManagement onbeManageCardBaseObject = new OnbeWsManageCard.AccountManagement();
+        String partnerUserId = targetPaymentMethod.Donor__c;
+
+        return onbeManageCardBaseObject.reissueCard_Http(CUSTOMER_SERVICE_APPLICATION_ID, partnerUserId, blockCode);
+    }
+
+    public String updateAccountStatus(String paymentMethodId, String newAccountStatus) {
+        Payment_Method__c targetPaymentMethod;
+
+        try {
+            targetPaymentMethod = [
+                SELECT Id, Donor__c, Account_Number__c
+                FROM Payment_Method__c
+                WHERE Id = :paymentMethodId
+                LIMIT 1
+            ];
+        } catch(Exception e) {
+            throw new AuraHandledException('Error while retrieving active/default payment method ' + paymentMethodId + ' - ' + e.getMessage());
+        }
+
         OnbeWsPrepaid.AccountManagementApiWebServices updateAccountStatusRequest = new OnbeWsPrepaid.AccountManagementApiWebServices();
-        updateAccountStatusRequest.updateAccountStatus_Http(newAccountStatus);
+        String transactionId = targetPaymentMethod.Donor__c + '-' + String.valueOf(System.currentTimeMillis());
+
+        OnbeResponsePrepaid.UpdateAccountStatusResponse updateAccountStatusResponse = updateAccountStatusRequest.updateAccountStatus_Http(
+            targetPaymentMethod.Account_Number__c, PROGRAM_ID, PROMOTION_ID, transactionId, newAccountStatus
+        );
+
+        if (updateAccountStatusResponse.code != 0) {
+            if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
+                throw new OnbeServiceException('Error received from Onbe: ' + updateAccountStatusResponse.code + '-' + updateAccountStatusResponse.sub_code);
+            }
+        }
 
         return '';
+    }
+    
+    private OnbeWsManageCard.AccountInquiryResponse executeAccountInquiry(Id donorId) {
+        Id donorContactId = donorId;
+        
+        // The donor contact id is stored as a Partner Id on the Onbe side, so we need to make sure we are getting or converting it correctly
+        if (donorId.getSObjectType() == Schema.Account.getSObjectType()) {
+            donorContactId = [SELECT PersonContactId FROM Account WHERE Id = :donorId LIMIT 1].PersonContactId;
+        } else if (donorId.getSObjectType() != Schema.Contact.getSObjectType()) {
+            throw new OnbeServiceException('An invalid Onbe Donor Id was provided: ' + donorId);
+        }
+
+        String card_number ='';
+        String puid = String.valueOf(donorContactId);
+        String ppd = ''; // We are unsure of what this property is, we asked Onbe but they couldn't provide an answer. Leave blank for now.
+        String mobile_phone = '';
+        Integer balance_detail = 1;
+        Integer journal_detail = 0;
+        Integer registration_detail = 0;
+        Integer start_date = 0;
+        Integer end_date = 0;
+        Integer max_items = 20;
+
+        OnbeWsManageCard.AccountManagement onbeManageCardBaseObject = new OnbeWsManageCard.AccountManagement();
+        OnbeWsManageCard.AccountInquiryResponse accountInquiryResponse = onbeManageCardBaseObject.accountInquiry_Http(
+            CUSTOMER_SERVICE_APPLICATION_ID, card_number, puid, ppd,
+            mobile_phone, balance_detail, journal_detail, registration_detail, 
+            start_date, end_date, max_items
+        );
+
+        if (
+            (accountInquiryResponse.code != null && accountInquiryResponse.code != 0) || 
+            (accountInquiryResponse.message != null && accountInquiryResponse.message != Constants.ONBE_CUSTOMER_SERVICE_SUCCESS_MESSAGE)
+        ) {
+            if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
+                throw new OnbeServiceException('Error received from Onbe: ' + accountInquiryResponse.code + '-' + accountInquiryResponse.message);
+            }
+        }
+
+        return accountInquiryResponse;
     }
 
     public class OnbeServiceException extends Exception {}

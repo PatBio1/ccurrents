@@ -111,7 +111,10 @@ public without sharing class SchedulerController {
             List<Visit__c> visitRecords = [
                 SELECT
                     isFirstVisit__c, Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name,
-                    Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.First_Visit_Code__c, Outcome__c
+                    Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.First_Visit_Code__c, Outcome__c, (
+                        SELECT Id, Amount_Points__c, Amount_Currency__c
+                        FROM Transactions__r
+                    )
                 FROM
                     Visit__c
                 WHERE
@@ -135,6 +138,22 @@ public without sharing class SchedulerController {
                 visit.outcome = visitRecord.Outcome__c;
                 visit.firstVisitCode = visitRecord.Donor__r.Account.First_Visit_Code__c;
                 visit.isFirstVisit = visitRecord.isFirstVisit__c;
+
+                Decimal totalPointReward = 0;
+                Decimal totalCurrencyReward = 0;
+
+                for (Transaction__c transactionRecord : visitRecord.Transactions__r) {
+                    if (transactionRecord.Amount_Points__c != null) {
+                        totalPointReward += transactionRecord.Amount_Points__c;
+                    }
+
+                    if (transactionRecord.Amount_Currency__c != null) {
+                        totalCurrencyReward += transactionRecord.Amount_Currency__c;
+                    }
+                }
+
+                visit.totalPointReward = totalPointReward;
+                visit.totalCurrencyReward = totalCurrencyReward;
                 visits.add(visit);
             }
 
@@ -262,6 +281,12 @@ public without sharing class SchedulerController {
 
         @AuraEnabled
         public String outcome {get; set;}
+
+        @AuraEnabled 
+        public Decimal totalCurrencyReward { get; set; }
+
+        @AuraEnabled
+        public Decimal totalPointReward { get; set; }
     }
 
 }

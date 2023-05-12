@@ -1,10 +1,13 @@
 import { LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-
 import LightningModal from 'lightning/modal';
 
+import cancelDonorActivePayment from '@salesforce/apex/CancelCardController.cancelDonorActivePayment';
+
 export default class LostMyCardModal extends NavigationMixin(LightningModal) {
+    isLoading = false;
+    
     navigateToScheduleAppointment(event) {
         this.navigateToCommunityPage('schedule');
     }
@@ -20,16 +23,27 @@ export default class LostMyCardModal extends NavigationMixin(LightningModal) {
         this.close("success");
     }
 
-    handleCancelCardImmediately() {
-        // Show a test toast message
-        const evt = new ShowToastEvent({
-            title: 'Card Cancelled',
-            message: 'Your card has been cancelled. (Testing only for now)',
-            variant: 'success',
-            mode: 'dismissable'
-        });
+    async handleCancelCardImmediately() {
+        this.isLoading = true;
         
-        this.dispatchEvent(evt);
-        this.close("success");
+        try {
+            await cancelDonorActivePayment();
+
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Card Cancelled',
+                message: 'Your card has been cancelled.',
+                variant: 'success',
+                mode: 'dismissable'
+            }));
+            this.close("success");
+        } catch(e) {
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Error',
+                message: 'Error cancelling card - ' + e.body.message,
+                variant: 'error'
+            }));
+        } finally {
+            this.isLoading = false;
+        }
     }
 }

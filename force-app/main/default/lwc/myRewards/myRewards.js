@@ -40,7 +40,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     isLoading = false;
 
     get userHasCard() {
-        return true;
+        return (this.donorRewardsInfo && this.donorRewardsInfo.cardNumber4Digits && this.donorRewardsInfo.cardNumberExpiration);
     }
 
     get visaLogo() {
@@ -48,7 +48,11 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     get cantRedeemPoints() {
-        return (this.donorRewardsInfo == undefined || this.donorRewardsInfo.donorPoints < this.donorRewardsInfo.minimumWithdrawalAmount);
+        return (
+            this.donorRewardsInfo == undefined || 
+            !this.donorRewardsInfo.minimumWithdrawalAmount || 
+            this.donorRewardsInfo.donorPoints < this.donorRewardsInfo.minimumWithdrawalAmount
+        );
     }
 
     get goalValid() {
@@ -139,7 +143,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     navigateToLoyaltyTiers(event) {
-        util.navigateToPage('loyalty-tiers');
+        util.navigateToPage(this, 'Loyalty_Tiers__c');
     }
 
     onAtmLocatorLinkClick(event) {
@@ -164,7 +168,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     navigateToScheduleAppointment(event) {
-        util.navigateToPage('schedule');
+        util.navigateToPage(this, 'Schedule__c');
     }
 
     togglePaymentDetails(event) {

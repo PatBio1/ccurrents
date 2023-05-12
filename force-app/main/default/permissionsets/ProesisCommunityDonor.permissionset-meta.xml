@@ -40,6 +40,10 @@
         <apexClass>SupportController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <classAccesses>
+        <apexClass>CancelCardController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <description>Enables access to the Proesis Donor Experience.</description>
     <fieldPermissions>
         <editable>false</editable>

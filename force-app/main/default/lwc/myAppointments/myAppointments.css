@@ -38,3 +38,9 @@
     overflow-y: auto;
     max-height: 80dvh;
 }
+
+.rewards-info-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

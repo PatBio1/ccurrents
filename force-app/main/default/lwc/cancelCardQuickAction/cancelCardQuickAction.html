@@ -1,0 +1,26 @@
+<template>
+    <lightning-quick-action-panel header="Cancel Payment Method" class="slds-is-relative">
+        <lightning-spinner if:true={isLoading}>
+        </lightning-spinner>
+
+        <div style="display: flex; align-items: center; justify-content: center; text-align: center; font-size: 18px;">
+            <p if:false={hasDefaultPaymentMethod}>
+                <strong>
+                    No active/default payment method was found for this donor.
+                </strong>
+            </p>
+            
+            <p if:true={hasDefaultPaymentMethod}>
+                Are you sure you want to cancel the <strong>'{defaultPaymentMethod.name}'</strong> payment method ending in <strong>{defaultPaymentMethod.cardNumber4Digits}</strong>?
+            </p>
+        </div>
+        
+        <div slot="footer">
+            <lightning-button variant="neutral" label="Cancel">
+            </lightning-button>
+
+            <lightning-button variant="brand" label="Confirm" class="slds-m-left_x-small" onclick={handleConfirmCancel} disabled={cantConfirmCancel}>
+            </lightning-button>
+        </div>
+    </lightning-quick-action-panel>
+</template>

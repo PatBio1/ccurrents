@@ -34,7 +34,7 @@ private class OnbeWsPrepaidTest {
         OnbeResponsePrepaid.CreateBulkOrderResponse onbeResponseCreateBulkOrder = new OnbeResponsePrepaid.CreateBulkOrderResponse();
 		OnbeResponsePrepaid.LinkCardResponse onbeResponseLinkCard = new OnbeResponsePrepaid.LinkCardResponse();
 		OnbeResponsePrepaid.ServiceResponse onbResponseServiceResponse = new OnbeResponsePrepaid.ServiceResponse();
-		OnbeResponsePrepaid.UpdateAccountStatusResponse onbeResponseUpdateAccountStatus = new OnbeResponsePrepaid.UpdateAccountStatusResponse();
+		// OnbeResponsePrepaid.UpdateAccountStatusResponse onbeResponseUpdateAccountStatus = new OnbeResponsePrepaid.UpdateAccountStatusResponse(new Dom.XmlNode());
 		OnbeResponsePrepaid.UpdateRegistrationResponse onbeResponseUpdateRegistration = new OnbeResponsePrepaid.UpdateRegistrationResponse();
 		OnbeResponsePrepaid.withdrawResponse onbeWithdraw = new OnbeResponsePrepaid.withdrawResponse();
 		OnbeWsPrepaid.ArrayOf_tns2_keyValue onbeWsArrayOfTns2KeyValue = new OnbeWsPrepaid.ArrayOf_tns2_keyValue();
@@ -129,7 +129,7 @@ private class OnbeWsPrepaidTest {
 		new OnbeResponsePrepaid.CreateBulkOrderResponse();
 		new OnbeResponsePrepaid.LinkCardResponse();
 		new OnbeResponsePrepaid.ServiceResponse();
-		new OnbeResponsePrepaid.UpdateAccountStatusResponse();
+		// new OnbeResponsePrepaid.UpdateAccountStatusResponse(new Dom.XmlNode());
 		new OnbeResponsePrepaid.UpdateRegistrationResponse();
 		new OnbeResponsePrepaid.withdrawResponse();
 		OnbeWsPrepaid.ArrayOf_tns2_keyValue Obj42 = new OnbeWsPrepaid.ArrayOf_tns2_keyValue();
@@ -285,7 +285,7 @@ private class OnbeWsPrepaidTest {
 	@isTest static void coverCodeForupdateAccountStatus_Http(){
 		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
-		testObject.updateAccountStatus_Http(null);		
+		testObject.updateAccountStatus_Http('', '', '', '', '');		
 	}
 
 	@isTest static void coverCodeForupdateRegistration_Http(){

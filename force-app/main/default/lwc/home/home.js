@@ -4,6 +4,7 @@ import labels from 'c/labelService';
 import util from 'c/util';
 import proesisDonor from '@salesforce/resourceUrl/ProesisDonor';
 import hasFutureVisit from '@salesforce/apex/SchedulerController.hasFutureVisit';
+import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsInfo';
 import language from '@salesforce/i18n/lang';
 import locale from '@salesforce/i18n/locale';
 
@@ -16,6 +17,7 @@ export default class Home extends NavigationMixin(LightningElement) {
     hasRendered = false;
     loading = true;
     currentPage;
+    donorRewardsInfo;
 
     @track articleCategories = [
         {
@@ -79,6 +81,13 @@ export default class Home extends NavigationMixin(LightningElement) {
                 this.loading = false;
             });
         }
+
+        // Load Donor Rewards info
+        getDonorRewardsInfo().then(response => {
+            this.donorRewardsInfo = response;
+        }).catch((error) => {
+            util.showToast(this, 'error', labels.error, error);
+        });
     }
 
     onBookmarkClick(event) {

@@ -102,18 +102,7 @@ public with sharing class OnbeWsManageCard {
 		private void AddHeader(DOM.XmlNode header){
 		}
 
-		// String application_id;
-		// public String card_number;  //Card Number string, or pass an empty string if you do not want to pass.
-		// public String puid;  //PUID string, or pass an empty string if you do not want to pass.
-		// public String ppd;   //PPD string, or pass an empty string if you do not want to pass.
-		// public String mobile_phone;  // Phone Number string, or pass an empty string if you do not want to pass.
-		// public Integer balance_detail;  // INT 0 indicates no balance information to be returned. 1 to have it returned.
-		// public Integer journal_detail;  // 0 have it returned indicates no transaction history and 2 to have it returned and to set to be returned. 1 to PPID, if any, in the transaction_details response field.
-		// public Integer registration_detail; // Pass 0 for no registration information to be returned, or 1 to have it returned.
-		// public Integer start_date;  // year, month, day. Example: 20090213 would be passed for February 13, 2009. Can pass 0 if you don't want a start date.
-		// public Integer end_date; // Same as above. Can pass 0 if you don't want a end date.
-		// public Integer max_items; 
-		public void accountInquiry_Http( String application_id,
+		public AccountInquiryResponse accountInquiry_Http( String application_id,
 			String card_number,
 			String puid,
 		 	String ppd, 
@@ -138,17 +127,19 @@ public with sharing class OnbeWsManageCard {
 			req.setEndpoint(endpoint_x);
 			req.setMethod('POST');
 			req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
-			req.setHeader('SOAPAction', 'blank');
-			//System.debug(doc.toXmlString());
+          	req.setHeader('SOAPAction', 'blank');
 			req.setBodyDocument(doc);
-			//System.debug(req.getBody());
+			
 			Http http = new Http();
 			HttpResponse res = http.send(req);
-			//System.debug(res.getBody());
+			
 			Dom.Document responseDoc = res.getBodyDocument();
+			System.debug(responseDoc.toXmlString());
+
 			Dom.XmlNode rootNode = responseDoc.getRootElement();
 			Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
-			Dom.XmlNode Node = bodyNode.getChildElement('', uriCardManagementMainEndpoint);			
+			
+			return new AccountInquiryResponse(bodyNode);
 		}
  
 		public void payoutAccountInquiry_Http() {
@@ -171,6 +162,37 @@ public with sharing class OnbeWsManageCard {
 			Dom.XmlNode rootNode = responseDoc.getRootElement();
 			Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
 			Dom.XmlNode Node = bodyNode.getChildElement('', uriCardManagementMainEndpoint);
+		}
+
+		public ReissueCardResponse reissueCard_Http(
+			String application_id,
+			String puid,
+		 	String block_code
+		) {
+			DOM.Document doc = new DOM.Document();
+			DOM.XmlNode body = populateDoc(doc);
+			DOM.XmlNode methodNode = body.addChildElement('reissueCard', uriCardManagementMainEndpoint, '');			
+			
+			OnbeWsManageCard.ReissueCardRequest request_x = new OnbeWsManageCard.ReissueCardRequest(application_id, puid, block_code);
+			request_x.populateXmlNode(methodNode);
+
+			HttpRequest req = new HttpRequest();
+			req.setEndpoint(endpoint_x);
+			req.setMethod('POST');
+			req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
+          	req.setHeader('SOAPAction', 'blank');
+			req.setBodyDocument(doc);
+
+			Http http = new Http();
+			HttpResponse res = http.send(req);
+
+			Dom.Document responseDoc = res.getBodyDocument();
+			System.debug(responseDoc.toXmlString());
+
+			Dom.XmlNode rootNode = responseDoc.getRootElement();
+			Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
+			
+			return new ReissueCardResponse(bodyNode);
 		}
  	}
 
@@ -217,7 +239,6 @@ public with sharing class OnbeWsManageCard {
 		}
 
 		public void populateXmlNode(Dom.XmlNode outerNode){
-			
 			//System.assertEquals('accountInquiry', outerNode.getName());
 			Dom.XmlNode applicationIdNode = outerNode.addChildElement('application_id', uriCardManagementMainEndpoint, '');
 			if(this.application_id != null){
@@ -270,39 +291,182 @@ public with sharing class OnbeWsManageCard {
 			// 	linkObj.populateXmlNode(linkNode);
 			// }
 		}
-
 	}
 
 	public class AccountInquiryResponse {
+		public Integer code; // Code doesn't seem to be returned either. If it's null, we'll just assume it's successful
+		public String message; // OK is returned in the message if successful, otherwise an error message is returned.
 
-		public Integer code; // 0 Request Processed Successfully
-		public String message; // Diagnostic message (80 Characters max)
-			// > Registration - populated only if 1 was passed in registration_detail
-			// public String first_name;  // First name of cardholder.
-			// public String last_name;  // Last name of cardholder.
-			// public String email;  // Email Address of cardholder.
-			// public String address_1;  // Address 1 field of cardholder address.
-			// public String address_2;  // Address 2 field of cardholder address.
-			// public String city;  // City field of cardholder address.
-			// public String state; // State field of cardholder address.
-			// public String zip;  //Postal code field of cardholder address
-			// public String home_phone;  // Home phone number of cardholder.
-			// public String business_phone;   //Business phone number of cardholder.
-			// public String mobile_phone;  // Mobile (Cell) phone number of cardholder.
-			// > Balance - populated only if 1 was passed in balance_detail
-			// public Integer balance_available;  // Available balance after deducting any pending transactions.
-			// public Integer balance_ledger;  // Balance of settled transactions (without deducting pending).
-			// public Integer balance_pending;  // Amount pending on the account,Not yet settled.
-			// public Datetime balance_date;  // May be null. Date of last sync of balance.
-			// > Card Detail
-			// public String card_number; // Card number will always be masked (except last eight digits).
-			// public String puid;  // Partner user identifier.
-			// public Integer program_id;  // Program ID associated with cardholder’s card.
-			// public Datetime created_date;  // Creation date of account.
-			// public Datetime last_plastic_date;  //  Date of last plastic issued.
-			// public Datetime ship_date;  // Date card shipped in the mail.
-			// public String expiration;  // Expiration date of card. (Example:"02/2010")
-			// public String account_status;  //  Possible Values: Active Canceled  Frozen  Lost/Stolen Contact us for Status 
+		public Decimal balance;
+		public String cardNumber4Digits;
+		public String expirationMMYYYY;
+
+		public AccountInquiryResponse(Dom.XmlNode node) {
+			// See the Test_GetBalance_Request_OnbePayment.apex test script for an example success return
+
+			Dom.XmlNode responseNode = node.getChildElement('accountInquiryResponse', uriCardManagementMainEndpoint);
+			if (responseNode == null) {
+				this.message = 'Response node not found';
+				return;
+			}
+
+			Dom.XmlNode returnNode = responseNode.getChildElement('accountInquiryReturn', null);
+
+			String responseBodyNodeId = returnNode.getAttribute('href', null);
+
+			Map<String, Dom.XmlNode> nodeIdToNode = new Map<String, Dom.XmlNode>();
+			for(Dom.XmlNode childNode : node.getChildElements()) {
+				if (childNode.getAttribute('id', null) != null) {
+					nodeIdToNode.put('#' + childNode.getAttribute('id', null), childNode);
+				}	
+			}
+
+			Dom.XmlNode responseBodyNode = nodeIdToNode.get(responseBodyNodeId);
+			if (responseBodyNode == null) {
+				this.message = 'Response body node not found';
+				return;
+			}
+
+			String balanceNodeId = responseBodyNode.getChildElement('balance', null)?.getAttribute('href', null);
+			String cardNodeId = responseBodyNode.getChildElement('card', null)?.getAttribute('href', null);
+			String responseNodeId = responseBodyNode.getChildElement('response', null)?.getAttribute('href', null);
+
+			Dom.XmlNode diagResponseNode = nodeIdToNode.get(responseNodeId);
+			String codeResponseNodeId;
+
+			if (diagResponseNode != null) {
+				this.message = diagResponseNode.getChildElement('message', null)?.getText();
+				codeResponseNodeId = diagResponseNode.getChildElement('code', null)?.getAttribute('href', null);
+
+				Dom.XmlNode codeResponseNode = nodeIdToNode.get(codeResponseNodeId);
+				if (codeResponseNode != null) {
+					String codeString = codeResponseNode.getText();
+
+					if (!String.isEmpty(codeString)) {
+						this.code = Integer.valueOf(codeString);
+					}
+				}
+			}
+
+			if ((this.code != null && this.code != 0) || (this.message != null && this.message != Constants.ONBE_CUSTOMER_SERVICE_SUCCESS_MESSAGE)) {
+				// This indicates an error, so no need to parse the rest of the response, we'll just throw the error in the service class
+				return;
+			}
+
+			Dom.XmlNode balanceNode = nodeIdToNode.get(balanceNodeId);
+			String availableBalanceNodeId = balanceNode.getChildElement('balance_available', null)?.getAttribute('href', null);
+
+			Dom.XmlNode availableBalanceNode = nodeIdToNode.get(availableBalanceNodeId);
+			if (availableBalanceNode != null) {
+				String balanceString = availableBalanceNode.getText();
+
+				if (!String.isEmpty(balanceString)) {
+					this.balance = Decimal.valueOf(balanceString);
+				}
+			}
+
+			Dom.XmlNode cardNode = nodeIdToNode.get(cardNodeId);
+			if (cardNode != null) {
+				this.cardNumber4Digits = cardNode.getChildElement('card_number', null)?.getText();
+				this.expirationMMYYYY = cardNode.getChildElement('expiration', null)?.getText();
+
+				if (!String.isEmpty(this.cardNumber4Digits)) {
+					this.cardNumber4Digits = this.cardNumber4Digits.right(4);
+				}
+			}
+		}
 	}
 
+	public class ReissueCardRequest {
+		public String application_id;
+		public String puid;
+		public String block_code;
+
+		public ReissueCardRequest(
+			String application_id,
+			String puid,
+			String block_code
+		){
+			this.application_id = application_id;
+			this.puid = puid;
+			this.block_code = block_code;
+		}
+
+		public void populateXmlNode(Dom.XmlNode outerNode) {
+			Dom.XmlNode applicationIdNode = outerNode.addChildElement('application_id', uriCardManagementMainEndpoint, '');
+			if (this.application_id != null){
+				applicationIdNode.addTextNode(this.application_id);
+			}
+			
+			Dom.XmlNode puidNode = outerNode.addChildElement('puid', uriCardManagementMainEndpoint, '');
+			if (this.puid != null){
+				puidNode.addTextNode(this.puid);
+			}
+
+			Dom.XmlNode blockCodeNode = outerNode.addChildElement('block_code', uriCardManagementMainEndpoint, '');
+			if (this.block_code != null){
+				blockCodeNode.addTextNode(this.block_code);
+			}
+		}
+	}
+
+	public class ReissueCardResponse {
+		public Integer code;
+		public String message;
+
+		String cardNumber4Digits;
+		String expirationMMYYYY;
+		String accountStatus;
+
+		public ReissueCardResponse(Dom.XmlNode node) {
+			Dom.XmlNode responseNode = node.getChildElement('reissueCardResponse', uriCardManagementMainEndpoint);
+			Dom.XmlNode returnNode = responseNode.getChildElement('reissueCardReturn', null);
+
+			String responseBodyNodeId = returnNode.getAttribute('href', null);
+
+			Map<String, Dom.XmlNode> nodeIdToNode = new Map<String, Dom.XmlNode>();
+			for(Dom.XmlNode childNode : node.getChildElements()) {
+				if (childNode.getAttribute('id', null) != null) {
+					nodeIdToNode.put('#' + childNode.getAttribute('id', null), childNode);
+				}	
+			}
+
+			Dom.XmlNode responseBodyNode = nodeIdToNode.get(responseBodyNodeId);
+			if (responseBodyNode == null) {
+				this.message = 'Response body node not found';
+				return;
+			}
+
+			this.message = responseBodyNode.getChildElement('message', null)?.getText();
+			String codeResponseNodeId = responseBodyNode.getChildElement('code', null)?.getAttribute('href', null);
+			String cardResponseNodeId = responseBodyNode.getChildElement('cardDetail', null)?.getAttribute('href', null);
+
+			Dom.XmlNode codeResponseNode = nodeIdToNode.get(codeResponseNodeId);
+			if (codeResponseNode != null) {
+				String codeString = codeResponseNode.getText();
+
+				if (!String.isEmpty(codeString)) {
+					this.code = Integer.valueOf(codeString);
+				}
+			}
+
+			if (this.code != null && this.code != 0) {
+				// This indicates an error, so no need to parse the rest of the response, we'll just throw the error in the service class
+				return;
+			}
+
+			if (!String.isEmpty(cardResponseNodeId)) {
+				Dom.XmlNode cardResponseNode = nodeIdToNode.get(cardResponseNodeId);
+				if (cardResponseNode != null) {
+					this.cardNumber4Digits = cardResponseNode.getChildElement('card_number', null)?.getText();
+					if (!String.isEmpty(this.cardNumber4Digits)) {
+						this.cardNumber4Digits = this.cardNumber4Digits.right(4);
+					}
+
+					this.expirationMMYYYY = cardResponseNode.getChildElement('expiration', null)?.getText();
+					this.accountStatus = cardResponseNode.getChildElement('account_status', null)?.getText();
+				}
+			}
+		}
+	}
 }

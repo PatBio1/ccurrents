@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Onbe_Balance__c</fullName>
+    <defaultValue>0</defaultValue>
+    <description>The last received balance from Onbe, called and stored from the Mobile app.</description>
+    <externalId>false</externalId>
+    <label>Onbe Balance</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

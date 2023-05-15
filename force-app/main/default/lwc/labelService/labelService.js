@@ -58,6 +58,8 @@ import incorrectCodeMessage from '@salesforce/label/c.Incorrect_Code_Message';
 import invalidZipCode from '@salesforce/label/c.Invalid_Zip_Code';
 import joinUs from '@salesforce/label/c.Join_Us';
 import lastName from '@salesforce/label/c.Last_Name';
+import legalTerms from '@salesforce/label/c.Legal_Terms';
+import legalTermsLink from '@salesforce/label/c.Legal_Terms_Link';
 import login from '@salesforce/label/c.Login';
 import logout from '@salesforce/label/c.Logout';
 import logoutConfirmation from '@salesforce/label/c.Logout_Confirmation';
@@ -67,6 +69,7 @@ import loyaltyTiers from '@salesforce/label/c.Loyalty_Tiers';
 import marketingCommunicationsOpsText from '@salesforce/label/c.Marketing_Communications_Ops_Text';
 import message from '@salesforce/label/c.Message';
 import middleName from '@salesforce/label/c.Middle_Name';
+import missingCardMessage from '@salesforce/label/c.Missing_Card_Message';
 import mobilePhone from '@salesforce/label/c.Mobile_Phone';
 import mobilePhoneRequirements from '@salesforce/label/c.Mobile_Phone_Requirements';
 import mobileVisitActions from '@salesforce/label/c.Mobile_Visit_Actions';
@@ -100,8 +103,6 @@ import prefix from '@salesforce/label/c.Prefix';
 import previous from '@salesforce/label/c.Previous';
 import primaryCenter from '@salesforce/label/c.Primary_Center';
 import primaryLanguage from '@salesforce/label/c.Primary_Language';
-import privacyPolicy from '@salesforce/label/c.Privacy_Policy';
-import privacyPolicyLink from '@salesforce/label/c.Privacy_Policy_Link';
 import profileChangeConfirmation from '@salesforce/label/c.Profile_Change_Confirmation';
 import profileChangeNoVisit from '@salesforce/label/c.Profile_Change_No_Visit';
 import promotionChartDescription from '@salesforce/label/c.Promotion_Chart_Description';
@@ -125,6 +126,7 @@ import scheduleAppointment from '@salesforce/label/c.Schedule_Appointment';
 import scheduled from '@salesforce/label/c.Scheduled';
 import scheduleYourAppointment from '@salesforce/label/c.Schedule_Your_Appointment';
 import scheduleYour1stAppointment from '@salesforce/label/c.Schedule_Your_1st_Appointment';
+import scheduleVisitAction from '@salesforce/label/c.Schedule_Visit_Action';
 import selectTimeSlot from '@salesforce/label/c.Select_Time_Slot';
 import setGoal from '@salesforce/label/c.Set_Goal';
 import setNewPassword from '@salesforce/label/c.Set_New_Password';
@@ -144,9 +146,6 @@ import supportInformation from '@salesforce/label/c.Support_Information';
 import sundayAbbreviation from '@salesforce/label/c.Sunday_Abbreviation';
 import taxi from '@salesforce/label/c.Taxi';
 import tellUsAboutYou from '@salesforce/label/c.Tell_Us_About_You';
-import termsOfService from '@salesforce/label/c.Terms_of_Service';
-import termsOfServiceLink from '@salesforce/label/c.Terms_of_Service_Link';
-import termsOfServicePrivacyPolicyLink from '@salesforce/label/c.Terms_of_Service_Privacy_Policy_Link';
 import thursdayAbbreviation from '@salesforce/label/c.Thursday_Abbreviation';
 import trackYourProgress from '@salesforce/label/c.Track_Your_Progress';
 import tuesdayAbbreviation from '@salesforce/label/c.Tuesday_Abbreviation';
@@ -239,6 +238,8 @@ const labels = {
     invalidZipCode,
     joinUs,
     lastName,
+    legalTerms,
+    legalTermsLink,
     login,
     logout,
     logoutConfirmation,
@@ -248,6 +249,7 @@ const labels = {
     marketingCommunicationsOpsText,
     message,
     middleName,
+    missingCardMessage,
     mobilePhone,
     mobilePhoneRequirements,
     mobileVisitActions,
@@ -281,8 +283,6 @@ const labels = {
     previous,
     primaryCenter,
     primaryLanguage,
-    privacyPolicy,
-    privacyPolicyLink,
     profileChangeConfirmation,
     profileChangeNoVisit,
     promotionChartDescription,
@@ -306,6 +306,7 @@ const labels = {
     scheduled,
     scheduleYourAppointment,
     scheduleYour1stAppointment,
+    scheduleVisitAction,
     selectTimeSlot,
     setGoal,
     setNewPassword,
@@ -325,9 +326,6 @@ const labels = {
     sundayAbbreviation,
     taxi,
     tellUsAboutYou,
-    termsOfService,
-    termsOfServiceLink,
-    termsOfServicePrivacyPolicyLink,
     thursdayAbbreviation,
     trackYourProgress,
     tuesdayAbbreviation,

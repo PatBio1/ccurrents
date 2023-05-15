@@ -178,6 +178,18 @@ export default class Profile extends LightningElement {
 
         let mobilePhoneInput = this.template.querySelector('lightning-input[data-field="mobilePhone"]');
 
+        let formattedPhone = this.profile.mobilePhone.replace(/[^\d]/g, '');
+
+        if (formattedPhone.length === 3) {
+            formattedPhone = formattedPhone + '-';
+        } else if (formattedPhone.length > 3 && formattedPhone.length < 7) {
+            formattedPhone = formattedPhone.slice(0, 3) + '-' + formattedPhone.slice(3) + (formattedPhone.length === 6 ? '-' : '');
+        } else if (formattedPhone.length >= 7) {
+            formattedPhone = formattedPhone.slice(0, 3) + '-' + formattedPhone.slice(3, 6) + '-' + formattedPhone.slice(6, 10);
+        }
+
+        mobilePhoneInput.value = this.profile.mobilePhone = formattedPhone;
+
         if (!this.phoneRegex.test(this.profile.mobilePhone)) {
             mobilePhoneInput.setCustomValidity(labels.mobilePhoneRequirements);
         } else {

@@ -55,4 +55,10 @@ public with sharing class Constants {
     public static final String LOYALTY_DONATION_PAYMENT_MESSAGE_HANDLER = 'Donation with Loyalty Promotion Payment';
 
     public static final String MISSING_PAYMENT_METHOD_TASK_SUBJECT = 'Missing Payment Method';
+
+    public static final String ONBE_CUSTOMER_SERVICE_SUCCESS_MESSAGE = 'OK';
+
+    public static final String ONBE_REISSUE_CARD_LOST_CODE = 'lost';
+    public static final String ONBE_REISSUE_CARD_REVOKED_CODE = 'revoked';
+    public static final String ONBE_REISSUE_CARD_STOLEN_CODE = 'stolen';
 }

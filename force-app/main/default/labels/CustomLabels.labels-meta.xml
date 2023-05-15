@@ -407,6 +407,20 @@
         <value>Last Name</value>
     </labels>
     <labels>
+        <fullName>Legal_Terms</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Legal Terms</shortDescription>
+        <value>Legal Terms</value>
+    </labels>
+    <labels>
+        <fullName>Legal_Terms_Link</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Legal Terms Link</shortDescription>
+        <value>http://cloud.m.proesisbio.com/combined</value>
+    </labels>
+    <labels>
         <fullName>Login</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -939,27 +953,6 @@
         <value>Tell us About You</value>
     </labels>
     <labels>
-        <fullName>Terms_of_Service</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Terms of Service</shortDescription>
-        <value>Terms of Service</value>
-    </labels>
-    <labels>
-        <fullName>Terms_of_Service_Link</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Terms of Service Link</shortDescription>
-        <value>https://proesisbio.com/terms-of-use</value>
-    </labels>
-    <labels>
-        <fullName>Terms_of_Service_Privacy_Policy_Link</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Terms of Service &amp; Privacy Policy Link</shortDescription>
-        <value>http://cloud.m.proesisbio.com/combined</value>
-    </labels>
-    <labels>
         <fullName>Thursday</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -1114,20 +1107,6 @@
         <value>Zip Code</value>
     </labels>
     <labels>
-        <fullName>Privacy_Policy</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Privacy Policy</shortDescription>
-        <value>Privacy Policy</value>
-    </labels>
-    <labels>
-        <fullName>Privacy_Policy_Link</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <value>https://proesisbio.com/privacy-policy</value>
-        <shortDescription>Privacy Policy Link</shortDescription>
-    </labels>
-    <labels>
         <fullName>Point_Brand_Name</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -1280,5 +1259,19 @@
         <protected>true</protected>
         <shortDescription>Rewards Video Link</shortDescription>
         <value>https://www.youtube.com/embed/</value>
+    </labels>
+    <labels>
+        <fullName>Missing_Card_Message</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Missing Card Message</shortDescription>
+        <value>No card has been set up for your account. Please schedule a visit to a center to get a payment card.</value>
+    </labels>
+    <labels>
+        <fullName>Schedule_Visit_Action</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Schedule Visit Action Label</shortDescription>
+        <value>Schedule Visit</value>
     </labels>
 </CustomLabels>

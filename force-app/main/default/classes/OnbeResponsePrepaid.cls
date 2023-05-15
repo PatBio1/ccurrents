@@ -109,6 +109,17 @@ public class OnbeResponsePrepaid {
     public class UpdateAccountStatusResponse {
         private String[] apex_schema_type_info = new String[]{uriAccountManagementPrepaidResponse,'true','false'};
         private String[] field_order_type_info = new String[]{};
+
+		public Integer code;
+		public String sub_code;
+
+		public UpdateAccountStatusResponse(DOM.XmlNode responseNode) {
+			DOM.XmlNode codeNode = responseNode.getChildElement('code', uriAccountManagementPrepaidResponse);
+			this.code = (codeNode == null) ? null : Integer.valueOf(codeNode.getText());
+
+			DOM.XmlNode sub_codeNode = responseNode.getChildElement('sub_code', uriAccountManagementPrepaidResponse);
+			this.sub_code = (sub_codeNode == null || sub_codeNode.getAttributeValue('nil', 'http://www.w3.org/2001/XMLSchema-instance') == 'true') ? null : sub_codeNode.getText();
+		}
     }
 
     public class AssignPackageResponse {

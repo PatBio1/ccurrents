@@ -253,6 +253,14 @@
         <name>Last_Name</name>
     </customLabels>
     <customLabels>
+        <label>Términos legales</label>
+        <name>Legal_Terms</name>
+    </customLabels>
+    <customLabels>
+        <label>http://cloud.m.proesisbio.com/combined</label>
+        <name>Legal_Terms_Link</name>
+    </customLabels>
+    <customLabels>
         <label>Acceso</label>
         <name>Login</name>
     </customLabels>
@@ -295,6 +303,10 @@
     <customLabels>
         <label>Segundo nombre</label>
         <name>Middle_Name</name>
+    </customLabels>
+    <customLabels>
+        <label>No se ha configurado ninguna tarjeta para su cuenta. Programe una visita a un centro para obtener una tarjeta de pago.</label>
+        <name>Missing_Card_Message</name>
     </customLabels>
     <customLabels>
         <label>Teléfono móvil</label>
@@ -425,14 +437,6 @@
         <name>Previous</name>
     </customLabels>
     <customLabels>
-        <label>Política de privacidad</label>
-        <name>Privacy_Policy</name>
-    </customLabels>
-    <customLabels>
-        <label>https://proesisbio.com/privacy-policy</label>
-        <name>Privacy_Policy_Link</name>
-    </customLabels>
-    <customLabels>
         <label>Su solicitud ha sido enviada y anotada para su visita programada el {0}. Por favor traiga documentación con prueba de cambio a esta visita para cambiar su información.</label>
         <name>Profile_Change_Confirmation</name>
     </customLabels>
@@ -521,6 +525,10 @@
         <name>Schedule_Your_1st_Appointment</name>
     </customLabels>
     <customLabels>
+        <label>Programar Visita</label>
+        <name>Schedule_Visit_Action</name>
+    </customLabels>
+    <customLabels>
         <label>Programado</label>
         <name>Scheduled</name>
     </customLabels>
@@ -599,18 +607,6 @@
     <customLabels>
         <label>Taxi</label>
         <name>Taxi</name>
-    </customLabels>
-    <customLabels>
-        <label>Términos de servicio</label>
-        <name>Terms_of_Service</name>
-    </customLabels>
-    <customLabels>
-        <label>https://proesisbio.com/terms-of-use</label>
-        <name>Terms_of_Service_Link</name>
-    </customLabels>
-    <customLabels>
-        <label>http://cloud.m.proesisbio.com/combined</label>
-        <name>Terms_of_Service_Privacy_Policy_Link</name>
     </customLabels>
     <customLabels>
         <label>Cuéntanos acerca de ti</label>

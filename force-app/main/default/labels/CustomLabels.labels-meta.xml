@@ -1295,4 +1295,144 @@
         <shortDescription>Schedule Visit Action Label</shortDescription>
         <value>Schedule Visit</value>
     </labels>
+    <labels>
+        <fullName>Learn_More_Section_Title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Learn More</shortDescription>
+        <value>Learn More</value>
+    </labels>
+    <labels>
+        <fullName>New_Donor_Section_Title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>New Donor</shortDescription>
+        <value>New Donor</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonorIdReqs_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donor ID Requirements</shortDescription>
+        <value>Donor ID Requirements</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonorIdReqs_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>8oMg69UavF0</shortDescription>
+        <value>8oMg69UavF0</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_ApptRules_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Appointment Rules</shortDescription>
+        <value>Appointment Rules</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_ApptRules_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>zuNA9p-WTDk</shortDescription>
+        <value>zuNA9p-WTDk</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonationProcess_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>The Donation Process</shortDescription>
+        <value>The Donation Process</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonationProcess_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>LkchqBcVp8s</shortDescription>
+        <value>LkchqBcVp8s</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_FirstAppointment_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>1st Appointment Expectations</shortDescription>
+        <value>1st Appointment Expectations</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_FirstAppointment_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>y3ynYyX1Ins</shortDescription>
+        <value>y3ynYyX1Ins</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_HealthHistory_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Health History Questionnaire</shortDescription>
+        <value>Health History Questionnaire</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_HealthHistory_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>N3JkWryjKqM</shortDescription>
+        <value>N3JkWryjKqM</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_LoyaltyProgram_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loyalty Program Overview</shortDescription>
+        <value>Loyalty Program Overview</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_LoyaltyProgram_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>iVX0MW6WP0U</shortDescription>
+        <value>iVX0MW6WP0U</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_HealthHistoryOnline_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Health History Online</shortDescription>
+        <value>Health History Online</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_HealthHistoryOnline_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>rzLx8Xay2WY</shortDescription>
+        <value>rzLx8Xay2WY</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_RedeemingPoints_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Redeeming PlasmaPoints</shortDescription>
+        <value>Redeeming PlasmaPoints</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_RedeemingPoints_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>cH-bmEHGBOs</shortDescription>
+        <value>cH-bmEHGBOs</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonationDay_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>It's Donation Day</shortDescription>
+        <value>It's Donation Day</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonationDay_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>iu4uvkT0ADE</shortDescription>
+        <value>iu4uvkT0ADE</value>
+    </labels>
 </CustomLabels>

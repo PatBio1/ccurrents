@@ -1,53 +1,25 @@
 <template>
-
-    <template if:true={showDonorTips}>
-        <div class="slds-var-p-around_medium">
-            <div class="title-medium slds-m-bottom_medium">
-                {labels.donorTips}
-            </div>
-
-            <lightning-tabset class="main-tabs">
-                <lightning-tab label={labels.all}>
-                    <template for:each={articles} for:item="article" for:index="articleIndex">
-                        <div key={article.id} class="slds-m-bottom_small">
-                            <img src={article.image} onclick={onArticleClick}/>
-
-                            <div class="slds-grid" style="background-color: #E5DDF4;">
-                                <div class="slds-col slds-size_5-of-6 slds-var-p-vertical_small slds-var-p-left_small">
-                                    {article.name}
-                                </div>
-                                <div class="slds-col slds-size_1-of-6 slds-var-p-vertical_small slds-var-p-right_small slds-text-align_right">
-                                    <lightning-icon if:true={article.bookmarked} icon-name="utility:bookmark" size="x-small" class="bookmarked-icon" data-article={articleIndex} onclick={onBookmarkClick}></lightning-icon>
-                                    <lightning-icon if:false={article.bookmarked} icon-name="utility:bookmark" size="x-small" class="bookmark-icon" data-article={articleIndex} onclick={onBookmarkClick}></lightning-icon>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </lightning-tab>
-
-                <lightning-tab label={labels.saved}>
-                    <template for:each={savedArticles} for:item="article" for:index="articleIndex">
-                        <div key={article.id} class="slds-m-bottom_small">
-                            <img src={article.image} onclick={onArticleClick}/>
-
-                            <div class="slds-grid" style="background-color: #E5DDF4;">
-                                <div class="slds-col slds-size_5-of-6 slds-var-p-vertical_small slds-var-p-left_small">
-                                    {article.name}
-                                </div>
-                                <div class="slds-col slds-size_1-of-6 slds-var-p-vertical_small slds-var-p-right_small slds-text-align_right">
-                                    <lightning-icon if:true={article.bookmarked} icon-name="utility:bookmark" size="x-small" class="bookmarked-icon" data-article={articleIndex} onclick={onBookmarkClick}></lightning-icon>
-                                    <lightning-icon if:false={article.bookmarked} icon-name="utility:bookmark" size="x-small" class="bookmark-icon" data-article={articleIndex} onclick={onBookmarkClick}></lightning-icon>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </lightning-tab>
-            </lightning-tabset>
+    <div class="slds-var-p-around_medium">
+        <div class="title-medium slds-m-bottom_medium">
+            {labels.donorTips}
         </div>
-    </template>
 
-    <div if:true={showArticle}>
-        <c-article back-label={labels.backToDonorTips} onback={onArticleBackButtonClick}></c-article>
+        <lightning-tabset class="main-tabs">
+            <template if:true={tipLinks} for:each={tipLinks.sections} for:item="tipLinkSection">
+                <lightning-tab key={tipLinkSection.title} label={tipLinkSection.title}>
+                    <div class="tip-section">
+                        <template for:each={tipLinkSection.links} for:item="tipLink">
+                            <div key={tipLink.youtubeVideoId} class="tip-link" onclick={handleSelectDonorTip} data-tip-link-id={tipLink.youtubeVideoId}>
+                                {tipLink.linkText}
+
+                                <span style="margin-left: auto;">
+                                    <lightning-icon icon-name="utility:play" size="small"></lightning-icon>
+                                </span>
+                            </div>
+                        </template>
+                    </div>
+                </lightning-tab>
+            </template>
+        </lightning-tabset>
     </div>
-
 </template>

@@ -43,6 +43,24 @@ import deleteProfileInstructions from '@salesforce/label/c.Delete_Profile_Instru
 import donorExists from '@salesforce/label/c.Donor_Exists';
 import donorExistsInstructions from '@salesforce/label/c.Donor_Exists_Instructions';
 import donorTips from '@salesforce/label/c.Donor_Tips';
+import donorTipApptRulesText from '@salesforce/label/c.Donor_Tip_ApptRules_Text';
+import donorTipApptRulesVideoId from '@salesforce/label/c.Donor_Tip_ApptRules_VideoId';
+import donorTipDonationDayText from '@salesforce/label/c.Donor_Tip_DonationDay_Text';
+import donorTipDonationDayVideoId from '@salesforce/label/c.Donor_Tip_DonationDay_VideoId';
+import donorTipDonationProcessText from '@salesforce/label/c.Donor_Tip_DonationProcess_Text';
+import donorTipDonationProcessVideoId from '@salesforce/label/c.Donor_Tip_DonationProcess_VideoId';
+import donorTipDonorIdReqsText from '@salesforce/label/c.Donor_Tip_DonorIdReqs_Text';
+import donorTipDonorIdReqsVideoId from '@salesforce/label/c.Donor_Tip_DonorIdReqs_VideoId';
+import donorTipFirstAppointmentText from '@salesforce/label/c.Donor_Tip_FirstAppointment_Text';
+import donorTipFirstAppointmentVideoId from '@salesforce/label/c.Donor_Tip_FirstAppointment_VideoId';
+import donorTipHealthHistoryText from '@salesforce/label/c.Donor_Tip_HealthHistory_Text';
+import donorTipHealthHistoryVideoId from '@salesforce/label/c.Donor_Tip_HealthHistory_VideoId';
+import donorTipHealthHistoryOnlineText from '@salesforce/label/c.Donor_Tip_HealthHistoryOnline_Text';
+import donorTipHealthHistoryOnlineVideoId from '@salesforce/label/c.Donor_Tip_HealthHistoryOnline_VideoId';
+import donorTipLoyaltyProgramText from '@salesforce/label/c.Donor_Tip_LoyaltyProgram_Text';
+import donorTipLoyaltyProgramVideoId from '@salesforce/label/c.Donor_Tip_LoyaltyProgram_VideoId';
+import donorTipRedeemingPointsText from '@salesforce/label/c.Donor_Tip_RedeemingPoints_Text';
+import donorTipRedeemingPointsVideoId from '@salesforce/label/c.Donor_Tip_RedeemingPoints_VideoId';
 import email from '@salesforce/label/c.Email';
 import english from '@salesforce/label/c.English';
 import enterCode from '@salesforce/label/c.Enter_Code';
@@ -61,6 +79,7 @@ import incorrectCodeMessage from '@salesforce/label/c.Incorrect_Code_Message';
 import invalidZipCode from '@salesforce/label/c.Invalid_Zip_Code';
 import joinUs from '@salesforce/label/c.Join_Us';
 import lastName from '@salesforce/label/c.Last_Name';
+import learnMoreSectionTitle from '@salesforce/label/c.Learn_More_Section_Title';
 import legalTerms from '@salesforce/label/c.Legal_Terms';
 import legalTermsLink from '@salesforce/label/c.Legal_Terms_Link';
 import login from '@salesforce/label/c.Login';
@@ -84,6 +103,7 @@ import myLocation from '@salesforce/label/c.My_Location';
 import myProfile from '@salesforce/label/c.My_Profile';
 import myRewards from '@salesforce/label/c.My_Rewards';
 import next from '@salesforce/label/c.Next';
+import newDonorSectionTitle from '@salesforce/label/c.New_Donor_Section_Title';
 import nickname from '@salesforce/label/c.Nickname';
 import notifications from '@salesforce/label/c.Notifications';
 import noPaymentsYet from '@salesforce/label/c.No_Payments_Yet';
@@ -226,6 +246,24 @@ const labels = {
     donorExists,
     donorExistsInstructions,
     donorTips,
+    donorTipApptRulesText,
+    donorTipApptRulesVideoId,
+    donorTipDonationDayText,
+    donorTipDonationDayVideoId,
+    donorTipDonationProcessText,
+    donorTipDonationProcessVideoId,
+    donorTipDonorIdReqsText,
+    donorTipDonorIdReqsVideoId,
+    donorTipFirstAppointmentText,
+    donorTipFirstAppointmentVideoId,
+    donorTipHealthHistoryText,
+    donorTipHealthHistoryVideoId,
+    donorTipHealthHistoryOnlineText,
+    donorTipHealthHistoryOnlineVideoId,
+    donorTipLoyaltyProgramText,
+    donorTipLoyaltyProgramVideoId,
+    donorTipRedeemingPointsText,
+    donorTipRedeemingPointsVideoId,
     email,
     english,
     enterCode,
@@ -244,6 +282,7 @@ const labels = {
     invalidZipCode,
     joinUs,
     lastName,
+    learnMoreSectionTitle,
     legalTerms,
     legalTermsLink,
     login,
@@ -267,6 +306,7 @@ const labels = {
     myProfile,
     myRewards,
     next,
+    newDonorSectionTitle,
     nickname,
     notifications,
     noPaymentsYet,

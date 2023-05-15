@@ -1,55 +1,71 @@
-import { track, LightningElement } from 'lwc';
+import { LightningElement } from 'lwc';
 import labels from 'c/labelService';
-import proesisDonor from '@salesforce/resourceUrl/ProesisDonor';
 
-const PAGE_DONOR_TIPS = 'Donor Tips';
-const PAGE_ARTICLE = 'Article';
+import DonorTipVideoModal from 'c/donorTipVideoModal';
+
+const AVAILABLE_TIP_LINKS = {
+    sections: [
+        {
+            title: labels.learnMoreSectionTitle,
+            links: [
+                {
+                    linkText: labels.donorTipDonorIdReqsText,
+                    youtubeVideoId: labels.donorTipDonorIdReqsVideoId // English vs Spanish links are different, will be handled via translations
+                },
+                {
+                    linkText: labels.donorTipApptRulesText,
+                    youtubeVideoId: labels.donorTipApptRulesVideoId
+                },
+                {
+                    linkText: labels.donorTipDonationProcessText,
+                    youtubeVideoId: labels.donorTipDonationProcessVideoId
+                },
+                {
+                    linkText: labels.donorTipHealthHistoryText,
+                    youtubeVideoId: labels.donorTipHealthHistoryVideoId
+                }
+            ]
+        },
+        {
+            title: labels.newDonorSectionTitle,
+            links: [
+                {
+                    linkText: labels.donorTipFirstAppointmentText,
+                    youtubeVideoId: labels.donorTipFirstAppointmentVideoId
+                },
+                {
+                    linkText: labels.donorTipLoyaltyProgramText,
+                    youtubeVideoId: labels.donorTipLoyaltyProgramVideoId
+                },
+                {
+                    linkText: labels.donorTipHealthHistoryOnlineText,
+                    youtubeVideoId: labels.donorTipHealthHistoryOnlineVideoId
+                },
+                {
+                    linkText: labels.donorTipRedeemingPointsText,
+                    youtubeVideoId: labels.donorTipRedeemingPointsVideoId
+                },
+                {
+                    linkText: labels.donorTipDonationDayText,
+                    youtubeVideoId: labels.donorTipDonationDayVideoId
+                }
+            ]
+        }
+    ]
+}
 
 export default class DonorTips extends LightningElement {
 
     labels = labels;
-    currentPage = PAGE_DONOR_TIPS;
+    tipLinks = AVAILABLE_TIP_LINKS;
 
-    @track articles = [
-        {
-            id: '5678',
-            name:'Dr. Miago answers questions',
-            image: proesisDonor + '/images/portrait-of-confident-practitioner-measuring-blood-pressure-of-patient-SBI-3009082352.png',
-            bookmarked: false
-        },
-        {
-            id: '1234',
-            name:'"My Donation Experience" by Jennifer Doe',
-            image: proesisDonor + '/images/portrait-of-confident-practitioner-measuring-blood-pressure-of-patient-SBI-3009082351.png',
-            bookmarked: true
-        }
-    ];
 
-    get showDonorTips() {
-        return (this.currentPage === PAGE_DONOR_TIPS);
+    handleSelectDonorTip(event) {
+        let targetYoutubeId = event.currentTarget.dataset.tipLinkId;
+
+        DonorTipVideoModal.open({
+            linkText: event.currentTarget.innerText,
+            youtubeVideoId: targetYoutubeId
+        });
     }
-
-    get showArticle() {
-        return (this.currentPage === PAGE_ARTICLE);
-    }
-
-    get savedArticles() {
-        return this.articles.filter(article => article.bookmarked);
-    }
-
-    onBookmarkClick(event) {
-        let articleIndex = event.target.dataset.article;
-        let article = this.articles[articleIndex];
-
-        article.bookmarked = !article.bookmarked;
-    }
-
-    onArticleClick() {
-        this.currentPage = PAGE_ARTICLE;
-    }
-
-    onArticleBackButtonClick() {
-        this.currentPage = PAGE_DONOR_TIPS;
-    }
-
 }

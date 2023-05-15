@@ -189,6 +189,78 @@
         <name>Donor_Tips</name>
     </customLabels>
     <customLabels>
+        <label>Requisitos de identificación del donante</label>
+        <name>Donor_Tip_ApptRules_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>vpsdPbLS4VU</label>
+        <name>Donor_Tip_ApptRules_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>El proceso de donación</label>
+        <name>Donor_Tip_DonationDay_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>5mqD4UuZSME</label>
+        <name>Donor_Tip_DonationDay_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>es el día de la donación</label>
+        <name>Donor_Tip_DonationProcess_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>1mjVgo1bu6g</label>
+        <name>Donor_Tip_DonationProcess_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Reglas de citas</label>
+        <name>Donor_Tip_DonorIdReqs_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>FH4MJhtQS14</label>
+        <name>Donor_Tip_DonorIdReqs_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Expectativas de la primera cita</label>
+        <name>Donor_Tip_FirstAppointment_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>RWl9FEdZO78</label>
+        <name>Donor_Tip_FirstAppointment_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Cuestionario de historial de salud</label>
+        <name>Donor_Tip_HealthHistory_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>E2TMCo8paDo</label>
+        <name>Donor_Tip_HealthHistory_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Historial de salud en línea</label>
+        <name>Donor_Tip_HealthHistoryOnline_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>t1mt01Fwb9I</label>
+        <name>Donor_Tip_HealthHistoryOnline_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Descripción general del programa de lealtad</label>
+        <name>Donor_Tip_LoyaltyProgram_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>deto30z9bko</label>
+        <name>Donor_Tip_LoyaltyProgram_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Canjear PlasmaPoints</label>
+        <name>Donor_Tip_RedeemingPoints_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>deto30z9bko</label>
+        <name>Donor_Tip_RedeemingPoints_VideoId</name>
+    </customLabels>
+    <customLabels>
         <label>Correo electrónico</label>
         <name>Email</name>
     </customLabels>
@@ -263,6 +335,10 @@
     <customLabels>
         <label>Apellido</label>
         <name>Last_Name</name>
+    </customLabels>
+    <customLabels>
+        <label>Aprende más</label>
+        <name>Learn_More_Section_Title</name>
     </customLabels>
     <customLabels>
         <label>Términos legales</label>
@@ -367,6 +443,10 @@
     <customLabels>
         <label>Siguiente</label>
         <name>Next</name>
+    </customLabels>
+    <customLabels>
+        <label>Nuevo donante</label>
+        <name>New_Donor_Section_Title</name>
     </customLabels>
     <customLabels>
         <label>Apodo</label>

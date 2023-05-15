@@ -1,51 +1,20 @@
 <template>
-
     <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
 
-    <template if:true={showHome}>
-        <div class="slds-var-p-around_medium" style="background-color: #E5DDF4">
-            <div class="slds-grid slds-grid_vertical-align-center slds-gutters">
-                <div class="slds-col slds-size_1-of-2">
-                    {labels.myBalance}:
-                </div>
-                <div if:true={donorRewardsInfo} class="slds-col slds-size_1-of-2 slds-text-align_right">
-                    <strong>
-                        ${donorRewardsInfo.donorBalance}<br/>
-                        {donorRewardsInfo.donorPoints} points
-                    </strong>
-                </div>
+    <div class="slds-var-p-around_medium" style="background-color: #E5DDF4">
+        <div class="slds-grid slds-grid_vertical-align-center slds-gutters">
+            <div class="slds-col slds-size_1-of-2">
+                {labels.myBalance}:
+            </div>
+
+            <div if:true={donorRewardsInfo} class="slds-col slds-size_1-of-2 slds-text-align_right">
+                <strong>
+                    ${donorRewardsInfo.donorBalance}<br/>
+                    {donorRewardsInfo.donorPoints} points
+                </strong>
             </div>
         </div>
-
-        <div class="slds-var-p-around_medium">
-            <template for:each={articleCategories} for:item="articleCategory" for:index="articleCategoryIndex">
-                <div key={articleCategory.name} class="slds-var-m-bottom_medium">
-                    <div class="title-medium slds-var-m-bottom_small">
-                        {articleCategory.name}
-                    </div>
-
-                    <template for:each={articleCategory.articles} for:item="article" for:index="articleIndex">
-                        <div key={article.id}>
-                            <img src={article.image} onclick={onArticleClick}/>
-
-                            <div class="slds-grid" style="background-color: #E5DDF4;">
-                                <div class="slds-col slds-size_5-of-6 slds-var-p-vertical_small slds-var-p-left_small">
-                                    {article.name}
-                                </div>
-                                <div class="slds-col slds-size_1-of-6 slds-var-p-vertical_small slds-var-p-right_small slds-text-align_right">
-                                    <lightning-icon if:true={article.bookmarked} icon-name="utility:bookmark" size="x-small" class="bookmarked-icon" data-category={articleCategoryIndex} data-article={articleIndex} onclick={onBookmarkClick}></lightning-icon>
-                                    <lightning-icon if:false={article.bookmarked} icon-name="utility:bookmark" size="x-small" class="bookmark-icon" data-category={articleCategoryIndex} data-article={articleIndex} onclick={onBookmarkClick}></lightning-icon>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </template>
-        </div>
-    </template>
-
-    <div if:true={showArticle}>
-        <c-article back-label={labels.back} onback={onArticleBackButtonClick}></c-article>
     </div>
 
+    <c-donor-tips></c-donor-tips>
 </template>

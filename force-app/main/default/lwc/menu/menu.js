@@ -29,6 +29,10 @@ export default class Menu extends NavigationMixin(LightningElement) {
     contactId;
     photoUrl;
 
+    get linkClass() {
+        return (this.isMobileApp ? 'slds-m-bottom_large' : 'slds-m-bottom_small') + ' slds-text-align_center';
+    }
+
     async renderedCallback() {
         if (!this.isInitialied && !this.isGuest) {
             this.isInitialied = true;

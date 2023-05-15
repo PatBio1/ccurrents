@@ -231,6 +231,13 @@
         <shortDescription>Contact And Support</shortDescription>
         <value>Contact &amp; Support</value>
     </labels>
+        <labels>
+        <fullName>Continue</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Continue</shortDescription>
+        <value>Continue</value>
+    </labels>
     <labels>
         <fullName>Copyright</fullName>
         <language>en_US</language>
@@ -265,6 +272,20 @@
         <protected>true</protected>
         <shortDescription>Delete Profile Instructions</shortDescription>
         <value>Deleting your Profile will remove you completely from the system, while inactivating your Profile will save time should you decide to enroll again.</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Exists</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donor Exists</shortDescription>
+        <value>Donor Exists</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Exists_Instructions</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donor Exists Instructions</shortDescription>
+        <value>A donor already exists with this email. Click &lt;b&gt;Continue&lt;/b&gt; below to proceed with setting a new password if you have lost your password. A verification email will be sent to &lt;b&gt;{0}&lt;/b&gt;.</value>
     </labels>
     <labels>
         <fullName>Donor_Tips</fullName>

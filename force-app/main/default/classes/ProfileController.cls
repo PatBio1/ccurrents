@@ -6,20 +6,92 @@ public without sharing class ProfileController {
     public static final Integer MAX_SMS_VERIFICATION_ATTEMPTS = 3;
 
     @AuraEnabled
-    public static Id upsertLead(Profile profile) {
+    public static Donor getDonor(Profile profile) {
         try {
             Util.testExceptionHandling();
 
+            Donor donor;
+
             if (String.isNotEmpty(profile.email)) {
-                List<List<SObject>> matchingEmailSObjects = [FIND :profile.email IN EMAIL FIELDS RETURNING User, Lead];
-                if (matchingEmailSObjects != null && matchingEmailSObjects.size() > 0 && (matchingEmailSObjects[0].size() > 0 || matchingEmailSObjects[1].size() > 0)) {
-                    List<Lead> matchingLeads = (List<Lead>) matchingEmailSObjects[1];
-    
-                    if ((matchingLeads.size() == 1 && matchingLeads[0].Id != profile.id) || matchingLeads.size() > 1) {
-                        throw new AuraHandledException('The provided email address is already in use.');
-                    }
+                String username = profile.email + Constants.USERNAME_SUFFIX;
+
+                List<User> users = [
+                    SELECT
+                        Id
+                    FROM
+                        User
+                    WHERE
+                        Username = :username
+                ];
+
+                if (users.size() > 0) {
+                    donor = new Donor();
+                    donor.id = users[0].Id;
+                    donor.type = 'User';
+                    return donor;
+                }
+
+                List<Lead> leads = [
+                    SELECT
+                        Id
+                    FROM
+                        Lead
+                    WHERE
+                        Email = :profile.email
+                    ORDER BY
+                        CreatedDate DESC
+                    LIMIT
+                        1
+                ];
+
+                if (leads.size() > 0 && leads[0].Id != profile.id) {
+                    donor = new Donor();
+                    donor.id = leads[0].Id;
+                    donor.type = 'Lead';
+                    return donor;
                 }
             }
+
+            return donor;
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
+    public static Profile getLead(Id leadId) {
+        try {
+            Util.testExceptionHandling();
+
+            Lead lead = [
+                SELECT
+                    Street, Street_Line_2__c, City, State, PostalCode, How_will_you_get_to_the_Center__c, Preferred_Name__c
+                FROM
+                    Lead
+                WHERE
+                    Id = :leadId
+            ];
+
+            Profile profile = new Profile();
+            profile.id = lead.Id;
+            profile.street = lead.Street;
+            profile.street2 = lead.Street_Line_2__c;
+            profile.city = lead.City;
+            profile.state = lead.State;
+            profile.postalCode = lead.PostalCode;
+            profile.howGetToCenter = lead.How_will_you_get_to_the_Center__c;
+            profile.nickname = lead.Preferred_Name__c;
+
+            return profile;
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
+        }
+    }
+
+    @AuraEnabled
+    public static Id upsertLead(Profile profile) {
+        try {
+            Util.testExceptionHandling();
 
             Lead lead = new Lead();
             lead.Id = profile.id;
@@ -27,7 +99,6 @@ public without sharing class ProfileController {
             lead.MiddleName = profile.middleName;
             lead.LastName = profile.lastName;
             lead.Suffix = profile.suffix;
-            lead.Preferred_Name__c = profile.nickname;
             lead.Email = profile.email;
             lead.MobilePhone = profile.mobilePhone;
             lead.Street = profile.street;
@@ -37,6 +108,7 @@ public without sharing class ProfileController {
             lead.PostalCode = profile.postalCode;
             lead.Country = 'US';
             lead.How_will_you_get_to_the_Center__c = profile.howGetToCenter;
+            lead.Preferred_Name__c = profile.nickname;
             upsert lead;
 
             return lead.Id;
@@ -503,14 +575,21 @@ public without sharing class ProfileController {
 
         Database.LeadConvertResult leadConvertResult = Database.convertLead(leadConvert);
 
-        update new Account(
+        Account account = new Account(
             Id = leadConvertResult.getAccountId(),
             RecordTypeId = Constants.DONOR_RECORD_TYPE_ID,
             Loyalty_Level__pc = LoyaltyLevelService.getDefault().Id,
-            First_Visit_Code__c = ScheduleUtils.createFirstVisitCode(),
             Status__pc = 'Registered',
             Last_Used_Center__pc = profile.centerId
         );
+
+        // Generate First Visit Code if this is not a legacy donor.
+        Boolean isLegacyDonor = [SELECT isLegacyDonor__c FROM Lead WHERE Id = :profile.id].isLegacyDonor__c;
+        if (!isLegacyDonor) {
+            account.First_Visit_Code__c = ScheduleUtils.createFirstVisitCode();
+        }
+
+        update account;
 
         AccountContactRelation accountContactRelation = new AccountContactRelation();
         accountContactRelation.AccountId = profile.centerId;
@@ -667,6 +746,16 @@ public without sharing class ProfileController {
 
         @AuraEnabled
         public Boolean isAcceptingMarketingComms {get; set;}
+
+    }
+
+    public class Donor {
+
+        @AuraEnabled
+        public Id id {get; set;}
+
+        @AuraEnabled
+        public String type {get; set;}
 
     }
 

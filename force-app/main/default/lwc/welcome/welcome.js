@@ -70,6 +70,15 @@ export default class Welcome extends NavigationMixin(LightningElement) {
         this.currentPage = PAGE_HOME;
     }
 
+    onDonorExists(event) {
+        this.currentPage = PAGE_LOGIN;
+
+        // Allow the DOM to render <c-login> before querying for it.
+        setTimeout(() => {
+            this.template.querySelector('c-login').donorExists(event.detail.email);
+        }, 100);
+    }
+
     onNextButtonClick(event) {
         this.center = event.detail.selectedCenter;
         this.currentPage = PAGE_PROFILE;

@@ -145,6 +145,10 @@
         <name>Contact_And_Support</name>
     </customLabels>
     <customLabels>
+        <label>Continuar</label>
+        <name>Continue</name>
+    </customLabels>
+    <customLabels>
         <label>© {0} Proesis Limited. Reservados todos los derechos.</label>
         <name>Copyright</name>
     </customLabels>
@@ -171,6 +175,14 @@
     <customLabels>
         <label>Pago de donación</label>
         <name>Donation_Payment_Message_Title</name>
+    </customLabels>
+    <customLabels>
+        <label>El donante existe</label>
+        <name>Donor_Exists</name>
+    </customLabels>
+    <customLabels>
+        <label>Ya existe un donante con este correo electrónico. Haga clic en &lt;b&gt;Continuar&lt;/b&gt; a continuación para continuar con la configuración de una nueva contraseña si la ha perdido. Se enviará un correo electrónico de verificación a &lt;b&gt;{0}&lt;/b&gt;.</label>
+        <name>Donor_Exists_Instructions</name>
     </customLabels>
     <customLabels>
         <label>Consejos para donantes</label>

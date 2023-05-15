@@ -107,6 +107,16 @@ public with sharing class DonorSelectorTest {
             );
             insert testRewardTransaction;
 
+            Payment_Method__c testPaymentMethod = new Payment_Method__c();
+            testPaymentMethod.Name = 'Test Payment Method';
+            testPaymentMethod.Donor__c = testRewardDonorContactId;
+            testPaymentMethod.Account_Token__c = '1050';
+            testPaymentMethod.Account_Number__c = '4968712468235235';
+            testPaymentMethod.Card_Number__c = '7890';
+            testPaymentMethod.Is_Active__c = true;
+            testPaymentMethod.isDefault__c = true;
+            insert testPaymentMethod;
+
             Proesis_Wallet__c newWalletSettings = new Proesis_Wallet__c(
                 Minimum_Withdrawal__c = 2000,
                 Points_to_Dollar__c = 100

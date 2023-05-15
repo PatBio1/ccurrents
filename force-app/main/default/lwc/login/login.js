@@ -1,4 +1,4 @@
-import { wire, LightningElement } from 'lwc';
+import { api, wire, LightningElement } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
 import login from '@salesforce/apex/LoginController.login';
 import sendVerificationEmail from '@salesforce/apex/LoginController.sendVerificationEmail';
@@ -79,6 +79,14 @@ export default class Menu extends LightningElement {
             util.isValidPassword(this.password) &&
             this.password.trim() === this.passwordConfirm?.trim()
         );
+    }
+
+    @api donorExists(email) {
+        this.email = email;
+
+        this.currentPage = PAGE_VERIFY_EMAIL;
+
+        this.onSendButtonClick();
     }
 
     onUsernameChange(event) {

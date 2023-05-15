@@ -63,7 +63,7 @@ public without sharing class DonorSelector {
         }
 
         Contact targetDonor = targetDonors[0];
-        if (targetDonor.Last_Onbe_Balance_Update__c == null || targetDonor.Last_Onbe_Balance_Update__c <= Date.today().addDays(-1)) {
+        if (targetDonor.Payment_Methods__r.size() > 0 && (targetDonor.Last_Onbe_Balance_Update__c == null || targetDonor.Last_Onbe_Balance_Update__c <= Date.today().addDays(-1))) {
             OnbePaymentService paymentService = new OnbePaymentService();
             Decimal donorOnbeBalance;
 

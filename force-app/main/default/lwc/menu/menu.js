@@ -1,7 +1,6 @@
 import { wire, LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { getRecord } from 'lightning/uiRecordApi';
-import formFactor from '@salesforce/client/formFactor';
 import isGuest from '@salesforce/user/isGuest';
 import userId from '@salesforce/user/Id';
 import userContactId from '@salesforce/schema/User.ContactId';
@@ -17,7 +16,7 @@ import getDonorRewardsInfo from '@salesforce/apex/DonorSelector.getDonorRewardsI
 export default class Menu extends NavigationMixin(LightningElement) {
 
     isGuest = isGuest;
-    isDesktop = (formFactor === 'Large');
+    isMobileApp = (navigator?.userAgent?.toLowerCase().indexOf('salesforce') !== -1);
     isInitialied = false;
 
     labels = labels;
@@ -29,6 +28,10 @@ export default class Menu extends NavigationMixin(LightningElement) {
     doesUserHaveUnreadNotifications = false;
     contactId;
     photoUrl;
+
+    get linkClass() {
+        return (this.isMobileApp ? 'slds-m-bottom_large' : 'slds-m-bottom_small') + ' slds-text-align_center';
+    }
 
     async renderedCallback() {
         if (!this.isInitialied && !this.isGuest) {

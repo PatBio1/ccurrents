@@ -2,6 +2,123 @@
 public with sharing class ProfileControllerTest {
 
     @isTest
+    static void testGetDonorUser() {
+        User experienceUser = TestUtil.createExperienceUser();
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.email = experienceUser.Email;
+
+            ProfileController.Donor donor = ProfileController.getDonor(profile);
+
+            System.assertNotEquals(null, donor);
+            System.assertEquals('User', donor.type);
+            System.assertEquals(experienceUser.Id, donor.id);
+        }
+    }
+
+    @isTest
+    static void testGetDonorLead() {
+        Lead lead;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.Email = 'donor@test.com';
+            insert lead;
+        }
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.email = lead.Email;
+
+            ProfileController.Donor donor = ProfileController.getDonor(profile);
+
+            System.assertNotEquals(null, donor);
+            System.assertEquals('Lead', donor.type);
+            System.assertEquals(lead.Id, donor.id);
+        }
+    }
+
+    @isTest
+    static void testGetDonorNotFound() {
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.email = 'donor@test.com';
+
+            ProfileController.Donor donor = ProfileController.getDonor(profile);
+
+            System.assertEquals(null, donor);
+        }
+    }
+
+    @isTest
+    static void testGetDonorException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.getDonor(new ProfileController.Profile());
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
+    static void testGetLead() {
+        Lead lead;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.Street = '123 Main Steet';
+            lead.Street_Line_2__c = 'Apt 100';
+            lead.City = 'Atlanta';
+            lead.State = 'GA';
+            lead.PostalCode = '30327';
+            lead.How_will_you_get_to_the_Center__c = 'Car';
+            lead.Preferred_Name__c = 'nickname';
+            insert lead;
+        }
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            ProfileController.Profile profile = ProfileController.getLead(lead.Id);
+
+            System.assertEquals('123 Main Steet', profile.street);
+            System.assertEquals('Apt 100', profile.street2);
+            System.assertEquals('Atlanta', profile.city);
+            System.assertEquals('GA', profile.state);
+            System.assertEquals('30327', profile.postalCode);
+            System.assertEquals('Car', profile.howGetToCenter);
+            System.assertEquals('nickname', profile.nickname);
+        }
+    }
+
+    @isTest
+    static void testGetLeadException() {
+        TestUtil.throwException = true;
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            Boolean exceptionThrown = false;
+
+            try {
+                ProfileController.getLead(null);
+            } catch (Exception e) {
+                exceptionThrown = true;
+            }
+
+            System.assert(exceptionThrown);
+        }
+    }
+
+    @isTest
     static void testUpsertLead() {
         System.runAs(TestUtil.createExperienceGuestUser()) {
             ProfileController.Profile profile = new ProfileController.Profile();
@@ -23,38 +140,6 @@ public with sharing class ProfileControllerTest {
             System.assertEquals('First', lead.FirstName);
             System.assertEquals('Middle', lead.MiddleName);
             System.assertEquals('Last', lead.LastName);
-        }
-    }
-
-    @isTest
-    static void testUpsertDuplicateLead() {
-        System.runAs(TestUtil.createExperienceGuestUser()) {
-            ProfileController.Profile profile = new ProfileController.Profile();
-            profile.firstName = 'First';
-            profile.middleName = 'Middle';
-            profile.lastName = 'Last';
-            profile.email = 'test123@test.com';
-            Id initialLeadId = ProfileController.upsertLead(profile);
-
-            // Set static test results to ensure SOSL query returns duplicate
-            Test.setFixedSearchResults(new List<Id> { initialLeadId });
-
-            profile = new ProfileController.Profile();
-            profile.firstName = 'First2';
-            profile.middleName = 'Middle2';
-            profile.lastName = 'Last2';
-            profile.email = 'test123@test.com';
-
-            Boolean wasExceptionThrown = false;
-            Test.startTest();
-            try {
-                ProfileController.upsertLead(profile);
-            } catch(AuraHandledException dupeExcepion) {
-                wasExceptionThrown = true;
-            }
-            Test.stopTest();
-
-            Assert.isTrue(wasExceptionThrown, 'Duplicate Lead Exception was not thrown');
         }
     }
 

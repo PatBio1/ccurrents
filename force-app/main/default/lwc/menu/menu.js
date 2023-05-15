@@ -113,6 +113,12 @@ export default class Menu extends NavigationMixin(LightningElement) {
         this.showMenu = false;
     }
 
+    onLegalTermsButtonClick() {
+        window.open(this.labels.legalTermsLink, '_self');
+
+        this.showMenu = false;
+    }
+
     onLogoutButtonClick() {
         logoutModal.open().then(() => {
             this.showMenu = false;
@@ -125,14 +131,6 @@ export default class Menu extends NavigationMixin(LightningElement) {
 
     onPhotoClick() {
         util.navigateToPage(this, 'Profile__c');
-    }
-
-    onPrivacyPolicySelect() {
-        window.open(this.labels.privacyPolicyLink);
-    }
-
-    onTermsOfServiceSelect() {
-        window.open(this.labels.termsOfServiceLink);
     }
 
 }

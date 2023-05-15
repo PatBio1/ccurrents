@@ -378,7 +378,9 @@ ct.Email AS Email,
 ct.Enable_Email__c AS EnableEmail,
 ct.Enable_Payment_Notifications__c AS EnablePaymentNotifications,
 ct.Loyalty_Level__c AS LoyaltyLevelId,
-ll.Name AS LoyaltyLevelName
+ll.Name AS LoyaltyLevelName,
+yl.Name AS YesterdayLoyaltyLevelName,
+IIF(ll.Name <> yl.Name, 1, 0) AS IsLoyaltyChange
 
 FROM Transaction__c_Salesforce AS t
 
@@ -452,6 +454,12 @@ FROM "Donor Payment" AS dpe)
 AS dpeEmail
 ON t.Id = dpeEmail.TransactionId
 
+LEFT JOIN (SELECT yln.SubscriberKey AS Id,
+yln.LevelName AS Name
+FROM "Yesterday Donor Loyalty Status" AS yln)
+AS yl
+ON yl.Id = t.Donor__c
+
 WHERE
 dpeEmail.TransactionId IS NULL AND
 DATEDIFF(DAY, DATEADD(DAY, -7, t.CreatedDate), t.CreatedDate) <= 7
@@ -504,3 +512,59 @@ ON cm.Id = br.CampaignMemberId
 WHERE
 br.CampaignMemberId IS NULL AND
 c.External_Id__c = "1"
+
+-- Yesterday Donor Loyalty Status
+SELECT c.Id AS SubscriberKey,
+c.Level__c AS LevelId,
+l.LevelName AS LevelName,
+GETDATE() AS DateUpdated
+
+FROM Contact_Salesforce AS c
+
+INNER JOIN (
+SELECT lev.Id AS LevelId,
+lev.Name AS LevelName
+FROM Level__c_Salesforce AS lev)
+AS l
+ON c.Level__c = l.LevelId
+
+WHERE Level__c IS NOT NULL
+
+-- Welcome New Donor, v2 (off User)
+SELECT u.Id AS UserId,
+u.UserName AS UserName,
+u.FirstName AS FirstName,
+u.Email AS Email,
+u.IsActive AS IsActive,
+u.ContactId AS SubscriberKey,
+p.Name AS ProfileName,
+IIF(v.VisitCount > 0, 1, 0) AS HasVisit
+
+FROM User_Salesforce AS u
+
+INNER JOIN (
+SELECT Id,
+Name
+FROM Profile_Salesforce)
+AS p
+ON u.ProfileId = p.Id
+
+LEFT JOIN
+(SELECT SubscriberKey
+FROM "Welcome New Donor"
+)
+AS wnd
+ON u.ContactId = wnd.SubscriberKey
+
+LEFT JOIN
+(SELECT Donor__c AS Donor,
+COUNT(Id) AS VisitCount
+FROM Visit__c_Salesforce
+GROUP BY Donor__c)
+AS v
+ON u.ContactId = v.Donor
+
+WHERE
+p.Name LIKE 'ProesisCustomer%' AND
+u.IsActive = 1 AND
+wnd.SubscriberKey IS NULL

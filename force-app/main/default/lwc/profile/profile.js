@@ -178,9 +178,16 @@ export default class Profile extends LightningElement {
     }
 
     onMobilePhoneChange(event) {
+        let previousValue = this.profile.mobilePhone;
+
         this.onFieldChange(event);
 
         let mobilePhoneInput = this.template.querySelector('lightning-input[data-field="mobilePhone"]');
+
+        // Skip over the hyphens when removing characters.
+        if ((this.profile.mobilePhone + '-') === previousValue) {
+            this.profile.mobilePhone = this.profile.mobilePhone.slice(0, -1);
+        }
 
         let formattedPhone = this.profile.mobilePhone.replace(/[^\d]/g, '');
 

@@ -585,12 +585,11 @@ public class OnbeWsPrepaid {
         req.setMethod('POST');
         req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
         req.setHeader('SOAPAction', 'blank');
-        //System.debug(doc.toXmlString());
         req.setBodyDocument(doc);
-        //System.debug(req.getBody());
+
         Http http = new Http();
         HTTPResponse res = http.send(req);
-        //System.debug(res.getBody());
+
         Dom.Document responseDoc = res.getBodyDocument();
         Dom.XmlNode rootNode = responseDoc.getRootElement();
         Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
@@ -600,7 +599,8 @@ public class OnbeWsPrepaid {
         return response_x;
       }
   
-      public OnbeResponsePrepaid.CreateAccountResponse createAccount_Http(String program_id,
+      public OnbeResponsePrepaid.CreateAccountResponse createAccount_Http(
+        String program_id,
         String promotion_id,
         String transaction_id,
         String partner_user_id,
@@ -609,7 +609,8 @@ public class OnbeWsPrepaid {
         OnbeDomainPrepaid.Card card,
         OnbeDomainPrepaid.Load load,
         OnbeDomainPrepaid.Link link,
-        OnbeDomainPrepaid.Registration registration) {
+        OnbeDomainPrepaid.Registration registration
+      ) {
           DOM.Document doc = new DOM.Document();
           DOM.XmlNode body = populateDoc(doc);
           DOM.XmlNode methodNode = body.addChildElement('createAccount', uriAccountManagementPrepaidWs, '');			
@@ -621,22 +622,18 @@ public class OnbeWsPrepaid {
           req.setMethod('POST');
           req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
           req.setHeader('SOAPAction', 'blank');
-          //System.debug(doc.toXmlString());
           req.setBodyDocument(doc);
           req.setTimeout(60000);
-          System.debug(req.getBody());
+
           Http http = new Http();
           HTTPResponse res = http.send(req);
-          //System.debug(res.getBody());
+
           Dom.Document responseDoc = res.getBodyDocument();
           Dom.XmlNode rootNode = responseDoc.getRootElement();
           Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
           Dom.XmlNode createAccountReturnNode = bodyNode.getChildElement('createAccountReturn', uriAccountManagementPrepaidWs);
 
           OnbeResponsePrepaid.CreateAccountResponse response_x = new OnbeResponsePrepaid.CreateAccountResponse(createAccountReturnNode);
-          System.debug(response_x.code);
-          System.debug(response_x.sub_code);
-
           return response_x;
       }
   

@@ -105,7 +105,7 @@ public without sharing class DonorCompInvocable {
         Map<Id, List<Txn_Line_Item__c>> donorIdToTxnLineItems = new Map<Id, List<Txn_Line_Item__c>>();
         Map<Id, List<Message__c>> donorIdToMessages = new Map<Id, List<Message__c>>();
         List<AddFundsRequest> addFundsRequests = new List<AddFundsRequest>();
-        List<Task> missingPaymentMethodTasks = new List<Task>();
+        Map<Id, Transaction_Log__c> donorIdToMissingPaymentMethodLogs = new Map<Id, Transaction_Log__c>();
 
         List<Level__c> lowestLoyaltyLevelByThreshold = [
             SELECT Id, Donation_Threshold__c, Threshold_Payment__c, Threshold_Points__c
@@ -160,28 +160,28 @@ public without sharing class DonorCompInvocable {
 
         Map<Id, Integer> donorIdToTotalVisitCount = DonorBatchableHelper.calculateDonor365DayVisitTotals(targetContacts);
         for (Contact foundContact : targetContacts) {
-            AddFundsRequest addFundsRequest;
-
-            // If there isn't a payment method that is active/not expired, then we need to notify the center managers that a donation couldn't be processed
-            if (foundContact.Payment_Methods__r == null || foundContact.Payment_Methods__r.size() == 0) {
-                missingPaymentMethodTasks.add(new Task(
-                    WhoId = foundContact.Id,
-                    Subject = Constants.MISSING_PAYMENT_METHOD_TASK_SUBJECT,
-                    Description = 'Donor ' + foundContact.Name + ' is missing an active payment method and could not be paid for visit ' + foundContact.Visits__r[0].Name
-                ));
-            } else {
-                addFundsRequest = new AddFundsRequest(foundContact.Payment_Methods__r[0].Account_Number__c);
-                addFundsRequests.add(addFundsRequest);
-            }
-
-            Map<Id, AggregateResult> activeLastPromotionDatesByTier = donorIdToActiveLastPromotionDatesByTier.get(foundContact.Id);
-            Integer totalVisitCount = donorIdToTotalVisitCount.get(foundContact.Id);
-
             if (foundContact.Visits__r == null || foundContact.Visits__r.size() == 0) {
                 continue;
             }
 
             Visit__c targetVisitRecord = foundContact.Visits__r[0];
+            AddFundsRequest addFundsRequest;
+
+            // If there isn't a payment method that is active/not expired, then we need to notify the center managers that a donation couldn't be processed
+            if (foundContact.Payment_Methods__r == null || foundContact.Payment_Methods__r.size() == 0) {
+                donorIdToMissingPaymentMethodLogs.put(foundContact.Id, new Transaction_Log__c(
+                    Datetime__c = System.now(),
+                    Message__c = 'Donor ' + foundContact.Name + ' is missing an active payment method and could not be paid for visit ' + foundContact.Visits__r[0].Name,
+                    Payment_Service__c = 'Onbe'
+                ));
+            } else {
+                addFundsRequest = new AddFundsRequest(foundContact.Id, targetVisitRecord.Id, foundContact.Payment_Methods__r[0].Account_Number__c);
+                addFundsRequests.add(addFundsRequest);
+            }
+
+            Map<Id, AggregateResult> activeLastPromotionDatesByTier = donorIdToActiveLastPromotionDatesByTier.get(foundContact.Id);
+            Integer totalVisitCount = donorIdToTotalVisitCount.get(foundContact.Id);
+            
             Rate__c targetRateRecord = centerAndDonationTypeToRate.get(
                 targetVisitRecord.Center_Donation_Type__r.Center__c + '-' + targetVisitRecord.Center_Donation_Type__r.Donation_Type__c
             );
@@ -197,7 +197,8 @@ public without sharing class DonorCompInvocable {
             donorIdToTransaction.put(foundContact.Id, new Transaction__c(
                 Donor__c = foundContact.Id,
                 Visit__c = targetVisitRecord.Id,
-                Type__c = 'Debit'
+                Type__c = 'Credit',
+                Status__c = addFundsRequest != null ? 'Complete' : 'Error' // If there isn't a request, that means there isn't a payment method, so the transaction is in error
             ));
 
             // Two Txn Line items need to be created, one for points, one for currency
@@ -310,35 +311,36 @@ public without sharing class DonorCompInvocable {
                 // Apply New Level Bonuses onto the line items
                 // Check to make sure the bonus level hasn't be triggered in the last 'Loyalty Threshold Window'
                 // If it has been triggered, the donor shouldn't receive the bonus
-                if (activeLastPromotionDatesByTier != null) {
-                    AggregateResult lastPromotionDate = activeLastPromotionDatesByTier.get(targetPromotionLevel.Id);
+                AggregateResult lastPromotionDate = activeLastPromotionDatesByTier?.get(targetPromotionLevel.Id);
+                if (
+                    activeLastPromotionDatesByTier == null ||
+                    lastPromotionDate == null ||
+                    lastPromotionDate.get('lastPromotionDate') == null
+                ) {
+                    List<Txn_Line_Item__c> lineItems = donorIdToTxnLineItems.get(foundContact.Id);
 
-                    if (lastPromotionDate == null || lastPromotionDate.get('lastPromotionDate') == null) {
-                        List<Txn_Line_Item__c> lineItems = donorIdToTxnLineItems.get(foundContact.Id);
+                    if (targetPromotionLevel.Threshold_Points__c != null && targetPromotionLevel.Threshold_Points__c > 0) {
+                        lineItems.add(new Txn_Line_Item__c(
+                            Item__c = 'Threshold Points',
+                            Quantity__c = 1,
+                            Type__c = 'Points',
+                            Unit_Cost__c = targetPromotionLevel.Threshold_Points__c,
+                            Promotion_Level__c = targetPromotionLevel.Id
+                        ));
+                    }
 
-                        if (targetPromotionLevel.Threshold_Points__c != null && targetPromotionLevel.Threshold_Points__c > 0) {
-                            lineItems.add(new Txn_Line_Item__c(
-                                Item__c = 'Threshold Points',
-                                Quantity__c = 1,
-                                Type__c = 'Points',
-                                Unit_Cost__c = targetPromotionLevel.Threshold_Points__c,
-                                Promotion_Level__c = targetPromotionLevel.Id
-                            ));
-                        }
+                    if (targetPromotionLevel.Threshold_Payment__c != null && targetPromotionLevel.Threshold_Payment__c > 0) {
+                        lineItems.add(new Txn_Line_Item__c(
+                            Item__c = 'Threshold Payment',
+                            Quantity__c = 1,
+                            Type__c = 'Currency',
+                            Unit_Cost__c = targetPromotionLevel.Threshold_Payment__c,
+                            Promotion_Level__c = targetPromotionLevel.Id
+                        ));
 
-                        if (targetPromotionLevel.Threshold_Payment__c != null && targetPromotionLevel.Threshold_Payment__c > 0) {
-                            lineItems.add(new Txn_Line_Item__c(
-                                Item__c = 'Threshold Payment',
-                                Quantity__c = 1,
-                                Type__c = 'Currency',
-                                Unit_Cost__c = targetPromotionLevel.Threshold_Payment__c,
-                                Promotion_Level__c = targetPromotionLevel.Id
-                            ));
-
-                            if (addFundsRequest != null) {
-                                addFundsRequest.comments.add('Threshold Payment');
-                                addFundsRequest.total += targetPromotionLevel.Threshold_Payment__c;
-                            }
+                        if (addFundsRequest != null) {
+                            addFundsRequest.comments.add('Threshold Payment');
+                            addFundsRequest.total += targetPromotionLevel.Threshold_Payment__c;
                         }
                     }
                 }
@@ -403,8 +405,15 @@ public without sharing class DonorCompInvocable {
         insert txnLineItems;
         insert messages;
 
-        if (missingPaymentMethodTasks.size() > 0) {
-            insert missingPaymentMethodTasks;
+        if (donorIdToMissingPaymentMethodLogs.size() > 0) {
+            for(Id donorIdWithTransactionLog : donorIdToMissingPaymentMethodLogs.keySet()) {
+                Transaction_Log__c transactionLog = donorIdToMissingPaymentMethodLogs.get(donorIdWithTransactionLog);
+                Transaction__c transactionRecord = donorIdToTransaction.get(donorIdWithTransactionLog);
+
+                transactionLog.Transaction__c = transactionRecord.Id;
+            }
+
+            insert donorIdToMissingPaymentMethodLogs.values();
         }
 
         // Process the add fund requests in an async context to avoid callout exception
@@ -490,15 +499,28 @@ public without sharing class DonorCompInvocable {
     }
 
     public class AddFundsRequest {
+        public Id donorContactId;
+        public Id visitId;
+
         public String accountNumber;
         public List<String> comments;
         public Decimal total;
 
-        public AddFundsRequest(String accountNumber) {
+        public Boolean isSuccessfullyProcessed;
+        public String processResponse; // code - sub_code
+
+        public AddFundsRequest(Id donorContactId, Id visitId, String accountNumber) {
+            this.donorContactId = donorContactId;
+            this.visitId = visitId;
             this.accountNumber = accountNumber;
 
             this.comments = new List<String>();
             this.total = 0;
+        }
+
+        public void recordAPIResponse(Boolean wasSuccessful, String response) {
+            this.isSuccessfullyProcessed = wasSuccessful;
+            this.processResponse = response;
         }
     }
 }

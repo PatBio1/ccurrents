@@ -11,10 +11,12 @@ public without sharing class AddFundsBatchable implements Database.Batchable<Don
 
     public void execute(Database.BatchableContext info, List<DonorCompInvocable.AddFundsRequest> scope) {
         Map<DonorCompInvocable.AddFundsRequest, Transaction__c> debitTransactions = AddFundsBatchableHelper.createDebitTransactions(scope);
-        AddFundsBatchableHelper.createDebitTransactionLineItems(debitTransactions);
-        AddFundsBatchableHelper.processAddFundsCallouts(new List<DonorCompInvocable.AddFundsRequest>(debitTransactions.keySet()));
+        Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c> transactionLineItems = AddFundsBatchableHelper.createDebitTransactionLineItems(
+            new List<DonorCompInvocable.AddFundsRequest>(debitTransactions.keySet())
+        );
 
-        AddFundsBatchableHelper.handleAddFundsResponses(debitTransactions);
+        AddFundsBatchableHelper.processAddFundsCallouts(new List<DonorCompInvocable.AddFundsRequest>(debitTransactions.keySet()));
+        AddFundsBatchableHelper.handleAddFundsResponses(debitTransactions, transactionLineItems);
     }
 
     public void finish(Database.BatchableContext bc) { }

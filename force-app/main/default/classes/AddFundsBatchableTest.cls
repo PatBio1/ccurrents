@@ -159,4 +159,9 @@ public without sharing class AddFundsBatchableTest {
             Assert.isNull(mockErrorTransaction.Retry_Next__c, 'The retry next date should be null');
         }
     }
+
+    @IsTest
+    static void testSuccessfulSchedule() {
+        System.schedule('Test Add Funds Run', '20 30 8 10 2 ?', new AddFundsBatchable());
+    }
 }

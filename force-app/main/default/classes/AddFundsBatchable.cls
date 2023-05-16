@@ -1,4 +1,4 @@
-public without sharing class AddFundsBatchable implements Database.Batchable<DonorCompInvocable.AddFundsRequest>, Database.AllowsCallouts, Database.Stateful {
+public without sharing class AddFundsBatchable implements System.Schedulable, Database.Batchable<DonorCompInvocable.AddFundsRequest>, Database.AllowsCallouts, Database.Stateful {
     List<DonorCompInvocable.AddFundsRequest> addFundRequests;
     Boolean isRetry;
 
@@ -60,6 +60,12 @@ public without sharing class AddFundsBatchable implements Database.Batchable<Don
         }
 
         return this.addFundRequests;
+    }
+
+    public void execute(SchedulableContext sc) {
+        // Callout limit is 100 per async transaction, therefore no more than 100 records
+        // A scheduled run also assumes that we are only retrying errored transactions
+        Database.executeBatch(new AddFundsBatchable(), 100);
     }
 
     public void execute(Database.BatchableContext info, List<DonorCompInvocable.AddFundsRequest> scope) {

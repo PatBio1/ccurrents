@@ -4,7 +4,17 @@ public with sharing class OnbeWsManageCard {
 	//Methods Excluded: updateAccountProfile, reissueCard, getCommentTypes, closeEscalation, addCommentEscalation, getEscalationAssignees, getCommentCategories, getCommentTypesByCategory
 	// Primary Port Class Name: AccountManagement	
 
-	private static final String uriCardManagementMainEndpoint = 'https://webservice-qa.northlane.com:4005/CardManagementV3/services/AccountManagement';
+	private static final String uriCardManagementMainEndpoint;
+
+	static {
+		Proesis_Settings__c orgSettings = Proesis_Settings__c.getOrgDefaults();
+
+		if (orgSettings.OnbePaymentService_CustSvcEndpoint__c != null) {
+			uriCardManagementMainEndpoint = orgSettings.OnbePaymentService_CustSvcEndpoint__c;
+		} else {
+			uriCardManagementMainEndpoint = 'https://webservice-qa.northlane.com:4005/CardManagementV3/services/AccountManagement';
+		}
+	}
 
 	public class AccountManagement {
 		public String endpoint_x = uriCardManagementMainEndpoint;

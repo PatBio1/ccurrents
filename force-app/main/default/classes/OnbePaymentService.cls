@@ -1,12 +1,27 @@
 public without sharing class OnbePaymentService implements PaymentServiceInterface {
     
     // Customer Service Static Values
-    private static final String CUSTOMER_SERVICE_APPLICATION_ID = '3037c66b967c3d338751f95d2cdac566';
+    private static final String CUSTOMER_SERVICE_APPLICATION_ID;
 
     // Account Management Static Values
-    private static final String PROGRAM_ID = '04011223';
+    private static final String PROGRAM_ID;
     private static final String PROMOTION_ID = '2';
     private static final String ACCESS_LEVEL = '02';
+
+    static {
+        Proesis_Settings__c orgSettings = Proesis_Settings__c.getOrgDefaults();
+        if (orgSettings.OnbePaymentService_AcctMgmtProgramID__c != null) {
+            PROGRAM_ID = orgSettings.OnbePaymentService_AcctMgmtProgramID__c;
+        } else {
+            PROGRAM_ID = '04011223';
+        }
+
+        if (orgSettings.OnbePaymentService_CustSvcAppID__c != null) {
+            CUSTOMER_SERVICE_APPLICATION_ID = orgSettings.OnbePaymentService_CustSvcAppID__c;
+        } else {
+            CUSTOMER_SERVICE_APPLICATION_ID = '3037c66b967c3d338751f95d2cdac566';
+        }
+    }
 
     public OnbePaymentService() {
 

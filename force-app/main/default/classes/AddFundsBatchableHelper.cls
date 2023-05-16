@@ -37,7 +37,7 @@ public with sharing class AddFundsBatchableHelper {
                 Type__c = 'Currency',
                 Unit_Cost__c = addFundsRequest.total,
                 Quantity__c = 1,
-                Item__c = 'Donation Payment'
+                Item__c = 'Debit Payment'
             ));
         }
 

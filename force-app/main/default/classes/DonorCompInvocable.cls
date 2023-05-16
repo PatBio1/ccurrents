@@ -417,7 +417,7 @@ public without sharing class DonorCompInvocable {
         }
 
         // Process the add fund requests in an async context to avoid callout exception
-        Database.executeBatch(new AddFundsBatchable(addFundsRequests));
+        Database.executeBatch(new AddFundsBatchable(addFundsRequests), 100);
     }
 
     public static void updateCampaignVisitCounter(List<Visit__c> visitsToProcess) {

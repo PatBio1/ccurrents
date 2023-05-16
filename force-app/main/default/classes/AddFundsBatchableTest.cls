@@ -56,7 +56,7 @@ public without sharing class AddFundsBatchableTest {
         Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 
         Test.startTest();
-        Database.executeBatch(new AddFundsBatchable(addFundsRequests));
+        Database.executeBatch(new AddFundsBatchable(addFundsRequests), 100);
         Test.stopTest();
 
         List<Transaction__c> createdDebitTransactions = [
@@ -93,7 +93,7 @@ public without sharing class AddFundsBatchableTest {
         TestUtil.throwException = true; // OnbePaymentService requires this
 
         Test.startTest();
-        Database.executeBatch(new AddFundsBatchable(addFundsRequests));
+        Database.executeBatch(new AddFundsBatchable(addFundsRequests), 100);
         Test.stopTest();
 
         List<Transaction__c> createdDebitTransactions = [

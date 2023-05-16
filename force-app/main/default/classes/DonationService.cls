@@ -4,12 +4,25 @@ public with sharing class DonationService {
     }
 
     public static void createExceptionTransactions(List<DonationExceptionRequest> exceptionRequests) {
+        List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
+        
         Set<Id> exceptionRateIds = new Set<Id>();
         Set<Id> visitIds = new Set<Id>();
 
         for (DonationExceptionRequest exceptionRequest : exceptionRequests) {
             exceptionRateIds.add(exceptionRequest.exceptionRateId);
             visitIds.add(exceptionRequest.visitId);
+        }
+
+        Map<Id, String> donorIdToPaymentMethodAccountNumber = new Map<Id, String>();
+        for(Payment_Method__c paymentMethod : [
+            SELECT Id, Account_Number__c
+            FROM Payment_Method__c
+            WHERE Donor__c IN (SELECT Donor__c FROM Visit__c WHERE Id IN :visitIds) AND
+                Is_Active__c = true AND 
+                isDefault__c = true
+        ]) {
+            donorIdToPaymentMethodAccountNumber.put(paymentMethod.Donor__c, paymentMethod.Account_Number__c);
         }
 
         // Verify Exception Limits haven't been exceeded before creating transactions
@@ -56,6 +69,15 @@ public with sharing class DonationService {
             if ((center.Individual_Exception_Limit__c != null && center.Individual_Exception_Limit__c > 0) && exceptionRate.Base_Payment__c > center.Individual_Exception_Limit__c) {
                 throw new CreateExceptionPaymentException(String.format(Constants.CENTER_INDIVIDUAL_EXCEPTION_LIMIT_ERROR, new List<object> { center.Name }));
             }
+
+            DonorCompInvocable.AddFundsRequest addFundsRequest = new DonorCompInvocable.AddFundsRequest(
+                exceptionRequest.donorId, exceptionRequest.visitId, donorIdToPaymentMethodAccountNumber.get(exceptionRequest.donorId)
+            );
+
+            addFundsRequest.total = exceptionRate.Base_Payment__c;
+            addFundsRequest.comments.add('Exception Payment - ' + exceptionRate.Description__c);
+
+            addFundsRequests.add(addFundsRequest);
         }
         
         // Assuming no exceptions, create the actual transactions
@@ -67,7 +89,7 @@ public with sharing class DonationService {
             Transaction__c exceptionTransaction = new Transaction__c(
                 Donor__c = exceptionRequest.donorId,
                 Visit__c = exceptionRequest.visitId,
-                Status__c = 'New',
+                Status__c = 'Complete',
                 Type__c = 'Credit',
                 SubType__c = 'Exception'
             );
@@ -101,6 +123,8 @@ public with sharing class DonationService {
             lineItems.add(lineItem);
         }
         insert lineItems;
+
+        Database.executeBatch(new AddFundsBatchable(addFundsRequests), 100);
     }
 
     public class DonationExceptionRequest {

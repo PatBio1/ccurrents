@@ -717,6 +717,18 @@
         <name>Track_Your_Progress</name>
     </customLabels>
     <customLabels>
+        <label>Divisa</label>
+        <name>Transaction_Column_Currency</name>
+    </customLabels>
+    <customLabels>
+        <label>Artículo</label>
+        <name>Transaction_Column_Item</name>
+    </customLabels>
+    <customLabels>
+        <label>Ver detalles</label>
+        <name>Transaction_View_Details</name>
+    </customLabels>
+    <customLabels>
         <label>Martes</label>
         <name>Tuesday</name>
     </customLabels>

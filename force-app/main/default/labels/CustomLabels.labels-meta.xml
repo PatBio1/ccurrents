@@ -1435,4 +1435,25 @@
         <shortDescription>iu4uvkT0ADE</shortDescription>
         <value>iu4uvkT0ADE</value>
     </labels>
+    <labels>
+        <fullName>Transaction_View_Details</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>View Details</shortDescription>
+        <value>View Details</value>
+    </labels>
+    <labels>
+        <fullName>Transaction_Column_Item</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Item</shortDescription>
+        <value>Item</value>
+    </labels>
+    <labels>
+        <fullName>Transaction_Column_Currency</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Currency</shortDescription>
+        <value>Currency</value>
+    </labels>
 </CustomLabels>

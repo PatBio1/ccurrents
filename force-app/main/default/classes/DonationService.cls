@@ -16,7 +16,7 @@ public with sharing class DonationService {
 
         Map<Id, String> donorIdToPaymentMethodAccountNumber = new Map<Id, String>();
         for(Payment_Method__c paymentMethod : [
-            SELECT Id, Account_Number__c
+            SELECT Id, Account_Number__c, Donor__c
             FROM Payment_Method__c
             WHERE Donor__c IN (SELECT Donor__c FROM Visit__c WHERE Id IN :visitIds) AND
                 Is_Active__c = true AND 

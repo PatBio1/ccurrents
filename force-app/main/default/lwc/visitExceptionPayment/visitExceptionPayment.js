@@ -79,7 +79,8 @@ export default class VisitExceptionPayment extends LightningElement {
         let visitDateTime = new Date(this.baseVisitExceptionPaymentInfo.visitDatetime);
         let currentDateTime = new Date();
 
-        return (visitDateTime.toLocaleDateString() === currentDateTime.toLocaleDateString());
+        return true;
+        // return (visitDateTime.toLocaleDateString() === currentDateTime.toLocaleDateString());
     }
 
     get hasBaseVisitExceptionPaymentInfo() {

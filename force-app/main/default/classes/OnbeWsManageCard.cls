@@ -361,7 +361,7 @@ public with sharing class OnbeWsManageCard {
 				String balanceString = availableBalanceNode.getText();
 
 				if (!String.isEmpty(balanceString)) {
-					this.balance = Decimal.valueOf(balanceString);
+					this.balance = Decimal.valueOf(balanceString) / 100;
 				}
 			}
 

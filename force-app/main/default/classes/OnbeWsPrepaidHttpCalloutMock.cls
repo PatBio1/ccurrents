@@ -10,6 +10,16 @@ global class OnbeWsPrepaidHttpCalloutMock implements HttpCalloutMock {
 
 	public static final String TEST_ACCOUNT_NUMBER = '1234567890123456';
 
+	public static Boolean returnError = false;
+
+	public OnbeWsPrepaidHttpCalloutMock() {
+		returnError = false;
+	}
+
+	public OnbeWsPrepaidHttpCalloutMock(Boolean returnError) {
+		OnbeWsPrepaidHttpCalloutMock.returnError = returnError;
+	}
+
 	global HTTPResponse respond(HTTPRequest req){
 		HttpResponse res = new HttpResponse();
 		res.setHeader('Content-Type', 'application/json');
@@ -29,6 +39,11 @@ global class OnbeWsPrepaidHttpCalloutMock implements HttpCalloutMock {
 		}
 		else if(methodNode[0].getName() == 'addFunds'){
 			DOM.XmlNode ResponseNode = bodyNode.addChildElement('addFundsReturn', uriAccountManagementPrepaidWs, null);
+
+			if (returnError) {
+				ResponseNode.addChildElement('code', 'http://response.accountmanagementapi.prepaid.citi.com', null).addTextNode('1');
+				ResponseNode.addChildElement('sub_code', 'http://response.accountmanagementapi.prepaid.citi.com', null).addTextNode('Error Message');
+			}
 		}
 		else if(methodNode[0].getName() == 'assignPackage'){
 			DOM.XmlNode ResponseNode = bodyNode.addChildElement('assignPackageReturn', uriAccountManagementPrepaidWs, null);

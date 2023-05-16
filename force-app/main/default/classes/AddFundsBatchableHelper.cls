@@ -11,37 +11,19 @@ public with sharing class AddFundsBatchableHelper {
             addFundsRequestToTransaction.put(addFundsRequest, debitTransaction);
         }
 
-        try {
-            insert addFundsRequestToTransaction.values();
-        } catch (Exception e) {
-            System.debug('Error inserting debit transactions: ' + e.getMessage());
-            throw e;
-        }
-
         return addFundsRequestToTransaction;
     }
     
-    public static Map<Id, Txn_Line_Item__c> createDebitTransactionLineItems(Map<DonorCompInvocable.AddFundsRequest, Transaction__c> addFundsRequestToTransaction) {
-        Map<Id, Txn_Line_Item__c> debitTransactionIdToLineItem = new Map<Id, Txn_Line_Item__c>();
+    public static Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c> createDebitTransactionLineItems(List<DonorCompInvocable.AddFundsRequest> addFundsRequests) {
+        Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c> debitTransactionIdToLineItem = new Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c>();
 
-        for(DonorCompInvocable.AddFundsRequest addFundsRequest : addFundsRequestToTransaction.keySet()) {
-            Transaction__c transactionRecord = addFundsRequestToTransaction.get(addFundsRequest);
-            Txn_Line_Item__c debitLineItem = new Txn_Line_Item__c();
-
-            debitLineItem.Transaction__c = transactionRecord.Id;
-            debitLineItem.Type__c = 'Currency';
-            debitLineItem.Unit_Cost__c = addFundsRequest.total;
-            debitLineItem.Quantity__c = 1;
-            debitLineItem.Item__c = 'Donation Payment';
-
-            debitTransactionIdToLineItem.put(transactionRecord.Id, debitLineItem);
-        }
-
-        try {
-            insert debitTransactionIdToLineItem.values();
-        } catch (Exception e) {
-            System.debug('Error inserting debit transaction line items: ' + e.getMessage());
-            throw e;
+        for(DonorCompInvocable.AddFundsRequest addFundsRequest : addFundsRequests) {
+            debitTransactionIdToLineItem.put(addFundsRequest, new Txn_Line_Item__c(
+                Type__c = 'Currency',
+                Unit_Cost__c = addFundsRequest.total,
+                Quantity__c = 1,
+                Item__c = 'Donation Payment'
+            ));
         }
 
         return debitTransactionIdToLineItem;
@@ -68,19 +50,39 @@ public with sharing class AddFundsBatchableHelper {
         }
     }
     
-    public static void handleAddFundsResponses(Map<DonorCompInvocable.AddFundsRequest, Transaction__c> addFundsRequestToTransaction) {
-        List<Transaction_Log__c> transactionLogs = new List<Transaction_Log__c>();
-        
+    public static void handleAddFundsResponses(
+        Map<DonorCompInvocable.AddFundsRequest, Transaction__c> addFundsRequestToTransaction,
+        Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c> addFundsRequestToTxnLineItem
+    ) {
+        // Transaction
         for(DonorCompInvocable.AddFundsRequest request : addFundsRequestToTransaction.keySet()) {
             Transaction__c transactionRecord = addFundsRequestToTransaction.get(request);
 
-            if (request.isSuccessfullyProcessed) {
-                transactionRecord.Status__c = 'Completed';
-                transactionRecord.Service__c = 'Onbe';
-            } else {
-                transactionRecord.Status__c = 'Error';
-                transactionRecord.Service__c = 'Onbe';
-                
+            transactionRecord.Status__c = (request.isSuccessfullyProcessed) ? 'Complete' : 'Error';
+            transactionRecord.Service__c = 'Onbe';
+        }
+
+        try {
+            insert addFundsRequestToTransaction.values();
+        } catch (Exception e) {
+            System.debug('Error updating debit transactions: ' + e.getMessage());
+            throw e;
+        }
+
+        // Transaction Line Item
+        for(DonorCompInvocable.AddFundsRequest request : addFundsRequestToTxnLineItem.keySet()) {
+            Txn_Line_Item__c txnLineItemRecord = addFundsRequestToTxnLineItem.get(request);
+            txnLineItemRecord.Transaction__c = addFundsRequestToTransaction.get(request).Id;
+        }
+        insert addFundsRequestToTxnLineItem.values();
+
+        // Transaction Log
+        List<Transaction_Log__c> transactionLogs = new List<Transaction_Log__c>();
+
+        for(DonorCompInvocable.AddFundsRequest request : addFundsRequestToTransaction.keySet()) {
+            Transaction__c transactionRecord = addFundsRequestToTransaction.get(request);
+
+            if (!request.isSuccessfullyProcessed) {
                 transactionLogs.add(new Transaction_Log__c(
                     Transaction__c = transactionRecord.Id,
                     Datetime__c = System.now(),
@@ -88,13 +90,6 @@ public with sharing class AddFundsBatchableHelper {
                     Payment_Service__c = 'Onbe'
                 ));
             }
-        }
-
-        try {
-            update addFundsRequestToTransaction.values();
-        } catch (Exception e) {
-            System.debug('Error updating debit transactions: ' + e.getMessage());
-            throw e;
         }
 
         if (transactionLogs.size() > 0) {

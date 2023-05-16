@@ -1,6 +1,7 @@
 public with sharing class AddFundsBatchableHelper {
     public static Map<DonorCompInvocable.AddFundsRequest, Transaction__c> createDebitTransactions(List<DonorCompInvocable.AddFundsRequest> requests) {
         Map<DonorCompInvocable.AddFundsRequest, Transaction__c> addFundsRequestToTransaction = new Map<DonorCompInvocable.AddFundsRequest, Transaction__c>();
+        Map<Id, Transaction__c> existingTransactions = new Map<Id, Transaction__c>();
 
         for(DonorCompInvocable.AddFundsRequest addFundsRequest : requests) {
             Transaction__c debitTransaction = new Transaction__c();
@@ -8,7 +9,21 @@ public with sharing class AddFundsBatchableHelper {
             debitTransaction.Status__c = 'Processing';
             debitTransaction.Donor__c = addFundsRequest.donorContactId;
             debitTransaction.Visit__c = addFundsRequest.visitId;
+            debitTransaction.Service__c = 'Onbe';
+
+            if (addFundsRequest.existingDebitTransactionId != null) {
+                debitTransaction.Id = addFundsRequest.existingDebitTransactionId;
+                existingTransactions.put(addFundsRequest.existingDebitTransactionId, debitTransaction);
+            } else {
+                debitTransaction.Retry_Count__c = 0;
+            }
+
             addFundsRequestToTransaction.put(addFundsRequest, debitTransaction);
+        }
+
+        for(Transaction__c exisitingTransaction : [SELECT Id, Retry_Count__c, Retry_Next__c FROM Transaction__c WHERE Id IN :existingTransactions.keySet()]) {
+            existingTransactions.get(exisitingTransaction.Id).Retry_Count__c = exisitingTransaction.Retry_Count__c + 1;
+            existingTransactions.get(exisitingTransaction.Id).Retry_Next__c = exisitingTransaction.Retry_Next__c;
         }
 
         return addFundsRequestToTransaction;
@@ -52,29 +67,49 @@ public with sharing class AddFundsBatchableHelper {
     
     public static void handleAddFundsResponses(
         Map<DonorCompInvocable.AddFundsRequest, Transaction__c> addFundsRequestToTransaction,
-        Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c> addFundsRequestToTxnLineItem
+        Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c> addFundsRequestToTxnLineItem,
+        Boolean isRetry
     ) {
+        Proesis_Settings__c proesisSettings = Proesis_Settings__c.getOrgDefaults();
+
+        Decimal baseRetryTime = proesisSettings.Payment_Service_Base_Retry__c;
+        if (baseRetryTime == null) {
+            baseRetryTime = 600;
+        }
+
+        Decimal multiplier = proesisSettings.Payment_Service_Multiplier__c;
+        if (multiplier == null) {
+            multiplier = 1.4;
+        }
+
         // Transaction
         for(DonorCompInvocable.AddFundsRequest request : addFundsRequestToTransaction.keySet()) {
             Transaction__c transactionRecord = addFundsRequestToTransaction.get(request);
-
             transactionRecord.Status__c = (request.isSuccessfullyProcessed) ? 'Complete' : 'Error';
-            transactionRecord.Service__c = 'Onbe';
+
+            if (!request.isSuccessfullyProcessed) {
+                Datetime nextRetryDatetime = System.now();
+                nextRetryDatetime = nextRetryDatetime.addSeconds((Integer)(baseRetryTime * Math.pow((Double)multiplier, (Double)transactionRecord.Retry_Count__c)));
+
+                transactionRecord.Retry_Next__c = nextRetryDatetime;
+            }
         }
 
         try {
-            insert addFundsRequestToTransaction.values();
+            upsert addFundsRequestToTransaction.values();
         } catch (Exception e) {
             System.debug('Error updating debit transactions: ' + e.getMessage());
-            throw e;
         }
 
         // Transaction Line Item
-        for(DonorCompInvocable.AddFundsRequest request : addFundsRequestToTxnLineItem.keySet()) {
-            Txn_Line_Item__c txnLineItemRecord = addFundsRequestToTxnLineItem.get(request);
-            txnLineItemRecord.Transaction__c = addFundsRequestToTransaction.get(request).Id;
+        if (!isRetry) {
+            for(DonorCompInvocable.AddFundsRequest request : addFundsRequestToTxnLineItem.keySet()) {
+                Txn_Line_Item__c txnLineItemRecord = addFundsRequestToTxnLineItem.get(request);
+                txnLineItemRecord.Transaction__c = addFundsRequestToTransaction.get(request).Id;
+            }
+
+            insert addFundsRequestToTxnLineItem.values();
         }
-        insert addFundsRequestToTxnLineItem.values();
 
         // Transaction Log
         List<Transaction_Log__c> transactionLogs = new List<Transaction_Log__c>();
@@ -97,7 +132,6 @@ public with sharing class AddFundsBatchableHelper {
                 insert transactionLogs;
             } catch (Exception e) {
                 System.debug('Error inserting transaction logs: ' + e.getMessage());
-                throw e;
             }
         }
     }

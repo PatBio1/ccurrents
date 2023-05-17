@@ -107,6 +107,16 @@ public with sharing class DonorSelectorTest {
             );
             insert testRewardTransaction;
 
+            Payment_Method__c testPaymentMethod = new Payment_Method__c();
+            testPaymentMethod.Name = 'Test Payment Method';
+            testPaymentMethod.Donor__c = testRewardDonorContactId;
+            testPaymentMethod.Account_Token__c = '1050';
+            testPaymentMethod.Account_Number__c = '4968712468235235';
+            testPaymentMethod.Card_Number__c = '7890';
+            testPaymentMethod.Is_Active__c = true;
+            testPaymentMethod.isDefault__c = true;
+            insert testPaymentMethod;
+
             Proesis_Wallet__c newWalletSettings = new Proesis_Wallet__c(
                 Minimum_Withdrawal__c = 2000,
                 Points_to_Dollar__c = 100
@@ -186,7 +196,7 @@ public with sharing class DonorSelectorTest {
 
         Assert.isNotNull(donorRewardsInfo, 'Expected to find donor rewards info');
         Assert.areEqual('Donor WithRewards', donorRewardsInfo.donorName, 'Expected to find donor name as Donor WithRewards');
-        Assert.areEqual(5000, donorRewardsInfo.donorBalance, 'Expected to find donor balance of $0'); // If nothing is returned in the callout, the balance is 0
+        Assert.areEqual(50, donorRewardsInfo.donorBalance, 'Expected to find donor balance of $50'); // If nothing is returned in the callout, the balance is 0
         Assert.areEqual(1000, donorRewardsInfo.donorPoints, 'Expected to find donor points worth 1000P');
         Assert.areEqual('Level 1', donorRewardsInfo.currentLoyaltyLevel, 'Expected to find donor current level as Level 1');
         Assert.areEqual('Level 2', donorRewardsInfo.nextLoyaltyLevel, 'Expected to find donor next level as Level 2');

@@ -3,7 +3,7 @@
     <lightning-spinner if:true={loading} size="medium"></lightning-spinner>
 
     <div if:true={showHome}>
-        <iframe width="100%" src="https://www.youtube.com/embed/aAUXJ8GlHus?controls=0" frameborder="0" allowfullscreen></iframe>
+        <iframe width="100%" src="https://www.youtube.com/embed/aab7mUifSjw?controls=0" frameborder="0" allowfullscreen></iframe>
 
         <div class="slds-text-align_center slds-var-p-around_medium">
             <lightning-button variant="base" label={labels.aboutDonationExperience} icon-name="utility:chevronright" icon-position="right" class="tertiary-button" onclick={onAboutButtonClick}></lightning-button>
@@ -71,7 +71,7 @@
         </div>
 
         <div class="" style="height: calc(100% - 130px);">
-            <iframe width="100%" height="100%" src={labels.termsOfServicePrivacyPolicyLink} frameborder="0"></iframe>
+            <iframe width="100%" height="100%" src={labels.legalTermsLink} frameborder="0"></iframe>
         </div>
 
         <div class="buttons slds-text-align_center">
@@ -91,7 +91,7 @@
     </div>
 
     <div if:true={showProfile}>
-        <c-profile center={center} onback={onBackButtonClick}></c-profile>
+        <c-profile center={center} onback={onBackButtonClick} ondonorexists={onDonorExists}></c-profile>
     </div>
 
     <div if:true={showLogin}>

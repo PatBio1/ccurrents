@@ -145,6 +145,10 @@
         <name>Contact_And_Support</name>
     </customLabels>
     <customLabels>
+        <label>Continuar</label>
+        <name>Continue</name>
+    </customLabels>
+    <customLabels>
         <label>© {0} Proesis Limited. Reservados todos los derechos.</label>
         <name>Copyright</name>
     </customLabels>
@@ -173,8 +177,88 @@
         <name>Donation_Payment_Message_Title</name>
     </customLabels>
     <customLabels>
+        <label>El donante existe</label>
+        <name>Donor_Exists</name>
+    </customLabels>
+    <customLabels>
+        <label>Ya existe un donante con este correo electrónico. Haga clic en &lt;b&gt;Continuar&lt;/b&gt; a continuación para continuar con la configuración de una nueva contraseña si la ha perdido. Se enviará un correo electrónico de verificación a &lt;b&gt;{0}&lt;/b&gt;.</label>
+        <name>Donor_Exists_Instructions</name>
+    </customLabels>
+    <customLabels>
         <label>Consejos para donantes</label>
         <name>Donor_Tips</name>
+    </customLabels>
+    <customLabels>
+        <label>Requisitos de identificación del donante</label>
+        <name>Donor_Tip_ApptRules_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>vpsdPbLS4VU</label>
+        <name>Donor_Tip_ApptRules_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>El proceso de donación</label>
+        <name>Donor_Tip_DonationDay_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>5mqD4UuZSME</label>
+        <name>Donor_Tip_DonationDay_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>es el día de la donación</label>
+        <name>Donor_Tip_DonationProcess_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>1mjVgo1bu6g</label>
+        <name>Donor_Tip_DonationProcess_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Reglas de citas</label>
+        <name>Donor_Tip_DonorIdReqs_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>FH4MJhtQS14</label>
+        <name>Donor_Tip_DonorIdReqs_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Expectativas de la primera cita</label>
+        <name>Donor_Tip_FirstAppointment_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>RWl9FEdZO78</label>
+        <name>Donor_Tip_FirstAppointment_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Cuestionario de historial de salud</label>
+        <name>Donor_Tip_HealthHistory_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>E2TMCo8paDo</label>
+        <name>Donor_Tip_HealthHistory_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Historial de salud en línea</label>
+        <name>Donor_Tip_HealthHistoryOnline_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>t1mt01Fwb9I</label>
+        <name>Donor_Tip_HealthHistoryOnline_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Descripción general del programa de lealtad</label>
+        <name>Donor_Tip_LoyaltyProgram_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>deto30z9bko</label>
+        <name>Donor_Tip_LoyaltyProgram_VideoId</name>
+    </customLabels>
+    <customLabels>
+        <label>Canjear PlasmaPoints</label>
+        <name>Donor_Tip_RedeemingPoints_Text</name>
+    </customLabels>
+    <customLabels>
+        <label>deto30z9bko</label>
+        <name>Donor_Tip_RedeemingPoints_VideoId</name>
     </customLabels>
     <customLabels>
         <label>Correo electrónico</label>
@@ -251,6 +335,18 @@
     <customLabels>
         <label>Apellido</label>
         <name>Last_Name</name>
+    </customLabels>
+    <customLabels>
+        <label>Aprende más</label>
+        <name>Learn_More_Section_Title</name>
+    </customLabels>
+    <customLabels>
+        <label>Términos legales</label>
+        <name>Legal_Terms</name>
+    </customLabels>
+    <customLabels>
+        <label>http://cloud.m.proesisbio.com/combined</label>
+        <name>Legal_Terms_Link</name>
     </customLabels>
     <customLabels>
         <label>Acceso</label>
@@ -349,6 +445,10 @@
         <name>Next</name>
     </customLabels>
     <customLabels>
+        <label>Nuevo donante</label>
+        <name>New_Donor_Section_Title</name>
+    </customLabels>
+    <customLabels>
         <label>Apodo</label>
         <name>Nickname</name>
     </customLabels>
@@ -427,14 +527,6 @@
     <customLabels>
         <label>Anterior</label>
         <name>Previous</name>
-    </customLabels>
-    <customLabels>
-        <label>Política de privacidad</label>
-        <name>Privacy_Policy</name>
-    </customLabels>
-    <customLabels>
-        <label>https://proesisbio.com/privacy-policy</label>
-        <name>Privacy_Policy_Link</name>
     </customLabels>
     <customLabels>
         <label>Su solicitud ha sido enviada y anotada para su visita programada el {0}. Por favor traiga documentación con prueba de cambio a esta visita para cambiar su información.</label>
@@ -609,18 +701,6 @@
         <name>Taxi</name>
     </customLabels>
     <customLabels>
-        <label>Términos de servicio</label>
-        <name>Terms_of_Service</name>
-    </customLabels>
-    <customLabels>
-        <label>https://proesisbio.com/terms-of-use</label>
-        <name>Terms_of_Service_Link</name>
-    </customLabels>
-    <customLabels>
-        <label>http://cloud.m.proesisbio.com/combined</label>
-        <name>Terms_of_Service_Privacy_Policy_Link</name>
-    </customLabels>
-    <customLabels>
         <label>Cuéntanos acerca de ti</label>
         <name>Tell_Us_About_You</name>
     </customLabels>
@@ -635,6 +715,18 @@
     <customLabels>
         <label>Seguimiento de su progreso</label>
         <name>Track_Your_Progress</name>
+    </customLabels>
+    <customLabels>
+        <label>Divisa</label>
+        <name>Transaction_Column_Currency</name>
+    </customLabels>
+    <customLabels>
+        <label>Artículo</label>
+        <name>Transaction_Column_Item</name>
+    </customLabels>
+    <customLabels>
+        <label>Ver detalles</label>
+        <name>Transaction_View_Details</name>
     </customLabels>
     <customLabels>
         <label>Martes</label>

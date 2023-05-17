@@ -231,6 +231,13 @@
         <shortDescription>Contact And Support</shortDescription>
         <value>Contact &amp; Support</value>
     </labels>
+        <labels>
+        <fullName>Continue</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Continue</shortDescription>
+        <value>Continue</value>
+    </labels>
     <labels>
         <fullName>Copyright</fullName>
         <language>en_US</language>
@@ -265,6 +272,20 @@
         <protected>true</protected>
         <shortDescription>Delete Profile Instructions</shortDescription>
         <value>Deleting your Profile will remove you completely from the system, while inactivating your Profile will save time should you decide to enroll again.</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Exists</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donor Exists</shortDescription>
+        <value>Donor Exists</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Exists_Instructions</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donor Exists Instructions</shortDescription>
+        <value>A donor already exists with this email. Click &lt;b&gt;Continue&lt;/b&gt; below to proceed with setting a new password if you have lost your password. A verification email will be sent to &lt;b&gt;{0}&lt;/b&gt;.</value>
     </labels>
     <labels>
         <fullName>Donor_Tips</fullName>
@@ -405,6 +426,20 @@
         <protected>true</protected>
         <shortDescription>Last Name</shortDescription>
         <value>Last Name</value>
+    </labels>
+    <labels>
+        <fullName>Legal_Terms</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Legal Terms</shortDescription>
+        <value>Legal Terms</value>
+    </labels>
+    <labels>
+        <fullName>Legal_Terms_Link</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Legal Terms Link</shortDescription>
+        <value>http://cloud.m.proesisbio.com/combined</value>
     </labels>
     <labels>
         <fullName>Login</fullName>
@@ -939,27 +974,6 @@
         <value>Tell us About You</value>
     </labels>
     <labels>
-        <fullName>Terms_of_Service</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Terms of Service</shortDescription>
-        <value>Terms of Service</value>
-    </labels>
-    <labels>
-        <fullName>Terms_of_Service_Link</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Terms of Service Link</shortDescription>
-        <value>https://proesisbio.com/terms-of-use</value>
-    </labels>
-    <labels>
-        <fullName>Terms_of_Service_Privacy_Policy_Link</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Terms of Service &amp; Privacy Policy Link</shortDescription>
-        <value>http://cloud.m.proesisbio.com/combined</value>
-    </labels>
-    <labels>
         <fullName>Thursday</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -1112,20 +1126,6 @@
         <protected>true</protected>
         <shortDescription>Zip Code</shortDescription>
         <value>Zip Code</value>
-    </labels>
-    <labels>
-        <fullName>Privacy_Policy</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <shortDescription>Privacy Policy</shortDescription>
-        <value>Privacy Policy</value>
-    </labels>
-    <labels>
-        <fullName>Privacy_Policy_Link</fullName>
-        <language>en_US</language>
-        <protected>true</protected>
-        <value>https://proesisbio.com/privacy-policy</value>
-        <shortDescription>Privacy Policy Link</shortDescription>
     </labels>
     <labels>
         <fullName>Point_Brand_Name</fullName>
@@ -1294,5 +1294,166 @@
         <protected>true</protected>
         <shortDescription>Schedule Visit Action Label</shortDescription>
         <value>Schedule Visit</value>
+    </labels>
+    <labels>
+        <fullName>Learn_More_Section_Title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Learn More</shortDescription>
+        <value>Learn More</value>
+    </labels>
+    <labels>
+        <fullName>New_Donor_Section_Title</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>New Donor</shortDescription>
+        <value>New Donor</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonorIdReqs_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Donor ID Requirements</shortDescription>
+        <value>Donor ID Requirements</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonorIdReqs_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>8oMg69UavF0</shortDescription>
+        <value>8oMg69UavF0</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_ApptRules_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Appointment Rules</shortDescription>
+        <value>Appointment Rules</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_ApptRules_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>zuNA9p-WTDk</shortDescription>
+        <value>zuNA9p-WTDk</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonationProcess_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>The Donation Process</shortDescription>
+        <value>The Donation Process</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonationProcess_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>LkchqBcVp8s</shortDescription>
+        <value>LkchqBcVp8s</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_FirstAppointment_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>1st Appointment Expectations</shortDescription>
+        <value>1st Appointment Expectations</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_FirstAppointment_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>y3ynYyX1Ins</shortDescription>
+        <value>y3ynYyX1Ins</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_HealthHistory_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Health History Questionnaire</shortDescription>
+        <value>Health History Questionnaire</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_HealthHistory_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>N3JkWryjKqM</shortDescription>
+        <value>N3JkWryjKqM</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_LoyaltyProgram_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Loyalty Program Overview</shortDescription>
+        <value>Loyalty Program Overview</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_LoyaltyProgram_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>iVX0MW6WP0U</shortDescription>
+        <value>iVX0MW6WP0U</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_HealthHistoryOnline_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Health History Online</shortDescription>
+        <value>Health History Online</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_HealthHistoryOnline_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>rzLx8Xay2WY</shortDescription>
+        <value>rzLx8Xay2WY</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_RedeemingPoints_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Redeeming PlasmaPoints</shortDescription>
+        <value>Redeeming PlasmaPoints</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_RedeemingPoints_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>cH-bmEHGBOs</shortDescription>
+        <value>cH-bmEHGBOs</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonationDay_Text</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>It's Donation Day</shortDescription>
+        <value>It's Donation Day</value>
+    </labels>
+    <labels>
+        <fullName>Donor_Tip_DonationDay_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>iu4uvkT0ADE</shortDescription>
+        <value>iu4uvkT0ADE</value>
+    </labels>
+    <labels>
+        <fullName>Transaction_View_Details</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>View Details</shortDescription>
+        <value>View Details</value>
+    </labels>
+    <labels>
+        <fullName>Transaction_Column_Item</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Item</shortDescription>
+        <value>Item</value>
+    </labels>
+    <labels>
+        <fullName>Transaction_Column_Currency</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Currency</shortDescription>
+        <value>Currency</value>
     </labels>
 </CustomLabels>

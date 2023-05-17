@@ -100,7 +100,7 @@ public without sharing class CoreSchedulerHandler {
         for(Visit__c visit : [
             SELECT Id, Status__c, Outcome__c, Appointment__c, Appointment__r.Booked__c, Appointment__r.Booked_Loyalty__c, Donor__r.Loyalty_Level__c 
             FROM Visit__c 
-            WHERE Id IN :visitIds
+            WHERE Id IN :visitIds AND Status__c IN ( 'New', 'Scheduled' )
         ]) {
             // Adjust Appointment Booked counts
             Appointment__c targetAppointmentSlot = appointmentSlotIdToRecord.get(visit.Appointment__c);

@@ -4,6 +4,10 @@ import { loadStyle } from 'lightning/platformResourceLoader';
 import constants from 'c/constants';
 import labels from 'c/labelService';
 import util from 'c/util';
+import donorExistsModal from 'c/donorExistsModal';
+import leadExistsModal from 'c/leadExistsModal';
+import getDonor from '@salesforce/apex/ProfileController.getDonor';
+import getLead from '@salesforce/apex/ProfileController.getLead';
 import upsertLead from '@salesforce/apex/ProfileController.upsertLead';
 import createUser from '@salesforce/apex/ProfileController.createUser';
 import createUserFromScheduler from '@salesforce/apex/ProfileController.createUserFromScheduler';
@@ -174,9 +178,28 @@ export default class Profile extends LightningElement {
     }
 
     onMobilePhoneChange(event) {
+        let previousValue = this.profile.mobilePhone;
+
         this.onFieldChange(event);
 
         let mobilePhoneInput = this.template.querySelector('lightning-input[data-field="mobilePhone"]');
+
+        // Skip over the hyphens when removing characters.
+        if ((this.profile.mobilePhone + '-') === previousValue) {
+            this.profile.mobilePhone = this.profile.mobilePhone.slice(0, -1);
+        }
+
+        let formattedPhone = this.profile.mobilePhone.replace(/[^\d]/g, '');
+
+        if (formattedPhone.length === 3) {
+            formattedPhone = formattedPhone + '-';
+        } else if (formattedPhone.length > 3 && formattedPhone.length < 7) {
+            formattedPhone = formattedPhone.slice(0, 3) + '-' + formattedPhone.slice(3) + (formattedPhone.length === 6 ? '-' : '');
+        } else if (formattedPhone.length >= 7) {
+            formattedPhone = formattedPhone.slice(0, 3) + '-' + formattedPhone.slice(3, 6) + '-' + formattedPhone.slice(6, 10);
+        }
+
+        mobilePhoneInput.value = this.profile.mobilePhone = formattedPhone;
 
         if (!this.phoneRegex.test(this.profile.mobilePhone)) {
             mobilePhoneInput.setCustomValidity(labels.mobilePhoneRequirements);
@@ -231,7 +254,76 @@ export default class Profile extends LightningElement {
     }
 
     onBasicProfileNextButtonClick() {
-        this.saveProfile(PAGE_ADDRESS);
+        this.loading = true;
+
+        const request = {
+            profile: this.profile
+        };
+
+        console.log('getDonor request', request);
+
+        getDonor(request).then(response => {
+            console.log('getDonor response', response);
+
+            if (response) {
+                // Existing User with same email.
+                if (response.type === 'User') {
+                    donorExistsModal.open({
+                        email: this.profile.email
+                    }).then((continou) => {
+                        if (continou) {
+                            this.dispatchEvent(new CustomEvent('donorexists', {detail: {email: this.profile.email}}));
+                        }
+
+                        this.close();
+                    });
+                }
+
+                // Existing Lead with same email.
+                else {
+                    leadExistsModal.open({
+                        email: this.profile.email
+                    }).then((continou) => {
+                        if (continou) {
+                            this.loadLead(response.id);
+                        }
+
+                        this.close();
+                    });
+                }
+
+                this.loading = false;
+            } else {
+                this.saveProfile(PAGE_ADDRESS);
+            }
+        }).catch((error) => {
+            util.showGuestToast(this, 'error', labels.error, error);
+
+            this.loading = false;
+        });
+    }
+
+    loadLead(leadId) {
+        this.loading = true;
+
+        const request = {
+            leadId: leadId
+        };
+
+        console.log('getLead request', request);
+
+        getLead(request).then(response => {
+            console.log('getLead response', response);
+
+            // Merge existing values with new values.
+            Object.assign(this.profile, response);
+
+            this.saveProfile(PAGE_ADDRESS);
+        }).catch((error) => {
+            util.showGuestToast(this, 'error', labels.error, error);
+
+            this.loading = false;
+        });
     }
 
     onAddressPreviousButtonClick() {

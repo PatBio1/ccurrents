@@ -34,12 +34,33 @@ import confirmVisitCancel from '@salesforce/label/c.Confirm_Visit_Cancel';
 import confirmVisitCancelAction from '@salesforce/label/c.Confirm_Visit_Cancel_Action';
 import congratulations from '@salesforce/label/c.Congratulations';
 import contactAndSupport from '@salesforce/label/c.Contact_And_Support';
+import continou from '@salesforce/label/c.Continue';
 import copyright from '@salesforce/label/c.Copyright';
 import deleteLabel from '@salesforce/label/c.Delete';
 import deleteProfile from '@salesforce/label/c.Delete_Profile';
 import deleteProfileConfirmation from '@salesforce/label/c.Delete_Profile_Confirmation';
 import deleteProfileInstructions from '@salesforce/label/c.Delete_Profile_Instructions';
+import donorExists from '@salesforce/label/c.Donor_Exists';
+import donorExistsInstructions from '@salesforce/label/c.Donor_Exists_Instructions';
 import donorTips from '@salesforce/label/c.Donor_Tips';
+import donorTipApptRulesText from '@salesforce/label/c.Donor_Tip_ApptRules_Text';
+import donorTipApptRulesVideoId from '@salesforce/label/c.Donor_Tip_ApptRules_VideoId';
+import donorTipDonationDayText from '@salesforce/label/c.Donor_Tip_DonationDay_Text';
+import donorTipDonationDayVideoId from '@salesforce/label/c.Donor_Tip_DonationDay_VideoId';
+import donorTipDonationProcessText from '@salesforce/label/c.Donor_Tip_DonationProcess_Text';
+import donorTipDonationProcessVideoId from '@salesforce/label/c.Donor_Tip_DonationProcess_VideoId';
+import donorTipDonorIdReqsText from '@salesforce/label/c.Donor_Tip_DonorIdReqs_Text';
+import donorTipDonorIdReqsVideoId from '@salesforce/label/c.Donor_Tip_DonorIdReqs_VideoId';
+import donorTipFirstAppointmentText from '@salesforce/label/c.Donor_Tip_FirstAppointment_Text';
+import donorTipFirstAppointmentVideoId from '@salesforce/label/c.Donor_Tip_FirstAppointment_VideoId';
+import donorTipHealthHistoryText from '@salesforce/label/c.Donor_Tip_HealthHistory_Text';
+import donorTipHealthHistoryVideoId from '@salesforce/label/c.Donor_Tip_HealthHistory_VideoId';
+import donorTipHealthHistoryOnlineText from '@salesforce/label/c.Donor_Tip_HealthHistoryOnline_Text';
+import donorTipHealthHistoryOnlineVideoId from '@salesforce/label/c.Donor_Tip_HealthHistoryOnline_VideoId';
+import donorTipLoyaltyProgramText from '@salesforce/label/c.Donor_Tip_LoyaltyProgram_Text';
+import donorTipLoyaltyProgramVideoId from '@salesforce/label/c.Donor_Tip_LoyaltyProgram_VideoId';
+import donorTipRedeemingPointsText from '@salesforce/label/c.Donor_Tip_RedeemingPoints_Text';
+import donorTipRedeemingPointsVideoId from '@salesforce/label/c.Donor_Tip_RedeemingPoints_VideoId';
 import email from '@salesforce/label/c.Email';
 import english from '@salesforce/label/c.English';
 import enterCode from '@salesforce/label/c.Enter_Code';
@@ -58,6 +79,9 @@ import incorrectCodeMessage from '@salesforce/label/c.Incorrect_Code_Message';
 import invalidZipCode from '@salesforce/label/c.Invalid_Zip_Code';
 import joinUs from '@salesforce/label/c.Join_Us';
 import lastName from '@salesforce/label/c.Last_Name';
+import learnMoreSectionTitle from '@salesforce/label/c.Learn_More_Section_Title';
+import legalTerms from '@salesforce/label/c.Legal_Terms';
+import legalTermsLink from '@salesforce/label/c.Legal_Terms_Link';
 import login from '@salesforce/label/c.Login';
 import logout from '@salesforce/label/c.Logout';
 import logoutConfirmation from '@salesforce/label/c.Logout_Confirmation';
@@ -79,6 +103,7 @@ import myLocation from '@salesforce/label/c.My_Location';
 import myProfile from '@salesforce/label/c.My_Profile';
 import myRewards from '@salesforce/label/c.My_Rewards';
 import next from '@salesforce/label/c.Next';
+import newDonorSectionTitle from '@salesforce/label/c.New_Donor_Section_Title';
 import nickname from '@salesforce/label/c.Nickname';
 import notifications from '@salesforce/label/c.Notifications';
 import noPaymentsYet from '@salesforce/label/c.No_Payments_Yet';
@@ -101,8 +126,6 @@ import prefix from '@salesforce/label/c.Prefix';
 import previous from '@salesforce/label/c.Previous';
 import primaryCenter from '@salesforce/label/c.Primary_Center';
 import primaryLanguage from '@salesforce/label/c.Primary_Language';
-import privacyPolicy from '@salesforce/label/c.Privacy_Policy';
-import privacyPolicyLink from '@salesforce/label/c.Privacy_Policy_Link';
 import profileChangeConfirmation from '@salesforce/label/c.Profile_Change_Confirmation';
 import profileChangeNoVisit from '@salesforce/label/c.Profile_Change_No_Visit';
 import promotionChartDescription from '@salesforce/label/c.Promotion_Chart_Description';
@@ -146,11 +169,11 @@ import supportInformation from '@salesforce/label/c.Support_Information';
 import sundayAbbreviation from '@salesforce/label/c.Sunday_Abbreviation';
 import taxi from '@salesforce/label/c.Taxi';
 import tellUsAboutYou from '@salesforce/label/c.Tell_Us_About_You';
-import termsOfService from '@salesforce/label/c.Terms_of_Service';
-import termsOfServiceLink from '@salesforce/label/c.Terms_of_Service_Link';
-import termsOfServicePrivacyPolicyLink from '@salesforce/label/c.Terms_of_Service_Privacy_Policy_Link';
 import thursdayAbbreviation from '@salesforce/label/c.Thursday_Abbreviation';
 import trackYourProgress from '@salesforce/label/c.Track_Your_Progress';
+import transactionColumnCurrency from '@salesforce/label/c.Transaction_Column_Currency';
+import transactionColumnItem from '@salesforce/label/c.Transaction_Column_Item';
+import transactionViewDetails from '@salesforce/label/c.Transaction_View_Details';
 import tuesdayAbbreviation from '@salesforce/label/c.Tuesday_Abbreviation';
 import updatesAndAppointments from '@salesforce/label/c.Updates_And_Appointments';
 import uploadAnotherPhoto from '@salesforce/label/c.Upload_Another_Photo';
@@ -217,12 +240,33 @@ const labels = {
     confirmVisitCancelAction,
     congratulations,
     contactAndSupport,
+    continou,
     copyright,
     deleteLabel,
     deleteProfile,
     deleteProfileConfirmation,
     deleteProfileInstructions,
+    donorExists,
+    donorExistsInstructions,
     donorTips,
+    donorTipApptRulesText,
+    donorTipApptRulesVideoId,
+    donorTipDonationDayText,
+    donorTipDonationDayVideoId,
+    donorTipDonationProcessText,
+    donorTipDonationProcessVideoId,
+    donorTipDonorIdReqsText,
+    donorTipDonorIdReqsVideoId,
+    donorTipFirstAppointmentText,
+    donorTipFirstAppointmentVideoId,
+    donorTipHealthHistoryText,
+    donorTipHealthHistoryVideoId,
+    donorTipHealthHistoryOnlineText,
+    donorTipHealthHistoryOnlineVideoId,
+    donorTipLoyaltyProgramText,
+    donorTipLoyaltyProgramVideoId,
+    donorTipRedeemingPointsText,
+    donorTipRedeemingPointsVideoId,
     email,
     english,
     enterCode,
@@ -241,6 +285,9 @@ const labels = {
     invalidZipCode,
     joinUs,
     lastName,
+    learnMoreSectionTitle,
+    legalTerms,
+    legalTermsLink,
     login,
     logout,
     logoutConfirmation,
@@ -262,6 +309,7 @@ const labels = {
     myProfile,
     myRewards,
     next,
+    newDonorSectionTitle,
     nickname,
     notifications,
     noPaymentsYet,
@@ -284,8 +332,6 @@ const labels = {
     previous,
     primaryCenter,
     primaryLanguage,
-    privacyPolicy,
-    privacyPolicyLink,
     profileChangeConfirmation,
     profileChangeNoVisit,
     promotionChartDescription,
@@ -329,11 +375,11 @@ const labels = {
     sundayAbbreviation,
     taxi,
     tellUsAboutYou,
-    termsOfService,
-    termsOfServiceLink,
-    termsOfServicePrivacyPolicyLink,
     thursdayAbbreviation,
     trackYourProgress,
+    transactionColumnCurrency,
+    transactionColumnItem,
+    transactionViewDetails,
     tuesdayAbbreviation,
     updatesAndAppointments,
     uploadAnotherPhoto,

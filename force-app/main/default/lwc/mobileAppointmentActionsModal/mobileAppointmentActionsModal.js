@@ -11,6 +11,7 @@ const CONFIRM_CANCEL_SCREEN_KEY = 'CONFIRM_CANCEL';
 export default class MobileAppointmentActionsModal extends NavigationMixin(LightningModal) {
     @api visitId;
 
+    isLoading = false;
     labels = labels;
     currentScreen = SELECT_ACTION_SCREEN_KEY;
 
@@ -39,6 +40,8 @@ export default class MobileAppointmentActionsModal extends NavigationMixin(Light
     }
 
     async handleConfirmCancelVisit(event) {
+        this.isLoading = true;
+
         try {
             await cancelVisit({ visitId: this.visitId });
 
@@ -46,6 +49,8 @@ export default class MobileAppointmentActionsModal extends NavigationMixin(Light
             this.close('success');
         } catch (error) {
             console.error(error);
+        } finally {
+            this.isLoading = false;
         }
     }
 }

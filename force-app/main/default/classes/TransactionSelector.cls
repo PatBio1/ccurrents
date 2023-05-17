@@ -8,7 +8,9 @@ public without sharing class TransactionSelector {
             transactionRecords = [
                 SELECT Id, Name, Amount_Currency__c, Amount_Points__c, CreatedDate, (SELECT Id, Item__c, Total__c, Type__c FROM Txn_Line_Items__r) 
                 FROM Transaction__c 
-                WHERE Donor__c = :targetDonorId 
+                WHERE Donor__c = :targetDonorId AND
+                    Type__c = 'Debit' AND 
+                    Status__c = 'Complete'
                 ORDER BY CreatedDate DESC
             ];
         } catch (Exception e) {

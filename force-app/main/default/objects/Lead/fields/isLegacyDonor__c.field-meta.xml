@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>isLegacyDonor__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indicates this Donor has an alternate Enroll ID that is their legacy Donor Number from an acquired/merged donation Center and legacy system. These existing legacy donors use their &apos;old donor number&apos; in the enrollment code field on the BECS form the first visit they have after go live. This will connect them in the CRM to the BECS/NL generated new donor_number coming from that system.</description>
+    <externalId>false</externalId>
+    <label>isLegacyDonor</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

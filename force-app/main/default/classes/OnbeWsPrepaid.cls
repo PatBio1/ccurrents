@@ -3,14 +3,31 @@
 public class OnbeWsPrepaid {
 
     // Constants
-    private static final String uriAccountManagementMainEndpoint = 'https://webservice-qa.northlane.com:4005/accountmanagementapiws/services/AccountManagementApiWebServices';
+    private static final String uriAccountManagementMainEndpoint;
     private static final String uriAccountManagementPrepaidWs = 'http://ws.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidRequest = 'http://request.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidResponse = 'http://response.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidDomain = 'http://domain.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidCommon = 'http://common.accountmanagementapi.prepaid.citi.com';
-    private static final String PROGRAM_ID = '04011223';
-    private static final String PROMOTION_ID = '1';
+    private static final String PROGRAM_ID;
+
+    static {
+      Proesis_Settings__c orgSettings = Proesis_Settings__c.getOrgDefaults();
+      
+      if (orgSettings != null){
+        if(orgSettings.OnbePaymentService_AcctMgmtEndpoint__c != null){
+          uriAccountManagementMainEndpoint = orgSettings.OnbePaymentService_AcctMgmtEndpoint__c;
+        } else {
+          uriAccountManagementMainEndpoint = 'https://webservice-qa.northlane.com:4005/accountmanagementapiws/services/AccountManagementApiWebServices';
+        }
+
+        if(orgSettings.OnbePaymentService_AcctMgmtProgramID__c != null){
+          PROGRAM_ID = orgSettings.OnbePaymentService_AcctMgmtProgramID__c;
+        } else {
+          PROGRAM_ID = '04011223';
+        }
+      }
+    }
 
     public class ArrayOf_tns2_keyValue {
 
@@ -585,12 +602,11 @@ public class OnbeWsPrepaid {
         req.setMethod('POST');
         req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
         req.setHeader('SOAPAction', 'blank');
-        //System.debug(doc.toXmlString());
         req.setBodyDocument(doc);
-        //System.debug(req.getBody());
+
         Http http = new Http();
         HTTPResponse res = http.send(req);
-        //System.debug(res.getBody());
+
         Dom.Document responseDoc = res.getBodyDocument();
         Dom.XmlNode rootNode = responseDoc.getRootElement();
         Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
@@ -600,7 +616,8 @@ public class OnbeWsPrepaid {
         return response_x;
       }
   
-      public OnbeResponsePrepaid.CreateAccountResponse createAccount_Http(String program_id,
+      public OnbeResponsePrepaid.CreateAccountResponse createAccount_Http(
+        String program_id,
         String promotion_id,
         String transaction_id,
         String partner_user_id,
@@ -609,7 +626,8 @@ public class OnbeWsPrepaid {
         OnbeDomainPrepaid.Card card,
         OnbeDomainPrepaid.Load load,
         OnbeDomainPrepaid.Link link,
-        OnbeDomainPrepaid.Registration registration) {
+        OnbeDomainPrepaid.Registration registration
+      ) {
           DOM.Document doc = new DOM.Document();
           DOM.XmlNode body = populateDoc(doc);
           DOM.XmlNode methodNode = body.addChildElement('createAccount', uriAccountManagementPrepaidWs, '');			
@@ -621,22 +639,18 @@ public class OnbeWsPrepaid {
           req.setMethod('POST');
           req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
           req.setHeader('SOAPAction', 'blank');
-          //System.debug(doc.toXmlString());
           req.setBodyDocument(doc);
           req.setTimeout(60000);
-          System.debug(req.getBody());
+
           Http http = new Http();
           HTTPResponse res = http.send(req);
-          //System.debug(res.getBody());
+
           Dom.Document responseDoc = res.getBodyDocument();
           Dom.XmlNode rootNode = responseDoc.getRootElement();
           Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
           Dom.XmlNode createAccountReturnNode = bodyNode.getChildElement('createAccountReturn', uriAccountManagementPrepaidWs);
 
           OnbeResponsePrepaid.CreateAccountResponse response_x = new OnbeResponsePrepaid.CreateAccountResponse(createAccountReturnNode);
-          System.debug(response_x.code);
-          System.debug(response_x.sub_code);
-
           return response_x;
       }
   

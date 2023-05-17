@@ -7,3 +7,26 @@
 .bookmarked-icon {
     --lwc-colorTextIconDefault: #983285;
 }
+
+.tip-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tip-link {
+    padding: 0.5rem;
+    text-align: left;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    border-radius: 4px;
+    background-color: #e9defd;
+
+    font-weight: 500;
+    font-size: 16px;
+
+    cursor: pointer;
+}

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Donation_Date_Migrated__c</fullName>
+    <description>Migrated data showing the last donation date for a donor.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Migrated data showing the last donation date for a donor.</inlineHelpText>
+    <label>Last Donation Date Migrated</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Date</type>
+</CustomField>

@@ -168,16 +168,13 @@ public without sharing class DonorCompInvocable {
             AddFundsRequest addFundsRequest;
 
             // If there isn't a payment method that is active/not expired, then we need to notify the center managers that a donation couldn't be processed
-            if (foundContact.Payment_Methods__r == null || foundContact.Payment_Methods__r.size() == 0) {
-                donorIdToMissingPaymentMethodLogs.put(foundContact.Id, new Transaction_Log__c(
-                    Datetime__c = System.now(),
-                    Message__c = 'Donor ' + foundContact.Name + ' is missing an active payment method and could not be paid for visit ' + foundContact.Visits__r[0].Name,
-                    Payment_Service__c = 'Onbe'
-                ));
-            } else {
-                addFundsRequest = new AddFundsRequest(foundContact.Id, targetVisitRecord.Id, foundContact.Payment_Methods__r[0].Account_Number__c);
-                addFundsRequests.add(addFundsRequest);
-            }
+            Boolean hasPaymentMethod = (foundContact.Payment_Methods__r != null && foundContact.Payment_Methods__r.size() > 0);
+            addFundsRequest = new AddFundsRequest(
+                foundContact.Id, 
+                targetVisitRecord.Id, 
+                hasPaymentMethod ? foundContact.Payment_Methods__r[0].Account_Number__c : ''
+            );
+            addFundsRequests.add(addFundsRequest);
 
             Map<Id, AggregateResult> activeLastPromotionDatesByTier = donorIdToActiveLastPromotionDatesByTier.get(foundContact.Id);
             Integer totalVisitCount = donorIdToTotalVisitCount.get(foundContact.Id);
@@ -225,7 +222,7 @@ public without sharing class DonorCompInvocable {
 
                 if (addFundsRequest != null) {
                     addFundsRequest.comments.add('Donation Payment');
-                    addFundsRequest.total += donationPaymentTotal;
+                    addFundsRequest.addLineItem('Donation Payment', 'Currency', donationPaymentTotal);
                 }
             }
             donorIdToTxnLineItems.put(foundContact.Id, txnLineItems);
@@ -272,7 +269,7 @@ public without sharing class DonorCompInvocable {
 
                             if (addFundsRequest != null) {
                                 addFundsRequest.comments.add(bonusLevel.Name + ' - Bonus Payment');
-                                addFundsRequest.total += bonusLevel.Threshold_Payment__c;
+                                addFundsRequest.addLineItem(bonusLevel.Name + ' - Bonus Payment', 'Currency', bonusLevel.Threshold_Payment__c);
                             }
                         }
                     }
@@ -340,7 +337,7 @@ public without sharing class DonorCompInvocable {
 
                         if (addFundsRequest != null) {
                             addFundsRequest.comments.add('Threshold Payment');
-                            addFundsRequest.total += targetPromotionLevel.Threshold_Payment__c;
+                            addFundsRequest.addLineItem('Threshold Payment', 'Currency', targetPromotionLevel.Threshold_Payment__c);
                         }
                     }
                 }
@@ -503,6 +500,7 @@ public without sharing class DonorCompInvocable {
         public Id visitId;
         public Id existingDebitTransactionId;
 
+        public List<AddFundsLineItem> lineItems;
         public String accountNumber;
         public List<String> comments;
         public Decimal total;
@@ -521,12 +519,36 @@ public without sharing class DonorCompInvocable {
             this.existingDebitTransactionId = existingDebitTransactionId;
 
             this.comments = new List<String>();
+            this.lineItems = new List<AddFundsLineItem>();
             this.total = 0;
         }
 
         public void recordAPIResponse(Boolean wasSuccessful, String response) {
             this.isSuccessfullyProcessed = wasSuccessful;
             this.processResponse = response;
+        }
+
+        public void addLineItem(String item, String type, Decimal amount) {
+            this.lineItems.add(new AddFundsLineItem(item, type, amount));
+            this.total += amount;
+        }
+    }
+
+    public class AddFundsLineItem {
+        public String item;
+        public String type;
+        public Decimal amount;
+        public Integer quantity;
+        
+        public AddFundsLineItem(String item, String type, Decimal amount) {
+            this(item, type, amount, 1);
+        }
+
+        public AddFundsLineItem(String item, String type, Decimal amount, Integer quantity) {
+            this.item = item;
+            this.type = type;
+            this.amount = amount;
+            this.quantity = quantity;
         }
     }
 }

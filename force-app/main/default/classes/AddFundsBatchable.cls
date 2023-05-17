@@ -70,7 +70,7 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
 
     public void execute(Database.BatchableContext info, List<DonorCompInvocable.AddFundsRequest> scope) {
         Map<DonorCompInvocable.AddFundsRequest, Transaction__c> debitTransactions = AddFundsBatchableHelper.createDebitTransactions(scope);
-        Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c> transactionLineItems;
+        Map<DonorCompInvocable.AddFundsRequest, List<Txn_Line_Item__c>> transactionLineItems;
 
         if (!isRetry) {
             transactionLineItems = AddFundsBatchableHelper.createDebitTransactionLineItems(scope);

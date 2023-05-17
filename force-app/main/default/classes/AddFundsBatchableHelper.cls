@@ -29,16 +29,22 @@ public with sharing class AddFundsBatchableHelper {
         return addFundsRequestToTransaction;
     }
     
-    public static Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c> createDebitTransactionLineItems(List<DonorCompInvocable.AddFundsRequest> addFundsRequests) {
-        Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c> debitTransactionIdToLineItem = new Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c>();
+    public static Map<DonorCompInvocable.AddFundsRequest, List<Txn_Line_Item__c>> createDebitTransactionLineItems(List<DonorCompInvocable.AddFundsRequest> addFundsRequests) {
+        Map<DonorCompInvocable.AddFundsRequest, List<Txn_Line_Item__c>> debitTransactionIdToLineItem = new Map<DonorCompInvocable.AddFundsRequest, List<Txn_Line_Item__c>>();
 
         for(DonorCompInvocable.AddFundsRequest addFundsRequest : addFundsRequests) {
-            debitTransactionIdToLineItem.put(addFundsRequest, new Txn_Line_Item__c(
-                Type__c = 'Currency',
-                Unit_Cost__c = addFundsRequest.total,
-                Quantity__c = 1,
-                Item__c = 'Debit Payment'
-            ));
+            List<Txn_Line_Item__c> debitTransactionLineItems = new List<Txn_Line_Item__c>();
+            
+            for(DonorCompInvocable.AddFundsLineItem lineItem : addFundsRequest.lineItems) {
+                debitTransactionLineItems.add(new Txn_Line_Item__c(
+                    Type__c = lineItem.type,
+                    Unit_Cost__c = lineItem.amount,
+                    Quantity__c = lineItem.quantity,
+                    Item__c = lineItem.item
+                ));
+            }
+
+            debitTransactionIdToLineItem.put(addFundsRequest, debitTransactionLineItems);
         }
 
         return debitTransactionIdToLineItem;
@@ -48,6 +54,11 @@ public with sharing class AddFundsBatchableHelper {
         OnbePaymentService paymentService = new OnbePaymentService();
         
         for(DonorCompInvocable.AddFundsRequest addFundsRequest : requests) {
+            if (String.isEmpty(addFundsRequest.accountNumber)) {
+                addFundsRequest.recordAPIResponse(false, 'Donor does not have an active payment method to process this transaction.');
+                continue;
+            }
+
             String completeComment = String.join(addFundsRequest.comments, ', ');
             if (completeComment.length() > 128) {
                 completeComment = completeComment.leftPad(125, '...');
@@ -67,7 +78,7 @@ public with sharing class AddFundsBatchableHelper {
     
     public static void handleAddFundsResponses(
         Map<DonorCompInvocable.AddFundsRequest, Transaction__c> addFundsRequestToTransaction,
-        Map<DonorCompInvocable.AddFundsRequest, Txn_Line_Item__c> addFundsRequestToTxnLineItem,
+        Map<DonorCompInvocable.AddFundsRequest, List<Txn_Line_Item__c>> addFundsRequestToTxnLineItem,
         Boolean isRetry
     ) {
         Proesis_Settings__c proesisSettings = Proesis_Settings__c.getOrgDefaults();
@@ -103,12 +114,16 @@ public with sharing class AddFundsBatchableHelper {
 
         // Transaction Line Item
         if (!isRetry) {
+            List<Txn_Line_Item__c> txnLineItemsToInsert = new List<Txn_Line_Item__c>();
+
             for(DonorCompInvocable.AddFundsRequest request : addFundsRequestToTxnLineItem.keySet()) {
-                Txn_Line_Item__c txnLineItemRecord = addFundsRequestToTxnLineItem.get(request);
-                txnLineItemRecord.Transaction__c = addFundsRequestToTransaction.get(request).Id;
+                for(Txn_Line_Item__c txnLineItem : addFundsRequestToTxnLineItem.get(request)) {
+                    txnLineItem.Transaction__c = addFundsRequestToTransaction.get(request).Id;
+                    txnLineItemsToInsert.add(txnLineItem);
+                }
             }
 
-            insert addFundsRequestToTxnLineItem.values();
+            insert txnLineItemsToInsert;
         }
 
         // Transaction Log

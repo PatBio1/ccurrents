@@ -3,6 +3,9 @@
     </lightning-modal-header>
 
     <lightning-modal-body class="slds-is-relative">
+        <lightning-spinner if:true={isLoading}>
+        </lightning-spinner>
+
         <div if:true={displaySelectActionScreen} class="mobile-actions-conatiner">
             <lightning-button style="width: 100%;" stretch="true" label={labels.rescheduleVisitAction} variant="brand" onclick={handleRescheduleVisit}></lightning-button>
             <lightning-button style="width: 100%;" stretch="true" label={labels.visitCancelAction} variant="brand" onclick={handleInitCancelVisit}></lightning-button>

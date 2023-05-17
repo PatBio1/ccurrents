@@ -196,7 +196,7 @@ public with sharing class DonorSelectorTest {
 
         Assert.isNotNull(donorRewardsInfo, 'Expected to find donor rewards info');
         Assert.areEqual('Donor WithRewards', donorRewardsInfo.donorName, 'Expected to find donor name as Donor WithRewards');
-        Assert.areEqual(5000, donorRewardsInfo.donorBalance, 'Expected to find donor balance of $0'); // If nothing is returned in the callout, the balance is 0
+        Assert.areEqual(50, donorRewardsInfo.donorBalance, 'Expected to find donor balance of $50'); // If nothing is returned in the callout, the balance is 0
         Assert.areEqual(1000, donorRewardsInfo.donorPoints, 'Expected to find donor points worth 1000P');
         Assert.areEqual('Level 1', donorRewardsInfo.currentLoyaltyLevel, 'Expected to find donor current level as Level 1');
         Assert.areEqual('Level 2', donorRewardsInfo.nextLoyaltyLevel, 'Expected to find donor next level as Level 2');

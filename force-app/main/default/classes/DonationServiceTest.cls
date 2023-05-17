@@ -1,6 +1,6 @@
 @IsTest
 public class DonationServiceTest {
-    final static Integer AMOUNT_OF_DONORS = 200;
+    final static Integer AMOUNT_OF_DONORS = 100; // Can't process more than 100 requests in one transaction due to callout limits
 
     @TestSetup
     static void createTestData() {
@@ -35,6 +35,7 @@ public class DonationServiceTest {
         insert appointments;
 
         List<Visit__c> visits = new List<Visit__c>();
+        List<Payment_Method__c> donorPaymentMethods = new List<Payment_Method__c>();
         Integer counter = 0;
 
         for(Contact contact : [SELECT Id, AccountId FROM Contact WHERE AccountId IN :donors]) {
@@ -44,7 +45,21 @@ public class DonationServiceTest {
                 Center_Donation_Type__c = testCenterDonationType.Id,
                 Status__c = 'Scheduled'
             ));
+
+            donorPaymentMethods.add(new Payment_Method__c(
+                Name = 'Test Payment Method',
+                Donor__c = contact.Id,
+                Account_Token__c = String.valueOf(1050 + counter),
+                Account_Number__c = '4968712468235235',
+                Card_Number__c = String.valueOf(1000 + (Math.random() * 8999).intValue()),
+                Is_Active__c = true,
+                isDefault__c = true
+            ));
+
+            counter++;
         }
+
+        insert donorPaymentMethods;
         insert visits;
 
         // Create Exception Rate for Center Donation
@@ -67,17 +82,23 @@ public class DonationServiceTest {
             targetVisit.Donor__c, targetVisit.Id, targetExceptionRate.Id
         );
 
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+
         Test.startTest();
         DonationService.createExceptionTransaction(exceptionPaymentRequest);
         Test.stopTest();
 
-        List<Transaction__c> createdTransactions = [SELECT Id, Amount_Currency__c, (SELECT Id, Total__c, Item__c FROM Txn_Line_Items__r) FROM Transaction__c];
-        Assert.areEqual(1, createdTransactions.size(), 'Amount of created transactions should be equal to 1');
+        List<Transaction__c> createdTransactions = [SELECT Id, Amount_Currency__c, Status__c, SubType__c, (SELECT Id, Total__c, Item__c FROM Txn_Line_Items__r) FROM Transaction__c];
+        Assert.areEqual(2, createdTransactions.size(), 'Amount of created transactions should be equal to 1');
         
-        Assert.areEqual(targetExceptionRate.Base_Payment__c, createdTransactions[0].Amount_Currency__c, 'Amount of created transaction should be equal to base payment of exception rate');
-        Assert.areEqual(1, createdTransactions[0].Txn_Line_Items__r.size(), 'Amount of line items in created transaction should be equal to 1');
-        Assert.areEqual(targetExceptionRate.Base_Payment__c, createdTransactions[0].Txn_Line_Items__r[0].Total__c, 'Total of line item in created transaction should be equal to base payment of exception rate');
-        Assert.areEqual(targetExceptionRate.Description__c, createdTransactions[0].Txn_Line_Items__r[0].Item__c, 'Item of line item in created transaction should be equal to exception rate description');
+        for(Transaction__c createdTransaction : createdTransactions) {
+            Assert.areEqual('Complete', createdTransaction.Status__c, 'Status of created transaction should be equal to Complete');
+            Assert.areEqual(targetExceptionRate.Base_Payment__c, createdTransaction.Amount_Currency__c, 'Amount of created transaction should be equal to base payment of exception rate');
+            Assert.areEqual(1, createdTransaction.Txn_Line_Items__r.size(), 'Amount of line items in created transaction should be equal to 1');
+            Assert.areEqual(targetExceptionRate.Base_Payment__c, createdTransaction.Txn_Line_Items__r[0].Total__c, 'Total of line item in created transaction should be equal to base payment of exception rate');
+            Assert.areEqual(targetExceptionRate.Description__c, createdTransaction.Txn_Line_Items__r[0].Item__c, 'Item of line item in created transaction should be equal to exception rate description');
+            Assert.areEqual('Exception', createdTransaction.SubType__c, 'SubType of created transaction should be equal to Exception');
+        }
     }
 
     @IsTest 
@@ -97,18 +118,24 @@ public class DonationServiceTest {
             Max_Dollar_Per_Day__c = (targetExceptionRate.Base_Payment__c * targetVisits.size())
         );
 
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+
         Test.startTest();
         DonationService.createExceptionTransactions(exceptionPaymentRequests);
         Test.stopTest();
 
-        List<Transaction__c> createdTransactions = [SELECT Id, Amount_Currency__c, (SELECT Id, Total__c, Item__c FROM Txn_Line_Items__r) FROM Transaction__c];
-        Assert.areEqual(AMOUNT_OF_DONORS, createdTransactions.size(), 'Amount of created transactions should be equal to amount of donors');
+        List<Transaction__c> createdTransactions = [SELECT Id, Amount_Currency__c, Status__c, (SELECT Id, Total__c, Item__c FROM Txn_Line_Items__r) FROM Transaction__c];
+        Assert.areEqual(AMOUNT_OF_DONORS * 2, createdTransactions.size(), 'Amount of created transactions should be equal to amount of donors');
 
         for(Transaction__c txnRecord : createdTransactions) {
+            Assert.areEqual('Complete', txnRecord.Status__c, 'Status of created transaction should be equal to Complete');
             Assert.areEqual(targetExceptionRate.Base_Payment__c, txnRecord.Amount_Currency__c, 'Amount of created transaction should be equal to base payment of exception rate');
             Assert.areEqual(1, txnRecord.Txn_Line_Items__r.size(), 'Amount of line items in created transaction should be equal to 1');
             Assert.areEqual(targetExceptionRate.Base_Payment__c, txnRecord.Txn_Line_Items__r[0].Total__c, 'Total of line item in created transaction should be equal to base payment of exception rate');
-            Assert.areEqual(targetExceptionRate.Description__c, txnRecord.Txn_Line_Items__r[0].Item__c, 'Item of line item in created transaction should be equal to exception rate description');
+            Assert.isTrue(
+                txnRecord.Txn_Line_Items__r[0].Item__c == targetExceptionRate.Description__c || txnRecord.Txn_Line_Items__r[0].Item__c == 'Debit Payment',
+                'Item of line item in created transaction should be equal to exception rate description'
+            );
         }
     }
 
@@ -131,6 +158,8 @@ public class DonationServiceTest {
             Id = targetExceptionRate.Center__c,
             Max_Dollar_Per_Day__c = totalExceptionPaymentAmount - 1
         );
+
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 
         Test.startTest();
         try {

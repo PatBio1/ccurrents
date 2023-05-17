@@ -3,14 +3,31 @@
 public class OnbeWsPrepaid {
 
     // Constants
-    private static final String uriAccountManagementMainEndpoint = 'https://webservice-qa.northlane.com:4005/accountmanagementapiws/services/AccountManagementApiWebServices';
+    private static final String uriAccountManagementMainEndpoint;
     private static final String uriAccountManagementPrepaidWs = 'http://ws.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidRequest = 'http://request.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidResponse = 'http://response.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidDomain = 'http://domain.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidCommon = 'http://common.accountmanagementapi.prepaid.citi.com';
-    private static final String PROGRAM_ID = '04011223';
-    private static final String PROMOTION_ID = '1';
+    private static final String PROGRAM_ID;
+
+    static {
+      Proesis_Settings__c orgSettings = Proesis_Settings__c.getOrgDefaults();
+      
+      if (orgSettings != null){
+        if(orgSettings.OnbePaymentService_AcctMgmtEndpoint__c != null){
+          uriAccountManagementMainEndpoint = orgSettings.OnbePaymentService_AcctMgmtEndpoint__c;
+        } else {
+          uriAccountManagementMainEndpoint = 'https://webservice-qa.northlane.com:4005/accountmanagementapiws/services/AccountManagementApiWebServices';
+        }
+
+        if(orgSettings.OnbePaymentService_AcctMgmtProgramID__c != null){
+          PROGRAM_ID = orgSettings.OnbePaymentService_AcctMgmtProgramID__c;
+        } else {
+          PROGRAM_ID = '04011223';
+        }
+      }
+    }
 
     public class ArrayOf_tns2_keyValue {
 

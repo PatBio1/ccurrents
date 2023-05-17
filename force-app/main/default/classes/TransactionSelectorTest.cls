@@ -42,7 +42,8 @@ public class TransactionSelectorTest {
                 testTransactions.add(new Transaction__c(
                     Donor__c = donorContactId,
                     Visit__c = testVisits[i].Id,
-                    Type__c = 'Credit'
+                    Type__c = 'Debit',
+                    Status__c = 'Complete'
                 ));
             }
             insert testTransactions;

@@ -151,22 +151,22 @@
                                     <lightning-formatted-number if:true={payment.currencyTotal} format-style="currency" currency-code={userCurrency} value={payment.currencyTotal}>
                                     </lightning-formatted-number>
     
-                                    <p>
-                                        <lightning-formatted-number if:true={payment.pointTotal} value={payment.pointTotal}>
-                                        </lightning-formatted-number> P
+                                    <p if:true={payment.pointTotal}>
+                                        <lightning-formatted-number value={payment.pointTotal}>
+                                        </lightning-formatted-number> {labels.pointBrandName}
                                     </p>
                                 </div>
                             </div>
                             
                             <div if:true={payment.transactionLineItems} class="transaction-line-item-container">
                                 <a style="display: flex; align-items: center; gap: 2px;" onclick={togglePaymentDetails} data-transaction-id={payment.transactionId}>
-                                    <span><lightning-button-icon variant="bare" icon-name={payment.displayIcon}></lightning-button-icon></span> View Details
+                                    <span><lightning-button-icon variant="bare" icon-name={payment.displayIcon}></lightning-button-icon></span> {labels.transactionViewDetails}
                                 </a>
 
                                 <div class="line-item-grid" if:true={payment.displayDetails}>
-                                    <p><b>Name</b></p>
-                                    <p><b>Currency</b></p>
-                                    <p><b>Points</b></p>
+                                    <p><b>{labels.transactionColumnItem}</b></p>
+                                    <p><b>{labels.transactionColumnCurrency}</b></p>
+                                    <p><b>{labels.pointBrandName}</b></p>
 
                                     <template for:each={payment.transactionLineItems} for:item="lineItem">
                                         <p key={lineItem.itemName}>{lineItem.itemName}</p>

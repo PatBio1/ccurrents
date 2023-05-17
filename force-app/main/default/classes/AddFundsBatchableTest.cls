@@ -1,6 +1,9 @@
 @IsTest
 public without sharing class AddFundsBatchableTest {
 
+    static final Decimal RETRY_MULTIPLIER = 1.4;
+    static final Decimal BASE_RETRY_INTERVAL = 600;
+
     @TestSetup
     static void createTestData() {
         List<Account> testDonors = new List<Account> {
@@ -23,6 +26,8 @@ public without sharing class AddFundsBatchableTest {
         insert testCenterDonationType;
 
         List<Visit__c> testVisits = new List<Visit__c>();
+        List<Payment_Method__c> donorPaymentMethods = new List<Payment_Method__c>();
+
         for(Contact testDonorContact : [SELECT Id FROM Contact WHERE AccountId IN :testDonors]) {
             testVisits.add(new Visit__c(
                 Donor__c = testDonorContact.Id,
@@ -31,8 +36,20 @@ public without sharing class AddFundsBatchableTest {
                 Status__c = 'Complete',
                 Outcome__c = 'Donation'
             ));
+
+            donorPaymentMethods.add(new Payment_Method__c(
+                Name = 'Test Payment Method',
+                Donor__c = testDonorContact.Id,
+                Account_Token__c = '1050',
+                Account_Number__c = '4968712468235235',
+                Card_Number__c = '7890',
+                Is_Active__c = true,
+                isDefault__c = true
+            ));
         }
+
         insert testVisits;
+        insert donorPaymentMethods;
     }
 
     @IsTest
@@ -44,7 +61,7 @@ public without sharing class AddFundsBatchableTest {
         for(Contact testDonor : testDonors) {
             DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001');
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
-            newAddFundsRequest.total = 100.00;
+            newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 
             addFundsRequests.add(newAddFundsRequest);
             index++;
@@ -53,7 +70,7 @@ public without sharing class AddFundsBatchableTest {
         Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 
         Test.startTest();
-        Database.executeBatch(new AddFundsBatchable(addFundsRequests));
+        Database.executeBatch(new AddFundsBatchable(addFundsRequests), 100);
         Test.stopTest();
 
         List<Transaction__c> createdDebitTransactions = [
@@ -80,7 +97,7 @@ public without sharing class AddFundsBatchableTest {
         for(Contact testDonor : testDonors) {
             DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001');
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
-            newAddFundsRequest.total = 100.00;
+            newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 
             addFundsRequests.add(newAddFundsRequest);
             index++;
@@ -90,22 +107,75 @@ public without sharing class AddFundsBatchableTest {
         TestUtil.throwException = true; // OnbePaymentService requires this
 
         Test.startTest();
-        Database.executeBatch(new AddFundsBatchable(addFundsRequests));
+        Database.executeBatch(new AddFundsBatchable(addFundsRequests), 100);
         Test.stopTest();
 
         List<Transaction__c> createdDebitTransactions = [
-            SELECT Id, Amount_Currency__c, Status__c, (SELECT Id FROM Txn_Line_Items__r), (SELECT Id FROM Transaction_Logs__r)
+            SELECT Id, Amount_Currency__c, Status__c, Retry_Count__c, Retry_Next__c, (SELECT Id FROM Txn_Line_Items__r), (SELECT Id FROM Transaction_Logs__r)
             FROM Transaction__c
             WHERE Type__c = 'Debit' AND 
                 Donor__c IN :testDonors
         ];
 
         Assert.areEqual(testDonors.size(), createdDebitTransactions.size(), 'There should be one debit transaction created for each donor');
+        Integer expectedRetryCount = 0;
+        Datetime expectedRetryNext = System.now().addSeconds((Integer)(BASE_RETRY_INTERVAL * Math.pow((Double)RETRY_MULTIPLIER, (Double)expectedRetryCount)));
+
         for(Transaction__c createdDebitTransaction : createdDebitTransactions) {
             Assert.areEqual(100.00, createdDebitTransaction.Amount_Currency__c, 'The debit transaction should have the correct amount');
             Assert.areEqual(1, createdDebitTransaction.Txn_Line_Items__r.size(), 'The debit transaction should have one line item');
             Assert.areEqual('Error', createdDebitTransaction.Status__c, 'The debit transaction should have a status of Error');
             Assert.areEqual(1, createdDebitTransaction.Transaction_Logs__r.size(), 'The debit transaction should have one transaction log detailing the error');
+            Assert.areEqual(expectedRetryCount, createdDebitTransaction.Retry_Count__c, 'The debit transaction should have a retry count of 1');
+
+            // The time is bound to be different by a couple of milliseconds, so allow for a small difference
+            Decimal difference = createdDebitTransaction.Retry_Next__c.getTime() - expectedRetryNext.getTime();
+            Assert.isTrue(difference < 100, 'The Retry Next field should have been set using BASE_RETRY * BASE_RETRY ^ Retry Count');
         }
+    }
+
+    @IsTest
+    static void testSuccessfulAddFundsRetry() {
+        List<Contact> testDonors = [SELECT Id, (SELECT Id FROM Visits__r) FROM Contact WHERE Account.DonorId__c != null];
+        List<Transaction__c> mockedErrorTransactions = new List<Transaction__c>();
+
+        for(Contact testDonor : testDonors) {
+            Transaction__c newTransaction = new Transaction__c(
+                Donor__c = testDonor.Id,
+                Visit__c = testDonor.Visits__r[0].Id,
+                Type__c = 'Debit',
+                Status__c = 'Error',
+                Amount_Currency__c = 100.00,
+                Retry_Count__c = 0
+            );
+
+            mockedErrorTransactions.add(newTransaction);
+        }
+        insert mockedErrorTransactions;
+
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+
+        Test.startTest();
+        Database.executeBatch(new AddFundsBatchable());
+        Test.stopTest();
+
+        mockedErrorTransactions = [
+            SELECT Id, Status__c, Retry_Count__c, Retry_Next__c, (SELECT Id FROM Transaction_Logs__r)
+            FROM Transaction__c
+            WHERE Id IN :mockedErrorTransactions
+        ];
+
+        Assert.areEqual(testDonors.size(), mockedErrorTransactions.size(), 'There should be one debit transaction created for each donor');
+        for(Transaction__c mockErrorTransaction : mockedErrorTransactions) {
+            Assert.areEqual('Complete', mockErrorTransaction.Status__c, 'The debit transaction should have a status of Complete after the retry');
+            Assert.areEqual(0, mockErrorTransaction.Transaction_Logs__r.size(), 'No additional logs should have been created');
+            Assert.areEqual(1, mockErrorTransaction.Retry_Count__c, 'The retry count should be incremented');
+            Assert.isNull(mockErrorTransaction.Retry_Next__c, 'The retry next date should be null');
+        }
+    }
+
+    @IsTest
+    static void testSuccessfulSchedule() {
+        System.schedule('Test Add Funds Run', '20 30 8 10 2 ?', new AddFundsBatchable());
     }
 }

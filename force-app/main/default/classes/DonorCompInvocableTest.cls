@@ -293,7 +293,8 @@ public with sharing class DonorCompInvocableTest {
             SELECT Id, Loyalty_Level__r.Name, (
                 SELECT Id, Amount_Currency__c, Amount_Points__c 
                 FROM Transactions__r
-                WHERE Amount_Currency__c > 0 
+                WHERE Amount_Currency__c > 0 AND 
+                    Type__c = 'Credit'
                 ORDER BY Name ASC
             )
             FROM Contact

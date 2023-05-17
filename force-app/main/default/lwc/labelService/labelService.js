@@ -171,6 +171,9 @@ import taxi from '@salesforce/label/c.Taxi';
 import tellUsAboutYou from '@salesforce/label/c.Tell_Us_About_You';
 import thursdayAbbreviation from '@salesforce/label/c.Thursday_Abbreviation';
 import trackYourProgress from '@salesforce/label/c.Track_Your_Progress';
+import transactionColumnCurrency from '@salesforce/label/c.Transaction_Column_Currency';
+import transactionColumnItem from '@salesforce/label/c.Transaction_Column_Item';
+import transactionViewDetails from '@salesforce/label/c.Transaction_View_Details';
 import tuesdayAbbreviation from '@salesforce/label/c.Tuesday_Abbreviation';
 import updatesAndAppointments from '@salesforce/label/c.Updates_And_Appointments';
 import uploadAnotherPhoto from '@salesforce/label/c.Upload_Another_Photo';
@@ -374,6 +377,9 @@ const labels = {
     tellUsAboutYou,
     thursdayAbbreviation,
     trackYourProgress,
+    transactionColumnCurrency,
+    transactionColumnItem,
+    transactionViewDetails,
     tuesdayAbbreviation,
     updatesAndAppointments,
     uploadAnotherPhoto,

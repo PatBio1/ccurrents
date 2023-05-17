@@ -600,7 +600,7 @@ public without sharing class ProfileController {
         return leadConvertResult;
     }
 
-    private static void assignUserPermissionSet(Id userId) {
+    public static void assignUserPermissionSet(Id userId) {
         PermissionSet permissionSet = [SELECT Id FROM PermissionSet WHERE Label = :Constants.EXPERIENCE_PERMISSION_SET_NAME];
 
         PermissionSetAssignment permissionSetAssignment = new PermissionSetAssignment();
@@ -647,21 +647,7 @@ public without sharing class ProfileController {
 
     @future
     private static void commitUserFromScheduler(Id accountId, String language) {
-        Database.DMLOptions userEmailOptions = new Database.DMLOptions();
-        userEmailOptions.EmailHeader.triggerUserEmail = true;
-        userEmailOptions.EmailHeader.triggerOtherEmail = true;
-        userEmailOptions.EmailHeader.triggerAutoResponseEmail = true;
-
-        User user = createUser(accountId, language);
-        user.setOptions(userEmailOptions);
-        insert user;
-
-        update new Account(
-            Id = accountId,
-            User__pc = user.Id
-        );
-
-        assignUserPermissionSet(user.Id);
+        System.enqueueJob(new UserCreationQueueable(accountId, language));
     }
 
     public class Profile {

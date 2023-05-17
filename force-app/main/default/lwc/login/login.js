@@ -150,7 +150,7 @@ export default class Menu extends LightningElement {
         login(request).then(loginResponse => {
             window.location.href = loginResponse;
         }).catch((error) => {
-            util.showGuestToast(this, 'error', labels.error, error);
+            this.showToast('error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -184,7 +184,7 @@ export default class Menu extends LightningElement {
             this.emailVerificationsExhausted = false;
             this.currentPage = PAGE_VERIFY_EMAIL;
         }).catch((error) => {
-            util.showGuestToast(this, 'error', labels.error, error);
+            this.showToast('error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -207,13 +207,12 @@ export default class Menu extends LightningElement {
             if (result === 'Success') {
                 this.currentPage = PAGE_SET_PASSWORD;
             } else if (result === 'Incorrect') {
-
-                util.showGuestToast(this, 'error', labels.incorrectCode, labels.incorrectCodeMessage);
+                this.showToast('error', labels.incorrectCode, labels.incorrectCodeMessage);
             } else {
                 this.emailVerificationsExhausted = true;
             }
         }).catch((error) => {
-            util.showGuestToast(this, 'error', labels.error, error);
+            this.showToast('error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -235,14 +234,18 @@ export default class Menu extends LightningElement {
             this.password = undefined;
             this.passwordConfirm = undefined;
 
-            util.showGuestToast(this, 'success', labels.success, labels.passwordChanged);
+            this.showToast('success', labels.success, labels.passwordChanged);
 
             this.currentPage = PAGE_LOGIN;
         }).catch((error) => {
-            util.showGuestToast(this, 'error', labels.error, error);
+            this.showToast('error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
+    }
+
+    showToast(variant, title, message, mode) {
+        this.refs.loginGuestToast.show(variant, title, util.getFilteredErrorMessage(message), mode);
     }
 
 }

@@ -30,7 +30,7 @@ export default class Menu extends NavigationMixin(LightningElement) {
     photoUrl;
 
     get linkClass() {
-        return (this.isMobileApp ? 'slds-m-bottom_large' : 'slds-m-bottom_small') + ' slds-text-align_center';
+        return (this.isMobileApp ? 'slds-m-bottom_large' : '') + ' slds-text-align_center';
     }
 
     async renderedCallback() {

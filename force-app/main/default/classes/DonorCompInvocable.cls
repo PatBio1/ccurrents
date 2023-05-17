@@ -505,6 +505,7 @@ public without sharing class DonorCompInvocable {
         public List<String> comments;
         public Decimal total;
 
+        public Boolean isExceptionPayment;
         public Boolean isSuccessfullyProcessed;
         public String processResponse; // code - sub_code
 
@@ -521,6 +522,7 @@ public without sharing class DonorCompInvocable {
             this.comments = new List<String>();
             this.lineItems = new List<AddFundsLineItem>();
             this.total = 0;
+            this.isExceptionPayment = false;
         }
 
         public void recordAPIResponse(Boolean wasSuccessful, String response) {
@@ -530,7 +532,10 @@ public without sharing class DonorCompInvocable {
 
         public void addLineItem(String item, String type, Decimal amount) {
             this.lineItems.add(new AddFundsLineItem(item, type, amount));
-            this.total += amount;
+
+            if (type == 'Currency') {
+                this.total += amount;
+            }
         }
     }
 

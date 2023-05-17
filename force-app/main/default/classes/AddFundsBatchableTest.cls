@@ -26,6 +26,8 @@ public without sharing class AddFundsBatchableTest {
         insert testCenterDonationType;
 
         List<Visit__c> testVisits = new List<Visit__c>();
+        List<Payment_Method__c> donorPaymentMethods = new List<Payment_Method__c>();
+
         for(Contact testDonorContact : [SELECT Id FROM Contact WHERE AccountId IN :testDonors]) {
             testVisits.add(new Visit__c(
                 Donor__c = testDonorContact.Id,
@@ -34,8 +36,20 @@ public without sharing class AddFundsBatchableTest {
                 Status__c = 'Complete',
                 Outcome__c = 'Donation'
             ));
+
+            donorPaymentMethods.add(new Payment_Method__c(
+                Name = 'Test Payment Method',
+                Donor__c = testDonorContact.Id,
+                Account_Token__c = '1050',
+                Account_Number__c = '4968712468235235',
+                Card_Number__c = '7890',
+                Is_Active__c = true,
+                isDefault__c = true
+            ));
         }
+
         insert testVisits;
+        insert donorPaymentMethods;
     }
 
     @IsTest
@@ -47,7 +61,7 @@ public without sharing class AddFundsBatchableTest {
         for(Contact testDonor : testDonors) {
             DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001');
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
-            newAddFundsRequest.total = 100.00;
+            newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 
             addFundsRequests.add(newAddFundsRequest);
             index++;
@@ -83,7 +97,7 @@ public without sharing class AddFundsBatchableTest {
         for(Contact testDonor : testDonors) {
             DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001');
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
-            newAddFundsRequest.total = 100.00;
+            newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 
             addFundsRequests.add(newAddFundsRequest);
             index++;

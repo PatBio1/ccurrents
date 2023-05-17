@@ -74,8 +74,9 @@ public with sharing class DonationService {
                 exceptionRequest.donorId, exceptionRequest.visitId, donorIdToPaymentMethodAccountNumber.get(exceptionRequest.donorId)
             );
 
-            addFundsRequest.total = exceptionRate.Base_Payment__c;
+            addFundsRequest.addLineItem(exceptionRate.Description__c, 'Currency', exceptionRate.Base_Payment__c);
             addFundsRequest.comments.add('Exception Payment - ' + exceptionRate.Description__c);
+            addFundsRequest.isExceptionPayment = true;
 
             addFundsRequests.add(addFundsRequest);
         }

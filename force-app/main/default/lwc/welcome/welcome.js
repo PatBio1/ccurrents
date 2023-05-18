@@ -1,5 +1,6 @@
 import { wire, LightningElement } from 'lwc';
 import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
+import formFactor from '@salesforce/client/formFactor';
 import labels from 'c/labelService';
 
 const PAGE_HOME = 'Home';
@@ -17,6 +18,10 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     language = 'en_US';
     startURL;
     center;
+
+    get showVideo() {
+        return (formFactor !== 'Small');
+    }
 
     get copyrightLabel() {
         const currentYear = new Date().getFullYear();

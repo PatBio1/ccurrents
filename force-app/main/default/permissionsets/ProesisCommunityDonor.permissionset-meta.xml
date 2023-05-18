@@ -47,6 +47,11 @@
     <description>Enables access to the Proesis Donor Experience.</description>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Contact.Redeemed_Points__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Message__c.Body__c</field>
         <readable>true</readable>
     </fieldPermissions>

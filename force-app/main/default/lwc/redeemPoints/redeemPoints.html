@@ -1,0 +1,35 @@
+<template>
+    <lightning-button icon-name="utility:chevronleft" label="Back" variant="base" onclick={handleExitRedeemPointsScreen}></lightning-button>
+
+    <h1 class="redeem-points-title">Redeem</h1>
+    <div class="redeem-points-total">
+        <span style="color: #8979A9;"><strong>Points:</strong></span> <span style="color: black;">{donorBalance} PlasmaPoints</span>
+    </div>
+    <p style="margin-top: 0.75rem; color: #8979A9;">*minimum withdrawal is <lightning-formatted-number value={minimumWithdrawalAmount}></lightning-formatted-number> {labels.pointBrandName}</p>
+
+    <p style="margin-top: 1.5rem; font-size: 16px;"><strong>Enter the amount of points you want to redeem</strong></p>
+
+    <div class="redeem-points-converter">
+        <lightning-input 
+            value={amountOfPointsToRedeem} 
+            min={minimumWithdrawalAmount} 
+            max={maxAmountOfPointsToRedeem} 
+            type="number" 
+            label="Amount (PlasmaPoints)" 
+            step={conversationRate}
+            message-when-range-underflow={underflowMessage}
+            message-when-range-overflow={overflowMessage}
+            message-when-step-mismatch={stepMismatchMessage}
+            onchange={handleChangeAmountOfPointsToRedeem}
+        >
+        </lightning-input>
+
+        <lightning-icon icon-name="utility:change_record_type" size="small"></lightning-icon>
+
+        <lightning-input type="number" formatter="currency" label="You will get ($)" value={currentDollarsAfterRedeem} disabled>
+        </lightning-input>
+    </div>
+
+    <lightning-button variant="brand" label="Redeem" stretch="true">
+    </lightning-button>
+</template>

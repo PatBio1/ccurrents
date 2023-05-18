@@ -19,6 +19,10 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     startURL;
     center;
 
+    get videoUrl() {
+        return `https://www.youtube.com/embed/${labels.donorTipDonationProcessVideoId}?controls=0`;
+    }
+
     get showVideo() {
         return (formFactor !== 'Small');
     }

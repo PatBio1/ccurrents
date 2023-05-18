@@ -1279,7 +1279,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Rewards Video Link</shortDescription>
-        <value>https://www.youtube.com/embed/</value>
+        <value>https://www.youtube.com/embed/8LKpAMoj274</value>
     </labels>
     <labels>
         <fullName>Missing_Card_Message</fullName>
@@ -1455,5 +1455,12 @@
         <protected>true</protected>
         <shortDescription>Currency</shortDescription>
         <value>Currency</value>
+    </labels>
+    <labels>
+        <fullName>Welcome_To_Westmore_VideoId</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>aab7mUifSjw</shortDescription>
+        <value>aab7mUifSjw</value>
     </labels>
 </CustomLabels>

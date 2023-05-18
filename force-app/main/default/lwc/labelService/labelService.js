@@ -191,6 +191,7 @@ import watchVideo from '@salesforce/label/c.Watch_Video';
 import weight from '@salesforce/label/c.Weight';
 import wednesdayAbbreviation from '@salesforce/label/c.Wednesday_Abbreviation';
 import welcomeToProesis from '@salesforce/label/c.Welcome_To_Proesis';
+import welcomeToWestmoreVideoId from '@salesforce/label/c.Welcome_To_Westmore_VideoId';
 import workingHours from '@salesforce/label/c.Working_Hours';
 import yourBalanceLabel from '@salesforce/label/c.Your_Balance_Label';
 import yourHealth from '@salesforce/label/c.Your_Health';
@@ -397,6 +398,7 @@ const labels = {
     wednesdayAbbreviation,
     weight,
     welcomeToProesis,
+    welcomeToWestmoreVideoId,
     workingHours,
     yourBalanceLabel,
     yourHealth,

@@ -201,7 +201,7 @@
         <name>Donor_Tip_DonationDay_Text</name>
     </customLabels>
     <customLabels>
-        <label>5mqD4UuZSME</label>
+        <label>1mjVgo1bu6g</label>
         <name>Donor_Tip_DonationDay_VideoId</name>
     </customLabels>
     <customLabels>
@@ -209,7 +209,7 @@
         <name>Donor_Tip_DonationProcess_Text</name>
     </customLabels>
     <customLabels>
-        <label>1mjVgo1bu6g</label>
+        <label>5mqD4UuZSME</label>
         <name>Donor_Tip_DonationProcess_VideoId</name>
     </customLabels>
     <customLabels>
@@ -581,6 +581,10 @@
         <name>Rewards_Explanation</name>
     </customLabels>
     <customLabels>
+        <label>https://www.youtube.com/embed/8JS_z8NhN0Q</label>
+        <name>Rewards_Video_Link</name>
+    </customLabels>
+    <customLabels>
         <label>Video de recompensas</label>
         <name>Rewards_Video_Title</name>
     </customLabels>
@@ -799,6 +803,10 @@
     <customLabels>
         <label>Bienvenidos a Proesis</label>
         <name>Welcome_To_Proesis</name>
+    </customLabels>
+    <customLabels>
+        <label>VXo53BkTRq4</label>
+        <name>Welcome_To_Westmore_VideoId</name>
     </customLabels>
     <customLabels>
         <label>Título del saldo de Wallet</label>

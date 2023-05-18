@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
-        <name>Send_Notification</name>
-        <label>Send Notification</label>
-        <locationX>176</locationX>
-        <locationY>158</locationY>
+        <name>Send_Default_Notification</name>
+        <label>Send Default Notification</label>
+        <locationX>314</locationX>
+        <locationY>242</locationY>
         <actionName>customNotificationAction</actionName>
         <actionType>customNotificationAction</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -15,9 +15,9 @@
             </value>
         </inputParameters>
         <inputParameters>
-            <name>body</name>
+            <name>recipientIds</name>
             <value>
-                <elementReference>Notification_Body</elementReference>
+                <elementReference>Recipient_Id_Collection_Input</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -27,9 +27,48 @@
             </value>
         </inputParameters>
         <inputParameters>
+            <name>body</name>
+            <value>
+                <elementReference>Notification_Body</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>targetId</name>
+            <value>
+                <elementReference>Message_Record_Input.Id</elementReference>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_Donation_Notification</name>
+        <label>Send Donation Notification</label>
+        <locationX>50</locationX>
+        <locationY>458</locationY>
+        <actionName>customNotificationAction</actionName>
+        <actionType>customNotificationAction</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>customNotifTypeId</name>
+            <value>
+                <elementReference>Custom_Notification_Id_Input.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
             <name>recipientIds</name>
             <value>
                 <elementReference>Recipient_Id_Collection_Input</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>title</name>
+            <value>
+                <elementReference>Notification_Title_Donation</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>body</name>
+            <value>
+                <elementReference>Notification_Body_Donation</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -40,6 +79,61 @@
         </inputParameters>
     </actionCalls>
     <apiVersion>57.0</apiVersion>
+    <assignments>
+        <name>Create_Donation_Message_Update</name>
+        <label>Create Donation Message Update</label>
+        <locationX>50</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>Message_Record_Update.Id</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Message_Record_Input.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message_Record_Update.Name</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Notification_Title_Donation</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message_Record_Update.Body__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Notification_Body_Donation</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Donation_Message_Record_Text</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Message_Handler_Type_Decision</name>
+        <label>Message Handler Type Decision</label>
+        <locationX>182</locationX>
+        <locationY>134</locationY>
+        <defaultConnector>
+            <targetReference>Send_Default_Notification</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Is_Donation</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Message_Record_Input.Message_Handler_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Donation Payment</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Donation_Message_Update</targetReference>
+            </connector>
+            <label>Is Donation</label>
+        </rules>
+    </decisions>
     <environments>Default</environments>
     <interviewLabel>Donor Payment Notification {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Donor Payment Notification</label>
@@ -62,23 +156,43 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
-    <start>
+    <recordUpdates>
+        <name>Update_Donation_Message_Record_Text</name>
+        <label>Update Donation Message Record Text</label>
         <locationX>50</locationX>
+        <locationY>350</locationY>
+        <connector>
+            <targetReference>Send_Donation_Notification</targetReference>
+        </connector>
+        <inputReference>Message_Record_Update</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>56</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Send_Notification</targetReference>
+            <targetReference>Message_Handler_Type_Decision</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
     <textTemplates>
         <name>Notification_Body</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
         <text>{!Message_Record_Input.Body__c}</text>
     </textTemplates>
     <textTemplates>
+        <name>Notification_Body_Donation</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>We are grateful for your generosity. You will receive an email receipt soon with an itemized breakdown of the compensation you received for your recent donation.</text>
+    </textTemplates>
+    <textTemplates>
         <name>Notification_Title</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
         <text>{!Message_Record_Input.Name}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>Notification_Title_Donation</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Thanks for donating! You just got paid.</text>
     </textTemplates>
     <variables>
         <name>Custom_Notification_Id_Input</name>
@@ -109,6 +223,15 @@
         <dataType>SObject</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Message__c</objectType>
+    </variables>
+    <variables>
+        <description>Updates the message record text with content variables from this notification flow.</description>
+        <name>Message_Record_Update</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
         <isOutput>false</isOutput>
         <objectType>Message__c</objectType>
     </variables>

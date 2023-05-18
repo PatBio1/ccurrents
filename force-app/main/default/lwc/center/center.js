@@ -21,10 +21,6 @@ export default class Center extends LightningElement {
         this.loadCenter();
     }
 
-    get welcomeVideoUrl() {
-        return `https://www.youtube.com/embed/${labels.welcomeToWestmoreVideoId}?controls=0`;
-    }
-
     loadCenter() {
         this.loading = true;
 

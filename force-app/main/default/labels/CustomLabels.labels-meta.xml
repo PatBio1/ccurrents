@@ -1320,8 +1320,8 @@
         <fullName>Donor_Tip_DonorIdReqs_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>8oMg69UavF0</shortDescription>
-        <value>8oMg69UavF0</value>
+        <shortDescription>https://www.youtube.com/embed/8oMg69UavF0</shortDescription>
+        <value>https://www.youtube.com/embed/8oMg69UavF0</value>
     </labels>
     <labels>
         <fullName>Donor_Tip_ApptRules_Text</fullName>
@@ -1334,8 +1334,8 @@
         <fullName>Donor_Tip_ApptRules_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>zuNA9p-WTDk</shortDescription>
-        <value>zuNA9p-WTDk</value>
+        <shortDescription>https://www.youtube.com/embed/zuNA9p-WTDk</shortDescription>
+        <value>https://www.youtube.com/embed/zuNA9p-WTDk</value>
     </labels>
     <labels>
         <fullName>Donor_Tip_DonationProcess_Text</fullName>
@@ -1348,8 +1348,8 @@
         <fullName>Donor_Tip_DonationProcess_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>LkchqBcVp8s</shortDescription>
-        <value>LkchqBcVp8s</value>
+        <shortDescription>https://www.youtube.com/embed/LkchqBcVp8s</shortDescription>
+        <value>https://www.youtube.com/embed/LkchqBcVp8s</value>
     </labels>
     <labels>
         <fullName>Donor_Tip_FirstAppointment_Text</fullName>
@@ -1362,8 +1362,8 @@
         <fullName>Donor_Tip_FirstAppointment_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>y3ynYyX1Ins</shortDescription>
-        <value>y3ynYyX1Ins</value>
+        <shortDescription>https://www.youtube.com/embed/y3ynYyX1Ins</shortDescription>
+        <value>https://www.youtube.com/embed/y3ynYyX1Ins</value>
     </labels>
     <labels>
         <fullName>Donor_Tip_HealthHistory_Text</fullName>
@@ -1376,8 +1376,8 @@
         <fullName>Donor_Tip_HealthHistory_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>N3JkWryjKqM</shortDescription>
-        <value>N3JkWryjKqM</value>
+        <shortDescription>https://www.youtube.com/embed/N3JkWryjKqM</shortDescription>
+        <value>https://www.youtube.com/embed/N3JkWryjKqM</value>
     </labels>
     <labels>
         <fullName>Donor_Tip_LoyaltyProgram_Text</fullName>
@@ -1390,8 +1390,8 @@
         <fullName>Donor_Tip_LoyaltyProgram_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>iVX0MW6WP0U</shortDescription>
-        <value>iVX0MW6WP0U</value>
+        <shortDescription>https://www.youtube.com/embed/iVX0MW6WP0U</shortDescription>
+        <value>https://www.youtube.com/embed/iVX0MW6WP0U</value>
     </labels>
     <labels>
         <fullName>Donor_Tip_HealthHistoryOnline_Text</fullName>
@@ -1404,8 +1404,8 @@
         <fullName>Donor_Tip_HealthHistoryOnline_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>rzLx8Xay2WY</shortDescription>
-        <value>rzLx8Xay2WY</value>
+        <shortDescription>https://www.youtube.com/embed/rzLx8Xay2WY</shortDescription>
+        <value>https://www.youtube.com/embed/rzLx8Xay2WY</value>
     </labels>
     <labels>
         <fullName>Donor_Tip_RedeemingPoints_Text</fullName>
@@ -1418,8 +1418,8 @@
         <fullName>Donor_Tip_RedeemingPoints_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>cH-bmEHGBOs</shortDescription>
-        <value>cH-bmEHGBOs</value>
+        <shortDescription>https://www.youtube.com/embed/cH-bmEHGBOs</shortDescription>
+        <value>https://www.youtube.com/embed/cH-bmEHGBOs</value>
     </labels>
     <labels>
         <fullName>Donor_Tip_DonationDay_Text</fullName>
@@ -1432,8 +1432,8 @@
         <fullName>Donor_Tip_DonationDay_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>iu4uvkT0ADE</shortDescription>
-        <value>iu4uvkT0ADE</value>
+        <shortDescription>https://www.youtube.com/embed/iu4uvkT0ADE</shortDescription>
+        <value>https://www.youtube.com/embed/iu4uvkT0ADE</value>
     </labels>
     <labels>
         <fullName>Transaction_View_Details</fullName>
@@ -1460,7 +1460,7 @@
         <fullName>Welcome_To_Westmore_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>aab7mUifSjw</shortDescription>
-        <value>aab7mUifSjw</value>
+        <shortDescription>https://www.youtube.com/embed/aab7mUifSjw</shortDescription>
+        <value>https://www.youtube.com/embed/aab7mUifSjw</value>
     </labels>
 </CustomLabels>

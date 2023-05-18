@@ -4,7 +4,7 @@
 
     <lightning-modal-body>
         <div class="video-container">
-            <iframe src={youtubeEmbedUrl} frameborder="0" allowfullscreen></iframe>
+            <iframe if:true={youtubeVideoUrl} src={youtubeVideoUrl} frameborder="0" allowfullscreen></iframe>
         </div>
     </lightning-modal-body>
 </template>

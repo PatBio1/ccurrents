@@ -9,7 +9,7 @@
                 <lightning-tab key={tipLinkSection.title} label={tipLinkSection.title}>
                     <div class="tip-section">
                         <template for:each={tipLinkSection.links} for:item="tipLink">
-                            <div key={tipLink.youtubeVideoId} class="tip-link" onclick={handleSelectDonorTip} data-tip-link-id={tipLink.youtubeVideoId}>
+                            <div key={tipLink.youtubeVideoId} class="tip-link" onclick={handleSelectDonorTip} data-tip-video-url={tipLink.youtubeVideoUrl}>
                                 {tipLink.linkText}
 
                                 <span style="margin-left: auto;">

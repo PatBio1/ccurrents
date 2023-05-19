@@ -201,7 +201,7 @@
     <relatedLists>
         <fields>NAME</fields>
         <fields>Type__c</fields>
-        <fields>Account.ACC_NAME</fields>
+        <fields>Donor__c</fields>
         <relatedList>Transaction__c.Visit__c</relatedList>
     </relatedLists>
     <relatedLists>

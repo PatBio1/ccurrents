@@ -2,6 +2,8 @@ import { LightningElement, wire } from 'lwc';
 import { getRecord } from 'lightning/uiRecordApi';
 import { loadScript } from 'lightning/platformResourceLoader';
 
+import userCurrency from '@salesforce/i18n/currency';
+
 import chartJs from '@salesforce/resourceUrl/ChartJS_4_2_1';
 import chartJsDatalabels from '@salesforce/resourceUrl/ChartJS_Datalabels_2_2';
 import labels from 'c/labelService';
@@ -21,6 +23,8 @@ const LEVEL_NAME_TO_BACKGROUND_STYLE = new Map([
 
 export default class LoyaltyTiers extends LightningElement {
     labels = labels;
+
+    userCurrency = userCurrency;
 
     photoUrl;
     loyaltyLevels;

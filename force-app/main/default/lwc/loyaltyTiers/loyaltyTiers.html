@@ -50,12 +50,11 @@
                             <span style="font-size: 12px;">
                                 <span> - </span>
 
-                                <lightning-formatted-number maximum-fraction-digits="0" format-style="currency" currency-code="USD" value={loyaltyTier.loyaltyCurrencyPerDonation}></lightning-formatted-number>
-                                <span style="margin-left: 0.25rem;">{labels.perDonation}</span>
-
-                                <span style="margin: 0 0.25rem;">&amp;</span> 
-
-                                {loyaltyTier.loyaltyPointsPerDonation} {labels.pointBrandName}
+                                {loyaltyTier.loyaltyPointsPerDonation} {labels.pointBrandName} {labels.perDonation}
+                                
+                                <span style="margin-left: 0.25rem;" if:true={loyaltyTier.loyaltyThresholdPayment}>
+                                    and a <strong><lightning-formatted-number format-style="currency" currency-code={userCurrency} value={loyaltyTier.loyaltyThresholdPayment}></lightning-formatted-number></strong> bonus
+                                </span>
                             </span>
                         </div>
                     </div>

@@ -21,7 +21,7 @@ export default class Welcome extends NavigationMixin(LightningElement) {
     center;
 
     get videoUrl() {
-        return `https://www.youtube.com/embed/${labels.donorTipDonationProcessVideoId}?controls=0`;
+        return labels.donorTipDonationProcessVideoId;
     }
 
     get videoPlaceholderImage() {

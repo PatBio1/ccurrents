@@ -61,4 +61,7 @@ public with sharing class Constants {
     public static final String ONBE_REISSUE_CARD_LOST_CODE = 'lost';
     public static final String ONBE_REISSUE_CARD_REVOKED_CODE = 'revoked';
     public static final String ONBE_REISSUE_CARD_STOLEN_CODE = 'stolen';
+
+    public static final String MESSAGE_HANDLER_TYPE_DONATION = 'Donation Payment';
+
 }

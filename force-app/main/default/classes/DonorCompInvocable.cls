@@ -187,6 +187,7 @@ public without sharing class DonorCompInvocable {
             Message__c paymentMessage = new Message__c(
                 Donor__c = foundContact.Id,
                 Visit__c = targetVisitRecord.Id,
+                Message_Handler_Type__c = Constants.MESSAGE_HANDLER_TYPE_DONATION,
                 Trigger_Marketing_Cloud__c = true
             );
 

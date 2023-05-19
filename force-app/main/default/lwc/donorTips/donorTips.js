@@ -10,19 +10,19 @@ const AVAILABLE_TIP_LINKS = {
             links: [
                 {
                     linkText: labels.donorTipDonorIdReqsText,
-                    youtubeVideoId: labels.donorTipDonorIdReqsVideoId // English vs Spanish links are different, will be handled via translations
+                    youtubeVideoUrl: labels.donorTipDonorIdReqsVideoId // English vs Spanish links are different, will be handled via translations
                 },
                 {
                     linkText: labels.donorTipApptRulesText,
-                    youtubeVideoId: labels.donorTipApptRulesVideoId
+                    youtubeVideoUrl: labels.donorTipApptRulesVideoId
                 },
                 {
                     linkText: labels.donorTipDonationProcessText,
-                    youtubeVideoId: labels.donorTipDonationProcessVideoId
+                    youtubeVideoUrl: labels.donorTipDonationProcessVideoId
                 },
                 {
                     linkText: labels.donorTipHealthHistoryText,
-                    youtubeVideoId: labels.donorTipHealthHistoryVideoId
+                    youtubeVideoUrl: labels.donorTipHealthHistoryVideoId
                 }
             ]
         },
@@ -31,23 +31,23 @@ const AVAILABLE_TIP_LINKS = {
             links: [
                 {
                     linkText: labels.donorTipFirstAppointmentText,
-                    youtubeVideoId: labels.donorTipFirstAppointmentVideoId
+                    youtubeVideoUrl: labels.donorTipFirstAppointmentVideoId
                 },
                 {
                     linkText: labels.donorTipLoyaltyProgramText,
-                    youtubeVideoId: labels.donorTipLoyaltyProgramVideoId
+                    youtubeVideoUrl: labels.donorTipLoyaltyProgramVideoId
                 },
                 {
                     linkText: labels.donorTipHealthHistoryOnlineText,
-                    youtubeVideoId: labels.donorTipHealthHistoryOnlineVideoId
+                    youtubeVideoUrl: labels.donorTipHealthHistoryOnlineVideoId
                 },
                 {
                     linkText: labels.donorTipRedeemingPointsText,
-                    youtubeVideoId: labels.donorTipRedeemingPointsVideoId
+                    youtubeVideoUrl: labels.donorTipRedeemingPointsVideoId
                 },
                 {
                     linkText: labels.donorTipDonationDayText,
-                    youtubeVideoId: labels.donorTipDonationDayVideoId
+                    youtubeVideoUrl: labels.donorTipDonationDayVideoId
                 }
             ]
         }
@@ -61,11 +61,11 @@ export default class DonorTips extends LightningElement {
 
 
     handleSelectDonorTip(event) {
-        let targetYoutubeId = event.currentTarget.dataset.tipLinkId;
+        let targetYoutubeUrl = event.currentTarget.dataset.tipVideoUrl;
 
         DonorTipVideoModal.open({
             linkText: event.currentTarget.innerText,
-            youtubeVideoId: targetYoutubeId
+            youtubeVideoUrl: targetYoutubeUrl
         });
     }
 }

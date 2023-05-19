@@ -17,8 +17,8 @@ jobs:
           name: "Update sfdx"
       - run: 
           command: |
-              echo $SFDXURL_INTQA > /tmp/sfdx.url
-              sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a INTQA
+              # echo $SFDXURL_INTQA > /tmp/sfdx.url
+              # sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a INTQA
               echo $SFDXURL_UATSTAGING > /tmp/sfdx.url
               sfdx force:auth:sfdxurl:store -f /tmp/sfdx.url -a UATSTAGING
               echo $SFDXURL_PROD > /tmp/sfdx.url

@@ -4,9 +4,10 @@
 
     <div if:true={showHome}>
         <iframe if:true={showVideo} width="100%" src={videoUrl} frameborder="0" allowfullscreen></iframe>
+        <img if:false={showVideo} src={videoPlaceholderImage} width="100%"/>
 
         <div class="slds-text-align_center slds-var-p-around_medium">
-            <lightning-button variant="base" label={labels.aboutDonationExperience} icon-name="utility:chevronright" icon-position="right" class="tertiary-button" onclick={onAboutButtonClick}></lightning-button>
+            <!--lightning-button variant="base" label={labels.aboutDonationExperience} icon-name="utility:chevronright" icon-position="right" class="tertiary-button" onclick={onAboutButtonClick}></lightning-button-->
 
             <div class="slds-m-vertical_large slds-text-align_center">
                 <lightning-combobox variant="label-hidden" options={languageOptions} value={language} onchange={onLanguageChange} style="padding: 0 25%;"></lightning-combobox>

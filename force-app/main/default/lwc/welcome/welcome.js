@@ -1,6 +1,7 @@
 import { wire, LightningElement } from 'lwc';
 import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
 import formFactor from '@salesforce/client/formFactor';
+import proesisDonor from '@salesforce/resourceUrl/ProesisDonor';
 import labels from 'c/labelService';
 
 const PAGE_HOME = 'Home';
@@ -21,6 +22,10 @@ export default class Welcome extends NavigationMixin(LightningElement) {
 
     get videoUrl() {
         return `https://www.youtube.com/embed/${labels.donorTipDonationProcessVideoId}?controls=0`;
+    }
+
+    get videoPlaceholderImage() {
+        return proesisDonor + '/images/people.png';
     }
 
     get showVideo() {

@@ -45,7 +45,7 @@ public without sharing class DonorSelector {
     @AuraEnabled
     public static DonorRewardsInfo getDonorRewardsInfo() {
         List<Contact> targetDonors = [
-            SELECT Id, Name, Last_Onbe_Balance_Update__c, Onbe_Balance__c, Balance_Points__c, Total_Visits_365d__c,
+            SELECT Id, Name, Last_Onbe_Balance_Update__c, Onbe_Balance__c, Balance_Points__c, Redeemed_Points__c, Total_Visits_365d__c,
                 Loyalty_Level__r.Name, Loyalty_Level__r.Donation_Threshold__c, 
                 Loyalty_Level__r.Next_Level__r.Name, Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, (
                     SELECT Id, Expiration__c, Card_Number__c
@@ -108,6 +108,9 @@ public without sharing class DonorSelector {
 
     public class DonorRewardsInfo {
         @AuraEnabled
+        public String donorId;
+        
+        @AuraEnabled
         public String donorName;
 
         @AuraEnabled
@@ -121,6 +124,9 @@ public without sharing class DonorSelector {
 
         @AuraEnabled
         public Decimal minimumWithdrawalAmount;
+
+        @AuraEnabled 
+        public Decimal pointsToDollarsConversionRate;
 
         @AuraEnabled
         public String nextLoyaltyLevel;
@@ -144,9 +150,14 @@ public without sharing class DonorSelector {
         public String cardNumberExpiration;
 
         public DonorRewardsInfo(Contact donorInfo) {
+            this.donorId = donorInfo.Id;
             this.donorName = donorInfo.Name;
             this.donorBalance = donorInfo.Onbe_Balance__c == null ? 0 : donorInfo.Onbe_Balance__c;
-            this.donorPoints = donorInfo.Balance_Points__c;
+
+            Decimal pointsBalance = donorInfo.Balance_Points__c == null ? 0 : donorInfo.Balance_Points__c;
+            Decimal redeemedPoints = donorInfo.Redeemed_Points__c == null ? 0 : donorInfo.Redeemed_Points__c;
+            this.donorPoints = pointsBalance - redeemedPoints;
+
             this.currentLoyaltyLevel = !String.isEmpty(donorInfo.Loyalty_Level__r.Name) ? donorInfo.Loyalty_Level__r.Name : 'Donor (Default)';
             this.donorVisitCount = (donorInfo.Total_Visits_365d__c != null) ? donorInfo.Total_Visits_365d__c : 0;
             this.currentTierDonationThreshold = (donorInfo.Loyalty_Level__r.Donation_Threshold__c != null) ? donorInfo.Loyalty_Level__r.Donation_Threshold__c : 0;
@@ -154,6 +165,7 @@ public without sharing class DonorSelector {
 
             Proesis_Wallet__c proesisWalletConfig = Proesis_Wallet__c.getOrgDefaults();
             this.minimumWithdrawalAmount = proesisWalletConfig.Minimum_Withdrawal__c;
+            this.pointsToDollarsConversionRate = (proesisWalletConfig.Points_to_Dollar__c != null) ? proesisWalletConfig.Points_to_Dollar__c : 100;
 
             if (donorInfo.Loyalty_Level__r.Next_Level__r != null) {
                 this.nextLoyaltyLevel = donorInfo.Loyalty_Level__r.Next_Level__r.Name;

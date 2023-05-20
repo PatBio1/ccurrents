@@ -1114,6 +1114,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.Last_Onbe_Balance_Update__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.Last_Used_Center__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1155,6 +1160,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Contact.Next_Visit__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Contact.Onbe_Balance__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

@@ -439,7 +439,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Legal Terms Link</shortDescription>
-        <value>http://cloud.m.proesisbio.com/combined</value>
+        <value>https://cloud.m.proesisbio.com/combined</value>
     </labels>
     <labels>
         <fullName>Login</fullName>

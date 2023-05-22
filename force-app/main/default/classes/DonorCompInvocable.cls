@@ -208,6 +208,10 @@ public without sharing class DonorCompInvocable {
                     Type__c = 'Points',
                     Unit_Cost__c = foundContact.Loyalty_Level__r.Donation_Points__c
                 ));
+
+                if (addFundsRequest != null) {
+                    addFundsRequest.addLineItem('Donation Points', 'Points', foundContact.Loyalty_Level__r.Donation_Points__c);
+                }
             }
 
             Decimal loyaltyLevelPaymentBonus = (foundContact.Loyalty_Level__r.Donation_Payment__c != null) ? foundContact.Loyalty_Level__r.Donation_Payment__c : 0;
@@ -255,6 +259,10 @@ public without sharing class DonorCompInvocable {
                                 Unit_Cost__c = bonusLevel.Threshold_Points__c,
                                 Promotion_Level__c = bonusLevel.Id
                             ));
+
+                            if (addFundsRequest != null) {
+                                addFundsRequest.addLineItem(bonusLevel.Name + ' - Bonus Points', 'Points', bonusLevel.Threshold_Points__c);
+                            }
                         }
 
                         if (bonusLevel.Threshold_Payment__c != null && bonusLevel.Threshold_Payment__c > 0) {
@@ -325,6 +333,10 @@ public without sharing class DonorCompInvocable {
                             Unit_Cost__c = targetPromotionLevel.Threshold_Points__c,
                             Promotion_Level__c = targetPromotionLevel.Id
                         ));
+
+                        if (addFundsRequest != null) {
+                            addFundsRequest.addLineItem('Threshold Points', 'Points', targetPromotionLevel.Threshold_Points__c);
+                        }
                     }
 
                     if (targetPromotionLevel.Threshold_Payment__c != null && targetPromotionLevel.Threshold_Payment__c > 0) {

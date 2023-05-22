@@ -1,4 +1,4 @@
-public with sharing class AddFundsBatchableHelper {
+public without sharing class AddFundsBatchableHelper {
     public static Map<DonorCompInvocable.AddFundsRequest, Transaction__c> createDebitTransactions(List<DonorCompInvocable.AddFundsRequest> requests) {
         Map<DonorCompInvocable.AddFundsRequest, Transaction__c> addFundsRequestToTransaction = new Map<DonorCompInvocable.AddFundsRequest, Transaction__c>();
         Map<Id, Transaction__c> existingTransactions = new Map<Id, Transaction__c>();
@@ -8,8 +8,11 @@ public with sharing class AddFundsBatchableHelper {
             debitTransaction.Type__c = 'Debit';
             debitTransaction.Status__c = 'Processing';
             debitTransaction.Donor__c = addFundsRequest.donorContactId;
-            debitTransaction.Visit__c = addFundsRequest.visitId;
             debitTransaction.Service__c = 'Onbe';
+
+            if (addFundsRequest.visitId != null) {
+                debitTransaction.Visit__c = addFundsRequest.visitId;
+            }
 
             if (addFundsRequest.isExceptionPayment) {
                 debitTransaction.SubType__c = 'Exception';

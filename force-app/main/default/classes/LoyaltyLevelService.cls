@@ -38,7 +38,11 @@ public without sharing class LoyaltyLevelService {
     public static List<LoyaltyLevel> getLoyaltyLevelDisplayInfo() {
         List<LoyaltyLevel> loyaltyLevels = new List<LoyaltyLevel>();
 
-        for (Level__c level : [SELECT Name, Donation_Threshold__c, Description__c, Donation_Payment__c, Donation_Points__c FROM Level__c WHERE isActive__c = true AND isVisible__c = true ORDER BY Donation_Threshold__c ASC]) {
+        for (Level__c level : [
+            SELECT Name, Donation_Threshold__c, Description__c, Donation_Payment__c, Donation_Points__c, Threshold_Payment__c
+            FROM Level__c 
+            WHERE isActive__c = true AND isVisible__c = true ORDER BY Donation_Threshold__c ASC
+        ]) {
             LoyaltyLevel loyaltyLevel = new LoyaltyLevel();
             loyaltyLevel.levelId = level.Id;
             loyaltyLevel.levelName = level.Name;
@@ -46,6 +50,7 @@ public without sharing class LoyaltyLevelService {
             loyaltyLevel.levelDescription = level.Description__c;
             loyaltyLevel.loyaltyCurrencyPerDonation = level.Donation_Payment__c;
             loyaltyLevel.loyaltyPointsPerDonation = level.Donation_Points__c;
+            loyaltyLevel.loyaltyThresholdPayment = level.Threshold_Payment__c;
             loyaltyLevels.add(loyaltyLevel);
         }
 
@@ -99,6 +104,9 @@ public without sharing class LoyaltyLevelService {
 
         @AuraEnabled
         public Decimal loyaltyPointsPerDonation;
+
+        @AuraEnabled
+        public Decimal loyaltyThresholdPayment;
     }
 
     public class BadgeSetting {

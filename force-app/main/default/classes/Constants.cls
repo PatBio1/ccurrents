@@ -64,4 +64,5 @@ public with sharing class Constants {
 
     public static final String MESSAGE_HANDLER_TYPE_DONATION = 'Donation Payment';
 
+    public static final String REPLACE_PAYMENT_METHOD_TASK_SUBJECT = 'Renew Payment Method';
 }

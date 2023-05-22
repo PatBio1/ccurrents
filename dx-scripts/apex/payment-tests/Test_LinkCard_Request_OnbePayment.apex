@@ -1,52 +1,40 @@
+private static final String PROGRAM_ID = '04011223';
+private static final String PROMOTION_ID = '2';
 
-// Test Callout Method:  OnbeWsPrepaid.AccountManagementApiWebServices.linkCard_Http(OnbeDomainPrepaid.Link)
-
-// ## IF YOU WANT TO SEE THE DETAILED RESPONSE OUTPUT, TURN APEX DEBUG LOG LEVELS TO FINE OR FINEST!
-
-OnbeWsPrepaid.AccountManagementApiWebServices createActivateCardRequest = new OnbeWsPrepaid.AccountManagementApiWebServices();
-
+Id donorContactId = '0038H00000JSno5QAD'; 
 
 OnbeDomainPrepaid.Link newLink = new OnbeDomainPrepaid.Link();
-newLink.block = 'NONE';  // either ALL or NONE
-newLink.cardPackageId = '80001';
+newLink.block = 'ALL';
+newLink.cardPackageId = '1093';
 
+OnbeWsPrepaid.AccountManagementApiWebServices accountManagementAPI = new OnbeWsPrepaid.AccountManagementApiWebServices();
+OnbeResponsePrepaid.LinkCardResponse linkCardResponse = accountManagementAPI.linkCard_Http(
+    String.valueOf(donorContactId), PROGRAM_ID, PROMOTION_ID, String.valueOf(donorContactId) + '-' + String.valueOf(System.currentTimeMillis()), newLink
+);
 
-// NOTE: the first time you call this SOAP Service, you may get a NullPointerException 
-//      The second time you call it, you won-t  ???
-//Error: System.NullPointerException: Attempt to de-reference a null object
-//Error: Class.OnbeWsPrepaid.AccountManagementApiWebServices.linkCard_Http: line 713, column 1
+System.debug(linkCardResponse);
 
-System.debug('createActivateCardRequest : ' + JSON.serializePretty(createActivateCardRequest));
-
-// This method is void
-createActivateCardRequest.linkCard_Http(newLink);
-
-
-
-/*  some Debug Output - the above request returned an HTTP 200.  Howerver, notice that the output contains the message: 'Missing program id'
-ARIABLE_ASSIGNMENT|[712]|bodyNode|"XMLNode[ELEMENT,Body,http://schemas.xmlsoap.org/soap/envelope/,null,null,
-[XMLNode[ELEMENT,linkCardReturn, http://ws.accountmanagementapi.prepaid.citi.com,null,[common.apex.api.dom.XmlNode$NamespaceDef@3ce81431],
-[XMLNode[ELEMENT,code,http://response.accountmanagementapi.prepaid.citi.com,null,[common.apex.api.dom.XmlNode$NamespaceDef@2c15ab27],
-[XMLNode[TEXT,null,null,null,null,null,1,]],null,], 
-XMLNode[ELEMENT,description,http://response.accountmanagementapi.prepaid.citi.com,null,[common.apex.api.dom.XmlNode$NamespaceDef@56cc9f21],
-[XMLNode[TEXT,null,null,null,null,null,Missing program id,]],null,], 
-XMLNode[ELEMENT,existingTransaction,http://response.accountmanagementapi.prepaid.citi.com,null,[common.apex.api.dom.XmlNode$NamespaceDef@12fba24f],
-[XMLNode[TEXT,null,null,null,null,null,false,]],null,], 
-XMLNode[ELEMENT,keyValue,http://response.accountmanagementapi.prepaid.citi.com,[common.apex.api.dom.XmlNode$Attribute@6ece75bd],[common.apex.api.dom.XmlNode$NamespaceDef@6f83a7d0, common.apex.api.dom.XmlNode$NamespaceDef@5d840896],null,null,], 
-XMLNode[ELEMENT,sub_code,http://response.accountmanagementapi.prepaid.citi.com,null,[common.apex.api.dom.XmlNode$NamespaceDef@12a230b3],[XMLNode[TEXT,null,null,null,null,null,MISSING_PROGRAM_ID,]],null,]],null,]],null,]"|0x7d1357cb
-SYSTEM_METHOD_EXIT|[713]|dom.XmlNode.getChildElement(String, String)
-
-VARIABLE_ASSIGNMENT|[713]|linkCardReturnNode|"XMLNode[ELEMENT,linkCardReturn,http://ws.accountmanagementapi.prepaid.citi.com,null,[common.apex.api.dom.XmlNode$NamespaceDef@3ce81431],
-[XMLNode[ELEMENT,code,http://response.accountmanagementapi.prepaid.citi.com,null,[common.apex.api.dom.XmlNode$NamespaceDef@2c15ab27],
-[XMLNode[TEXT,null,null,null,null,null,1,]],null,], 
-XMLNode[ELEMENT,description,http://response.accountmanagementapi.prepaid.citi.com,null,[common.apex.api.dom.XmlNode$NamespaceDef@56cc9f21],
-[XMLNode[TEXT,null,null,null,null,null,Missing program id,]],null,], 
-XMLNode[ELEMENT,existingTransaction,http://response.accountmanagementapi.prepaid.citi.com,null,[common.apex.api.dom.XmlNode$NamespaceDef@12fba24f],
-[XMLNode[TEXT,null,null,null,null,null,false,]],null,], 
-XMLNode[ELEMENT,keyValue,http://response.accountmanagementapi.prepaid.citi.com,[common.apex.api.dom.XmlNode$Attribute@6ece75bd],[common.apex.api.dom.XmlNode$NamespaceDef@6f83a7d0, common.apex.api.dom.XmlNode$NamespaceDef@5d840896],null,null,], 
-XMLNode[ELEMENT,sub_code,http://response.accountmanagementapi.prepaid.citi.com,null,[common.apex.api.dom.XmlNode$NamespaceDef@12a230b3],
-[XMLNode[TEXT,null,null,null,null,null,MISSING_PROGRAM_ID,]],null,]],null,]"|0x30aaf49
-
-
+// Response
+/*
+    <?xml version="1.0" encoding="UTF-8"?>
+    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <soapenv:Body>
+            <linkCardReturn xmlns="http://ws.accountmanagementapi.prepaid.citi.com">
+                <ns1:code xmlns:ns1="http://response.accountmanagementapi.prepaid.citi.com">0</ns1:code>
+                <ns2:description xmlns:ns2="http://response.accountmanagementapi.prepaid.citi.com">Processed Successfully</ns2:description>
+                <ns3:existingTransaction xmlns:ns3="http://response.accountmanagementapi.prepaid.citi.com">false</ns3:existingTransaction>
+                <ns4:keyValue xmlns:ns4="http://response.accountmanagementapi.prepaid.citi.com">
+                    <item>
+                        <ns5:key xmlns:ns5="http://common.accountmanagementapi.prepaid.citi.com">update-inventory</ns5:key>
+                        <ns6:value xmlns:ns6="http://common.accountmanagementapi.prepaid.citi.com">processed</ns6:value>
+                    </item>
+                    <item>
+                        <ns7:key xmlns:ns7="http://common.accountmanagementapi.prepaid.citi.com">link-card</ns7:key>
+                        <ns8:value xmlns:ns8="http://common.accountmanagementapi.prepaid.citi.com">processed</ns8:value>
+                    </item>
+                </ns4:keyValue>
+                <ns9:sub_code xmlns:ns9="http://response.accountmanagementapi.prepaid.citi.com">PROCESSED_SUCCESSFULLY</ns9:sub_code>
+            </linkCardReturn>
+        </soapenv:Body>
+    </soapenv:Envelope>
 */
-

@@ -341,11 +341,15 @@
         <name>Learn_More_Section_Title</name>
     </customLabels>
     <customLabels>
+        <label>Ya existe un perfil con este correo electrónico. Haga clic en &lt;b&gt;Continuar&lt;/b&gt; a continuación para continuar con la verificación de que este es su correo electrónico. Se enviará un correo electrónico de verificación a &lt;b&gt;{0}&lt;/b&gt;.</label>
+        <name>Lead_Exists_Instructions</name>
+    </customLabels>
+    <customLabels>
         <label>Términos legales</label>
         <name>Legal_Terms</name>
     </customLabels>
     <customLabels>
-        <label>http://cloud.m.proesisbio.com/combined</label>
+        <label>https://cloud.m.proesisbio.com/combined</label>
         <name>Legal_Terms_Link</name>
     </customLabels>
     <customLabels>

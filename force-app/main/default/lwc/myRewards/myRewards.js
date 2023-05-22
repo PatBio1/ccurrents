@@ -23,21 +23,33 @@ const LOYALTY_TIER_NAME_TO_DISPLAY_PROPS = new Map([
     ['Royal', { displayName: 'Royal', style: 'background: rgba(219, 202, 160, 0.57);'}]
 ]);
 
+const REWARDS_SCREEN_KEY = 'rewardsScreen';
+const REDEEM_POINTS_SCREEN_KEY = 'redeemPoints';
+
 export default class MyRewards extends NavigationMixin(LightningElement) {
 
     userCurrency = userCurrency;
     userTimezone = userTimezone;
     labels = labels;
 
-    noGoalSet = true;
-    settingGoal = false;
-    goalSet = false;
-    goalAmount;
-
     donorRewardsInfo;
     loyaltyLevelsInfo;
     @track paymentHistory;
     isLoading = false;
+
+    currentScreen = REWARDS_SCREEN_KEY;
+
+    get hasRewardsVideo() {
+        return (this.labels.rewardsVideoLink && this.labels.rewardsVideoLink.toLowerCase() !== 'null')
+    }
+
+    get isRewardScreen() {
+        return (this.currentScreen === REWARDS_SCREEN_KEY);
+    }
+
+    get isRedeemPointsScreen() {
+        return (this.currentScreen === REDEEM_POINTS_SCREEN_KEY);
+    }
 
     get userHasCard() {
         return (this.donorRewardsInfo && this.donorRewardsInfo.cardNumber4Digits && this.donorRewardsInfo.cardNumberExpiration);
@@ -110,30 +122,6 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
         this.isLoading = false;
     }
 
-    onSetGoalButtonClick() {
-        this.noGoalSet = false;
-        this.settingGoal = true;
-    }
-
-    onGoalAmountChange(event) {
-        this.goalAmount = event.data.value;
-    }
-
-    onSetGoalCancelButtonClick() {
-        this.noGoalSet = true;
-        this.settingGoal = false;
-    }
-
-    onSetGoalApplyButtonClick() {
-        this.settingGoal = false;
-        this.goalSet = true;
-    }
-
-    onSetNewGoalButtonClick() {
-        this.settingGoal = true;
-        this.goalSet = false;
-    }
-
     onLostCardButtonClick() {
         LostMyCardModal.open();
     }
@@ -181,4 +169,11 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
         }
     }
 
+    navigateToRedeemPoints(event) {
+        this.currentScreen = REDEEM_POINTS_SCREEN_KEY;
+    }
+
+    handleExitRedeemPointsScreen(event) {
+        this.currentScreen = REWARDS_SCREEN_KEY;
+    }
 }

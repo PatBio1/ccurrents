@@ -37,6 +37,8 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     @track paymentHistory;
     isLoading = false;
 
+    currentScreen = REWARDS_SCREEN_KEY;
+
     get hasRewardsVideo() {
         return (this.labels.rewardsVideoLink && this.labels.rewardsVideoLink.toLowerCase() !== 'null')
     }

@@ -623,7 +623,7 @@ public without sharing class ProfileController {
         user.Username = username;
         user.CommunityNickname = 'proesis' + System.currentTimeMillis();
         user.LocaleSidKey = language;
-        user.TimeZoneSidKey = 'America/New_York';
+        user.TimeZoneSidKey = 'America/Chicago';
         user.ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id;
         user.LanguageLocaleKey = (language.startsWith('es') ? 'es' : 'en_US');
         user.EmailEncodingKey = 'UTF-8';

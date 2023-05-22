@@ -55,7 +55,7 @@ export default class CancelCardQuickAction extends LightningElement {
         try {
             this.isLoading = true;
 
-            await cancelPaymentMethod({ paymentMethodId: this.defaultPaymentMethod.id });
+            await cancelPaymentMethod({ paymentMethodId: this.defaultPaymentMethod.id, reissueCode: 'revoked' });
 
             this.dispatchEvent(new ShowToastEvent({
                 title: 'Payment Method Cancelled',

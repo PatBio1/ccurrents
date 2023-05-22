@@ -79,6 +79,7 @@ import incorrectCodeMessage from '@salesforce/label/c.Incorrect_Code_Message';
 import invalidZipCode from '@salesforce/label/c.Invalid_Zip_Code';
 import joinUs from '@salesforce/label/c.Join_Us';
 import lastName from '@salesforce/label/c.Last_Name';
+import leadExistsInstructions from '@salesforce/label/c.Lead_Exists_Instructions';
 import learnMoreSectionTitle from '@salesforce/label/c.Learn_More_Section_Title';
 import legalTerms from '@salesforce/label/c.Legal_Terms';
 import legalTermsLink from '@salesforce/label/c.Legal_Terms_Link';
@@ -286,6 +287,7 @@ const labels = {
     invalidZipCode,
     joinUs,
     lastName,
+    leadExistsInstructions,
     learnMoreSectionTitle,
     legalTerms,
     legalTermsLink,

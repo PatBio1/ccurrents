@@ -41,7 +41,8 @@ public without sharing class CancelCardController {
             throw new AuraHandledException('Error while getting donor active payment method: ' + e.getMessage());
         }
 
-        cancelPaymentMethod(targetPaymentMethod.Id);
+        // As of writing this comment, the method is only used in the lost card modal. So we can assume a lost card code
+        cancelPaymentMethod(targetPaymentMethod.Id, Constants.ONBE_REISSUE_CARD_LOST_CODE);
     }
 
     @AuraEnabled

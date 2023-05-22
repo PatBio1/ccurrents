@@ -428,6 +428,13 @@
         <value>Last Name</value>
     </labels>
     <labels>
+        <fullName>Lead_Exists_Instructions</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Lead Exists Instructions</shortDescription>
+        <value>A profile with this email already exists. Click &lt;b&gt;Continue&lt;/b&gt; below to proceed with verifying this is your email. A verification email will be sent to &lt;b&gt;{0}&lt;/b&gt;.</value>
+    </labels>
+    <labels>
         <fullName>Legal_Terms</fullName>
         <language>en_US</language>
         <protected>true</protected>
@@ -439,7 +446,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Legal Terms Link</shortDescription>
-        <value>http://cloud.m.proesisbio.com/combined</value>
+        <value>https://cloud.m.proesisbio.com/combined</value>
     </labels>
     <labels>
         <fullName>Login</fullName>

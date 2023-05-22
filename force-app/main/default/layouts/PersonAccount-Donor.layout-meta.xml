@@ -3,8 +3,7 @@
     <excludeButtons>CreateAccountChannel</excludeButtons>
     <excludeButtons>CreateCallList</excludeButtons>
     <excludeButtons>CreateSurveyInvitation</excludeButtons>
-    <excludeButtons>DataDotComClean</excludeButtons>
-    <excludeButtons>DataDotComCompanyHierarchy</excludeButtons>
+    <excludeButtons>DataDotComAccountInsights</excludeButtons>
     <excludeButtons>DisablePartnerPortalAccount</excludeButtons>
     <excludeButtons>IncludeOffline</excludeButtons>
     <excludeButtons>LoginToPortalAsPersonUser</excludeButtons>
@@ -43,6 +42,10 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>Valid_Payment_Methods__pc</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Redeemed_Points__pc</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -519,11 +522,11 @@
     </platformActionList>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>Center__c</fields>
         <fields>Appointment__c</fields>
         <fields>Visit_Date_Time__c</fields>
         <fields>Status__c</fields>
         <fields>Donation_Volume__c</fields>
+        <fields>Center__c</fields>
         <relatedList>Visit__c.Donor__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -542,8 +545,6 @@
         <fields>NAME</fields>
         <fields>Type__c</fields>
         <fields>CREATED_DATE</fields>
-        <fields>Visit__c.Center__c</fields>
-        <fields>Visit__c.Donor__c</fields>
         <relatedList>Transaction__c.Donor__c</relatedList>
     </relatedLists>
     <relatedLists>
@@ -622,7 +623,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00hDH000002fCUa</masterLabel>
+        <masterLabel>00hDE000009bw3t</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

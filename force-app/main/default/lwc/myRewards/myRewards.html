@@ -1,189 +1,195 @@
 <template>
+    <template if:true={isRewardScreen}>
+        <div class="slds-var-p-around_medium">
+            <div class="title-medium slds-m-bottom_medium">
+                {labels.myRewards}
+            </div>
 
-    <div class="slds-var-p-around_medium">
-        <div class="title-medium slds-m-bottom_medium">
-            {labels.myRewards}
-        </div>
+            <lightning-tabset class="main-tabs">
+                <lightning-tab onactive={initMyBalanceTab} label={labels.myBalance}>
+                    <lightning-spinner if:true={isLoading}></lightning-spinner>
 
-        <lightning-tabset class="main-tabs">
-            <lightning-tab onactive={initMyBalanceTab} label={labels.myBalance}>
-                <lightning-spinner if:true={isLoading}></lightning-spinner>
-
-                <div class="title-small slds-m-bottom_medium">
-                    My Proesis Wallet
-                </div>
-
-                <div if:true={donorRewardsInfo} class="my-wallet-container slds-m-bottom_small">
-                    <div class="wallet-field">
-                        <p><b>{labels.walletBalanceTitle}</b></p>
-                        <p>
-                            <lightning-formatted-number format-style="currency" currency-code={userCurrency} value={donorRewardsInfo.donorBalance}>
-                            </lightning-formatted-number>
-                        </p>
+                    <div class="title-small slds-m-bottom_medium">
+                        My Proesis Wallet
                     </div>
 
-                    <div class="wallet-field">
-                        <p><b>{labels.pointBrandName}</b></p>
-                        <p><lightning-formatted-number value={donorRewardsInfo.donorPoints}></lightning-formatted-number></p>
+                    <div if:true={donorRewardsInfo} class="my-wallet-container slds-m-bottom_small">
+                        <div class="wallet-field">
+                            <p><b>{labels.walletBalanceTitle}</b></p>
+                            <p>
+                                <lightning-formatted-number format-style="currency" currency-code={userCurrency} value={donorRewardsInfo.donorBalance}>
+                                </lightning-formatted-number>
+                            </p>
+                        </div>
+
+                        <div class="wallet-field">
+                            <p><b>{labels.pointBrandName}</b></p>
+                            <p><lightning-formatted-number value={donorRewardsInfo.donorPoints}></lightning-formatted-number></p>
+                        </div>
+
+                        <!-- Instructed to remove this according to #267, leaving it here in case we need it -->
+                        <!-- <div class="wallet-field">
+                            <p><b>Allowed to Withdraw</b></p>
+                            <p>
+                                <lightning-formatted-number format-style="currency" currency-code={userCurrency} value="65">
+                                </lightning-formatted-number>
+                            </p>
+                        </div> -->
                     </div>
 
-                    <!-- Instructed to remove this according to #267, leaving it here in case we need it -->
-                    <!-- <div class="wallet-field">
-                        <p><b>Allowed to Withdraw</b></p>
-                        <p>
-                            <lightning-formatted-number format-style="currency" currency-code={userCurrency} value="65">
-                            </lightning-formatted-number>
-                        </p>
-                    </div> -->
-                </div>
+                    <p if:true={donorRewardsInfo} class="slds-m-bottom_small">
+                        *minimum withdrawal is <lightning-formatted-number value={donorRewardsInfo.minimumWithdrawalAmount}></lightning-formatted-number> {labels.pointBrandName}
+                    </p>
 
-                <p if:true={donorRewardsInfo} class="slds-m-bottom_small">
-                    *minimum withdrawal is <lightning-formatted-number value={donorRewardsInfo.minimumWithdrawalAmount}></lightning-formatted-number> {labels.pointBrandName}
-                </p>
-
-                <div class="slds-m-bottom_small">
-                    <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled={cantRedeemPoints}>Redeem {labels.pointBrandName}</button>
-                </div>
-
-                <div class="slds-m-bottom_medium my-status-container">
-                    <div class="my-status-header">
-                        <div class="title-small">My Status</div>
-                        <lightning-button variant="base" label="Learn More" icon-name="utility:chevronright" icon-position="right" class="tertiary-button" onclick={navigateToLoyaltyTiers}>
-                        </lightning-button>
+                    <div class="slds-m-bottom_small">
+                        <button class="slds-button slds-button_brand slds-button_stretch secondary-button" onclick={navigateToRedeemPoints} disabled={cantRedeemPoints}>
+                            Redeem {labels.pointBrandName}
+                        </button>
                     </div>
-                    
-                    <div if:true={loyaltyLevelsInfo} class="loyalty-tiers">
-                        <template for:each={loyaltyLevelsInfo} for:item="loyaltyTier">
-                            <div key={loyaltyTier.displayName} class="loyalty-tier" data-is-current={loyaltyTier.isCurrentTier}>
-                                <c-loyalty-tier-badge width="80" height="80" loyalty-tier-name={loyaltyTier.levelName}>
-                                </c-loyalty-tier-badge>
-    
-                                <div>
-                                    <p><b>{loyaltyTier.displayName}</b></p>
-                                    <p>{loyaltyTier.levelThreshold} donations</p>
+
+                    <div class="slds-m-bottom_medium my-status-container">
+                        <div class="my-status-header">
+                            <div class="title-small">My Status</div>
+                            <lightning-button variant="base" label="Learn More" icon-name="utility:chevronright" icon-position="right" class="tertiary-button" onclick={navigateToLoyaltyTiers}>
+                            </lightning-button>
+                        </div>
+                        
+                        <div if:true={loyaltyLevelsInfo} class="loyalty-tiers">
+                            <template for:each={loyaltyLevelsInfo} for:item="loyaltyTier">
+                                <div key={loyaltyTier.displayName} class="loyalty-tier" data-is-current={loyaltyTier.isCurrentTier}>
+                                    <c-loyalty-tier-badge width="80" height="80" loyalty-tier-name={loyaltyTier.levelName}>
+                                    </c-loyalty-tier-badge>
+        
+                                    <div>
+                                        <p><b>{loyaltyTier.displayName}</b></p>
+                                        <p>{loyaltyTier.levelThreshold} donations</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-
-                <div if:true={hasRewardsInfo}>
-                    Left: <strong>{donorRewardsInfo.remainingVisitsForNextTier} donations</strong> to get <strong><span style="color: #A18B76;">{donorRewardsInfo.nextLoyaltyLevel}</span></strong> status
-                </div>
-            </lightning-tab>
-
-            <lightning-tab onactive={initPaymentHistoryTab} label={labels.paymentHistory}>
-                <lightning-spinner if:true={isLoading}></lightning-spinner>
-
-                <div if:true={userHasCard} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_medium">
-                    <div class="slds-col slds-size_1-of-2 title-small">
-                        {labels.personalCard}
+                            </template>
+                        </div>
                     </div>
 
-                    <div class="slds-col slds-size_1-of-2 slds-text-align_right">
-                        <lightning-button variant="base" label={labels.lostMyCard} icon-name="utility:inspector_panel" icon-position="left" class="tertiary-button" onclick={onLostCardButtonClick}></lightning-button>
+                    <div if:true={hasRewardsInfo}>
+                        Left: <strong>{donorRewardsInfo.remainingVisitsForNextTier} donations</strong> to get <strong><span style="color: #A18B76;">{donorRewardsInfo.nextLoyaltyLevel}</span></strong> status
                     </div>
-                </div>
+                </lightning-tab>
 
-                <article if:true={userHasCard} class="card-info-container slds-card slds-card_boundary slds-m-bottom_medium">
-                    <svg class="visa-card" xmlns="http://www.w3.org/2000/svg">;
-                        <use xlink:href={visaLogo}></use>
-                    </svg>
-                    
-                    <div class="slds-card__body slds-card__body_inner slds-text-align_right">
-                        Ending in <strong>{donorRewardsInfo.cardNumber4Digits}</strong> expiring <strong>{donorRewardsInfo.cardNumberExpiration}</strong><br/>
-                        <a href="#" onclick={onAtmLocatorLinkClick}>{labels.atmLocator}</a>
-                    </div>
-                </article>
+                <lightning-tab onactive={initPaymentHistoryTab} label={labels.paymentHistory}>
+                    <lightning-spinner if:true={isLoading}></lightning-spinner>
 
-                <article if:false={userHasCard} class="no-card-info-container slds-card slds-card_boundary slds-m-bottom_medium">
-                    <p>{labels.missingCardMessage}</p>
+                    <div if:true={userHasCard} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_medium">
+                        <div class="slds-col slds-size_1-of-2 title-small">
+                            {labels.personalCard}
+                        </div>
 
-                    <div>
-                        <lightning-button label={labels.scheduleVisitAction} variant="brand" onclick={navigateToScheduleAppointment}>
-                        </lightning-button>
+                        <div class="slds-col slds-size_1-of-2 slds-text-align_right">
+                            <lightning-button variant="base" label={labels.lostMyCard} icon-name="utility:inspector_panel" icon-position="left" class="tertiary-button" onclick={onLostCardButtonClick}></lightning-button>
+                        </div>
                     </div>
-                </article>
 
-                <div class="slds-m-bottom_small">
-                    Other payment methods coming soon...
-                </div>
+                    <article if:true={userHasCard} class="card-info-container slds-card slds-card_boundary slds-m-bottom_medium">
+                        <svg class="visa-card" xmlns="http://www.w3.org/2000/svg">;
+                            <use xlink:href={visaLogo}></use>
+                        </svg>
+                        
+                        <div class="slds-card__body slds-card__body_inner slds-text-align_right">
+                            Ending in <strong>{donorRewardsInfo.cardNumber4Digits}</strong> expiring <strong>{donorRewardsInfo.cardNumberExpiration}</strong><br/>
+                            <a href="#" onclick={onAtmLocatorLinkClick}>{labels.atmLocator}</a>
+                        </div>
+                    </article>
 
-                <div class="slds-grid slds-gutters_x-small slds-m-bottom_medium">
-                    <div class="slds-col slds-size_1-of-3">
-                        <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled>Paypal</button>
+                    <article if:false={userHasCard} class="no-card-info-container slds-card slds-card_boundary slds-m-bottom_medium">
+                        <p>{labels.missingCardMessage}</p>
+
+                        <div>
+                            <lightning-button label={labels.scheduleVisitAction} variant="brand" onclick={navigateToScheduleAppointment}>
+                            </lightning-button>
+                        </div>
+                    </article>
+
+                    <div class="slds-m-bottom_small">
+                        Other payment methods coming soon...
                     </div>
-                    <div class="slds-col slds-size_1-of-3">
-                        <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled>VENMO</button>
+
+                    <div class="slds-grid slds-gutters_x-small slds-m-bottom_medium">
+                        <div class="slds-col slds-size_1-of-3">
+                            <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled>Paypal</button>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled>VENMO</button>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled>ACH</button>
+                        </div>
                     </div>
-                    <div class="slds-col slds-size_1-of-3">
-                        <button class="slds-button slds-button_brand slds-button_stretch secondary-button" disabled>ACH</button>
-                    </div>
-                </div>
 
                 <div if:true={hasRewardsVideo} class="slds-text-align_right slds-m-bottom_medium">
                     <lightning-button variant="base" label={labels.watchVideo} icon-name="utility:video" icon-position="left" class="tertiary-button" onclick={onWatchVideoButtonClick}></lightning-button>
                 </div>
 
-                <div class="title-small slds-m-bottom_x-small">
-                    {labels.paymentHistory}
-                </div>
+                    <div class="title-small slds-m-bottom_x-small">
+                        {labels.paymentHistory}
+                    </div>
 
-                <div style="color: #8979A9;">
-                    <p if:false={paymentHistory}>{labels.noPaymentsYet}</p>
+                    <div style="color: #8979A9;">
+                        <p if:false={paymentHistory}>{labels.noPaymentsYet}</p>
 
-                    <template if:true={paymentHistory} for:each={paymentHistory} for:item="payment">
-                        <div class="transaction-card slds-card slds-card_boundary" key={payment.transactionDate}>
-                            <div class="transaction-info">
-                                <div class="transaction-name-header">
-                                    <lightning-icon icon-name="utility:payment_gateway" size="medium" variant="success">
-                                    </lightning-icon>
-    
+                        <template if:true={paymentHistory} for:each={paymentHistory} for:item="payment">
+                            <div class="transaction-card slds-card slds-card_boundary" key={payment.transactionDate}>
+                                <div class="transaction-info">
+                                    <div class="transaction-name-header">
+                                        <lightning-icon icon-name="utility:payment_gateway" size="medium" variant="success">
+                                        </lightning-icon>
+        
+                                        <div class="transaction-rollup-info">
+                                            <p><b>{payment.name}</b></p>
+        
+                                            <lightning-formatted-date-time value={payment.transactionDate} time-zone={userTimezone}>
+                                            </lightning-formatted-date-time>
+                                        </div>
+                                    </div>
+        
                                     <div class="transaction-rollup-info">
-                                        <p><b>{payment.name}</b></p>
-    
-                                        <lightning-formatted-date-time value={payment.transactionDate} time-zone={userTimezone}>
-                                        </lightning-formatted-date-time>
+                                        <lightning-formatted-number if:true={payment.currencyTotal} format-style="currency" currency-code={userCurrency} value={payment.currencyTotal}>
+                                        </lightning-formatted-number>
+        
+                                        <p if:true={payment.pointTotal}>
+                                            <lightning-formatted-number value={payment.pointTotal}>
+                                            </lightning-formatted-number> {labels.pointBrandName}
+                                        </p>
                                     </div>
                                 </div>
-    
-                                <div class="transaction-rollup-info">
-                                    <lightning-formatted-number if:true={payment.currencyTotal} format-style="currency" currency-code={userCurrency} value={payment.currencyTotal}>
-                                    </lightning-formatted-number>
-    
-                                    <p if:true={payment.pointTotal}>
-                                        <lightning-formatted-number value={payment.pointTotal}>
-                                        </lightning-formatted-number> {labels.pointBrandName}
-                                    </p>
+                                
+                                <div if:true={payment.transactionLineItems} class="transaction-line-item-container">
+                                    <a style="display: flex; align-items: center; gap: 2px;" onclick={togglePaymentDetails} data-transaction-id={payment.transactionId}>
+                                        <span><lightning-button-icon variant="bare" icon-name={payment.displayIcon}></lightning-button-icon></span> {labels.transactionViewDetails}
+                                    </a>
+
+                                    <div class="line-item-grid" if:true={payment.displayDetails}>
+                                        <p><b>{labels.transactionColumnItem}</b></p>
+                                        <p><b>{labels.transactionColumnCurrency}</b></p>
+                                        <p><b>{labels.pointBrandName}</b></p>
+
+                                        <template for:each={payment.transactionLineItems} for:item="lineItem">
+                                            <p key={lineItem.itemName}>{lineItem.itemName}</p>
+                                            
+                                            <lightning-formatted-number key={lineItem.currencyTotal} format-style="currency" currency-code={userCurrency} value={lineItem.currencyTotal}>
+                                            </lightning-formatted-number>
+
+                                            <lightning-formatted-number key={lineItem.pointTotal} value={lineItem.pointTotal}>
+                                            </lightning-formatted-number>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <div if:true={payment.transactionLineItems} class="transaction-line-item-container">
-                                <a style="display: flex; align-items: center; gap: 2px;" onclick={togglePaymentDetails} data-transaction-id={payment.transactionId}>
-                                    <span><lightning-button-icon variant="bare" icon-name={payment.displayIcon}></lightning-button-icon></span> {labels.transactionViewDetails}
-                                </a>
+                        </template>
+                    </div>
+                </lightning-tab>
+            </lightning-tabset>
+        </div>
+    </template>
 
-                                <div class="line-item-grid" if:true={payment.displayDetails}>
-                                    <p><b>{labels.transactionColumnItem}</b></p>
-                                    <p><b>{labels.transactionColumnCurrency}</b></p>
-                                    <p><b>{labels.pointBrandName}</b></p>
-
-                                    <template for:each={payment.transactionLineItems} for:item="lineItem">
-                                        <p key={lineItem.itemName}>{lineItem.itemName}</p>
-                                        
-                                        <lightning-formatted-number key={lineItem.currencyTotal} format-style="currency" currency-code={userCurrency} value={lineItem.currencyTotal}>
-                                        </lightning-formatted-number>
-
-                                        <lightning-formatted-number key={lineItem.pointTotal} value={lineItem.pointTotal}>
-                                        </lightning-formatted-number>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </lightning-tab>
-        </lightning-tabset>
+    <div class="slds-var-p-around_medium" if:true={isRedeemPointsScreen}>
+        <c-redeem-points donor-rewards-info={donorRewardsInfo} onexitscreen={handleExitRedeemPointsScreen}></c-redeem-points>
     </div>
-
 </template>

@@ -39,6 +39,10 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     @track paymentHistory;
     isLoading = false;
 
+    get hasRewardsVideo() {
+        return (this.labels.rewardsVideoLink && this.labels.rewardsVideoLink.toLowerCase() !== 'null')
+    }
+
     get userHasCard() {
         return (this.donorRewardsInfo && this.donorRewardsInfo.cardNumber4Digits && this.donorRewardsInfo.cardNumberExpiration);
     }

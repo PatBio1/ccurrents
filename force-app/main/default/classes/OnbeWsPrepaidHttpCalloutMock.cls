@@ -67,7 +67,8 @@ global class OnbeWsPrepaidHttpCalloutMock implements HttpCalloutMock {
 			DOM.XmlNode ResponseNode = bodyNode.addChildElement('serviceReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'linkCard'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('linkCardReturn', uriAccountManagementPrepaidWs, null);
+			responseDoc = new DOM.Document();
+			responseDoc.load('<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><linkCardReturn xmlns="http://ws.accountmanagementapi.prepaid.citi.com"><ns1:code xmlns:ns1="http://response.accountmanagementapi.prepaid.citi.com">0</ns1:code><ns2:description xmlns:ns2="http://response.accountmanagementapi.prepaid.citi.com">Processed Successfully</ns2:description><ns3:existingTransaction xmlns:ns3="http://response.accountmanagementapi.prepaid.citi.com">false</ns3:existingTransaction><ns4:keyValue xmlns:ns4="http://response.accountmanagementapi.prepaid.citi.com"><item><ns5:key xmlns:ns5="http://common.accountmanagementapi.prepaid.citi.com">update-inventory</ns5:key><ns6:value xmlns:ns6="http://common.accountmanagementapi.prepaid.citi.com">processed</ns6:value></item><item><ns7:key xmlns:ns7="http://common.accountmanagementapi.prepaid.citi.com">link-card</ns7:key><ns8:value xmlns:ns8="http://common.accountmanagementapi.prepaid.citi.com">processed</ns8:value></item></ns4:keyValue><ns9:sub_code xmlns:ns9="http://response.accountmanagementapi.prepaid.citi.com">PROCESSED_SUCCESSFULLY</ns9:sub_code></linkCardReturn></soapenv:Body></soapenv:Envelope>');
 		}
 		else if(methodNode[0].getName() == 'setPin'){
 			DOM.XmlNode ResponseNode = bodyNode.addChildElement('setPinReturn', uriAccountManagementPrepaidWs, null);

@@ -1286,7 +1286,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Rewards Video Link</shortDescription>
-        <value>https://www.youtube.com/embed/8LKpAMoj274</value>
+        <value>null</value>
     </labels>
     <labels>
         <fullName>Missing_Card_Message</fullName>

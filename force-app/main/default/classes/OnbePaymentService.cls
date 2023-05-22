@@ -99,9 +99,15 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         }
 
         if (!String.isEmpty(createActivateCardResponse.accountNumber) && !String.isEmpty(initialPIN)) {
-            accountManagementAPI.setPin_Http(
+            OnbeResponsePrepaid.SetPinResponse setPinResponse = accountManagementAPI.setPin_Http(
                 PROGRAM_ID, PROMOTION_ID, createActivateCardResponse.accountNumber, donorId + '-' + String.valueOf(System.currentTimeMillis()), initialPIN
             );
+
+            if (setPinResponse.code != 0) {
+                if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
+                    throw new OnbeServiceException('Error received from Onbe: ' + setPinResponse.code + '-' + setPinResponse.sub_code);
+                }
+            }
         }
 
         // Make an account inquiry call to get the card number/expiration
@@ -135,8 +141,88 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         return '';
     }
 
-    public String linkPhysicalCard() {
-        return 'Onbe Physical Card Link';
+    public void linkPhysicalCard(String cardPackageId, Id donorId, String initialPIN) {
+        Id donorContactId = donorId;
+        List<Payment_Method__c> existingPaymentMethods = [
+            SELECT Id, Is_Active__c, isDefault__c, Account_Number__c
+            FROM Payment_Method__c
+            WHERE Donor__c = :donorContactId AND 
+                Is_Active__c = true
+        ];
+
+        // The donor contact id is stored as a Partner Id on the Onbe side, so we need to make sure we are getting or converting it correctly
+        if (donorId.getSObjectType() == Schema.Account.getSObjectType()) {
+            donorContactId = [SELECT PersonContactId FROM Account WHERE Id = :donorId LIMIT 1].PersonContactId;
+        } else if (donorId.getSObjectType() != Schema.Contact.getSObjectType()) {
+            throw new OnbeServiceException('An invalid Onbe Donor Id was provided: ' + donorId);
+        }
+
+        OnbeDomainPrepaid.Link newLink = new OnbeDomainPrepaid.Link();
+        newLink.block = 'ALL';
+        newLink.cardPackageId = cardPackageId;
+
+        OnbeWsPrepaid.AccountManagementApiWebServices accountManagementAPI = new OnbeWsPrepaid.AccountManagementApiWebServices();
+        OnbeResponsePrepaid.LinkCardResponse linkCardResponse = accountManagementAPI.linkCard_Http(
+            String.valueOf(donorContactId), PROGRAM_ID, PROMOTION_ID, String.valueOf(donorContactId) + '-' + String.valueOf(System.currentTimeMillis()), newLink
+        );
+
+        if (linkCardResponse.code != 0) {
+            if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
+                throw new OnbeServiceException('Error received from Onbe: ' + linkCardResponse.code + '-' + linkCardResponse.sub_code);
+            }
+        }
+
+        // Set the pin for the new payment method
+        String accountNumber = existingPaymentMethods[0].Account_Number__c;
+        if (!String.isEmpty(accountNumber) && !String.isEmpty(initialPIN)) {
+            OnbeResponsePrepaid.SetPinResponse setPinResponse = accountManagementAPI.setPin_Http(
+                PROGRAM_ID, PROMOTION_ID, accountNumber, donorId + '-' + String.valueOf(System.currentTimeMillis()), initialPIN
+            );
+
+            if (setPinResponse.code != 0) {
+                if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
+                    throw new OnbeServiceException('Error received from Onbe: ' + setPinResponse.code + '-' + setPinResponse.sub_code);
+                }
+            }
+        }
+
+        // Get the new card number/expiration
+        OnbeWsManageCard.AccountInquiryResponse accountInquiryResponse = executeAccountInquiry(donorId);
+
+        // Get existing payment methods for this donor and mark them as inactive
+        for (Payment_Method__c existingPaymentMethod : existingPaymentMethods) {
+            existingPaymentMethod.Is_Active__c = false;
+            existingPaymentMethod.isDefault__c = false;
+        }
+
+        update existingPaymentMethods;
+
+        
+        // Save the new information to a new payment method
+        String expirationDateMMYYYY = accountInquiryResponse.expirationMMYYYY;
+        
+        Date expirationDate;
+        if (!String.isEmpty(expirationDateMMYYYY)) {
+            List<String> expirationMMYYParts = expirationDateMMYYYY.split('/');
+
+            Integer expirationMonth = Integer.valueOf(expirationMMYYParts[0]);
+            Integer expirationYear = Integer.valueOf(expirationMMYYParts[1]);
+
+            expirationDate = Date.newInstance(expirationYear, expirationMonth, 1);
+        } else {
+            expirationDate = Date.today().addYears(1);
+        }
+
+        Payment_Method__c newPaymentMethod = new Payment_Method__c();
+        newPaymentMethod.Name = PaymentService__mdt.getInstance('OnbePaymentService').PaymentServiceLabel__c;
+        newPaymentMethod.Account_Token__c = cardPackageId;
+        newPaymentMethod.Account_Number__c = accountNumber;
+        newPaymentMethod.Card_Number__c = accountInquiryResponse.cardNumber4Digits;
+        newPaymentMethod.Expiration__c = expirationDate;
+        newPaymentMethod.Is_Active__c = true;
+        newPaymentMethod.isDefault__c = true;
+        newPaymentMethod.Donor__c = donorContactId;
+        insert newPaymentMethod;
     }
 
     public String processPayment(String accountNumber, String comment, Long amount) {

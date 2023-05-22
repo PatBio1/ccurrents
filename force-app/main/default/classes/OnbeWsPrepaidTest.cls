@@ -32,7 +32,7 @@ private class OnbeWsPrepaidTest {
         OnbeResponsePrepaid.CardInquiryResponse onbeResponseCardInquiry = new OnbeResponsePrepaid.CardInquiryResponse();
 		OnbeResponsePrepaid.CreateAccountResponse onbeResponseCreateAccount = new OnbeResponsePrepaid.CreateAccountResponse();
         OnbeResponsePrepaid.CreateBulkOrderResponse onbeResponseCreateBulkOrder = new OnbeResponsePrepaid.CreateBulkOrderResponse();
-		OnbeResponsePrepaid.LinkCardResponse onbeResponseLinkCard = new OnbeResponsePrepaid.LinkCardResponse();
+		OnbeResponsePrepaid.LinkCardResponse onbeResponseLinkCard = new OnbeResponsePrepaid.LinkCardResponse(mockNode);
 		OnbeResponsePrepaid.ServiceResponse onbResponseServiceResponse = new OnbeResponsePrepaid.ServiceResponse();
 		// OnbeResponsePrepaid.UpdateAccountStatusResponse onbeResponseUpdateAccountStatus = new OnbeResponsePrepaid.UpdateAccountStatusResponse(new Dom.XmlNode());
 		OnbeResponsePrepaid.UpdateRegistrationResponse onbeResponseUpdateRegistration = new OnbeResponsePrepaid.UpdateRegistrationResponse();
@@ -127,7 +127,7 @@ private class OnbeWsPrepaidTest {
 		new OnbeResponsePrepaid.CardInquiryResponse();
 		new OnbeResponsePrepaid.CreateAccountResponse();
 		new OnbeResponsePrepaid.CreateBulkOrderResponse();
-		new OnbeResponsePrepaid.LinkCardResponse();
+		new OnbeResponsePrepaid.LinkCardResponse(mockNode);
 		new OnbeResponsePrepaid.ServiceResponse();
 		// new OnbeResponsePrepaid.UpdateAccountStatusResponse(new Dom.XmlNode());
 		new OnbeResponsePrepaid.UpdateRegistrationResponse();
@@ -273,7 +273,7 @@ private class OnbeWsPrepaidTest {
 	@isTest static void coverCodeForlinkCard_Http(){
 		Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 		OnbeWsPrepaid.AccountManagementApiWebServices testObject = new OnbeWsPrepaid.AccountManagementApiWebServices();
-		testObject.linkCard_Http(null);		
+		testObject.linkCard_Http(null, null, null, null, null);		
 	}
 
 	@isTest static void coverCodeForsetPin_Http(){

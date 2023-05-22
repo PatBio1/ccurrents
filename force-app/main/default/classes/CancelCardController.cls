@@ -78,7 +78,7 @@ public without sharing class CancelCardController {
 
         if (!futureDonorVisits.isEmpty()) {
             insert CancelCardController.createReplacePaymentMethodTask(
-                futureDonorVisits[0].Id, targetPaymentMethod.Expiration__c, paymentMethod.Donor__c
+                futureDonorVisits[0].Id, targetPaymentMethod[0].Expiration__c, paymentMethod.Donor__c
             );
         }
     }

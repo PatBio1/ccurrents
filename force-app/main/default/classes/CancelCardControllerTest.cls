@@ -2,6 +2,18 @@
 public without sharing class CancelCardControllerTest {
     @TestSetup
     static void createTestData() {
+        Account testMiramarCenterAccount = TestUtil.createMiramarCenter();
+        insert testMiramarCenterAccount;
+
+        Schedule__c testSchedule = TestUtil.createTestSchedule(testMiramarCenterAccount.Id, System.now().addDays(1));
+        insert testSchedule;
+
+        Appointment__c testAppointment = TestUtil.createTestAppointment(testSchedule.Id, System.now().addDays(1));
+        insert testAppointment;
+
+        Center_Donation_Type__c testDonationType = TestUtil.createCenterDonationType(testMiramarCenterAccount.Id);
+        insert testDonationType;
+
         Account donorAccountRecord = TestUtil.createDonor('123-456');
         insert donorAccountRecord;
 
@@ -56,10 +68,8 @@ public without sharing class CancelCardControllerTest {
         }
         Test.stopTest();
 
-        Payment_Method__c updatedPaymentMethod = [SELECT Id, Is_Active__c, isDefault__c FROM Payment_Method__c WHERE Donor__c = :experienceUser.ContactId ORDER BY CreatedDate DESC LIMIT 1];
-
-        Assert.isFalse(updatedPaymentMethod.Is_Active__c);
-        Assert.isFalse(updatedPaymentMethod.isDefault__c);
+        Payment_Method__c updatedPaymentMethod = [SELECT Id, User_Requested_Replace_Card__c FROM Payment_Method__c WHERE Donor__c = :experienceUser.ContactId ORDER BY CreatedDate DESC LIMIT 1];
+        Assert.isTrue(updatedPaymentMethod.User_Requested_Replace_Card__c);
     }
 
     @IsTest 
@@ -72,9 +82,28 @@ public without sharing class CancelCardControllerTest {
         CancelCardController.cancelPaymentMethod(testDonor.Payment_Methods__r[0].Id);
         Test.stopTest();
 
-        Payment_Method__c updatedPaymentMethod = [SELECT Id, Is_Active__c, isDefault__c FROM Payment_Method__c WHERE Id = :testDonor.Payment_Methods__r[0].Id LIMIT 1];
+        Payment_Method__c updatedPaymentMethod = [SELECT Id, User_Requested_Replace_Card__c FROM Payment_Method__c WHERE Id = :testDonor.Payment_Methods__r[0].Id LIMIT 1];
+        Assert.isTrue(updatedPaymentMethod.User_Requested_Replace_Card__c);
+    }
 
-        Assert.isFalse(updatedPaymentMethod.Is_Active__c);
-        Assert.isFalse(updatedPaymentMethod.isDefault__c);
+    @IsTest
+    static void testRenewPaymentMethodTaskAfterCancel() {
+        Contact testDonor = [SELECT Id, (SELECT Id FROM Payment_Methods__r WHERE Is_Active__c = true AND isDefault__c = true ORDER BY CreatedDate DESC LIMIT 1) FROM Contact WHERE Account.DonorId__c != null LIMIT 1];
+        Center_Donation_Type__c centerDonationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+        Appointment__c targetAppointment = [SELECT Id FROM Appointment__c WHERE Datetime__c > :System.now() LIMIT 1];
+
+        Visit__c testVisit = new Visit__c(
+            Center_Donation_Type__c = centerDonationType.Id,
+            Donor__c = testDonor.Id,
+            Appointment__c = targetAppointment.Id,
+            Status__c = 'Scheduled'
+        );
+        insert testVisit;
+
+        Test.startTest();
+        CancelCardController.cancelPaymentMethod(testDonor.Payment_Methods__r[0].Id);
+        Test.stopTest();
+
+        Assert.areEqual(1, [SELECT count() FROM Task WHERE Subject = :Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT AND WhatId = :testVisit.Id AND WhoId = :testDonor.Id], 'Expected to find a task for the donor to renew their payment method');
     }
 }

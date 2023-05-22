@@ -8,7 +8,7 @@ export default class LeadExistsModal extends LightningModal {
 
     labels = labels;
 
-    get intructionsLabel() {
+    get instructionsLabel() {
         return labels.formatLabel(labels.leadExistsInstructions, [this.email]);
     }
 

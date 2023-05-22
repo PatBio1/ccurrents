@@ -79,7 +79,7 @@ public without sharing class CancelCardControllerTest {
         Test.setMock(HttpCalloutMock.class, new OnbeWsManageCardHttpCalloutMock());
 
         Test.startTest();
-        CancelCardController.cancelPaymentMethod(testDonor.Payment_Methods__r[0].Id, Constants.ONBE_REISSUE_CARD_REVOKED_CODE);
+        CancelCardController.cancelPaymentMethod(testDonor.Payment_Methods__r[0].Id);
         Test.stopTest();
 
         Payment_Method__c updatedPaymentMethod = [SELECT Id, User_Requested_Replace_Card__c FROM Payment_Method__c WHERE Id = :testDonor.Payment_Methods__r[0].Id LIMIT 1];

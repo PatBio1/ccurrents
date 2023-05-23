@@ -101,7 +101,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
         this.isLoading = false;
     }
 
-    async initPaymentHistoryTab(event) {
+    async initPaymentHistoryTab() {
         this.initPaymentHistoryTab();
     }
 
@@ -127,10 +127,11 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     onWatchVideoButtonClick() {
-        RewardsVideoModal.open();
+        //RewardsVideoModal.open();
+        window.open(this.labels.rewardsVideoLink, '_self');
     }
 
-    navigateToLoyaltyTiers(event) {
+    navigateToLoyaltyTiers() {
         util.navigateToPage(this, 'Loyalty_Tiers__c');
     }
 
@@ -155,7 +156,7 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
         });
     }
 
-    navigateToScheduleAppointment(event) {
+    navigateToScheduleAppointment() {
         util.navigateToPage(this, 'Schedule__c');
     }
 
@@ -165,15 +166,16 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
 
         if (transaction) {
             transaction.displayDetails = !transaction.displayDetails;
-            transaction.displayIcon = transaction.displayDetails ? "utility:down" : "utility:right";
+            transaction.displayIcon = transaction.displayDetails ? 'utility:down' : 'utility:right';
         }
     }
 
-    navigateToRedeemPoints(event) {
+    navigateToRedeemPoints() {
         this.currentScreen = REDEEM_POINTS_SCREEN_KEY;
     }
 
-    handleExitRedeemPointsScreen(event) {
+    handleExitRedeemPointsScreen() {
         this.currentScreen = REWARDS_SCREEN_KEY;
     }
+
 }

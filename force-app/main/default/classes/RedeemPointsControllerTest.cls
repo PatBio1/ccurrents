@@ -53,7 +53,7 @@ public without sharing class RedeemPointsControllerTest {
         Test.stopTest();
 
         testDonor = [
-            SELECT Id, Redeemed_Points__c, Last_Onbe_Balance_Update__c, (
+            SELECT Id, Redeemed_Points__c, (
                 SELECT Id, Type__c, Status__c, SubType__c
                 FROM Transactions__r
                 WHERE SubType__c = 'Point Redemption'
@@ -63,7 +63,6 @@ public without sharing class RedeemPointsControllerTest {
         ];
 
         Assert.areEqual(pointsToRedeem, testDonor[0].Redeemed_Points__c, 'Donor should have 2000 points redeemed');
-        Assert.isNull(testDonor[0].Last_Onbe_Balance_Update__c, 'Donor should not have a last onbe balance update date');
         Assert.areEqual(2, testDonor[0].Transactions__r.size(), 'Donor should have 3 transactions after redeeming points');
 
         for(Transaction__c donorTransaction : testDonor[0].Transactions__r) {

@@ -26,14 +26,13 @@ public without sharing class RedeemPointsController {
         // Update points redeemed on the donor contact's record
         Contact targetContact;
         try {
-            targetContact = [SELECT Id, Redeemed_Points__c, Last_Onbe_Balance_Update__c FROM Contact WHERE Id = :donorId LIMIT 1];
+            targetContact = [SELECT Id, Redeemed_Points__c FROM Contact WHERE Id = :donorId LIMIT 1];
         } catch(Exception e) {
             System.debug(e);
             throw new AuraHandledException('Unable to find donor contact');
         }
 
         targetContact.Redeemed_Points__c = (targetContact.Redeemed_Points__c != null) ? targetContact.Redeemed_Points__c + roundedPointsToRedeem : roundedPointsToRedeem;
-        targetContact.Last_Onbe_Balance_Update__c = null;
         update targetContact;
 
         // Queue up the addFunds callout to Onbe

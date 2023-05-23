@@ -62,8 +62,15 @@ public without sharing class DonorSelector {
             return null;
         }
 
+        Proesis_Settings__c proesisSettings = Proesis_Settings__c.getOrgDefaults();
+        if (proesisSettings.Payment_Service_Balance_Max_Freq__c == null) {
+            proesisSettings.Payment_Service_Balance_Max_Freq__c = 3;
+        }
+
         Contact targetDonor = targetDonors[0];
-        if (targetDonor.Payment_Methods__r.size() > 0 && (targetDonor.Last_Onbe_Balance_Update__c == null || targetDonor.Last_Onbe_Balance_Update__c <= Date.today().addDays(-1))) {
+        Datetime targetDonorLastBalanceUpdate = targetDonor.Last_Onbe_Balance_Update__c != null ? targetDonor.Last_Onbe_Balance_Update__c.addHours((Integer)proesisSettings.Payment_Service_Balance_Max_Freq__c) : null;
+
+        if (targetDonor.Payment_Methods__r.size() > 0 && (targetDonorLastBalanceUpdate == null || targetDonorLastBalanceUpdate >= System.now())) {
             OnbePaymentService paymentService = new OnbePaymentService();
             Decimal donorOnbeBalance;
 
@@ -74,7 +81,7 @@ public without sharing class DonorSelector {
             }
 
             targetDonor.Onbe_Balance__c = donorOnbeBalance == null ? 0 : donorOnbeBalance;
-            targetDonor.Last_Onbe_Balance_Update__c = Date.today();
+            targetDonor.Last_Onbe_Balance_Update__c = System.now();
 
             update targetDonor;
         }

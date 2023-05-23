@@ -12,6 +12,7 @@ public without sharing class ProfileController {
 
             Donor donor;
 
+            // First try to match on email.
             if (String.isNotEmpty(profile.email)) {
                 String username = profile.email + Constants.USERNAME_SUFFIX;
 
@@ -38,6 +39,29 @@ public without sharing class ProfileController {
                         Lead
                     WHERE
                         Email = :profile.email
+                    ORDER BY
+                        CreatedDate DESC
+                    LIMIT
+                        1
+                ];
+
+                if (leads.size() > 0 && leads[0].Id != profile.id) {
+                    donor = new Donor();
+                    donor.id = leads[0].Id;
+                    donor.type = 'Lead';
+                    return donor;
+                }
+            }
+
+            // Next, try to match on mobile phone if there wasn't a match on email.
+            if (String.isNotEmpty(profile.mobilePhone)) {
+                List<Lead> leads = [
+                    SELECT
+                        Id
+                    FROM
+                        Lead
+                    WHERE
+                        MobilePhone = :profile.mobilePhone
                     ORDER BY
                         CreatedDate DESC
                     LIMIT

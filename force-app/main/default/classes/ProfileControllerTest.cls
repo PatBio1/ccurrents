@@ -18,7 +18,7 @@ public with sharing class ProfileControllerTest {
     }
 
     @isTest
-    static void testGetDonorLead() {
+    static void testGetDonorLeadEmail() {
         Lead lead;
 
         System.runAs(TestUtil.createAdminUser()) {
@@ -32,6 +32,30 @@ public with sharing class ProfileControllerTest {
         System.runAs(TestUtil.createExperienceGuestUser()) {
             ProfileController.Profile profile = new ProfileController.Profile();
             profile.email = lead.Email;
+
+            ProfileController.Donor donor = ProfileController.getDonor(profile);
+
+            System.assertNotEquals(null, donor);
+            System.assertEquals('Lead', donor.type);
+            System.assertEquals(lead.Id, donor.id);
+        }
+    }
+
+    @isTest
+    static void testGetDonorLeadPhone() {
+        Lead lead;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            lead.MobilePhone = '800-555-1212';
+            insert lead;
+        }
+
+        System.runAs(TestUtil.createExperienceGuestUser()) {
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.mobilePhone = lead.MobilePhone;
 
             ProfileController.Donor donor = ProfileController.getDonor(profile);
 

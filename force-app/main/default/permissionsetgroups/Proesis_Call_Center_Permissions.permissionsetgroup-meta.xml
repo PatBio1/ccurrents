@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSetGroup xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Set of permission groups for the call center users.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Proesis Call Center Permissions</label>
+    <mutingPermissionSets>Proesis_Call_Center_Permissions_Muted</mutingPermissionSets>
+    <permissionSets>Proesis_Call_Center_Salesforce</permissionSets>
+    <permissionSets>Proesis_Center_Staff_Platform</permissionSets>
+    <status>Updated</status>
+</PermissionSetGroup>

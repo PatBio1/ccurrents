@@ -43,6 +43,17 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>Center_Timezone__c</picklist>
+        <values>
+            <fullName>America%2FChicago</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>America%2FNew_York</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Clinic_Start_Day_of_Week__c</picklist>
         <values>
             <fullName>Monday</fullName>

@@ -337,7 +337,7 @@ public without sharing class ProfileController {
                 handleCreateMarketingConsent(leadConvertResult.getLeadId(), leadConvertResult.getContactId());
             }
 
-            User user = createUser(leadConvertResult.getAccountId(), profile.language);
+            User user = createUser(profile.centerId, leadConvertResult.getAccountId(), profile.language);
 
             Id userId = Site.createExternalUser(user, leadConvertResult.getAccountId(), profile.password, false);
 
@@ -368,7 +368,7 @@ public without sharing class ProfileController {
                 PersonMailingCountry = 'US' // We are hard coding US as that is what the Onbe API requires for the createAccount callout
             );
 
-            commitUserFromScheduler(leadConvertResult.getAccountId(), profile.language);
+            commitUserFromScheduler(profile.centerId, leadConvertResult.getAccountId(), profile.language);
 
             return leadConvertResult.getAccountId();
         } catch (Exception e) {
@@ -609,7 +609,8 @@ public without sharing class ProfileController {
         insert permissionSetAssignment;
     }
 
-    public static User createUser(Id accountId, String language) {
+    public static User createUser(Id centerId, Id accountId, String language) {
+        Account center = [SELECT Center_Timezone__c FROM Account WHERE Id = :centerId LIMIT 1];
         Account account = [SELECT FirstName, LastName, PersonEmail, PersonContactId FROM Account WHERE Id = :accountId LIMIT 1];
 
         String alias = (account.FirstName.trim().replaceAll('[^a-zA-Z]', '') + account.LastName.trim().replaceAll('[^a-zA-Z]', '')).abbreviate(8);
@@ -623,7 +624,7 @@ public without sharing class ProfileController {
         user.Username = username;
         user.CommunityNickname = 'proesis' + System.currentTimeMillis();
         user.LocaleSidKey = language;
-        user.TimeZoneSidKey = 'America/Chicago';
+        user.TimeZoneSidKey = center.Center_Timezone__c;
         user.ProfileId = [SELECT Id FROM Profile WHERE Name = :Constants.EXPERIENCE_USER_PROFILE_NAME].Id;
         user.LanguageLocaleKey = (language.startsWith('es') ? 'es' : 'en_US');
         user.EmailEncodingKey = 'UTF-8';
@@ -646,8 +647,8 @@ public without sharing class ProfileController {
     }
 
     @future
-    private static void commitUserFromScheduler(Id accountId, String language) {
-        System.enqueueJob(new UserCreationQueueable(accountId, language));
+    private static void commitUserFromScheduler(Id centerId, Id accountId, String language) {
+        System.enqueueJob(new UserCreationQueueable(centerId, accountId, language));
     }
 
     public class Profile {

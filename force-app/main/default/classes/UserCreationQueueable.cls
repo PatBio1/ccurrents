@@ -1,13 +1,16 @@
 public with sharing class UserCreationQueueable implements Queueable {
-    String accountId;
-    String userLanguage;
-    String createdUserId;
 
-    public UserCreationQueueable(String accountId, String userLanguage) {
-        this(accountId, userLanguage, null);
+    Id centerId;
+    Id accountId;
+    String userLanguage;
+    Id createdUserId;
+
+    public UserCreationQueueable(Id centerId, Id accountId, String userLanguage) {
+        this(centerId, accountId, userLanguage, null);
     }
 
-    public UserCreationQueueable(String accountId, String userLanguage, String createdUserId) {
+    public UserCreationQueueable(Id centerId, Id accountId, String userLanguage, Id createdUserId) {
+        this.centerId = centerId;
         this.accountId = accountId;
         this.userLanguage = userLanguage;
         this.createdUserId = createdUserId;
@@ -20,7 +23,7 @@ public with sharing class UserCreationQueueable implements Queueable {
             userEmailOptions.EmailHeader.triggerOtherEmail = true;
             userEmailOptions.EmailHeader.triggerAutoResponseEmail = true;
 
-            User user = ProfileController.createUser(accountId, userLanguage);
+            User user = ProfileController.createUser(centerId, accountId, userLanguage);
             user.setOptions(userEmailOptions);
             insert user;
 
@@ -33,4 +36,5 @@ public with sharing class UserCreationQueueable implements Queueable {
             update new Account(Id = accountId, User__pc = createdUserId);
         }
     }
+
 }

@@ -8,6 +8,7 @@ import language from '@salesforce/i18n/lang';
 import locale from '@salesforce/i18n/locale';
 
 export default class Home extends NavigationMixin(LightningElement) {
+
     labels = labels;
     hasRendered = false;
     loading = true;
@@ -46,4 +47,5 @@ export default class Home extends NavigationMixin(LightningElement) {
             util.showToast(this, 'error', labels.error, error);
         });
     }
+
 }

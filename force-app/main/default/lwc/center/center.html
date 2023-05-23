@@ -72,7 +72,8 @@
 
                     <div class="title-small slds-m-vertical_medium">{labels.centerVideo}</div>
 
-                    <iframe width="100%" src={labels.welcomeToWestmoreVideoId} frameborder="0" allowfullscreen></iframe>
+                    <!--iframe width="100%" src={labels.welcomeToWestmoreVideoId} frameborder="0" allowfullscreen></iframe-->
+                    <lightning-button variant="base" label={labels.watchVideo} icon-name="utility:video" icon-position="left" class="tertiary-button" onclick={onWatchVideoButtonClick}></lightning-button>
                 </lightning-tab>
                 <lightning-tab label={labels.updatesAndAppointments}>
                     <div class="title-small">{labels.notifications}</div>

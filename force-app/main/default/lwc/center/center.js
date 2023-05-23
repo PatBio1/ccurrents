@@ -1,5 +1,6 @@
 import { api, track, LightningElement } from 'lwc';
 import labels from 'c/labelService';
+import util from 'c/util';
 import getCenter from '@salesforce/apex/CenterController.getCenter';
 
 export default class Center extends LightningElement {
@@ -35,8 +36,7 @@ export default class Center extends LightningElement {
             this.center = response;
             this.loaded = true;
         }).catch((error) => {
-            // TODO - add error handling
-            console.log(error);
+            util.showToast(this, 'error', labels.error, error);
         }).finally(() => {
             this.loading = false;
         });
@@ -44,6 +44,10 @@ export default class Center extends LightningElement {
 
     onBackButtonClick() {
         this.dispatchEvent(new CustomEvent('back'));
+    }
+
+    onWatchVideoButtonClick() {
+        window.open(this.labels.welcomeToWestmoreVideoId, '_self');
     }
 
 }

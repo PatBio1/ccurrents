@@ -95,6 +95,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Account.Center_Timezone__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Account.Clinic_Schedule_Runway__c</field>
         <readable>true</readable>
     </fieldPermissions>

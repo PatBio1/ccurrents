@@ -95,6 +95,10 @@
                 <behavior>Edit</behavior>
                 <field>Default_Schedule_Model__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Center_Timezone__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>

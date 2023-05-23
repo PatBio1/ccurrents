@@ -15,10 +15,6 @@ public without sharing class AddFundsBatchableHelper {
                 debitTransaction.Visit__c = addFundsRequest.visitId;
             }
 
-            if (addFundsRequest.isExceptionPayment) {
-                debitTransaction.SubType__c = 'Exception';
-            }
-
             if (addFundsRequest.existingDebitTransactionId != null) {
                 debitTransaction.Id = addFundsRequest.existingDebitTransactionId;
                 existingTransactions.put(addFundsRequest.existingDebitTransactionId, debitTransaction);

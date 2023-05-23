@@ -87,7 +87,7 @@ public without sharing class CancelCardController {
     public static Task createReplacePaymentMethodTask(Id targetReplacementVisitId, Date paymentExpirationDate, Id paymentDonorId) {
         Task replacePaymentMethodTask = new Task();
         replacePaymentMethodTask.Subject = Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT;
-        replacePaymentMethodTask.Description = 'The existing payment method for this donor has been cancelled or is set to expire soon. Please update the donor\'s payment method.';
+        replacePaymentMethodTask.Description = Constants.REPLACE_PAYMENT_METHOD_TASK_DESCRIPTION;
         replacePaymentMethodTask.WhatId = targetReplacementVisitId;
         replacePaymentMethodTask.WhoId = paymentDonorId;
         replacePaymentMethodTask.ActivityDate = paymentExpirationDate;

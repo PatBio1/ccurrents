@@ -47,18 +47,28 @@ public without sharing class RedeemPointsControllerTest {
         Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 
         Test.startTest();
-        RedeemPointsController.redeemPoints(testDonor[0].Id, pointsToRedeem);
+        System.runAs(TestUtil.createExperienceUserFromContactId(testDonor[0].Id)) {
+            RedeemPointsController.redeemPoints(testDonor[0].Id, pointsToRedeem);
+        }
         Test.stopTest();
 
-        testDonor = [SELECT Id, Redeemed_Points__c, Last_Onbe_Balance_Update__c FROM Contact WHERE Id = :testDonor[0].Id];
+        testDonor = [
+            SELECT Id, Redeemed_Points__c, Last_Onbe_Balance_Update__c, (
+                SELECT Id, Type__c, Status__c, SubType__c
+                FROM Transactions__r
+                WHERE SubType__c = 'Point Redemption'
+            ) 
+            FROM Contact 
+            WHERE Id = :testDonor[0].Id
+        ];
+
         Assert.areEqual(pointsToRedeem, testDonor[0].Redeemed_Points__c, 'Donor should have 2000 points redeemed');
         Assert.isNull(testDonor[0].Last_Onbe_Balance_Update__c, 'Donor should not have a last onbe balance update date');
+        Assert.areEqual(2, testDonor[0].Transactions__r.size(), 'Donor should have 3 transactions after redeeming points');
 
-        List<Transaction__c> donorTransactions = [SELECT Id, Type__c, Status__c FROM Transaction__c WHERE Donor__c = :testDonor[0].Id];
-        Assert.areEqual(3, donorTransactions.size(), 'Donor should have 3 transactions after redeeming points');
-
-        for(Transaction__c donorTransaction : donorTransactions) {
+        for(Transaction__c donorTransaction : testDonor[0].Transactions__r) {
             Assert.areEqual('Complete', donorTransaction.Status__c, 'Redeem points transactions should be complete without error');
+            Assert.areEqual('Point Redemption', donorTransaction.SubType__c, 'Redeem points transactions should have a sub type of Point Redemption');
         }
 
         List<Txn_Line_Item__c> pointsRedeemedLineItems = [SELECT Id, Type__c, Unit_Cost__c FROM Txn_Line_Item__c WHERE Item__c = 'PlasmaPoints Redeemed'];
@@ -82,7 +92,7 @@ public without sharing class RedeemPointsControllerTest {
             lineItemCountByType.put(pointsRedeemedLineItem.Type__c, runningTypeCount);
         }
 
-        Assert.areEqual(2, lineItemCountByType.get('Points'), 'There should be 2 points line items');
+        Assert.areEqual(1, lineItemCountByType.get('Points'), 'There should be 1 point line items');
         Assert.areEqual(2, lineItemCountByType.get('Currency'), 'There should be 2 currency line item');
     }
 }

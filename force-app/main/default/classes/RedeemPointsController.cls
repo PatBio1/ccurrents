@@ -10,7 +10,7 @@ public without sharing class RedeemPointsController {
         Decimal roundedPointsToRedeem = dollorsToCredit * pointsToDollars;
         
         // Create the initial credit transactions
-        Transaction__c creditTransaction = new Transaction__c(Donor__c = donorId, Type__c = 'Credit', SubType__c = 'Point Redemption', Service__c = 'Onbe', Status__c = 'Complete');
+        Transaction__c creditTransaction = new Transaction__c(Donor__c = donorId, Type__c = 'Credit', SubType__c = 'Point Redemption', Status__c = 'Complete');
         insert creditTransaction;
 
         List<Txn_Line_Item__c> transactionLineItems = new List<Txn_Line_Item__c>();

@@ -31,22 +31,22 @@ public class VisitTriggerHandlerTest {
         insert new List<Appointment__c> {
             new Appointment__c(
                 Schedule__c = schedule.Id,
-                Datetime__c = Datetime.now().addDays(3),
+                Datetime__c = System.now().addDays(3),
                 Capacity__c = AMOUNT_OF_VISITS
             ),
             new Appointment__c(
                 Schedule__c = schedule.Id,
-                Datetime__c = Datetime.now().addDays(4),
+                Datetime__c = System.now().addDays(4),
                 Capacity__c = AMOUNT_OF_VISITS
             ),
             new Appointment__c(
                 Schedule__c = schedule.Id,
-                Datetime__c = Datetime.now().addDays(3).addYears(1),
+                Datetime__c = System.now().addDays(3).addYears(1),
                 Capacity__c = AMOUNT_OF_VISITS
             ),
             new Appointment__c(
                 Schedule__c = schedule.Id,
-                Datetime__c = Datetime.now().addDays(3).addYears(2),
+                Datetime__c = System.now().addDays(3).addYears(2),
                 Capacity__c = AMOUNT_OF_VISITS
             )
         };
@@ -567,6 +567,122 @@ public class VisitTriggerHandlerTest {
         // Check to make sure Last Previous donation was not updated on the visit's donor
         for(Visit__c testVisit : [SELECT Id, Donor__c, Donor__r.Last_Previous_Scheduled_Visit__c FROM Visit__c WHERE Id IN :testVisits]) {
             Assert.isNull(testVisit.Donor__r.Last_Previous_Scheduled_Visit__c, 'The donor\'s last previous scheduled visit was updated');
+        }
+    }
+
+    @isTest static void testCreateRenewPaymentTask() {
+        Date targetExpirationDate = System.now().addYears(1).date();
+        
+        Appointment__c targetAppointment = [SELECT Id, Datetime__c FROM Appointment__c LIMIT 1];
+        Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+        List<Contact> targetDonorContacts = [SELECT Id FROM Contact WHERE Id IN (SELECT PersonContactId FROM Account WHERE DonorId__c != NULL) LIMIT 1];
+
+        List<Payment_Method__c> paymentMethodsToCreate = new List<Payment_Method__c>();
+        List<Visit__c> testVisits = new List<Visit__c>();
+
+        for(Contact targetDonorContact : targetDonorContacts) {
+            paymentMethodsToCreate.add(new Payment_Method__c(
+                Donor__c = targetDonorContact.Id,
+                Account_Number__c = '582673582735623',
+                Account_Token__c = '1050',
+                Name = 'Test Payment Method',
+                Is_Active__c = true,
+                isDefault__c = true,
+                User_Requested_Replace_Card__c = true,
+                Expiration__c = targetExpirationDate
+            ));
+
+            testVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonorContact.Id,
+                Appointment__c = targetAppointment.Id,
+                Status__c = 'Scheduled'
+            ));
+        }
+        insert paymentMethodsToCreate;
+
+        Test.startTest();
+        insert testVisits;
+        Test.stopTest();
+
+        Map<Id, Id> visitIdToDonorId = new Map<Id, Id>();
+        for(Visit__c testVisit : testVisits) {
+            visitIdToDonorId.put(testVisit.Id, testVisit.Donor__c);
+        }
+
+        List<Task> createdTasks = [SELECT Subject, Description, ActivityDate, WhoId, WhatId FROM Task WHERE Subject = :Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT AND WhatId IN :testVisits];
+        Assert.areEqual(targetDonorContacts.size(), createdTasks.size(), 'The wrong amount of Renew Payment tasks were created');
+
+        for(Task createdTask : createdTasks) {
+            Assert.areEqual(Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT, createdTask.Subject, 'The task subject was not the expected value');
+            Assert.areEqual(Constants.REPLACE_PAYMENT_METHOD_TASK_DESCRIPTION, createdTask.Description, 'The task description was not the expected value');
+            Assert.areEqual(targetExpirationDate, createdTask.ActivityDate, 'The task activity date was not the expected value');
+            Assert.areEqual(visitIdToDonorId.get(createdTask.WhatId), createdTask.WhoId, 'The task whoId was not the expected value');
+        }
+    }
+
+    @isTest static void testReparentRenewPaymentTask() {
+        Date targetExpirationDate = System.now().addYears(1).date();
+        
+        List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c ORDER BY Datetime__c DESC LIMIT 2];
+        Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+        List<Contact> targetDonorContacts = [SELECT Id FROM Contact WHERE Id IN (SELECT PersonContactId FROM Account WHERE DonorId__c != NULL) LIMIT 1];
+
+        List<Payment_Method__c> paymentMethodsToCreate = new List<Payment_Method__c>();
+        List<Visit__c> testVisits = new List<Visit__c>();
+        List<Visit__c> moreRecentVisits = new List<Visit__c>();
+
+        for(Contact targetDonorContact : targetDonorContacts) {
+            paymentMethodsToCreate.add(new Payment_Method__c(
+                Donor__c = targetDonorContact.Id,
+                Account_Number__c = '582673582735623',
+                Account_Token__c = '1050',
+                Name = 'Test Payment Method',
+                Is_Active__c = true,
+                isDefault__c = true,
+                User_Requested_Replace_Card__c = true,
+                Expiration__c = targetExpirationDate
+            ));
+
+            testVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonorContact.Id,
+                Appointment__c = targetAppointments[0].Id,
+                Status__c = 'Scheduled'
+            ));
+
+            moreRecentVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonorContact.Id,
+                Appointment__c = targetAppointments[1].Id,
+                Status__c = 'Scheduled'
+            ));
+        }
+
+        insert paymentMethodsToCreate;
+        insert testVisits;
+
+        Test.startTest();
+        insert moreRecentVisits;
+        Test.stopTest();
+
+        Map<Id, Id> visitIdToDonorId = new Map<Id, Id>();
+        Map<Id, Id> donorIdToVisitId = new Map<Id, Id>();
+
+        for(Visit__c recentVisit : moreRecentVisits) {
+            visitIdToDonorId.put(recentVisit.Id, recentVisit.Donor__c);
+            donorIdToVisitId.put(recentVisit.Donor__c, recentVisit.Id);
+        }
+
+        List<Task> createdTasks = [SELECT Subject, Description, ActivityDate, WhoId, WhatId FROM Task WHERE Subject = :Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT AND WhatId IN :moreRecentVisits];
+        Assert.areEqual(targetDonorContacts.size(), createdTasks.size(), 'The wrong amount of Renew Payment tasks were created');
+
+        for(Task createdTask : createdTasks) {
+            Assert.areEqual(Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT, createdTask.Subject, 'The task subject was not the expected value');
+            Assert.areEqual(Constants.REPLACE_PAYMENT_METHOD_TASK_DESCRIPTION, createdTask.Description, 'The task description was not the expected value');
+            Assert.areEqual(targetExpirationDate, createdTask.ActivityDate, 'The task activity date was not the expected value');
+            Assert.areEqual(visitIdToDonorId.get(createdTask.WhatId), createdTask.WhoId, 'The task whoId was not the expected value');
+            Assert.areEqual(donorIdToVisitId.get(createdTask.WhoId), createdTask.WhatId, 'The task whoId was not the expected value');
         }
     }
 /*

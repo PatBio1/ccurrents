@@ -42,5 +42,45 @@ public with sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler 
             update consentTransactionsUpdates;
         }
     }
-}
 
+    public static void updateLegacyDonorMigratedData(Map<Id, Lead> newLeadMap, Set<Id> convertedLeadIds) {
+        List<Contact> contactUpdates = new List<Contact>();
+        Set<Id> contactsIdsInScope = new Set<Id>();
+        Map<Id, Lead> convertedContactIdToLeadMap = new Map<Id, Lead>();
+
+        for (Lead ld : newLeadMap.values()) {
+            if (ld.isLegacyDonor__c) {
+                contactsIdsInScope.add(ld.ConvertedContactId);
+                convertedContactIdToLeadMap.put(ld.ConvertedContactId, ld);
+            }
+        }
+
+        if (!contactsIdsInScope.isEmpty()) {
+            List<Contact> contactsInScope = [
+                SELECT Id,
+                    Date_Migrated__c,
+                    Last_Donation_Date_Migrated__c,
+                    Donations_Last_365_Days_Migrated__c
+                FROM Contact
+                WHERE isLegacyDonor__c = FALSE AND
+                Id IN :contactsIdsInScope
+            ];
+
+            if (!contactsInScope.isEmpty()) {
+                for (Contact ct : contactsInScope) {
+                    Lead convertedLead = convertedContactIdToLeadMap.get(ct.Id);
+                    Contact ctUpdate = new Contact (
+                        Id = ct.Id,
+                        isLegacyDonor__c = true,
+                        Date_Migrated__c = convertedLead.Date_Migrated__c,
+                        Last_Donation_Date_Migrated__c = convertedLead.Last_Donation_Date_Migrated__c,
+                        Donations_Last_365_Days_Migrated__c = convertedLead.Donations_Last_365_Days_Migrated__c
+                    );
+
+                    contactUpdates.add(ctUpdate);
+                }
+                update contactUpdates;
+            }
+        }
+    }
+}

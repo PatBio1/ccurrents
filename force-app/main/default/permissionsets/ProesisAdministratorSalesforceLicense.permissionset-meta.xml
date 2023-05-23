@@ -579,22 +579,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Account.IsActive__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Account.Individual_Exception_Limit__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Account.NumberofLocations__c</field>
+        <field>Account.IsActive__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
         <field>Account.Max_Dollar_Per_Day__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.NumberofLocations__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1099,6 +1099,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Contact.Last_Onbe_Balance_Update__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Contact.Last_Physical_Exam_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1110,11 +1115,6 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Contact.Last_SPE_Sample_Date__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>Contact.Last_Onbe_Balance_Update__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1464,11 +1464,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Lead.IsLegacyDonor__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Lead.Last_Donation_Date_Migrated__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1535,6 +1530,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Lead.isEmailVerified__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Lead.isLegacyDonor__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1690,6 +1690,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Payment_Method__c.Replace_Card__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Payment_Method__c.User_Requested_Replace_Card__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

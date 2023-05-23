@@ -22,7 +22,6 @@ public with sharing class OnbePaymentServiceTest {
         // return Service method strings and assert
         System.assertEquals('Onbe', onbePayService.getPaymentServiceName(), 'Payment Service Name did not match expected value.');
         System.assertEquals('Onbe Payment Service supports stored value card transfers.', onbePayService.getPaymentServiceDescription(), 'Payment Service Description did not match expected value.');
-        System.assertEquals('Onbe Physical Card Link', onbePayService.linkPhysicalCard(), 'Payment Physical Card Link did not match expected value.');
         System.assertEquals('Onbe Transaction', onbePayService.getTransaction(), 'getTransaction() method did not return expected value.');
         System.assertEquals('Onbe Transaction History', onbePayService.getTransactionHistory(), 'getTransactionHistory() method did not return expected value.');
     }
@@ -120,5 +119,29 @@ public with sharing class OnbePaymentServiceTest {
         OnbePaymentService onbePayService = new OnbePaymentService();
         onbePayService.reissueCard(testPaymentMethod.Id, Constants.ONBE_REISSUE_CARD_REVOKED_CODE);
         Test.stopTest();
+    }
+
+    @isTest 
+    private static void testLinkPhysicalCard() {
+        Contact testDonor = [SELECT Id FROM Contact WHERE Account.DonorId__c != null LIMIT 1];
+
+        Payment_Method__c testPaymentMethod = new Payment_Method__c();
+        testPaymentMethod.Name = 'Test Payment Method';
+        testPaymentMethod.Donor__c = testDonor.Id;
+        testPaymentMethod.Account_Token__c = '1050';
+        testPaymentMethod.Account_Number__c = '4968712468235235';
+        testPaymentMethod.Card_Number__c = '7890';
+        testPaymentMethod.Is_Active__c = true;
+        testPaymentMethod.isDefault__c = true;
+        insert testPaymentMethod;
+
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+
+        Test.startTest();
+        OnbePaymentService onbePayService = new OnbePaymentService();
+        onbePayService.linkPhysicalCard('1051', testDonor.Id, '1234');
+        Test.stopTest();
+
+        Assert.areEqual(2, [SELECT count() FROM Payment_Method__c WHERE Donor__c = :testDonor.Id], 'Payment Method was not created.');
     }
 }

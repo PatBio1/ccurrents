@@ -42,24 +42,57 @@ public without sharing class CancelCardController {
         }
 
         // As of writing this comment, the method is only used in the lost card modal. So we can assume a lost card code
-        cancelPaymentMethod(targetPaymentMethod.Id, Constants.ONBE_REISSUE_CARD_LOST_CODE);
+        cancelPaymentMethod(targetPaymentMethod.Id);
     }
 
     @AuraEnabled
-    public static void cancelPaymentMethod(String paymentMethodId, String reissueCode) {
-        try {
-            OnbePaymentService paymentService = new OnbePaymentService();
-            paymentService.reissueCard(paymentMethodId, reissueCode);
-        } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+    public static void cancelPaymentMethod(String paymentMethodId) {
+        List<Payment_Method__c> targetPaymentMethod = [
+            SELECT Id, User_Requested_Replace_Card__c, Donor__c, Expiration__c 
+            FROM Payment_Method__c 
+            WHERE Id = :paymentMethodId 
+            LIMIT 1
+        ];
+
+        if (targetPaymentMethod.isEmpty()) {
+            throw new AuraHandledException('Payment method not found');
         }
 
-        // Given a successful response, deactivate the payment method, also unmark as default
-        update new Payment_Method__c(
-            Id = paymentMethodId,
-            Is_Active__c = false,
-            isDefault__c = false
-        );
+        Payment_Method__c paymentMethod = targetPaymentMethod[0];
+        if (paymentMethod.User_Requested_Replace_Card__c) {
+            throw new AuraHandledException('Payment method already cancelled');
+        }
+
+        paymentMethod.User_Requested_Replace_Card__c = true;
+        update paymentMethod;
+
+        // Look for an existing visit, if we find one we need to attach a special note to the visit
+        List<Visit__c> futureDonorVisits = [
+            SELECT Id 
+            FROM Visit__c 
+            WHERE Donor__c = :paymentMethod.Donor__c AND 
+                Status__c IN ('New', 'Scheduled') AND 
+                Appointment_Datetime__c >= :System.now()
+            ORDER BY Appointment_Datetime__c ASC
+            LIMIT 1
+        ];
+
+        if (!futureDonorVisits.isEmpty()) {
+            insert CancelCardController.createReplacePaymentMethodTask(
+                futureDonorVisits[0].Id, targetPaymentMethod[0].Expiration__c, paymentMethod.Donor__c
+            );
+        }
+    }
+
+    public static Task createReplacePaymentMethodTask(Id targetReplacementVisitId, Date paymentExpirationDate, Id paymentDonorId) {
+        Task replacePaymentMethodTask = new Task();
+        replacePaymentMethodTask.Subject = Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT;
+        replacePaymentMethodTask.Description = 'The existing payment method for this donor has been cancelled. Please update the donor\'s payment method.';
+        replacePaymentMethodTask.WhatId = targetReplacementVisitId;
+        replacePaymentMethodTask.WhoId = paymentDonorId;
+        replacePaymentMethodTask.ActivityDate = paymentExpirationDate;
+
+        return replacePaymentMethodTask;
     }
 
     public class PaymentMethod {

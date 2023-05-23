@@ -148,6 +148,7 @@ public with sharing class TestUtil {
             Geolocation__Latitude__s = 25.973030,
             Geolocation__Longitude__s = -80.242049,
             CenterId__c = 'center-222',
+            Center_Timezone__c = 'America/New_York',
             Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
             Site = 'P-01',
             IsActive__c = true
@@ -166,6 +167,7 @@ public with sharing class TestUtil {
             Geolocation__Latitude__s = 32.78411048612642,
             Geolocation__Longitude__s = -96.87149106359581,
             CenterId__c = 'center-333',
+            Center_Timezone__c = 'America/Chicago',
             Services__c = 'Donation;Medical: New Donor;Medical: Annual Physical;Medical: Consultation',
             Site = 'P-02',
             IsActive__c = true

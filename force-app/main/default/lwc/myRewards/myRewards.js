@@ -39,6 +39,10 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
 
     currentScreen = REWARDS_SCREEN_KEY;
 
+    get hasRewardsVideo() {
+        return (this.labels.rewardsVideoLink && this.labels.rewardsVideoLink.toLowerCase() !== 'null')
+    }
+
     get isRewardScreen() {
         return (this.currentScreen === REWARDS_SCREEN_KEY);
     }

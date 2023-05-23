@@ -51,6 +51,21 @@
     <description>Enables access to the Proesis Donor Experience.</description>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Contact.Onbe_Balance__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Contact.Last_Onbe_Balance_Update__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Contact.Onbe_Balance__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Contact.Redeemed_Points__c</field>
         <readable>true</readable>
     </fieldPermissions>

@@ -250,12 +250,23 @@ public with sharing class CenterScheduleController {
 
     @AuraEnabled
     public static void linkPaymentCard(String cardId, Id donorId, String initalPIN) {
+        // We can assume that if the donor has a payment method record, even if it's inactive, that an account has been created
+        Integer existingPaymentMethodCount = [SELECT count() FROM Payment_Method__c WHERE Donor__c = :donorId];
+        Boolean hasPaymentAccount = existingPaymentMethodCount > 0;
+        
         OnbePaymentService linkPaymentCardService = new OnbePaymentService();
-
-        try {
-            linkPaymentCardService.setupPaymentServiceAccount(cardId, donorId, 0, initalPIN);
-        } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+        if (hasPaymentAccount) {
+            try {
+                linkPaymentCardService.linkPhysicalCard(cardId, donorId, initalPIN);
+            } catch (Exception e) {
+                throw new AuraHandledException(e.getMessage());
+            }
+        } else {
+            try {
+                linkPaymentCardService.setupPaymentServiceAccount(cardId, donorId, 0, initalPIN);
+            } catch (Exception e) {
+                throw new AuraHandledException(e.getMessage());
+            }
         }
     }
 

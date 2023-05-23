@@ -54,12 +54,14 @@ public without sharing class AddFundsBatchableTest {
 
     @IsTest
     static void testSuccessfulAddFundsRun() {
+        String targetTransactionSubType = 'Donation Payment';
+
         List<Contact> testDonors = [SELECT Id, (SELECT Id FROM Visits__r) FROM Contact WHERE Account.DonorId__c != null];
         List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
         Integer index = 0;
 
         for(Contact testDonor : testDonors) {
-            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001');
+            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', targetTransactionSubType);
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
             newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 
@@ -74,7 +76,7 @@ public without sharing class AddFundsBatchableTest {
         Test.stopTest();
 
         List<Transaction__c> createdDebitTransactions = [
-            SELECT Id, Amount_Currency__c, Status__c, (SELECT Id FROM Txn_Line_Items__r)
+            SELECT Id, Amount_Currency__c, Status__c, SubType__c, (SELECT Id FROM Txn_Line_Items__r)
             FROM Transaction__c
             WHERE Type__c = 'Debit' AND 
                 Donor__c IN :testDonors
@@ -85,17 +87,20 @@ public without sharing class AddFundsBatchableTest {
             Assert.areEqual(100.00, createdDebitTransaction.Amount_Currency__c, 'The debit transaction should have the correct amount');
             Assert.areEqual(1, createdDebitTransaction.Txn_Line_Items__r.size(), 'The debit transaction should have one line item');
             Assert.areEqual('Complete', createdDebitTransaction.Status__c, 'The debit transaction should have a status of Complete');
+            Assert.areEqual(targetTransactionSubType, createdDebitTransaction.SubType__c, 'The debit transaction should have the correct sub type');
         }
     }
 
     @IsTest
     static void testAddFundsRunWithError() {
+        String targetTransactionSubType = 'Donation Payment';
+
         List<Contact> testDonors = [SELECT Id, (SELECT Id FROM Visits__r) FROM Contact WHERE Account.DonorId__c != null];
         List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
         Integer index = 0;
 
         for(Contact testDonor : testDonors) {
-            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001');
+            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', targetTransactionSubType);
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
             newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 
@@ -111,7 +116,7 @@ public without sharing class AddFundsBatchableTest {
         Test.stopTest();
 
         List<Transaction__c> createdDebitTransactions = [
-            SELECT Id, Amount_Currency__c, Status__c, Retry_Count__c, Retry_Next__c, (SELECT Id FROM Txn_Line_Items__r), (SELECT Id FROM Transaction_Logs__r)
+            SELECT Id, Amount_Currency__c, Status__c, SubType__c, Retry_Count__c, Retry_Next__c, (SELECT Id FROM Txn_Line_Items__r), (SELECT Id FROM Transaction_Logs__r)
             FROM Transaction__c
             WHERE Type__c = 'Debit' AND 
                 Donor__c IN :testDonors
@@ -125,6 +130,7 @@ public without sharing class AddFundsBatchableTest {
             Assert.areEqual(100.00, createdDebitTransaction.Amount_Currency__c, 'The debit transaction should have the correct amount');
             Assert.areEqual(1, createdDebitTransaction.Txn_Line_Items__r.size(), 'The debit transaction should have one line item');
             Assert.areEqual('Error', createdDebitTransaction.Status__c, 'The debit transaction should have a status of Error');
+            Assert.areEqual(targetTransactionSubType, createdDebitTransaction.SubType__c, 'The debit transaction should have the correct sub type');
             Assert.areEqual(1, createdDebitTransaction.Transaction_Logs__r.size(), 'The debit transaction should have one transaction log detailing the error');
             Assert.areEqual(expectedRetryCount, createdDebitTransaction.Retry_Count__c, 'The debit transaction should have a retry count of 1');
 

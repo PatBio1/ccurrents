@@ -198,7 +198,7 @@ public with sharing class DonorCompInvocableTest {
 
         List<Contact> donors = [
             SELECT Id, Loyalty_Level__r.Name, (
-                SELECT Id, Amount_Currency__c, Amount_Points__c, Status__c 
+                SELECT Id, Amount_Currency__c, Amount_Points__c, Status__c, SubType__c 
                 FROM Transactions__r
                 WHERE Type__c = 'Credit' 
                 ORDER BY Name ASC
@@ -212,11 +212,13 @@ public with sharing class DonorCompInvocableTest {
 
         // Level 1 Transaction
         Assert.areEqual('Complete', donors[0].Transactions__r[0].Status__c, '1st Credit Transaction should have a Complete status');
+        Assert.areEqual('Donation Payment', donors[0].Transactions__r[0].SubType__c, '1st Credit Transaction should have a SubType__c = Donation Payment');
         Assert.areEqual(233, donors[0].Transactions__r[0].Amount_Currency__c, 'First Transaction should have Amount_Currency__c = 233');
         Assert.areEqual(1333, donors[0].Transactions__r[0].Amount_Points__c, 'First Transaction should have Amount_Points__c = 1333');
 
         // Level 2 Transaction
         Assert.areEqual('Complete', donors[0].Transactions__r[1].Status__c, '2nd Credit Transaction should have a Complete status');
+        Assert.areEqual('Donation Payment', donors[0].Transactions__r[1].SubType__c, '2nd Credit Transaction should have a SubType__c = Donation Payment');
         Assert.areEqual(300, donors[0].Transactions__r[1].Amount_Currency__c, 'Last Transaction should have Amount_Currency__c = 333');
         Assert.areEqual(2000, donors[0].Transactions__r[1].Amount_Points__c, 'Last Transaction should have Amount_Points__c = 2333');
     }

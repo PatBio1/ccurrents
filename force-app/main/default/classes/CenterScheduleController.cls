@@ -591,4 +591,4 @@ public with sharing class CenterScheduleController {
             this.appointmentSlotsRescheduledTo = appointmentSlotsRescheduledTo;
         }
     }
-}    
+}

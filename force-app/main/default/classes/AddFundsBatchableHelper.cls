@@ -6,16 +6,13 @@ public without sharing class AddFundsBatchableHelper {
         for(DonorCompInvocable.AddFundsRequest addFundsRequest : requests) {
             Transaction__c debitTransaction = new Transaction__c();
             debitTransaction.Type__c = 'Debit';
+            debitTransaction.SubType__c = addFundsRequest.transactionSubType;
             debitTransaction.Status__c = 'Processing';
             debitTransaction.Donor__c = addFundsRequest.donorContactId;
-            debitTransaction.Service__c = 'Onbe';
+            debitTransaction.Service__c = 'OnbePaymentService';
 
             if (addFundsRequest.visitId != null) {
                 debitTransaction.Visit__c = addFundsRequest.visitId;
-            }
-
-            if (addFundsRequest.isExceptionPayment) {
-                debitTransaction.SubType__c = 'Exception';
             }
 
             if (addFundsRequest.existingDebitTransactionId != null) {

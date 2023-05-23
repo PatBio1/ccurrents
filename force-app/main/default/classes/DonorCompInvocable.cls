@@ -172,7 +172,8 @@ public without sharing class DonorCompInvocable {
             addFundsRequest = new AddFundsRequest(
                 foundContact.Id, 
                 targetVisitRecord.Id, 
-                hasPaymentMethod ? foundContact.Payment_Methods__r[0].Account_Number__c : ''
+                hasPaymentMethod ? foundContact.Payment_Methods__r[0].Account_Number__c : '',
+                'Donation Payment'
             );
             addFundsRequests.add(addFundsRequest);
 
@@ -196,6 +197,7 @@ public without sharing class DonorCompInvocable {
                 Donor__c = foundContact.Id,
                 Visit__c = targetVisitRecord.Id,
                 Type__c = 'Credit',
+                SubType__c = 'Donation Payment',
                 Status__c = addFundsRequest != null ? 'Complete' : 'Error' // If there isn't a request, that means there isn't a payment method, so the transaction is in error
             ));
 
@@ -515,6 +517,7 @@ public without sharing class DonorCompInvocable {
 
         public List<AddFundsLineItem> lineItems;
         public String accountNumber;
+        public String transactionSubType;
         public List<String> comments;
         public Decimal total;
 
@@ -522,14 +525,15 @@ public without sharing class DonorCompInvocable {
         public Boolean isSuccessfullyProcessed;
         public String processResponse; // code - sub_code
 
-        public AddFundsRequest(Id donorContactId, Id visitId, String accountNumber) {
-            this(donorContactId, visitId, accountNumber, null);
+        public AddFundsRequest(Id donorContactId, Id visitId, String accountNumber, String transactionSubType) {
+            this(donorContactId, visitId, accountNumber, transactionSubType, null);
         }
 
-        public AddFundsRequest(Id donorContactId, Id visitId, String accountNumber, Id existingDebitTransactionId) {
+        public AddFundsRequest(Id donorContactId, Id visitId, String accountNumber, String transactionSubType, Id existingDebitTransactionId) {
             this.donorContactId = donorContactId;
             this.visitId = visitId;
             this.accountNumber = accountNumber;
+            this.transactionSubType = transactionSubType;
             this.existingDebitTransactionId = existingDebitTransactionId;
 
             this.comments = new List<String>();

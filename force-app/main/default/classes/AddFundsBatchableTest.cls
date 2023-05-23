@@ -59,7 +59,7 @@ public without sharing class AddFundsBatchableTest {
         Integer index = 0;
 
         for(Contact testDonor : testDonors) {
-            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001');
+            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', 'Donation Payment');
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
             newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 
@@ -95,7 +95,7 @@ public without sharing class AddFundsBatchableTest {
         Integer index = 0;
 
         for(Contact testDonor : testDonors) {
-            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001');
+            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', 'Donation Payment');
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
             newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 

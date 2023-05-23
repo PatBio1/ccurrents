@@ -43,7 +43,7 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
             }
 
             for(Transaction__c erroredTransaction : [
-                SELECT Id, Donor__c, Visit__c
+                SELECT Id, Donor__c, Visit__c, SubType__c
                 FROM Transaction__c 
                 WHERE Status__c = 'Error' AND 
                     Type__c = 'Debit' AND 
@@ -54,6 +54,7 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
                     erroredTransaction.Donor__c,
                     erroredTransaction.Visit__c,
                     donorIdToActivePaymentMethodNumber.get(erroredTransaction.Donor__c),
+                    erroredTransaction.SubType__c,
                     erroredTransaction.Id
                 ));
             }

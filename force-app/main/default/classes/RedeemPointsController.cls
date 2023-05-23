@@ -10,7 +10,7 @@ public without sharing class RedeemPointsController {
         Decimal roundedPointsToRedeem = dollorsToCredit * pointsToDollars;
         
         // Create the initial credit transactions
-        Transaction__c creditTransaction = new Transaction__c(Donor__c = donorId, Type__c = 'Credit', Service__c = 'Onbe', Status__c = 'Complete');
+        Transaction__c creditTransaction = new Transaction__c(Donor__c = donorId, Type__c = 'Credit', SubType__c = 'Point Redemption', Service__c = 'Onbe', Status__c = 'Complete');
         insert creditTransaction;
 
         List<Txn_Line_Item__c> transactionLineItems = new List<Txn_Line_Item__c>();
@@ -18,13 +18,6 @@ public without sharing class RedeemPointsController {
             Transaction__c = creditTransaction.Id, 
             Type__c = 'Currency', 
             Unit_Cost__c = dollorsToCredit,
-            Quantity__c = 1,
-            Item__c = 'PlasmaPoints Redeemed'
-        ));
-        transactionLineItems.add(new Txn_Line_Item__c(
-            Transaction__c = creditTransaction.Id, 
-            Type__c = 'Points', 
-            Unit_Cost__c = roundedPointsToRedeem,
             Quantity__c = 1,
             Item__c = 'PlasmaPoints Redeemed'
         ));
@@ -46,7 +39,7 @@ public without sharing class RedeemPointsController {
         // Queue up the addFunds callout to Onbe
         List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
 
-        DonorCompInvocable.AddFundsRequest redeemPointsRequest = new DonorCompInvocable.AddFundsRequest(donorId, null, accountNumber);
+        DonorCompInvocable.AddFundsRequest redeemPointsRequest = new DonorCompInvocable.AddFundsRequest(donorId, null, accountNumber, 'Point Redemption');
         redeemPointsRequest.comments.add('PlasmaPoints Redeemed');
         redeemPointsRequest.addLineItem('PlasmaPoints Redeemed', 'Currency', dollorsToCredit);
         redeemPointsRequest.addLineItem('PlasmaPoints Redeemed', 'Points', roundedPointsToRedeem);

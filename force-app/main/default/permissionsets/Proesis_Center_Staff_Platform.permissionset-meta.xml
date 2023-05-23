@@ -150,12 +150,12 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Account.Industry</field>
+        <field>Account.Individual_Exception_Limit__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Account.Individual_Exception_Limit__c</field>
+        <field>Account.Industry</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -891,6 +891,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Payment_Method__c.Replace_Card__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Payment_Method__c.User_Requested_Replace_Card__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

@@ -1,9 +1,6 @@
 List<AccountContactRelation> acrs = [
     SELECT
-        AccountId,
-        ContactId,
-        Contact.AccountId,
-        Roles
+        AccountId, Contact.AccountId
     FROM
         AccountContactRelation
     WHERE
@@ -51,7 +48,6 @@ List<AccountShare> accountSharesToInsert = new List<AccountShare>();
 
 for (AccountContactRelation acr : acrs) {
     List<AccountShare> centerAccountShareList = centerAccountShares.get(acr.AccountId);
-    //List<AccountShare> donorAccountShareList = centerAccountShares.get(acr.Contact.AccountId);
 
     if (centerAccountShareList != null) {
         for (AccountShare centerAccountShare : centerAccountShareList) {

@@ -7,6 +7,7 @@ global with sharing class MobileGuestService {
     public static final String ENDPOINT = 'callout:Callback/services/apexrest/mobile/guest/';
     public static final String GET_DOWNLOAD_URL_PATH = 'get-download-url';
     public static final String SET_USER_PHOTO_PATH = 'set-user-photo';
+    public static final String SHARE_RECORDS_PATH = 'share-records';
 
     @HttpPost
     global static void doPost() {
@@ -23,8 +24,13 @@ global with sharing class MobileGuestService {
         }
 
         else if (path == SET_USER_PHOTO_PATH) {
-            SetUserPhotoRequest SetUserPhotoRequest = (SetUserPhotoRequest) JSON.deserialize(request, SetUserPhotoRequest.class);
-            setUserPhoto(SetUserPhotoRequest);
+            SetUserPhotoRequest setUserPhotoRequest = (SetUserPhotoRequest) JSON.deserialize(request, SetUserPhotoRequest.class);
+            setUserPhoto(setUserPhotoRequest);
+        }
+
+        else if (path == SHARE_RECORDS_PATH) {
+            ShareRecordsRequest shareRecordsRequest = (ShareRecordsRequest) JSON.deserialize(request, ShareRecordsRequest.class);
+            shareRecords(shareRecordsRequest);
         }
 
         if (response != null) {
@@ -71,6 +77,10 @@ global with sharing class MobileGuestService {
         }
     }
 
+    private static void shareRecords(ShareRecordsRequest request) {
+        AccountContactRelationTriggerHandler.shareRecords(new Set<Id>(request.accountContactRelationIds));
+    }
+
 
     public class GetDownloadUrlRequest {
 
@@ -88,6 +98,12 @@ global with sharing class MobileGuestService {
 
         public Id userId {get; set;}
         public Id contentVersionId {get; set;}
+
+    }
+
+    public class ShareRecordsRequest {
+
+        public List<Id> accountContactRelationIds {get; set;}
 
     }
 

@@ -44,4 +44,20 @@ public with sharing class MobileGuestServiceTest {
         }
     }
 
+    @isTest
+    static void testShareRecords() {
+        System.runAs(TestUtil.createAdminUser()) {
+            MobileGuestService.ShareRecordsRequest shareRecordsRequest = new MobileGuestService.ShareRecordsRequest();
+            shareRecordsRequest.accountContactRelationIds = new List<Id>();
+
+            RestContext.request = new RestRequest();
+            RestContext.request.requestUri = MobileGuestService.ENDPOINT + MobileGuestService.SHARE_RECORDS_PATH;
+            RestContext.request.requestBody = Blob.valueof(JSON.serialize(shareRecordsRequest, true));
+
+            RestContext.response = new RestResponse();
+
+            MobileGuestService.doPost();
+        }
+    }
+
 }

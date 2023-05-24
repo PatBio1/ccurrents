@@ -55,7 +55,11 @@ public with sharing class PromotionPaymentInvocableTest {
             promotionPaymentRequest.amount = testAmount;
             promotionPaymentRequest.reason = 'reason';
 
+            Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
+
+            Test.startTest();
             List<PromotionPaymentInvocable.PromotionPaymentResponse> promotionPaymentResponses = PromotionPaymentInvocable.invoke(new List<PromotionPaymentInvocable.PromotionPaymentRequest>{promotionPaymentRequest});
+            Test.stopTest();
 
             Assert.areEqual(1, promotionPaymentResponses.size(), 'Should have one response');
             Assert.areEqual(experienceUser.ContactId, promotionPaymentResponses[0].donorId, 'Should have the same donor id');

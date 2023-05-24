@@ -43,20 +43,27 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
             }
 
             for(Transaction__c erroredTransaction : [
-                SELECT Id, Donor__c, Visit__c, SubType__c
+                SELECT Id, Donor__c, Visit__c, SubType__c, (SELECT Id, Type__c, Item__c, Total__c FROM Txn_Line_Items__r)
                 FROM Transaction__c 
                 WHERE Status__c = 'Error' AND 
                     Type__c = 'Debit' AND 
                     (Retry_Next__c = null OR Retry_Next__c <= TODAY) AND 
                     (Retry_Count__c = null OR Retry_Count__c < :paymentServiceMaxRetry)
             ]) {
-                this.addFundRequests.add(new DonorCompInvocable.AddFundsRequest(
+                DonorCompInvocable.AddFundsRequest newRetryRequest = new DonorCompInvocable.AddFundsRequest(
                     erroredTransaction.Donor__c,
                     erroredTransaction.Visit__c,
                     donorIdToActivePaymentMethodNumber.get(erroredTransaction.Donor__c),
                     erroredTransaction.SubType__c,
                     erroredTransaction.Id
-                ));
+                );
+
+                for(Txn_Line_Item__c lineItem : erroredTransaction.Txn_Line_Items__r) {
+                    newRetryRequest.comments.add(lineItem.Item__c);
+                    newRetryRequest.addLineItem(lineItem.Item__c, lineItem.Type__c, lineItem.Total__c);
+                }
+
+                this.addFundRequests.add(newRetryRequest);
             }
         }
 

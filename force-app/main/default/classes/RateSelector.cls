@@ -11,7 +11,8 @@ public without sharing class RateSelector {
                 SELECT Id, Base_Payment__c, Donation_Type__r.Name, Center__c, UOM__c 
                 FROM Rate__c 
                 WHERE Center__c = :centerId AND 
-                    Donation_Type__c IN (SELECT Id FROM Donation_Type__c WHERE Name = :targetDonationType)
+                    Donation_Type__c IN (SELECT Id FROM Donation_Type__c WHERE Name = :targetDonationType) AND 
+                    Type__c = 'Base'
                 LIMIT 1
             ];
         } catch (Exception e) {

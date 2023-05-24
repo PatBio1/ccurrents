@@ -1,4 +1,4 @@
-public with sharing class UserCreationQueueable implements Queueable {
+public without sharing class UserCreationQueueable implements Queueable {
 
     Id centerId;
     Id accountId;
@@ -30,7 +30,7 @@ public with sharing class UserCreationQueueable implements Queueable {
             ProfileController.assignUserPermissionSet(user.Id);
 
             if (!Test.isRunningTest()) {
-                System.enqueueJob(new UserCreationQueueable(accountId, userLanguage, user.Id));
+                System.enqueueJob(new UserCreationQueueable(centerId, accountId, userLanguage, user.Id));
             }
         } else {
             update new Account(Id = accountId, User__pc = createdUserId);

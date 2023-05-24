@@ -71,7 +71,7 @@ public with sharing class DonationService {
             }
 
             DonorCompInvocable.AddFundsRequest addFundsRequest = new DonorCompInvocable.AddFundsRequest(
-                exceptionRequest.donorId, exceptionRequest.visitId, donorIdToPaymentMethodAccountNumber.get(exceptionRequest.donorId)
+                exceptionRequest.donorId, exceptionRequest.visitId, donorIdToPaymentMethodAccountNumber.get(exceptionRequest.donorId), 'Exception'
             );
 
             addFundsRequest.addLineItem(exceptionRate.Description__c, 'Currency', exceptionRate.Base_Payment__c);

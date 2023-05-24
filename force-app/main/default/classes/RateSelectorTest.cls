@@ -16,7 +16,8 @@ public without sharing class RateSelectorTest {
             Donation_Type__c = testDonationType.Id,
             Center__c = testCenter.Id,
             Base_Payment__c = TEST_BASE_PAYMENT,
-            UOM__c = TEST_UOM
+            UOM__c = TEST_UOM,
+            Type__c = 'Base'
         );
         insert testRate;
 

@@ -65,4 +65,6 @@ public with sharing class Constants {
     public static final String MESSAGE_HANDLER_TYPE_DONATION = 'Donation Payment';
 
     public static final String REPLACE_PAYMENT_METHOD_TASK_SUBJECT = 'Renew Payment Method';
+    public static final String REPLACE_PAYMENT_METHOD_TASK_DESCRIPTION = 'The existing payment method for this donor has been cancelled or is set to expire soon. Please update the donor\'s payment method.';
+
 }

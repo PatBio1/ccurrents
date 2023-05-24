@@ -886,8 +886,8 @@
         <fullName>Social_Photo</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Social Photo</shortDescription>
-        <value>Social Photo</value>
+        <shortDescription>Profile Photo</shortDescription>
+        <value>Profile Photo</value>
     </labels>
     <labels>
         <fullName>Spanish</fullName>

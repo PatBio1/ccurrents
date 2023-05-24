@@ -14,6 +14,7 @@ public with sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler 
 
         if (!convertedLeadIds.isEmpty()) {
             updateConsentTransactionLinksOnConversion((Map<Id, Lead>) newMap, convertedLeadIds);
+            updateLegacyDonorMigratedData((Map<Id, Lead>) newMap);
         }
     }
 
@@ -43,7 +44,7 @@ public with sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler 
         }
     }
 
-    public static void updateLegacyDonorMigratedData(Map<Id, Lead> newLeadMap, Set<Id> convertedLeadIds) {
+    public static void updateLegacyDonorMigratedData(Map<Id, Lead> newLeadMap) {
         List<Contact> contactUpdates = new List<Contact>();
         Set<Id> contactsIdsInScope = new Set<Id>();
         Map<Id, Lead> convertedContactIdToLeadMap = new Map<Id, Lead>();

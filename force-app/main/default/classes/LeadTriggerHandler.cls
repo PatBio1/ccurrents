@@ -45,42 +45,44 @@ public with sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler 
     }
 
     public static void updateLegacyDonorMigratedData(Map<Id, Lead> newLeadMap) {
-        List<Contact> contactUpdates = new List<Contact>();
-        Set<Id> contactsIdsInScope = new Set<Id>();
-        Map<Id, Lead> convertedContactIdToLeadMap = new Map<Id, Lead>();
+        List<Account> accountUpdates = new List<Account>();
+        Set<Id> accountIdsInScope = new Set<Id>();
+        Map<Id, Lead> convertedAccountIdToLeadMap = new Map<Id, Lead>();
 
         for (Lead ld : newLeadMap.values()) {
             if (ld.isLegacyDonor__c) {
-                contactsIdsInScope.add(ld.ConvertedContactId);
-                convertedContactIdToLeadMap.put(ld.ConvertedContactId, ld);
+                accountIdsInScope.add(ld.ConvertedAccountId);
+                convertedAccountIdToLeadMap.put(ld.ConvertedAccountId, ld);
             }
         }
 
-        if (!contactsIdsInScope.isEmpty()) {
-            List<Contact> contactsInScope = [
+        if (!accountIdsInScope.isEmpty()) {
+            List<Account> accountsInScope = [
                 SELECT Id,
-                    Date_Migrated__c,
-                    Last_Donation_Date_Migrated__c,
-                    Donations_Last_365_Days_Migrated__c
-                FROM Contact
-                WHERE isLegacyDonor__c = FALSE AND
-                Id IN :contactsIdsInScope
+                    Date_Migrated__pc,
+                    Last_Donation_Date_Migrated__pc,
+                    Donations_Last_365_Days_Migrated__pc,
+                    First_Visit_Code__c
+                FROM Account
+                WHERE isLegacyDonor__pc = FALSE AND
+                Id IN :accountIdsInScope
             ];
 
-            if (!contactsInScope.isEmpty()) {
-                for (Contact ct : contactsInScope) {
-                    Lead convertedLead = convertedContactIdToLeadMap.get(ct.Id);
-                    Contact ctUpdate = new Contact (
-                        Id = ct.Id,
-                        isLegacyDonor__c = true,
-                        Date_Migrated__c = convertedLead.Date_Migrated__c,
-                        Last_Donation_Date_Migrated__c = convertedLead.Last_Donation_Date_Migrated__c,
-                        Donations_Last_365_Days_Migrated__c = convertedLead.Donations_Last_365_Days_Migrated__c
+            if (!accountsInScope.isEmpty()) {
+                for (Account acct : accountsInScope) {
+                    Lead convertedLead = convertedAccountIdToLeadMap.get(acct.Id);
+                    Account acctUpdate = new Account (
+                        Id = acct.Id,
+                        isLegacyDonor__pc = true,
+                        Date_Migrated__pc = convertedLead.Date_Migrated__c,
+                        Last_Donation_Date_Migrated__pc = convertedLead.Last_Donation_Date_Migrated__c,
+                        Donations_Last_365_Days_Migrated__pc = convertedLead.Donations_Last_365_Days_Migrated__c,
+                        First_Visit_Code__c = convertedLead.First_Visit_Code__c
                     );
 
-                    contactUpdates.add(ctUpdate);
+                    accountUpdates.add(acctUpdate);
                 }
-                update contactUpdates;
+                update accountUpdates;
             }
         }
     }

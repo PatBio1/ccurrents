@@ -11,7 +11,6 @@ public with sharing class DonorPaymentService {
     }
 
     public static void createPromotionPayment(Id donorId, Id visitId, Decimal amount) {
-
+        
     }
-
 }

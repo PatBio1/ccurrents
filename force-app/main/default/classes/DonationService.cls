@@ -10,7 +10,10 @@ public with sharing class DonationService {
         Set<Id> visitIds = new Set<Id>();
 
         for (DonationExceptionRequest exceptionRequest : exceptionRequests) {
-            exceptionRateIds.add(exceptionRequest.exceptionRateId);
+            if (exceptionRequest.exceptionRateId != null && (exceptionRequest.exceptionAmount == null || String.isEmpty(exceptionRequest.exceptionReason))) {
+                exceptionRateIds.add(exceptionRequest.exceptionRateId);
+            }
+            
             visitIds.add(exceptionRequest.visitId);
         }
 
@@ -133,10 +136,20 @@ public with sharing class DonationService {
         public Id visitId;
         public Id exceptionRateId;
 
+        public Decimal exceptionAmount;
+        public String exceptionReason;
+
         public DonationExceptionRequest(Id donorId, Id visitId, Id exceptionRateId) {
             this.donorId = donorId;
             this.visitId = visitId;
             this.exceptionRateId = exceptionRateId;
+        }
+
+        public DonationExceptionRequest(Id donorId, Id visitId, Decimal amount, String reason) {
+            this.donorId = donorId;
+            this.visitId = visitId;
+            this.exceptionAmount = amount;
+            this.exceptionReason = reason;
         }
     }
 

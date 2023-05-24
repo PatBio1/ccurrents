@@ -1,4 +1,4 @@
-public with sharing class UserCreationQueueable implements Queueable {
+public without sharing class UserCreationQueueable implements Queueable {
 
     Id centerId;
     Id accountId;

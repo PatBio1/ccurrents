@@ -6,6 +6,11 @@
     </customPermissions>
     <description>Additional Create and Edit permissions for marketing managers</description>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Account.First_Visit_Code__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Campaign.ActualCost</field>
         <readable>true</readable>

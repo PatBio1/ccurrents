@@ -189,11 +189,15 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Readonly</behavior>
-                <field>IsLegacyDonor__c</field>
+                <field>isLegacyDonor__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>Donations_Last_365_Days_Migrated__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>First_Visit_Code__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>

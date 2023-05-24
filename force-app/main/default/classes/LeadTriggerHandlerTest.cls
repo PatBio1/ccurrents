@@ -49,7 +49,8 @@ public with sharing class LeadTriggerHandlerTest {
             isLegacyDonor__c = true,
             Date_Migrated__c = Date.newInstance(2023, 05, 05),
             Last_Donation_Date_Migrated__c = Date.newInstance(2023, 05, 01),
-            Donations_Last_365_Days_Migrated__c = 20
+            Donations_Last_365_Days_Migrated__c = 20,
+            First_Visit_Code__c = '123456'
         );
 
         insert testLead;
@@ -66,25 +67,26 @@ public with sharing class LeadTriggerHandlerTest {
 
         Lead convertedLead = [
             SELECT Id,
-                ConvertedContactId
+                ConvertedAccountId
             FROM Lead
             WHERE IsConverted = TRUE
         ][0];
 
-        Contact convertedContact = [
+        Account convertedAccount = [
             SELECT Id,
-                isLegacyDonor__c,
-                Date_Migrated__c,
-                Last_Donation_Date_Migrated__c,
-                Donations_Last_365_Days_Migrated__c
-            FROM Contact
-            WHERE Id = :convertedLead.ConvertedContactId
+                isLegacyDonor__pc,
+                Date_Migrated__pc,
+                Last_Donation_Date_Migrated__pc,
+                Donations_Last_365_Days_Migrated__pc,
+                First_Visit_Code__c
+            FROM Account
+            WHERE Id = :convertedLead.ConvertedAccountId
         ][0];
 
-        Assert.areEqual(testLead.isLegacyDonor__c, convertedContact.isLegacyDonor__c);
-        Assert.areEqual(testLead.Date_Migrated__c, convertedContact.Date_Migrated__c);
-        Assert.areEqual(testLead.Last_Donation_Date_Migrated__c, convertedContact.Last_Donation_Date_Migrated__c);
-        Assert.areEqual(testLead.Donations_Last_365_Days_Migrated__c, convertedContact.Donations_Last_365_Days_Migrated__c);
+        Assert.areEqual(testLead.isLegacyDonor__c, convertedAccount.isLegacyDonor__pc);
+        Assert.areEqual(testLead.Date_Migrated__c, convertedAccount.Date_Migrated__pc);
+        Assert.areEqual(testLead.Last_Donation_Date_Migrated__c, convertedAccount.Last_Donation_Date_Migrated__pc);
+        Assert.areEqual(testLead.Donations_Last_365_Days_Migrated__c, convertedAccount.Donations_Last_365_Days_Migrated__pc);
+        Assert.areEqual(testLead.First_Visit_Code__c, convertedAccount.First_Visit_Code__c);
     }
-
 }

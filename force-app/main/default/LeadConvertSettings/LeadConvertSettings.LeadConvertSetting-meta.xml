@@ -7,6 +7,10 @@
             <inputField>DonorId__c</inputField>
             <outputField>DonorId__c</outputField>
         </mappingFields>
+        <mappingFields>
+            <inputField>First_Visit_Code__c</inputField>
+            <outputField>First_Visit_Code__c</outputField>
+        </mappingFields>
         <outputObject>Account</outputObject>
     </objectMapping>
     <objectMapping>
@@ -48,7 +52,7 @@
             <outputField>How_will_you_get_to_the_Center__c</outputField>
         </mappingFields>
         <mappingFields>
-            <inputField>IsLegacyDonor__c</inputField>
+            <inputField>isLegacyDonor__c</inputField>
             <outputField>isLegacyDonor__c</outputField>
         </mappingFields>
         <mappingFields>

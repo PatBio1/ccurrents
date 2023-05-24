@@ -10,7 +10,10 @@ public with sharing class DonationService {
         Set<Id> visitIds = new Set<Id>();
 
         for (DonationExceptionRequest exceptionRequest : exceptionRequests) {
-            exceptionRateIds.add(exceptionRequest.exceptionRateId);
+            if (exceptionRequest.exceptionRateId != null && (exceptionRequest.exceptionAmount == null || String.isEmpty(exceptionRequest.exceptionReason))) {
+                exceptionRateIds.add(exceptionRequest.exceptionRateId);
+            }
+            
             visitIds.add(exceptionRequest.visitId);
         }
 
@@ -26,7 +29,15 @@ public with sharing class DonationService {
         }
 
         // Verify Exception Limits haven't been exceeded before creating transactions
-        Map<Id, Rate__c> exceptionRates = new Map<Id, Rate__c>([SELECT Id, Name, Base_Payment__c, Description__c FROM Rate__c WHERE Id IN :exceptionRateIds]);
+        Map<Id, Rate__c> exceptionRates;
+        if (exceptionRateIds.size() > 0) {
+            exceptionRates = new Map<Id, Rate__c>([
+                SELECT Id, Base_Payment__c, Description__c, Center__c
+                FROM Rate__c
+                WHERE Id IN :exceptionRateIds
+            ]);
+        }
+
         Map<Id, Account> centerIdToCenter = new Map<Id, Account>();
 
         for(Visit__c targetVisit : [
@@ -51,7 +62,18 @@ public with sharing class DonationService {
         }
 
         for (DonationExceptionRequest exceptionRequest : exceptionRequests) {
-            Rate__c exceptionRate = exceptionRates.get(exceptionRequest.exceptionRateId);
+            Decimal exceptionAmount;
+            String exceptionReason;
+            
+            if (!String.isEmpty(exceptionRequest.exceptionRateId)) {
+                Rate__c exceptionRate = exceptionRates.get(exceptionRequest.exceptionRateId);
+                exceptionAmount = exceptionRate.Base_Payment__c;
+                exceptionReason = exceptionRate.Description__c;
+            } else {
+                exceptionAmount = exceptionRequest.exceptionAmount;
+                exceptionReason = exceptionRequest.exceptionReason;
+            }
+
             Account center = centerIdToCenter.get(exceptionRequest.visitId);
 
             Decimal totalExceptionAmount = centerIdToTotalExceptionAmount.get(center.Id);
@@ -59,14 +81,14 @@ public with sharing class DonationService {
                 totalExceptionAmount = 0;
             }
 
-            totalExceptionAmount += exceptionRate.Base_Payment__c;
+            totalExceptionAmount += exceptionAmount;
             centerIdToTotalExceptionAmount.put(center.Id, totalExceptionAmount);
 
             if ((center.Max_Dollar_Per_Day__c != null && center.Max_Dollar_Per_Day__c > 0) && totalExceptionAmount > center.Max_Dollar_Per_Day__c) {
                 throw new CreateExceptionPaymentException(String.format(Constants.CENTER_DAY_EXCEPTION_LIMIT_ERROR, new List<object> { center.Name }));
             }
 
-            if ((center.Individual_Exception_Limit__c != null && center.Individual_Exception_Limit__c > 0) && exceptionRate.Base_Payment__c > center.Individual_Exception_Limit__c) {
+            if ((center.Individual_Exception_Limit__c != null && center.Individual_Exception_Limit__c > 0) && exceptionAmount > center.Individual_Exception_Limit__c) {
                 throw new CreateExceptionPaymentException(String.format(Constants.CENTER_INDIVIDUAL_EXCEPTION_LIMIT_ERROR, new List<object> { center.Name }));
             }
 
@@ -74,8 +96,8 @@ public with sharing class DonationService {
                 exceptionRequest.donorId, exceptionRequest.visitId, donorIdToPaymentMethodAccountNumber.get(exceptionRequest.donorId), 'Exception'
             );
 
-            addFundsRequest.addLineItem(exceptionRate.Description__c, 'Currency', exceptionRate.Base_Payment__c);
-            addFundsRequest.comments.add('Exception Payment - ' + exceptionRate.Description__c);
+            addFundsRequest.addLineItem(exceptionReason, 'Currency', exceptionAmount);
+            addFundsRequest.comments.add('Exception Payment - ' + exceptionReason);
             addFundsRequest.isExceptionPayment = true;
 
             addFundsRequests.add(addFundsRequest);
@@ -87,6 +109,15 @@ public with sharing class DonationService {
 
         List<Group> targetExceptionPaymentTaskQueue = [SELECT Id FROM Group WHERE DeveloperName = 'Proesis_Operations' LIMIT 1];
         for(DonationExceptionRequest exceptionRequest : exceptionRequests) {
+            String exceptionReason;
+            
+            if (!String.isEmpty(exceptionRequest.exceptionRateId)) {
+                Rate__c exceptionRate = exceptionRates.get(exceptionRequest.exceptionRateId);
+                exceptionReason = exceptionRate.Description__c;
+            } else {
+                exceptionReason = exceptionRequest.exceptionReason;
+            }
+            
             Transaction__c exceptionTransaction = new Transaction__c(
                 Donor__c = exceptionRequest.donorId,
                 Visit__c = exceptionRequest.visitId,
@@ -98,7 +129,7 @@ public with sharing class DonationService {
             Task exceptionPaymentTask = new Task(
                 WhoId = exceptionRequest.donorId,
                 WhatId = exceptionRequest.visitId,
-                Subject = 'Exception Payment - ' + exceptionRates.get(exceptionRequest.exceptionRateId).Description__c,
+                Subject = 'Exception Payment - ' + exceptionReason,
                 ActivityDate = Date.today(),
                 OwnerId = targetExceptionPaymentTaskQueue[0].Id
             );
@@ -112,11 +143,22 @@ public with sharing class DonationService {
 
         List<Txn_Line_Item__c> lineItems = new List<Txn_Line_Item__c>();
         for (DonationExceptionRequest exceptionRequest : exceptionRequests) {
-            Rate__c exceptionRate = exceptionRates.get(exceptionRequest.exceptionRateId);
+            Decimal exceptionAmount;
+            String exceptionReason;
+            
+            if (!String.isEmpty(exceptionRequest.exceptionRateId)) {
+                Rate__c exceptionRate = exceptionRates.get(exceptionRequest.exceptionRateId);
+                exceptionAmount = exceptionRate.Base_Payment__c;
+                exceptionReason = exceptionRate.Description__c;
+            } else {
+                exceptionAmount = exceptionRequest.exceptionAmount;
+                exceptionReason = exceptionRequest.exceptionReason;
+            }
+            
             Txn_Line_Item__c lineItem = new Txn_Line_Item__c(
                 Transaction__c = visitIdToTransaction.get(exceptionRequest.visitId).Id,
-                Item__c = exceptionRate.Description__c,
-                Unit_Cost__c = exceptionRate.Base_Payment__c,
+                Item__c = exceptionReason,
+                Unit_Cost__c = exceptionAmount,
                 Quantity__c = 1,
                 Type__c = 'Currency'
             );
@@ -133,10 +175,20 @@ public with sharing class DonationService {
         public Id visitId;
         public Id exceptionRateId;
 
+        public Decimal exceptionAmount;
+        public String exceptionReason;
+
         public DonationExceptionRequest(Id donorId, Id visitId, Id exceptionRateId) {
             this.donorId = donorId;
             this.visitId = visitId;
             this.exceptionRateId = exceptionRateId;
+        }
+
+        public DonationExceptionRequest(Id donorId, Id visitId, Decimal amount, String reason) {
+            this.donorId = donorId;
+            this.visitId = visitId;
+            this.exceptionAmount = amount;
+            this.exceptionReason = reason;
         }
     }
 

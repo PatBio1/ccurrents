@@ -3,9 +3,15 @@ public with sharing class PromotionPaymentInvocable {
     @InvocableMethod(Label='Promotion Payment' Category='Payment' Description='Calls Promotion Payment in Donor Payment Service.')
     public static List<PromotionPaymentResponse> invoke(List<PromotionPaymentRequest> promotionPaymentRequests) {
         List<PromotionPaymentResponse> promotionPaymentResponses = new List<PromotionPaymentResponse>();
+        List<DonorPaymentService.PromotionPaymentRequest> promotionPaymentDonorServiceRequests = new List<DonorPaymentService.PromotionPaymentRequest>();
 
         for (PromotionPaymentRequest promotionPaymentRequest : promotionPaymentRequests) {
-            DonorPaymentService.createPromotionPayment(promotionPaymentRequest.donorId, promotionPaymentRequest.visitId, promotionPaymentRequest.amount);
+            promotionPaymentDonorServiceRequests.add(new DonorPaymentService.PromotionPaymentRequest(
+                promotionPaymentRequest.donorId,
+                promotionPaymentRequest.visitId,
+                promotionPaymentRequest.amount,
+                promotionPaymentRequest.reason
+            ));
 
             PromotionPaymentResponse promotionPaymentResponse = new PromotionPaymentResponse();
             promotionPaymentResponse.donorId = promotionPaymentRequest.donorId;
@@ -15,6 +21,7 @@ public with sharing class PromotionPaymentInvocable {
             promotionPaymentResponses.add(promotionPaymentResponse);
         }
 
+        DonorPaymentService.createPromotionPayment(promotionPaymentDonorServiceRequests);
         return promotionPaymentResponses;
     }
 

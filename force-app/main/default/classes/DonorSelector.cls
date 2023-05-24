@@ -70,7 +70,7 @@ public without sharing class DonorSelector {
         Contact targetDonor = targetDonors[0];
         Datetime targetDonorLastBalanceUpdate = targetDonor.Last_Onbe_Balance_Update__c != null ? targetDonor.Last_Onbe_Balance_Update__c.addHours((Integer)proesisSettings.Payment_Service_Balance_Max_Freq__c) : null;
 
-        if (targetDonor.Payment_Methods__r.size() > 0 && (targetDonorLastBalanceUpdate == null || targetDonorLastBalanceUpdate >= System.now())) {
+        if (targetDonor.Payment_Methods__r.size() > 0 && (targetDonorLastBalanceUpdate == null || System.now() >= targetDonorLastBalanceUpdate)) {
             OnbePaymentService paymentService = new OnbePaymentService();
             Decimal donorOnbeBalance;
 

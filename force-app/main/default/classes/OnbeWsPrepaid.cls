@@ -4,9 +4,9 @@ public class OnbeWsPrepaid {
 
     // Constants
     private static final String uriAccountManagementMainEndpoint;
-    private static final String uriAccountManagementPrepaidWs = 'http://ws.accountmanagementapi.prepaid.citi.com';
-    private static final String uriAccountManagementPrepaidRequest = 'http://request.accountmanagementapi.prepaid.citi.com';
-    private static final String uriAccountManagementPrepaidResponse = 'http://response.accountmanagementapi.prepaid.citi.com';
+    private static final String uriAccountManagementPrepaidWs;
+    private static final String uriAccountManagementPrepaidRequest;
+    private static final String uriAccountManagementPrepaidResponse;
     private static final String uriAccountManagementPrepaidDomain = 'http://domain.accountmanagementapi.prepaid.citi.com';
     private static final String uriAccountManagementPrepaidCommon = 'http://common.accountmanagementapi.prepaid.citi.com';
     private static final String PROGRAM_ID;
@@ -25,6 +25,24 @@ public class OnbeWsPrepaid {
           PROGRAM_ID = orgSettings.OnbePaymentService_AcctMgmtProgramID__c;
         } else {
           PROGRAM_ID = '04011223';
+        }
+
+        if(orgSettings.OnbePaymentService_AcctMgmtRequestNS__c != null){
+          uriAccountManagementPrepaidRequest = orgSettings.OnbePaymentService_AcctMgmtRequestNS__c;
+        } else {
+          uriAccountManagementPrepaidRequest = 'http://request.accountmanagementapi.prepaid.citi.com';
+        }
+
+        if(orgSettings.OnbePaymentService_AcctMgmtResponseNS__c != null){
+          uriAccountManagementPrepaidResponse = orgSettings.OnbePaymentService_AcctMgmtResponseNS__c;
+        } else {
+          uriAccountManagementPrepaidResponse = 'http://response.accountmanagementapi.prepaid.citi.com';
+        }
+
+        if(orgSettings.OnbePaymentService_AcctMgmtTargetNS__c != null){
+          uriAccountManagementPrepaidWs = orgSettings.OnbePaymentService_AcctMgmtTargetNS__c;
+        } else {
+          uriAccountManagementPrepaidWs = 'http://ws.accountmanagementapi.prepaid.citi.com';
         }
       }
     }

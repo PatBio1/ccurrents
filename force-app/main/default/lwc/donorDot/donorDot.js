@@ -95,8 +95,15 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         return (this.donor.visitNotes && this.donor.visitNotes.length > 0);
     }
 
-    connectedCallback() {
-        console.log(this.donor, this.appointment);
+    renderedCallback() {
+        if (this.showpopover && !this.isPopupConfigured) {
+            this.calculatePopupPosition();
+        }
+    }
+
+    togglePopover() {
+        this.showpopover = !this.showpopover;
+        this.isPopupConfigured = false;
 
         this[NavigationMixin.GenerateUrl]({
             type: 'standard__recordPage',
@@ -117,17 +124,6 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         }).then((url) => {
             this.donorLink = url;
         });
-    }
-
-    renderedCallback() {
-        if (this.showpopover && !this.isPopupConfigured) {
-            this.calculatePopupPosition();
-        }
-    }
-
-    togglePopover() {
-        this.showpopover = !this.showpopover;
-        this.isPopupConfigured = false;
     }
 
     hidePopover() {

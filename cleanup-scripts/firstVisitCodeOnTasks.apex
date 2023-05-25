@@ -8,8 +8,7 @@ for (Task tsk : [
         Subject,
         Description
     FROM Task
-    WHERE Subject = 'First Visit Code' AND
-    Who.Account.First_Visit_Code__c != NULL
+    WHERE Subject = 'First Visit Code'
 ]) {
     if (tsk.Description == null) {
         contactsToQuery.add(tsk.WhoId); // Assuming this is always a Contact for these based on current logic of how these are created

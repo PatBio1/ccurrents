@@ -1,7 +1,7 @@
 @IsTest
 public with sharing class CenterSchedulerControllerTests {
 
-    static Date baseDate = Date.today();
+    static Date baseDate = System.now().date();
     static Date currentDate =  baseDate.addDays(-12);
     static Date startDate =  baseDate.addDays(-10);
     static Date endDate =  baseDate.addDays(30);

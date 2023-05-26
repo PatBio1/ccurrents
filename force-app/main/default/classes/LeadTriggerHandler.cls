@@ -47,7 +47,11 @@ public with sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler 
     public static void updateLegacyDonorMigratedData(Map<Id, Lead> newLeadMap) {
         List<Account> accountUpdates = new List<Account>();
         Set<Id> accountIdsInScope = new Set<Id>();
+        Set<Id> contactIdsInScope = new Set<Id>();
         Map<Id, Lead> convertedAccountIdToLeadMap = new Map<Id, Lead>();
+        Map<Id, Lead> convertedContactIdToLeadMap = new Map<Id, Lead>();
+        Map<Id, Account> accountUpdateMap = new Map<Id, Account>();
+        List<Task> taskUpdates = new List<Task>();
 
         for (Lead ld : newLeadMap.values()) {
             if (ld.isLegacyDonor__c) {
@@ -56,34 +60,65 @@ public with sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler 
             }
         }
 
+        System.debug(accountIdsInScope);
+
         if (!accountIdsInScope.isEmpty()) {
-            List<Account> accountsInScope = [
+            for (Account acct : [
                 SELECT Id,
                     Date_Migrated__pc,
                     Last_Donation_Date_Migrated__pc,
                     Donations_Last_365_Days_Migrated__pc,
-                    First_Visit_Code__c
+                    First_Visit_Code__c,
+                    PersonContactId
                 FROM Account
-                WHERE isLegacyDonor__pc = FALSE AND
-                Id IN :accountIdsInScope
-            ];
+                WHERE Id IN :accountIdsInScope
+            ]) {
+                Lead convertedLead = convertedAccountIdToLeadMap.get(acct.Id);
+                Account acctUpdate = new Account (
+                    Id = acct.Id,
+                    isLegacyDonor__pc = true,
+                    Date_Migrated__pc = convertedLead.Date_Migrated__c,
+                    Last_Donation_Date_Migrated__pc = convertedLead.Last_Donation_Date_Migrated__c,
+                    Donations_Last_365_Days_Migrated__pc = convertedLead.Donations_Last_365_Days_Migrated__c,
+                    First_Visit_Code__c = convertedLead.First_Visit_Code__c
+                );
 
-            if (!accountsInScope.isEmpty()) {
-                for (Account acct : accountsInScope) {
-                    Lead convertedLead = convertedAccountIdToLeadMap.get(acct.Id);
-                    Account acctUpdate = new Account (
-                        Id = acct.Id,
-                        isLegacyDonor__pc = true,
-                        Date_Migrated__pc = convertedLead.Date_Migrated__c,
-                        Last_Donation_Date_Migrated__pc = convertedLead.Last_Donation_Date_Migrated__c,
-                        Donations_Last_365_Days_Migrated__pc = convertedLead.Donations_Last_365_Days_Migrated__c,
-                        First_Visit_Code__c = convertedLead.First_Visit_Code__c
-                    );
-
-                    accountUpdates.add(acctUpdate);
-                }
-                update accountUpdates;
+                contactIdsInScope.add(acct.PersonContactId);
+                convertedContactIdToLeadMap.put(acct.PersonContactId, convertedLead);
+                accountUpdates.add(acctUpdate);
+                accountUpdateMap.put(acctUpdate.Id, acctUpdate);
             }
+            update accountUpdates;
+
+            System.debug(accountUpdates);
+
+            for (Task tsk : [
+                SELECT Id,
+                    WhoId
+                FROM Task
+                WHERE WhoId IN :contactIdsInScope AND
+                Subject = :Constants.FIRST_VISIT_CODE_TASK_SUBJECT
+            ]) {
+                if (convertedContactIdToLeadMap.get(tsk.WhoId) != null) {
+                    Id donorAccountId = convertedContactIdToLeadMap.get(tsk.WhoId).ConvertedAccountId;
+                    String donorFirstVisitCode = accountUpdateMap?.get(donorAccountId).First_Visit_Code__c;
+
+                    System.debug(donorAccountId);
+                    System.debug(donorFirstVisitCode);
+
+                    Task tskUpdate = new Task (
+                        Id = tsk.Id,
+                        Description = donorFirstVisitCode
+                    );
+                    taskUpdates.add(tskUpdate);
+                }
+            }
+
+            if (!taskUpdates.isEmpty()) {
+                update taskUpdates;
+            }
+
+            System.debug(taskUpdates);
         }
     }
 }

@@ -55,6 +55,12 @@ public with sharing class LeadTriggerHandlerTest {
 
         insert testLead;
 
+        insert new Task (
+            WhoId = testLead.Id,
+            Subject = Constants.FIRST_VISIT_CODE_TASK_SUBJECT,
+            Description = '111111'
+        );
+
         Test.startTest();
 
         Database.LeadConvert lc = new Database.LeadConvert();
@@ -78,9 +84,18 @@ public with sharing class LeadTriggerHandlerTest {
                 Date_Migrated__pc,
                 Last_Donation_Date_Migrated__pc,
                 Donations_Last_365_Days_Migrated__pc,
-                First_Visit_Code__c
+                First_Visit_Code__c,
+                PersonContactId
             FROM Account
             WHERE Id = :convertedLead.ConvertedAccountId
+        ][0];
+
+        Task convertedTask = [
+            SELECT Id,
+                Description
+            FROM Task
+            WHERE WhoId = :convertedAccount.PersonContactId AND
+            Subject = :Constants.FIRST_VISIT_CODE_TASK_SUBJECT
         ][0];
 
         Assert.areEqual(testLead.isLegacyDonor__c, convertedAccount.isLegacyDonor__pc);
@@ -88,5 +103,6 @@ public with sharing class LeadTriggerHandlerTest {
         Assert.areEqual(testLead.Last_Donation_Date_Migrated__c, convertedAccount.Last_Donation_Date_Migrated__pc);
         Assert.areEqual(testLead.Donations_Last_365_Days_Migrated__c, convertedAccount.Donations_Last_365_Days_Migrated__pc);
         Assert.areEqual(testLead.First_Visit_Code__c, convertedAccount.First_Visit_Code__c);
+        Assert.areEqual(testLead.First_Visit_Code__c, convertedTask.Description);
     }
 }

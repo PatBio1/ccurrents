@@ -4,6 +4,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import { visitStatusToDisplayClass, visitOutcomeToDisplayClass } from "c/constants";
 import RescheduleVisitModal from "c/rescheduleVisitModal";
 import EnrollCardModal from "c/enrollCardModal";
+import UpdateVisitOutcomeModal from "c/updateVisitOutcomeModal";
 
 export default class DonorDot extends NavigationMixin(LightningElement)  {
     @track showpopover = false;
@@ -28,6 +29,19 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
 
     get donorLoyaltyLevelDisplay() {
         return (this.donorLoyaltyLevel) ? this.donorLoyaltyLevel : "No Loyalty";
+    }
+
+    get cantUpdateOutcome() {
+        let appointmentDatetime = new Date(this.appointment.appointmentDatetime);
+        let targetDate = new Date();
+
+        return (
+            appointmentDatetime.getDate() !== targetDate.getDate() ||
+            appointmentDatetime.getMonth() !== targetDate.getMonth() ||
+            appointmentDatetime.getFullYear() !== targetDate.getFullYear() ||
+            this.donor.status === "Complete" ||
+            this.donor.outcome
+        );
     }
 
     get cantReschedule() {
@@ -182,6 +196,16 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
             }
         }).then(url => {
             window.open(url, "_blank");
+        });
+    }
+
+    handleInitOutcomeUpdate(event) {
+        UpdateVisitOutcomeModal.open({
+            visitId: this.donor.visitId,
+
+            onvisitoutcomeupdated: (event) => {
+                this.dispatchEvent(new CustomEvent("visitoutcomeupdated", { detail: {...event.detail, appointmentId: this.appointment.Id} }));
+            }
         });
     }
 }

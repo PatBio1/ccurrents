@@ -630,4 +630,11 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appointment.decrementDisabled = false;
         }
     }
+
+    handleVisitOutcomeUpdated(event) {
+        let updatedAppointmentId = event.detail.appointmentId;
+        let updatedAppointment = this.appointments.find(appointment => appointment.Id === updatedAppointmentId);
+
+        this.refreshAppointmentSlot(updatedAppointmentId, updatedAppointment);
+    }
 }

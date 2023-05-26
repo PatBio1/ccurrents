@@ -403,6 +403,15 @@ public with sharing class CenterScheduleController {
         return new UpdateCapacityResult(shouldRescheduleDonors, appointmentSlotsRescheduledTo);
     }
 
+    @AuraEnabled
+    public static void updateVisitOutcome(Id visitId, String outcome) {
+        try {
+            update new Visit__c(Id = visitId, Outcome__c = outcome, Status__c = 'Complete');
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
     public class RescheduleSlot {
         @AuraEnabled
         public Id appointmentId;

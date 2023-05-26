@@ -359,7 +359,9 @@ public with sharing class SchedulerControllerTest {
 
         List<Task> tasks = [SELECT Subject, Description FROM Task];
 
-        System.assertEquals(3, tasks.size()); // Expecting First Visit Code, SPE Exam, and Physcial Exam tasks
+        // Expecting First Visit Code, SPE Exam, and Physical Exam tasks
+        // As of 5/26/23, the SPE and Physical Exam tasks are no longer created
+        System.assertEquals(1, tasks.size()); 
 
         Set<String> expectedTasks = new Set<String>{Constants.SPE_ANALYSIS_TASK_SUBJECT, Constants.PHYSICAL_EXAM_TASK_SUBJECT, Constants.FIRST_VISIT_CODE_TASK_SUBJECT};
 

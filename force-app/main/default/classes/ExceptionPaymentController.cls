@@ -32,13 +32,24 @@ public without sharing class ExceptionPaymentController {
             LIMIT 1
         ];
 
-        List<AggregateResult> exceptionTransactionCurrencySum = [
+        List<AggregateResult> centerExceptionTransactionCurrencySum = [
             SELECT Visit__r.Center_Donation_Type__r.Center__c, SUM(Amount_Currency__c) sum
             FROM Transaction__c
             WHERE Visit__r.Center_Donation_Type__r.Center__c = :targetCenterAccount.Id AND 
+                Type__c = 'Debit' AND
                 SubType__c = 'Exception' AND 
                 CreatedDate = TODAY
             GROUP BY Visit__r.Center_Donation_Type__r.Center__c
+        ];
+
+        List<AggregateResult> individualExceptionTransactionCurrencySum = [
+            SELECT Visit__r.Donor__c, SUM(Amount_Currency__c) sum
+            FROM Transaction__c
+            WHERE Visit__r.Donor__c = :targetVisit.Donor__c AND 
+                Type__c = 'Debit' AND
+                SubType__c = 'Exception' AND 
+                CreatedDate = TODAY
+            GROUP BY Visit__r.Donor__c
         ];
 
         List<Rate__c> availableCenterExceptionRates = [
@@ -49,11 +60,13 @@ public without sharing class ExceptionPaymentController {
                 Type__c = 'Exception'
         ];
 
-        Decimal usedDayLimit = (exceptionTransactionCurrencySum != null && exceptionTransactionCurrencySum.size() > 0) ? (Decimal)exceptionTransactionCurrencySum[0].get('sum') : 0;
+        Decimal usedDayLimit = (centerExceptionTransactionCurrencySum != null && centerExceptionTransactionCurrencySum.size() > 0) ? (Decimal)centerExceptionTransactionCurrencySum[0].get('sum') : 0;
+        Decimal usedIndividualLimit = (individualExceptionTransactionCurrencySum != null && individualExceptionTransactionCurrencySum.size() > 0) ? (Decimal)individualExceptionTransactionCurrencySum[0].get('sum') : 0;
         return new VisitExceptionPaymentInfo(
             targetVisit, 
             targetCenterAccount, 
-            usedDayLimit, 
+            usedDayLimit,
+            usedIndividualLimit, 
             availableCenterExceptionRates
         );
     }
@@ -78,6 +91,8 @@ public without sharing class ExceptionPaymentController {
 
         @AuraEnabled
         public Decimal visitIndividualLimit;
+        @AuraEnabled
+        public Decimal visitIndividualRemainingLimit;
 
         @AuraEnabled
         public Datetime visitDatetime;
@@ -85,7 +100,7 @@ public without sharing class ExceptionPaymentController {
         @AuraEnabled
         public List<ExceptionPaymentType> availableExceptionPaymentTypes;
 
-        public VisitExceptionPaymentInfo(Visit__c targetVisit, Account targetCenter, Decimal usedDayLimit, List<Rate__c> availableCenterExceptionRates) {
+        public VisitExceptionPaymentInfo(Visit__c targetVisit, Account targetCenter, Decimal usedDayLimit, Decimal usedIndividualLimit, List<Rate__c> availableCenterExceptionRates) {
             this.visitId = targetVisit.Id;
             this.visitDonorId = targetVisit.Donor__c;
             this.visitDonorName = targetVisit.Donor__r.Name;
@@ -93,6 +108,7 @@ public without sharing class ExceptionPaymentController {
             this.visitDayLimit = (targetCenter.Max_Dollar_Per_Day__c == null) ? 0 : targetCenter.Max_Dollar_Per_Day__c;
             this.visitDayRemainingLimit = visitDayLimit - usedDayLimit;
             this.visitIndividualLimit = (targetCenter.Individual_Exception_Limit__c == null) ? 0 : targetCenter.Individual_Exception_Limit__c;
+            this.visitIndividualRemainingLimit = visitIndividualLimit - usedIndividualLimit;
             this.visitDatetime = targetVisit.Appointment_Datetime__c;
 
             this.availableExceptionPaymentTypes = new List<ExceptionPaymentType>();

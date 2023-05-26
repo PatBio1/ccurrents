@@ -41,26 +41,42 @@ export default class VisitExceptionPayment extends LightningElement {
         return this.hasCenterDayLimit || this.hasCenterIndividualLimit;
     }
 
-    get centerDayLimitBackgroundStyle() {
+    get hitCenterDayLimit() {
         if (
             !this.hasBaseVisitExceptionPaymentInfo ||
             !this.baseVisitExceptionPaymentInfo.visitDayRemainingLimit ||
-            !this.selectedRateId ||
-            this.selectedExceptionRateInfo.amount <= this.baseVisitExceptionPaymentInfo.visitDayRemainingLimit
+            !this.selectedRateId
         ) {
+            return false;
+        }
+
+        console.log('center day limit', this.selectedExceptionRateInfo.amount, this.baseVisitExceptionPaymentInfo.visitDayRemainingLimit);
+        return (this.selectedExceptionRateInfo.amount >= this.baseVisitExceptionPaymentInfo.visitDayRemainingLimit);
+    }
+
+    get centerDayLimitBackgroundStyle() {
+        if (!this.hitCenterDayLimit) {
             return '';
         }
 
         return `background: ${LIMIT_EXCEED_ERROR_COLOR}`;
     }
     
-    get centerIndividualLimitBackgroundStyle() {
+    get hitDonorDayLimit() {
         if (
             !this.hasBaseVisitExceptionPaymentInfo ||
-            !this.baseVisitExceptionPaymentInfo.visitIndividualLimit ||
-            !this.selectedRateId ||
-            this.selectedExceptionRateInfo.amount <= this.baseVisitExceptionPaymentInfo.visitIndividualLimit
+            !this.baseVisitExceptionPaymentInfo.visitIndividualRemainingLimit ||
+            !this.selectedRateId
         ) {
+            return false;
+        }
+
+        console.log('donor day limit', this.selectedExceptionRateInfo.amount, this.baseVisitExceptionPaymentInfo.visitIndividualRemainingLimit);
+        return (this.selectedExceptionRateInfo.amount >= this.baseVisitExceptionPaymentInfo.visitIndividualRemainingLimit);
+    }
+
+    get centerIndividualLimitBackgroundStyle() {
+        if (!this.hitDonorDayLimit) {
             return '';
         }
 
@@ -79,8 +95,7 @@ export default class VisitExceptionPayment extends LightningElement {
         let visitDateTime = new Date(this.baseVisitExceptionPaymentInfo.visitDatetime);
         let currentDateTime = new Date();
 
-        return true;
-        // return (visitDateTime.toLocaleDateString() === currentDateTime.toLocaleDateString());
+        return (visitDateTime.toLocaleDateString() === currentDateTime.toLocaleDateString());
     }
 
     get hasBaseVisitExceptionPaymentInfo() {
@@ -88,7 +103,6 @@ export default class VisitExceptionPayment extends LightningElement {
     }
     
     get hasExceptionRateInfo() {
-        // return false;
         return (
             this.hasBaseVisitExceptionPaymentInfo && 
             this.baseVisitExceptionPaymentInfo.availableExceptionPaymentTypes && 
@@ -113,7 +127,7 @@ export default class VisitExceptionPayment extends LightningElement {
     }
 
     get isScreenInputInvalid() {
-        return !this.selectedRateId;
+        return !(this.selectedRateId && !this.hitCenterDayLimit && !this.hitDonorDayLimit);
     }
 
     get isExceptionRateSelectionScreen() {

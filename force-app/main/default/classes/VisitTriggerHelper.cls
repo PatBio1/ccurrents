@@ -99,6 +99,7 @@ public without sharing class VisitTriggerHelper {
 
             Set<Id> annualPhysicalExamVisitTasksToDelete = new Set<Id>();
             Set<Id> triannualSPEVisitTasksToDelete = new Set<Id>();
+            Set<Id> generalTasksToDelete = new Set<Id>(); // The other tasks filter on the subject and visit, this will just take task ids
 
             // Handle First Visit Flags and Tasks
             // This is handled by a second query in order to reduce looping and heap size (in the event of a large visit backlog for a donor)
@@ -125,7 +126,7 @@ public without sharing class VisitTriggerHelper {
 
                         // Check to see if the nextSoonestVisit was previously marked as a first visit
                         // If it was, we need to unmark it and note that the visit tasks need to be reparented
-                        if (nextSoonestVisit != null && nextSoonestVisit.isFirstVisit__c) {
+                        if (nextSoonestVisit != null && nextSoonestVisit.isFirstVisit__c && nextSoonestVisit.Id != intendedFirstVisit.Id) {
                             nextSoonestVisit.isFirstVisit__c = false;
                             nextSoonestVisit.Physical_Exam__c = false;
                             nextSoonestVisit.SPE_Analysis__c = false;
@@ -133,17 +134,20 @@ public without sharing class VisitTriggerHelper {
                             visitRecordsToUpdate.put(nextSoonestVisit.Id, nextSoonestVisit);
                             visitIdToNewTaskParentId.put(nextSoonestVisit.Id, intendedFirstVisit.Id);
                         } else {
-                            tasksToCreate.add(new Task(
-                                WhatId = intendedFirstVisit.Id,
-                                WhoId = donor.Id,
-                                Subject = Constants.PHYSICAL_EXAM_TASK_SUBJECT
-                            ));
+                            // 5/26/2023 - Colin requested that we halt these tasks for now as it was confusing center staff and not providing value
+                            // If we implement this in the future, we need to figure out how to create these tasks around the data in NextLink (source of truth for this)
 
-                            tasksToCreate.add(new Task(
-                                WhatId = intendedFirstVisit.Id,
-                                WhoId = donor.Id,
-                                Subject = Constants.SPE_ANALYSIS_TASK_SUBJECT
-                            ));
+                            // tasksToCreate.add(new Task(
+                            //     WhatId = intendedFirstVisit.Id,
+                            //     WhoId = donor.Id,
+                            //     Subject = Constants.PHYSICAL_EXAM_TASK_SUBJECT
+                            // ));
+
+                            // tasksToCreate.add(new Task(
+                            //     WhatId = intendedFirstVisit.Id,
+                            //     WhoId = donor.Id,
+                            //     Subject = Constants.SPE_ANALYSIS_TASK_SUBJECT
+                            // ));
 
                             tasksToCreate.add(new Task(
                                 WhatId = intendedFirstVisit.Id,
@@ -168,7 +172,7 @@ public without sharing class VisitTriggerHelper {
                         nextSoonestVisit.SPE_Analysis__c = true;
 
                         visitRecordsToUpdate.put(nextSoonestVisit.Id, nextSoonestVisit);
-                        visitIdToNewTaskParentId.put(nextSoonestVisit.Id, nextSoonestVisit.Id);
+                        visitIdToNewTaskParentId.put(intendedFirstVisit.Id, nextSoonestVisit.Id);
                     }
                 }
             }

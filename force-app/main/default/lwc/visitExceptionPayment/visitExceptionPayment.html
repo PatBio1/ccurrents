@@ -43,8 +43,13 @@
                           </div>
 
                           <div if:true={hasCenterIndividualLimit} style={centerIndividualLimitBackgroundStyle} class="exception-limit-container">
-                              <h3>Center Payment Limit</h3>
-                              <p><lightning-formatted-number value={baseVisitExceptionPaymentInfo.visitIndividualLimit} format-style="currency" currency-code={userCurrency}></lightning-formatted-number></p>
+                              <h3>Donor Day Limit</h3>
+
+                              <p>
+                                <lightning-formatted-number value={baseVisitExceptionPaymentInfo.visitIndividualRemainingLimit} format-style="currency" currency-code={userCurrency}></lightning-formatted-number>
+                                <span> / </span>
+                                <lightning-formatted-number value={baseVisitExceptionPaymentInfo.visitIndividualLimit} format-style="currency" currency-code={userCurrency}></lightning-formatted-number>
+                              </p>
                           </div>
                       </div>
                   </div>

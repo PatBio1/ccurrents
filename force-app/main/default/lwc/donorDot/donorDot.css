@@ -63,6 +63,17 @@
     align-items: center;
 }
 
+.donor-name-text {
+    color: var(--lwc-brandTextLink,rgb(1, 118, 211));
+    text-decoration: none;
+    transition: color .1s linear;
+    cursor: pointer;
+}
+
+.donor-name-text:hover {
+    text-decoration: underline;
+}
+
 .regular-loyalty-badge {
     display: none;
 }

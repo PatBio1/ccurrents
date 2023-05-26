@@ -184,4 +184,71 @@ public without sharing class AddFundsBatchableTest {
     static void testSuccessfulSchedule() {
         System.schedule('Test Add Funds Run', '20 30 8 10 2 ?', new AddFundsBatchable());
     }
+
+    @IsTest
+    static void testRetryRun() {
+        Map<Id, Transaction__c> donorIdToMockedTransaction = new Map<Id, Transaction__c>();
+        Map<Id, List<Txn_Line_Item__c>> donorIdToTxnLineItems = new Map<Id, List<Txn_Line_Item__c>>();
+
+        for(Contact testDonor : [SELECT Id, (SELECT Id FROM Visits__r) FROM Contact WHERE Account.DonorId__c != null]) {
+            Transaction__c newTransaction = new Transaction__c(
+                Donor__c = testDonor.Id,
+                Visit__c = testDonor.Visits__r[0].Id,
+                Type__c = 'Debit',
+                Status__c = 'Error',
+                Amount_Currency__c = 100.00,
+                Retry_Count__c = 0
+            );
+
+            donorIdToMockedTransaction.put(testDonor.Id, newTransaction);
+            donorIdToTxnLineItems.put(testDonor.Id, new List<Txn_Line_Item__c> {
+                new Txn_Line_Item__c(
+                    Item__c = 'Test Line Item 1',
+                    Type__c = 'Currency',
+                    Unit_Cost__c = 100,
+                    Quantity__c = 1
+                )
+            });
+        }
+
+        insert donorIdToMockedTransaction.values();
+
+        List<Txn_Line_Item__c> allTxnLineItems = new List<Txn_Line_Item__c>();
+        for(Id donorId : donorIdToTxnLineItems.keySet()) {
+            for(Txn_Line_Item__c txnLineItem : donorIdToTxnLineItems.get(donorId)) {
+                txnLineItem.Transaction__c = donorIdToMockedTransaction.get(donorId).Id;
+            }
+
+            allTxnLineItems.addAll(donorIdToTxnLineItems.get(donorId));
+        }
+
+        insert allTxnLineItems;
+
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock(true));
+        TestUtil.throwException = true; // OnbePaymentService requires this
+
+        Test.startTest();
+        Database.executeBatch(new AddFundsBatchable(), 100);
+        Test.stopTest();
+
+        List<Transaction__c> updatedTransactionRecords = [
+            SELECT Id, Status__c, Retry_Count__c, Retry_Next__c, (SELECT Id FROM Transaction_Logs__r)
+            FROM Transaction__c
+            WHERE Id IN :donorIdToMockedTransaction.values()
+        ];
+
+        Assert.areEqual(donorIdToMockedTransaction.size(), updatedTransactionRecords.size(), 'There should be one debit transaction created for each donor');
+        Integer expectedRetryCount = 1;
+        Datetime expectedRetryNext = System.now().addSeconds((Integer)(BASE_RETRY_INTERVAL * Math.pow((Double)RETRY_MULTIPLIER, (Double)expectedRetryCount)));
+
+        for(Transaction__c updatedTransactionRecord : updatedTransactionRecords) {
+            Assert.areEqual('Error', updatedTransactionRecord.Status__c, 'The debit transaction should have a status of Error after the retry');
+            Assert.areEqual(1, updatedTransactionRecord.Transaction_Logs__r.size(), 'The debit transaction should have one transaction log detailing the error');
+            Assert.areEqual(expectedRetryCount, updatedTransactionRecord.Retry_Count__c, 'The debit transaction should have a retry count of 1');
+
+            // The time is bound to be different by a couple of milliseconds, so allow for a small difference
+            Decimal difference = updatedTransactionRecord.Retry_Next__c.getTime() - expectedRetryNext.getTime();
+            Assert.isTrue(difference < 100, 'The Retry Next field should have been set using BASE_RETRY * BASE_RETRY ^ Retry Count');
+        }
+    }
 }

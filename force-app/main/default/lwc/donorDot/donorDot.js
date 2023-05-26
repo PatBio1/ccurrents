@@ -14,7 +14,6 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     @api centerId;
     @api popFlipYPoint;
 
-    donorLink;
     visitLink;
     isPopupConfigured = false;
     popUpDirection;
@@ -104,26 +103,6 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     togglePopover() {
         this.showpopover = !this.showpopover;
         this.isPopupConfigured = false;
-
-        this[NavigationMixin.GenerateUrl]({
-            type: 'standard__recordPage',
-            attributes: {
-                recordId: this.donor.visitId,
-                actionName: 'view',
-            },
-        }).then((url) => {
-            this.visitLink = url;
-        });
-
-        this[NavigationMixin.GenerateUrl]({
-            type: 'standard__recordPage',
-            attributes: {
-                recordId: this.donor.donorId,
-                actionName: 'view',
-            },
-        }).then((url) => {
-            this.donorLink = url;
-        });
     }
 
     hidePopover() {
@@ -191,6 +170,18 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     handleInitEnrollCard(event) {
         EnrollCardModal.open({
             donorId: this.donor.donorId
+        });
+    }
+
+    async handleNavigateToDonorPage(event) {
+        this[NavigationMixin.GenerateUrl]({
+            type: "standard__recordPage",
+            attributes: {
+                recordId: this.donor.donorId,
+                actionName: 'view'
+            }
+        }).then(url => {
+            window.open(url, "_blank");
         });
     }
 }

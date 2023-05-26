@@ -197,7 +197,7 @@
         <name>Donor_Tip_ApptRules_VideoId</name>
     </customLabels>
     <customLabels>
-        <label>El proceso de donación</label>
+        <label>es el día de la donación</label>
         <name>Donor_Tip_DonationDay_Text</name>
     </customLabels>
     <customLabels>
@@ -205,7 +205,7 @@
         <name>Donor_Tip_DonationDay_VideoId</name>
     </customLabels>
     <customLabels>
-        <label>es el día de la donación</label>
+        <label>El proceso de donación</label>
         <name>Donor_Tip_DonationProcess_Text</name>
     </customLabels>
     <customLabels>
@@ -257,7 +257,7 @@
         <name>Donor_Tip_RedeemingPoints_Text</name>
     </customLabels>
     <customLabels>
-        <label>https://www.youtube.com/embed/deto30z9bko</label>
+        <label>https://www.youtube.com/embed/rQxmTx7k0uI</label>
         <name>Donor_Tip_RedeemingPoints_VideoId</name>
     </customLabels>
     <customLabels>

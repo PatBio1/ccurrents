@@ -164,7 +164,7 @@
     <nameField>
         <displayFormat>A-{0}</displayFormat>
         <label>Appointment Name</label>
-        <trackHistory>false</trackHistory>
+        <trackHistory>true</trackHistory>
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Appointments</pluralLabel>

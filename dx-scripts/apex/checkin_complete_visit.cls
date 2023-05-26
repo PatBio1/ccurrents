@@ -1,5 +1,5 @@
-String targetDonor = 'donor-01106';
-Datetime targetDatetime = Datetime.newInstance(2023, 5, 27, 12, 0, 0);
+String targetDonor = 'donor-01032';
+Datetime targetDatetime = Datetime.newInstance(2023, 6, 14, 1, 15, 0);
 
 DonorCheckinInvocable.updateVisitStatus(new List<List<Donor_CheckIn__e>> {
     new List<Donor_CheckIn__e> {

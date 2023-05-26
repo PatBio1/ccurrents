@@ -36,6 +36,7 @@ public without sharing class ExceptionPaymentController {
             SELECT Visit__r.Center_Donation_Type__r.Center__c, SUM(Amount_Currency__c) sum
             FROM Transaction__c
             WHERE Visit__r.Center_Donation_Type__r.Center__c = :targetCenterAccount.Id AND 
+                Type__c = 'Debit' AND
                 SubType__c = 'Exception' AND 
                 CreatedDate = TODAY
             GROUP BY Visit__r.Center_Donation_Type__r.Center__c

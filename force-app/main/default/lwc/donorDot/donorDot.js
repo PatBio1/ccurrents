@@ -115,6 +115,10 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     togglePopover() {
+        if (!this.showpopover) {
+            this.dispatchEvent(new CustomEvent('donorpopupopen'));
+        }
+
         this.showpopover = !this.showpopover;
         this.isPopupConfigured = false;
     }
@@ -207,5 +211,10 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
                 this.dispatchEvent(new CustomEvent("visitoutcomeupdated", { detail: {...event.detail, appointmentId: this.appointment.Id} }));
             }
         });
+    }
+
+    @api closePopover() {
+        this.showpopover = false;
+        this.isPopupConfigured = false;
     }
 }

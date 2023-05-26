@@ -637,4 +637,11 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
         this.refreshAppointmentSlot(updatedAppointmentId, updatedAppointment);
     }
+
+    handleDonorPopupOpen(event) {
+        let allDonorDotElements = this.template.querySelectorAll("c-donor-dot");
+        for(let donorDotElement of allDonorDotElements) {
+            donorDotElement.closePopover();
+        }
+    }
 }

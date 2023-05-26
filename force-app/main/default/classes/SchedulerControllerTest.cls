@@ -40,14 +40,14 @@ public with sharing class SchedulerControllerTest {
 
             Appointment__c appointment = new Appointment__c();
             appointment.Schedule__c = schedule.Id;
-            appointment.Datetime__c = DateTime.newInstanceGmt(System.now().year(), System.now().month(), System.now().day(), 10, 0, 0);
+            appointment.Datetime__c = DateTime.newInstanceGmt(System.now().year(), System.now().month(), System.now().addDays(1).day(), 10, 0, 0);
             appointment.Duration__c = 10;
             appointment.Capacity__c = 5;
             insert appointment;
         }
 
         System.runAs(TestUtil.createExperienceUser()) {
-            List<SchedulerController.AppointmentGroup> appointmentGroups = SchedulerController.getAppointments(center.Id, System.now().date());
+            List<SchedulerController.AppointmentGroup> appointmentGroups = SchedulerController.getAppointments(center.Id, System.now().date().addDays(1));
 
             System.assertEquals(3, appointmentGroups.size());
             System.assertEquals(1, appointmentGroups[0].appointments.size());
@@ -69,14 +69,14 @@ public with sharing class SchedulerControllerTest {
 
             Schedule__c schedule = new Schedule__c(
                 Center__c = center.Id,
-                Begin_Date__c = Date.today().addDays(-10),
-                End_Date__c = Date.today().addDays(30)
+                Begin_Date__c = System.now().addDays(-10).date(),
+                End_Date__c = System.now().addDays(30).date()
             );
             insert schedule;
 
             Appointment__c createdAppointment = new Appointment__c();
             createdAppointment.Schedule__c = schedule.Id;
-            createdAppointment.Datetime__c = DateTime.newInstance(Date.today().year(), Date.today().month(), Date.today().day(), 10, 0, 0);
+            createdAppointment.Datetime__c = DateTime.newInstance(System.now().year(), System.now().month(), System.now().addDays(1).day(), 10, 0, 0);
             createdAppointment.Duration__c = 10;
             createdAppointment.Capacity__c = 5;
             insert createdAppointment;
@@ -94,7 +94,7 @@ public with sharing class SchedulerControllerTest {
         }
 
         System.runAs(testExperienceUser) {
-            List<SchedulerController.AppointmentGroup> appointmentGroups = SchedulerController.getRescheduleAppointments(center.Id, createdVisit.Id, Date.today());
+            List<SchedulerController.AppointmentGroup> appointmentGroups = SchedulerController.getRescheduleAppointments(center.Id, createdVisit.Id, System.now().date().addDays(1));
 
             System.assertEquals(3, appointmentGroups.size());
             System.assertEquals(1, appointmentGroups[0].appointments.size());

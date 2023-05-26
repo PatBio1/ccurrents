@@ -41,7 +41,7 @@
                             </lightning-avatar>
     
                             <div style="display: flex; flex-direction: column;">
-                                <p class="donor-name-text" onclick={handleNavigateToDonorPage}><b>{donor.donorName}</b></p>
+                                <p><b><a href={donorLink} target="_blank">{donor.donorName}</a></b></p>
     
                                 <ul style="font-size: 14px;" class="slds-list_horizontal slds-has-dividers_left">
                                     <li class="slds-item">{donorLoyaltyLevelDisplay}</li>

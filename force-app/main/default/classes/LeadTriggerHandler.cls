@@ -60,8 +60,6 @@ public with sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler 
             }
         }
 
-        System.debug(accountIdsInScope);
-
         if (!accountIdsInScope.isEmpty()) {
             for (Account acct : [
                 SELECT Id,
@@ -90,8 +88,6 @@ public with sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler 
             }
             update accountUpdates;
 
-            System.debug(accountUpdates);
-
             for (Task tsk : [
                 SELECT Id,
                     WhoId
@@ -102,9 +98,6 @@ public with sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler 
                 if (convertedContactIdToLeadMap.get(tsk.WhoId) != null) {
                     Id donorAccountId = convertedContactIdToLeadMap.get(tsk.WhoId).ConvertedAccountId;
                     String donorFirstVisitCode = accountUpdateMap?.get(donorAccountId).First_Visit_Code__c;
-
-                    System.debug(donorAccountId);
-                    System.debug(donorFirstVisitCode);
 
                     Task tskUpdate = new Task (
                         Id = tsk.Id,
@@ -117,8 +110,6 @@ public with sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler 
             if (!taskUpdates.isEmpty()) {
                 update taskUpdates;
             }
-
-            System.debug(taskUpdates);
         }
     }
 }

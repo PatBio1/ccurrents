@@ -131,10 +131,12 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
             String adjustedHours;
             if (nextRetryDateTime.hour() > 12) {
                 adjustedHours = String.valueOf(nextRetryDateTime.hour() - 12);
-            }
-
-            if (adjustedHours.length() == 1) {
-                adjustedHours = '0' + adjustedHours;
+            } else {
+                if (nextRetryDateTime.hour() < 10) {
+                    adjustedHours = '0' + nextRetryDateTime.hour();
+                } else {
+                    adjustedHours = String.valueOf(nextRetryDateTime.hour());
+                }
             }
 
             String adjustedMinutes = (nextRetryDateTime.minute() < 10) ? '0' + nextRetryDateTime.minute() : String.valueOf(nextRetryDateTime.minute());

@@ -3,9 +3,15 @@ public with sharing class ExceptionPaymentInvocable {
     @InvocableMethod(Label='Exception Payment' Category='Payment' Description='Calls Exception Payment in Donor Payment Service.')
     public static List<ExceptionPaymentResponse> invoke(List<ExceptionPaymentRequest> exceptionPaymentRequests) {
         List<ExceptionPaymentResponse> exceptionPaymentResponses = new List<ExceptionPaymentResponse>();
+        List<DonationService.DonationExceptionRequest> exceptionRequests = new List<DonationService.DonationExceptionRequest>();
 
         for (ExceptionPaymentRequest exceptionPaymentRequest : exceptionPaymentRequests) {
-            DonorPaymentService.createExceptionPayment(exceptionPaymentRequest.donorId, exceptionPaymentRequest.visitId, exceptionPaymentRequest.amount);
+            exceptionRequests.add(new DonationService.DonationExceptionRequest(
+                exceptionPaymentRequest.donorId,
+                exceptionPaymentRequest.visitId,
+                exceptionPaymentRequest.amount,
+                exceptionPaymentRequest.reason
+            ));
 
             ExceptionPaymentResponse exceptionPaymentResponse = new ExceptionPaymentResponse();
             exceptionPaymentResponse.donorId = exceptionPaymentRequest.donorId;
@@ -15,6 +21,7 @@ public with sharing class ExceptionPaymentInvocable {
             exceptionPaymentResponses.add(exceptionPaymentResponse);
         }
 
+        DonorPaymentService.createExceptionPayment(exceptionRequests);
         return exceptionPaymentResponses;
     }
 

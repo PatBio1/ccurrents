@@ -77,6 +77,9 @@
                         <div class="slds-badge">{displayStatus}</div>
                         
                         <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                            <lightning-button-icon title="Update Outcome" icon-name="utility:list" variant="bare" size="large" onclick={handleInitOutcomeUpdate} disabled={cantUpdateOutcome}>
+                            </lightning-button-icon>
+
                             <lightning-button-icon title="Enroll Card" icon-name="utility:currency" variant="bare" size="large" onclick={handleInitEnrollCard}>
                             </lightning-button-icon>
     

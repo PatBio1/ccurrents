@@ -505,4 +505,44 @@ public with sharing class CenterSchedulerControllerTests {
         Appointment__c expectedRescheduleSlot = [SELECT Id, Booked__c, Capacity__c, Availability__c, Schedule__r.Center__c FROM Appointment__c ORDER BY Datetime__c ASC LIMIT 1 OFFSET 1];
         Assert.areEqual(CAPACITY_CHANGE, [SELECT count() FROM Visit__c WHERE Appointment__c = :expectedRescheduleSlot.Id AND Donor__c IN :donors], 'There should be ' + CAPACITY_CHANGE + ' visit rescheduled to the next appointment slot');
     }
+
+    @IsTest
+    static void testUpdateVisitOutcome() {
+        String targetDonorRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId();
+
+        Appointment__c targetAppointmentSlot = [SELECT Id, Schedule__r.Center__c FROM Appointment__c LIMIT 1];
+        Account targetCenter = [SELECT Id FROM Account WHERE Id = :targetAppointmentSlot.Schedule__r.Center__c LIMIT 1];
+        Account targetDonor = [SELECT Id, PersonContactId FROM Account WHERE RecordTypeId = :targetDonorRecordTypeId LIMIT 1];
+
+        // Create additional test data to allow visit insert
+        Donation_Type__c donationTypeTest = new Donation_Type__c(
+            Name = 'Test Donation Type'
+        );
+        insert donationTypeTest;
+
+        Center_Donation_Type__c centerDonationTypeTest = new Center_Donation_Type__c(
+            Center__c = targetCenter.Id,
+            Donation_Type__c = donationTypeTest.Id,
+            isActive__c = true
+        );
+        insert centerDonationTypeTest;
+
+        Visit__c testVisit = new Visit__c(
+            Appointment__c = targetAppointmentSlot.Id,
+            Center_Donation_Type__c = centerDonationTypeTest.Id,
+            Donor__c = targetDonor.PersonContactId,
+            Status__c = 'Scheduled'
+        );
+        insert testVisit;
+
+        Test.startTest();
+        CenterScheduleController.updateVisitOutcome(testVisit.Id, 'No Show');
+        Test.stopTest();
+
+        Visit__c updatedTestVisit = [SELECT Id, Status__c, Outcome__c FROM Visit__c WHERE Id = :testVisit.Id LIMIT 1];
+
+        Assert.isNotNull(updatedTestVisit, 'Couldn\'t find the desired visit record. Either it wasn\'t created or the data wasn\'t set correctly.');
+        Assert.areEqual('No Show', updatedTestVisit.Outcome__c, 'The outcome of the visit should have been updated');
+        Assert.areEqual('Complete', updatedTestVisit.Status__c, 'The status of the visit should have been updated to \'Complete\'');
+    }
 }

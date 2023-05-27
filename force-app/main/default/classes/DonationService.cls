@@ -1,4 +1,4 @@
-public with sharing class DonationService {
+public without sharing class DonationService {
     public static void createExceptionTransaction(DonationExceptionRequest exceptionRequest) {
         createExceptionTransactions(new List<DonationExceptionRequest>{ exceptionRequest });
     }

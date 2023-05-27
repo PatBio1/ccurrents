@@ -2,7 +2,7 @@
  * Created by joshlequire1 on 2/28/23.
  */
 
-public with sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler {
+public without sharing class LeadTriggerHandler extends TriggerFactory.BaseHandler {
     public static Boolean bypassTrigger = false;
 
     public override void afterUpdate(Map<Id, SObject> oldMap, Map<Id, SObject> newMap) {

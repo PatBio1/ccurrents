@@ -1,4 +1,4 @@
-public with sharing class ExceptionPaymentInvocable {
+public without sharing class ExceptionPaymentInvocable {
 
     @InvocableMethod(Label='Exception Payment' Category='Payment' Description='Calls Exception Payment in Donor Payment Service.')
     public static List<ExceptionPaymentResponse> invoke(List<ExceptionPaymentRequest> exceptionPaymentRequests) {

@@ -18,7 +18,7 @@ public without sharing class ExceptionPaymentController {
         }
 
         Visit__c targetVisit = [
-            SELECT Id, Appointment_Datetime__c, Donor__c, Donor__r.Name, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c
+            SELECT Id, Appointment_Datetime__c, Donor__c, Donor__r.Name, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c, Age_in_Days__c
             FROM Visit__c
             WHERE Id = :targetVisitId
             LIMIT 1
@@ -95,7 +95,9 @@ public without sharing class ExceptionPaymentController {
         public Decimal visitIndividualRemainingLimit;
 
         @AuraEnabled
-        public Datetime visitDatetime;
+        public Integer visitAge;
+        @AuraEnabled
+        public Integer paymentWindowInDays;
 
         @AuraEnabled
         public List<ExceptionPaymentType> availableExceptionPaymentTypes;
@@ -109,7 +111,10 @@ public without sharing class ExceptionPaymentController {
             this.visitDayRemainingLimit = visitDayLimit - usedDayLimit;
             this.visitIndividualLimit = (targetCenter.Individual_Exception_Limit__c == null) ? 0 : targetCenter.Individual_Exception_Limit__c;
             this.visitIndividualRemainingLimit = visitIndividualLimit - usedIndividualLimit;
-            this.visitDatetime = targetVisit.Appointment_Datetime__c;
+            this.visitAge = (Integer)targetVisit.Age_in_Days__c;
+
+            Proesis_Settings__c proesisSettings = Proesis_Settings__c.getOrgDefaults();
+            this.paymentWindowInDays = (proesisSettings == null || proesisSettings.Exception_Payment_Window__c == null) ? 5 : (Integer)proesisSettings.Exception_Payment_Window__c;
 
             this.availableExceptionPaymentTypes = new List<ExceptionPaymentType>();
             for (Rate__c rate : availableCenterExceptionRates) {

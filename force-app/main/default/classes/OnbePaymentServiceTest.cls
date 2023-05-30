@@ -34,7 +34,7 @@ public with sharing class OnbePaymentServiceTest {
 
         Test.startTest();
         OnbePaymentService onbePayService = new OnbePaymentService();
-        onbePayService.setupPaymentServiceAccount('1040', testDonor.Id, 0, '1234');
+        onbePayService.setupPaymentServiceAccount('1040', testDonor.Id, 0, '1234', false);
         Test.stopTest();
 
         Assert.areEqual(1, [SELECT count() FROM Payment_Method__c WHERE Donor__c = :testDonor.Id], 'Payment Method was not created.');
@@ -139,7 +139,7 @@ public with sharing class OnbePaymentServiceTest {
 
         Test.startTest();
         OnbePaymentService onbePayService = new OnbePaymentService();
-        onbePayService.linkPhysicalCard('1051', testDonor.Id, '1234');
+        onbePayService.linkPhysicalCard('1051', testDonor.Id, '1234', true);
         Test.stopTest();
 
         Assert.areEqual(2, [SELECT count() FROM Payment_Method__c WHERE Donor__c = :testDonor.Id], 'Payment Method was not created.');

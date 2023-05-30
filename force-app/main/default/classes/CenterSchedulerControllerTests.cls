@@ -442,7 +442,7 @@ public with sharing class CenterSchedulerControllerTests {
         Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 
         Test.startTest();
-        CenterScheduleController.linkPaymentCard(testCardPackage, targetDonor.Id, initialPIN);
+        CenterScheduleController.linkPaymentCard(testCardPackage, targetDonor.Id, initialPIN, true);
         Test.stopTest();
 
         Assert.areEqual(1, [SELECT count() FROM Payment_Method__c WHERE Donor__c = :targetDonor.Id], 'The payment method should have been created');

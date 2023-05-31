@@ -442,7 +442,7 @@ public with sharing class CenterSchedulerControllerTests {
         Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 
         Test.startTest();
-        CenterScheduleController.linkPaymentCard(testCardPackage, targetDonor.Id, initialPIN);
+        CenterScheduleController.linkPaymentCard(testCardPackage, targetDonor.Id, initialPIN, true);
         Test.stopTest();
 
         Assert.areEqual(1, [SELECT count() FROM Payment_Method__c WHERE Donor__c = :targetDonor.Id], 'The payment method should have been created');
@@ -539,10 +539,109 @@ public with sharing class CenterSchedulerControllerTests {
         CenterScheduleController.updateVisitOutcome(testVisit.Id, 'No Show');
         Test.stopTest();
 
-        Visit__c updatedTestVisit = [SELECT Id, Status__c, Outcome__c FROM Visit__c WHERE Id = :testVisit.Id LIMIT 1];
+        Visit__c updatedTestVisit = [SELECT Id, Status__c, Outcome__c, Appointment__r.Booked__c FROM Visit__c WHERE Id = :testVisit.Id LIMIT 1];
 
         Assert.isNotNull(updatedTestVisit, 'Couldn\'t find the desired visit record. Either it wasn\'t created or the data wasn\'t set correctly.');
         Assert.areEqual('No Show', updatedTestVisit.Outcome__c, 'The outcome of the visit should have been updated');
         Assert.areEqual('Complete', updatedTestVisit.Status__c, 'The status of the visit should have been updated to \'Complete\'');
+
+        // Note, this should be -1 since we are inserting the visit directly therefore it was never incremented
+        Assert.areEqual(-1, updatedTestVisit.Appointment__r.Booked__c, 'The booked count should have been decremented');
+    }
+
+    @IsTest
+    static void testUpdateVisitWithDupeOutcome() {
+        String targetDonorRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId();
+
+        Appointment__c targetAppointmentSlot = [SELECT Id, Schedule__r.Center__c FROM Appointment__c LIMIT 1];
+        Account targetCenter = [SELECT Id FROM Account WHERE Id = :targetAppointmentSlot.Schedule__r.Center__c LIMIT 1];
+        Account targetDonor = [SELECT Id, PersonContactId FROM Account WHERE RecordTypeId = :targetDonorRecordTypeId LIMIT 1];
+
+        // Create additional test data to allow visit insert
+        Donation_Type__c donationTypeTest = new Donation_Type__c(
+            Name = 'Test Donation Type'
+        );
+        insert donationTypeTest;
+
+        Center_Donation_Type__c centerDonationTypeTest = new Center_Donation_Type__c(
+            Center__c = targetCenter.Id,
+            Donation_Type__c = donationTypeTest.Id,
+            isActive__c = true
+        );
+        insert centerDonationTypeTest;
+
+        Visit__c testVisit = new Visit__c(
+            Appointment__c = targetAppointmentSlot.Id,
+            Center_Donation_Type__c = centerDonationTypeTest.Id,
+            Donor__c = targetDonor.PersonContactId,
+            Status__c = 'Complete',
+            Outcome__c = 'No Show'
+        );
+        insert testVisit;
+
+        Test.startTest();
+        CenterScheduleController.updateVisitOutcome(testVisit.Id, 'No Show');
+        Assert.areEqual(0, Limits.getDmlRows(), 'No DML should have been performed');
+        Test.stopTest();
+    }
+
+    @IsTest
+    static void testUpdateVisitWithLoyalty() {
+        String targetDonorRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId();
+
+        Appointment__c targetAppointmentSlot = [SELECT Id, Schedule__r.Center__c FROM Appointment__c LIMIT 1];
+        Account targetCenter = [SELECT Id FROM Account WHERE Id = :targetAppointmentSlot.Schedule__r.Center__c LIMIT 1];
+        Account targetDonor = [SELECT Id, PersonContactId, Loyalty_Level__pc FROM Account WHERE RecordTypeId = :targetDonorRecordTypeId LIMIT 1];
+
+        List<Level__c> loyaltyLevels = new List<Level__c> {
+            // Default
+            new Level__c(
+                Name = 'Default',
+                Donation_Threshold__c = 0
+            ),
+            // VIP
+            new Level__c(
+                Name = 'VIP',
+                Donation_Threshold__c = 10
+            )
+        };
+        insert loyaltyLevels; 
+
+        targetDonor.Loyalty_Level__pc = loyaltyLevels[1].Id;
+        update targetDonor;
+
+        // Create additional test data to allow visit insert
+        Donation_Type__c donationTypeTest = new Donation_Type__c(
+            Name = 'Test Donation Type'
+        );
+        insert donationTypeTest;
+
+        Center_Donation_Type__c centerDonationTypeTest = new Center_Donation_Type__c(
+            Center__c = targetCenter.Id,
+            Donation_Type__c = donationTypeTest.Id,
+            isActive__c = true
+        );
+        insert centerDonationTypeTest;
+
+        Visit__c testVisit = new Visit__c(
+            Appointment__c = targetAppointmentSlot.Id,
+            Center_Donation_Type__c = centerDonationTypeTest.Id,
+            Donor__c = targetDonor.PersonContactId,
+            Status__c = 'Scheduled'
+        );
+        insert testVisit;
+
+        Test.startTest();
+        CenterScheduleController.updateVisitOutcome(testVisit.Id, 'No Show');
+        Test.stopTest();
+
+        Visit__c updatedTestVisit = [SELECT Id, Status__c, Outcome__c, Appointment__r.Booked__c FROM Visit__c WHERE Id = :testVisit.Id LIMIT 1];
+
+        Assert.isNotNull(updatedTestVisit, 'Couldn\'t find the desired visit record. Either it wasn\'t created or the data wasn\'t set correctly.');
+        Assert.areEqual('No Show', updatedTestVisit.Outcome__c, 'The outcome of the visit should have been updated');
+        Assert.areEqual('Complete', updatedTestVisit.Status__c, 'The status of the visit should have been updated to \'Complete\'');
+
+        // Note, this should be -1 since we are inserting the visit directly therefore it was never incremented
+        Assert.areEqual(-1, updatedTestVisit.Appointment__r.Booked__c, 'The booked loyalty count should have been decremented'); 
     }
 }

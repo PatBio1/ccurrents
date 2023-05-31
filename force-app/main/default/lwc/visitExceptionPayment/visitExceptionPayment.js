@@ -6,6 +6,7 @@ import CURRENCY from '@salesforce/i18n/currency';
 
 import getBaseVisitExceptionPaymentInfo from '@salesforce/apex/ExceptionPaymentController.getBaseVisitExceptionPaymentInfo';
 import createExceptionPayment from '@salesforce/apex/ExceptionPaymentController.createExceptionPayment';
+import Visits_Remaining_For_Tier from '@salesforce/label/c.Visits_Remaining_For_Tier';
 
 const EXCEPTION_RATE_SELECTION_SCREEN = 'exceptionRateSelection';
 const EXCEPTION_PAYMENT_CONFIRMATION_SCREEN = 'exceptionPaymentConfirmation';
@@ -92,10 +93,7 @@ export default class VisitExceptionPayment extends LightningElement {
             return false;
         }
 
-        let visitDateTime = new Date(this.baseVisitExceptionPaymentInfo.visitDatetime);
-        let currentDateTime = new Date();
-
-        return (visitDateTime.toLocaleDateString() === currentDateTime.toLocaleDateString());
+        return (this.baseVisitExceptionPaymentInfo.visitAge <= this.baseVisitExceptionPaymentInfo.paymentWindowInDays);
     }
 
     get hasBaseVisitExceptionPaymentInfo() {

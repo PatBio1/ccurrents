@@ -10,6 +10,7 @@ export default class EnrollCardModal extends LightningModal {
     cardPackageId;
     initalPIN;
     loading = false;
+    blockExistingCards = false;
     
     get isInputInvalid() {
         let pinInputField = this.template.querySelector('lightning-input[data-pin-input]');
@@ -33,7 +34,7 @@ export default class EnrollCardModal extends LightningModal {
     async handleSubmitCardEnrollment() {
         try {
             this.loading = true;
-            await linkPaymentCard({ cardId: this.cardPackageId, donorId: this.donorId, initalPIN: this.initalPIN });
+            await linkPaymentCard({ cardId: this.cardPackageId, donorId: this.donorId, initalPIN: this.initalPIN, blockCards: this.blockExistingCards });
         } catch (error) {
             this.dispatchEvent(new ShowToastEvent({
                 title: 'Error',
@@ -52,5 +53,9 @@ export default class EnrollCardModal extends LightningModal {
             variant: 'success'
         }));
         this.close("success")
+    }
+
+    handleBlockExistingCardsChange(event) {
+        this.blockExistingCards = event.detail.checked;
     }
 }

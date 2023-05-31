@@ -1,6 +1,6 @@
 private static final String application_id = '7ca4da5d9d247de81c0410aa54d621e2';
 private static final String card_number ='';
-private static final String puid = '003Dn00000NtQBEIA3';
+private static final String puid = '003Dn00000PLWr2IAH';
 private static final String ppd = ''; // We are unsure of what this property is, we asked Onbe but they couldn't provide an answer. Leave blank for now.
 private static final String mobile_phone = '';
 private static final Integer balance_detail = 1;

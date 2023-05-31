@@ -114,6 +114,7 @@ public without sharing class VisitTriggerHelper {
                 ) 
                 FROM Contact 
                 WHERE Id IN :donorIds
+                FOR UPDATE
             ]) {
                 if (donor.Visits__r.size() > 0) {
                     Visit__c intendedFirstVisit = donor.Visits__r[0];
@@ -193,6 +194,7 @@ public without sharing class VisitTriggerHelper {
                 ) 
                 FROM Contact 
                 WHERE Id IN :donorIds
+                FOR UPDATE
             ]) {
                 if (donor.Payment_Methods__r != null && donor.Payment_Methods__r.size() > 0) {
                     for(Visit__c visit : donor.Visits__r) {
@@ -357,6 +359,7 @@ public without sharing class VisitTriggerHelper {
             ) 
             FROM Contact 
             WHERE Id IN :donorIds
+            FOR UPDATE
         ]) {
             if (donor.Visits__r != null && donor.Visits__r.size() >= 2) {
                 for (Visit__c visit : donor.Visits__r) {

@@ -854,6 +854,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CampaignMember.Campaign_Level__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CampaignMember.Eligible_Donation_Count__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1649,6 +1654,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Message__c.Campaign_Member_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Message__c.Center__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1665,6 +1675,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Message__c.Expiration_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Message__c.Fire_Promotional_Payment__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

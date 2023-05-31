@@ -443,6 +443,7 @@ public without sharing class DonorCompInvocable {
             donorToVisitsInRange.put(visit.Donor__c, new List<Visit__c>());
         }
     
+        // This query logic for Active Incentive Type Campaigns is assumed in the Campaign Member Trigger; if this changes, update the Campaign Member Trigger Handler class logic depending on how this was originally written.
         for (CampaignMember cm : [
             SELECT Id,
                 ContactId,

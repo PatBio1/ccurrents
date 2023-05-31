@@ -8,6 +8,7 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
         incentiveCampaignPromotion((Map<Id, CampaignMember>) newMap, (Map<Id, CampaignMember>) oldMap);
     }
 
+    // Move to helper class if & when necessary
     public static void incentiveCampaignPromotion(Map<Id, CampaignMember> newCampaignMemberMap, Map<Id, CampaignMember> oldCampaignMemberMap) {
         Set<Id> campaignsToCheck = new Set<Id>();
         Map<Id, CampaignMember> campaignMemberMap = new Map<Id, CampaignMember>();
@@ -15,7 +16,9 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
         List<CampaignMember> campaignMemberUpdates = new List<CampaignMember>();
 
         for (CampaignMember cm : newCampaignMemberMap.values()) {
-            if (cm.Eligible_Donation_Count__c > oldCampaignMemberMap.get(cm.Id).Eligible_Donation_Count__c) {
+            CampaignMember oldCampaignMember = oldCampaignMemberMap.get(cm.Id);
+            if ((cm.Eligible_Donation_Count__c > oldCampaignMember.Eligible_Donation_Count__c) ||
+                (cm.Eligible_Donation_Count__c >= 1 && oldCampaignMember.Eligible_Donation_Count__c == null)) {
                 campaignsToCheck.add(cm.CampaignId);
                 campaignMemberMap.put(cm.Id, cm);
             }
@@ -40,14 +43,18 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
             campaignLevelMap.put(String.valueOf(cl.Campaign__c + '-' + cl.Minimum_Donation_Amount__c), cl);
         }
 
-        for(CampaignMember cm : campaignMemberMap.values()) {
-            if(campaignLevelMap.get(String.valueOf(cm.CampaignId + '-' + cm.Eligible_Donation_Count__c)) != null) {
+        for (CampaignMember cm : campaignMemberMap.values()) {
+            if (campaignLevelMap.get(String.valueOf(cm.CampaignId + '-' + cm.Eligible_Donation_Count__c)) != null) {
                 CampaignMember cmUpdate = new CampaignMember(
-                  Id = cm.Id
-
+                    Id = cm.Id,
+                    Campaign_Level__c = campaignLevelMap.get(String.valueOf(cm.CampaignId + '-' + cm.Eligible_Donation_Count__c)).Id
                 );
+                campaignMemberUpdates.add(cmUpdate);
             }
         }
 
+        if (!campaignMemberUpdates.isEmpty()) {
+            update campaignMemberUpdates;
+        }
     }
 }

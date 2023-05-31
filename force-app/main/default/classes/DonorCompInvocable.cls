@@ -452,7 +452,7 @@ public without sharing class DonorCompInvocable {
                 CreatedDate
             FROM CampaignMember
             WHERE Campaign.IsActive = TRUE
-            AND Campaign.Type = 'Incentive'
+            AND Campaign.Type = :Constants.CAMPAIGN_TYPE_INCENTIVE
             AND ContactId IN :donorToCampaignMembers.keySet()
         ]) {
             List<CampaignMember> donorCMs = donorToCampaignMembers.get(cm.ContactId);

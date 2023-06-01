@@ -46,6 +46,7 @@ public without sharing class CampaignMemberTriggerHandlerTest {
             incentiveCampaignLevelMap.put(Integer.valueOf(cl.Minimum_Donation_Amount__c), cl.Id);
         }
 
+        // Expects Incentive_Eligible__c to default to TRUE; test will fail (as expected) if that changes.
         CampaignMember testCampaignMember = new CampaignMember(
             ContactId = personContactId,
             CampaignId = incentiveCampaign.Id

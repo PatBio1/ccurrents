@@ -69,4 +69,6 @@ public with sharing class Constants {
 
     public static final String CAMPAIGN_TYPE_INCENTIVE = 'Incentive';
 
+    public static final String PAYMENTREQUEST_STATUS_NEW = 'New';
+
 }

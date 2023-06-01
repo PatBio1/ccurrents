@@ -65,8 +65,8 @@
         <label>Incentive Campaign Details</label>
         <layoutColumns>
             <layoutItems>
-                <behavior>Readonly</behavior>
-                <field>Eligible_Donation_Count__c</field>
+                <behavior>Edit</behavior>
+                <field>Incentive_Eligible__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>
@@ -77,6 +77,10 @@
             <layoutItems>
                 <behavior>Readonly</behavior>
                 <field>Last_Related_Visit__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Eligible_Donation_Count__c</field>
             </layoutItems>
             <layoutItems>
                 <behavior>Readonly</behavior>

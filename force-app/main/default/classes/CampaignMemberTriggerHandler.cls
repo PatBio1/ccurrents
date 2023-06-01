@@ -15,11 +15,13 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
         Map<Id, CampaignMember> campaignMemberMap = new Map<Id, CampaignMember>();
         Map<String, Campaign_Level__c> campaignLevelMap = new Map<String, Campaign_Level__c>();
         List<CampaignMember> campaignMemberUpdates = new List<CampaignMember>();
+        List<Payment_Request__c> newPaymentRequests = new List<Payment_Request__c>();
 
         for (CampaignMember cm : newCampaignMemberMap.values()) {
             CampaignMember oldCampaignMember = oldCampaignMemberMap.get(cm.Id);
-            if ((cm.Eligible_Donation_Count__c > oldCampaignMember.Eligible_Donation_Count__c) ||
-                (cm.Eligible_Donation_Count__c >= 1 && oldCampaignMember.Eligible_Donation_Count__c == null)) {
+            if (cm.Incentive_Eligible__c &&
+                ((cm.Eligible_Donation_Count__c > oldCampaignMember.Eligible_Donation_Count__c) ||
+                    (cm.Eligible_Donation_Count__c >= 1 && oldCampaignMember.Eligible_Donation_Count__c == null))) {
                 campaignsToCheck.add(cm.CampaignId);
                 campaignMemberMap.put(cm.Id, cm);
             }
@@ -38,7 +40,8 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
                 Minimum_Donation_Amount__c,
                 Next_Campaign_Level__c,
                 Campaign__r.Enable_Payment_Requests__c,
-                Campaign__r.Member_Incentive_Life_Days__c
+                Campaign__r.Member_Incentive_Life_Days__c,
+                Campaign__r.Name
             FROM Campaign_Level__c
             WHERE Campaign__c IN :campaignsToCheck AND
             isActive__c = TRUE
@@ -57,11 +60,38 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
                     Campaign_Level__c = clDetail.Id
                 );
                 campaignMemberUpdates.add(cmUpdate);
+
+                if (clDetail.Campaign__r.Enable_Payment_Requests__c) {
+                    Payment_Request__c newPaymentRequest = createPaymentRequest(cm, clDetail);
+                    newPaymentRequests.add(newPaymentRequest);
+                }
+
             }
         }
 
         if (!campaignMemberUpdates.isEmpty()) {
             update campaignMemberUpdates;
         }
+
+        if (!newPaymentRequests.isEmpty()) {
+            insert newPaymentRequests;
+        }
+
+    }
+
+    public static Payment_Request__c createPaymentRequest(CampaignMember cm, Campaign_Level__c cl) {
+        String nameString = String.valueOf(cl.Campaign__r.Name + ' ' + cl.Name + ' Incentive Payment'
+        ).left(80);
+        Payment_Request__c newPaymentRequest = new Payment_Request__c(
+            Name = nameString,
+            Reason_Description__c = nameString,
+            Amount_Dollars__c = cl.Award_Dollar_Amount__c,
+            Amount_Points__c = cl.Award_Point_Amount__c,
+            Donor__c = cm.ContactId,
+            Visit__c = cm.Last_Related_Visit__c,
+            Campaign_Member_Id__c = String.valueOf(cm.Id)
+        );
+
+        return newPaymentRequest;
     }
 }

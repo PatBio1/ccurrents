@@ -874,6 +874,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>CampaignMember.Incentive_Eligible__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>CampaignMember.Last_Related_Visit__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -905,6 +910,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Campaign_Level__c.Description__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Campaign_Level__c.Message_Body_Default__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Campaign_Level__c.Message_Subject_Default__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -1694,11 +1709,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Message__c.Fire_Promotional_Payment__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
         <field>Message__c.Message_Handler_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1795,6 +1805,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Payment_Request__c.Donor__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Payment_Request__c.Message_Body__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Payment_Request__c.Message_Subject__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

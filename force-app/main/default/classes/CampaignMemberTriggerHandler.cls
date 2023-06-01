@@ -34,11 +34,14 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
         // We're trusting that DonorCompInvocable.updateCampaignVisitCounter is firing only on ACTIVE Incentive Type Campaigns
         for (Campaign_Level__c cl : [
             SELECT Id,
+                Name,
                 Award_Point_Amount__c,
                 Award_Dollar_Amount__c,
                 Campaign__c,
                 Minimum_Donation_Amount__c,
                 Next_Campaign_Level__c,
+                Message_Subject_Default__c,
+                Message_Body_Default__c,
                 Campaign__r.Enable_Payment_Requests__c,
                 Campaign__r.Member_Incentive_Life_Days__c,
                 Campaign__r.Name
@@ -89,7 +92,10 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
             Amount_Points__c = cl.Award_Point_Amount__c,
             Donor__c = cm.ContactId,
             Visit__c = cm.Last_Related_Visit__c,
-            Campaign_Member_Id__c = String.valueOf(cm.Id)
+            Campaign_Member_Id__c = String.valueOf(cm.Id),
+            Status__c = Constants.PAYMENTREQUEST_STATUS_NEW,
+            Message_Subject__c = cl.Message_Subject_Default__c,
+            Message_Body__c = cl.Message_Body_Default__c
         );
 
         return newPaymentRequest;

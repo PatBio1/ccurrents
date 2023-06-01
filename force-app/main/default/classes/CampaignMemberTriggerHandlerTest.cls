@@ -24,26 +24,30 @@ public without sharing class CampaignMemberTriggerHandlerTest {
         List<Campaign_Level__c> incentiveCampaignLevels = new List<Campaign_Level__c>{
             new Campaign_Level__c(
                 Name = 'Level 1',
-                Award_Dollar_Amount__c = 50,
+                Award_Dollar_Amount__c = 100,
                 Campaign__c = incentiveCampaign.Id,
                 isActive__c = true,
-                Minimum_Donation_Amount__c = 1
+                Minimum_Donation_Amount__c = 1,
+                Message_Subject_Default__c = 'You achieved level 1!',
+                Message_Body_Default__c = 'Here\'s some sweet moolah'
             ),
             new Campaign_Level__c(
                 Name = 'Level 2',
                 Award_Dollar_Amount__c = 50,
                 Campaign__c = incentiveCampaign.Id,
                 isActive__c = true,
-                Minimum_Donation_Amount__c = 2
+                Minimum_Donation_Amount__c = 2,
+                Message_Subject_Default__c = 'You achieved level 2!',
+                Message_Body_Default__c = 'Here\'s some more sweet moolah'
             )
         };
 
         insert incentiveCampaignLevels;
 
-        Map<Integer, Id> incentiveCampaignLevelMap = new Map<Integer, Id>();
+        Map<Integer, Campaign_Level__c> incentiveCampaignLevelMap = new Map<Integer, Campaign_Level__c>();
 
         for (Campaign_Level__c cl : incentiveCampaignLevels) {
-            incentiveCampaignLevelMap.put(Integer.valueOf(cl.Minimum_Donation_Amount__c), cl.Id);
+            incentiveCampaignLevelMap.put(Integer.valueOf(cl.Minimum_Donation_Amount__c), cl);
         }
 
         // Expects Incentive_Eligible__c to default to TRUE; test will fail (as expected) if that changes.
@@ -65,7 +69,7 @@ public without sharing class CampaignMemberTriggerHandlerTest {
         CampaignMember cmUpdate1Check = [SELECT Id, Eligible_Donation_Count__c, Campaign_Level__c FROM CampaignMember WHERE Id = :testCampaignMember.Id][0];
 
         // Verify change from null value to 1
-        Assert.areEqual(incentiveCampaignLevelMap.get(1), cmUpdate1Check.Campaign_Level__c);
+        Assert.areEqual(incentiveCampaignLevelMap.get(1).Id, cmUpdate1Check.Campaign_Level__c);
 
         CampaignMember cmUpdate2 = new CampaignMember(
             Id = testCampaignMember.Id,
@@ -77,7 +81,7 @@ public without sharing class CampaignMemberTriggerHandlerTest {
         CampaignMember cmUpdate2Check = [SELECT Id, Eligible_Donation_Count__c, Campaign_Level__c FROM CampaignMember WHERE Id = :testCampaignMember.Id][0];
 
         // Verify change from 1 to 2
-        Assert.areEqual(incentiveCampaignLevelMap.get(2), cmUpdate2Check.Campaign_Level__c);
+        Assert.areEqual(incentiveCampaignLevelMap.get(2).Id, cmUpdate2Check.Campaign_Level__c);
 
         CampaignMember cmUdpate3 = new CampaignMember(
             Id = testCampaignMember.Id,
@@ -89,7 +93,7 @@ public without sharing class CampaignMemberTriggerHandlerTest {
         // Verify no change from 2 to 3, because no level exists for this
         CampaignMember cmUpdate3Check = [SELECT Id, Eligible_Donation_Count__c, Campaign_Level__c FROM CampaignMember WHERE Id = :testCampaignMember.Id][0];
 
-        Assert.areEqual(incentiveCampaignLevelMap.get(2), cmUpdate3Check.Campaign_Level__c);
+        Assert.areEqual(incentiveCampaignLevelMap.get(2).Id, cmUpdate3Check.Campaign_Level__c);
 
         // Change Incentive Life, test result
         Campaign incentiveCampaignUpdate = new Campaign(
@@ -100,17 +104,43 @@ public without sharing class CampaignMemberTriggerHandlerTest {
         update incentiveCampaignUpdate;
 
         CampaignMember cmUpdate4 = new CampaignMember(
-          Id = testCampaignMember.Id,
+            Id = testCampaignMember.Id,
             Eligible_Donation_Count__c = 1
         );
 
         CampaignMember cmUpdate4Check = [SELECT Id, Eligible_Donation_Count__c, Campaign_Level__c FROM CampaignMember WHERE Id = :testCampaignMember.Id][0];
 
         // Should be no change
-        Assert.areEqual(incentiveCampaignLevelMap.get(2), cmUpdate3Check.Campaign_Level__c);
+        Assert.areEqual(incentiveCampaignLevelMap.get(2).Id, cmUpdate3Check.Campaign_Level__c);
 
         Test.stopTest();
 
+        for (Payment_Request__c pr : [
+            SELECT Id,
+                Name,
+                Reason_Description__c,
+                Amount_Dollars__c,
+                Amount_Points__c,
+                Status__c,
+                Donor__c,
+                Visit__c,
+                Campaign_Member_Id__c,
+                Message_Subject__c,
+                Message_Body__c
+            FROM Payment_Request__c
+        ]) {
+            Assert.areEqual(pr.Donor__c, personContactId);
+            Assert.areEqual(testCampaignMember.Id, pr.Campaign_Member_Id__c);
+            Assert.areEqual(Constants.PAYMENTREQUEST_STATUS_NEW, pr.Status__c);
+            if (pr.Name.contains('Level 1')) {
+                Assert.areEqual(100, pr.Amount_Dollars__c);
+                Assert.areEqual('You achieved level 1!', pr.Message_Subject__c);
+                Assert.areEqual('Here\'s some sweet moolah', pr.Message_Body__c);
+            } else {
+                Assert.areEqual(50, pr.Amount_Dollars__c);
+                Assert.areEqual('You achieved level 2!', pr.Message_Subject__c);
+                Assert.areEqual('Here\'s some more sweet moolah', pr.Message_Body__c);
+            }
+        }
     }
-
 }

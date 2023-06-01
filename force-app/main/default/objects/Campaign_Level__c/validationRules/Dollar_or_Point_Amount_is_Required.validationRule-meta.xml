@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Dollar_or_Point_Amount_is_Required</fullName>
+    <active>true</active>
+    <description>If active, an award dollar or point amount is required. This is necessary for firing payment requests for this Campaign Level.</description>
+    <errorConditionFormula>isActive__c &amp;&amp;
+ISBLANK(Award_Dollar_Amount__c) &amp;&amp;
+ISBLANK(Award_Point_Amount__c)</errorConditionFormula>
+    <errorMessage>An Award Dollar and/or Point Amount is required if this Campaign Level is set to Active.</errorMessage>
+</ValidationRule>

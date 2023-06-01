@@ -16,7 +16,7 @@
                 <field>Description__c</field>
             </layoutItems>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Required</behavior>
                 <field>Campaign__c</field>
             </layoutItems>
         </layoutColumns>
@@ -39,7 +39,7 @@
         <label>Configurations</label>
         <layoutColumns>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Required</behavior>
                 <field>Minimum_Donation_Amount__c</field>
             </layoutItems>
             <layoutItems>
@@ -66,13 +66,13 @@
         <label>Messaging (Notification) Defaults</label>
         <layoutColumns>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Required</behavior>
                 <field>Message_Subject_Default__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
-                <behavior>Edit</behavior>
+                <behavior>Required</behavior>
                 <field>Message_Body_Default__c</field>
             </layoutItems>
         </layoutColumns>

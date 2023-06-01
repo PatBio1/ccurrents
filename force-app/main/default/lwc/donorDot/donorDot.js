@@ -50,7 +50,18 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     }
 
     get canReschedule() {
-        return (!this.appointment.isInThePast && (this.donor.status !== "Complete" && this.donor.status !== "Checked-In"));
+        let appointmentDatetime = new Date(this.appointment.appointmentDatetime);
+        let targetDate = new Date();
+
+        return (
+            (
+                appointmentDatetime.getDate() === targetDate.getDate() &&
+                appointmentDatetime.getMonth() === targetDate.getMonth() &&
+                appointmentDatetime.getFullYear() === targetDate.getFullYear()
+            ) &&
+            this.donor.status !== "Complete" &&
+            !this.donor.outcome
+        );
     }
 
     get displayStatus() {

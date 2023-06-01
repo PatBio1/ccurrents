@@ -92,6 +92,40 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         return (this.appointments && this.appointments.length);
     }
 
+    calculateAppointmentAddRescheduleDisabled(appointment) {
+        let todayDate = new Date(Date.now());
+        let appointmentDate = new Date(appointment.appointmentDatetime);
+        
+        let isAppointmentToday = (
+            appointmentDate.getDate() === todayDate.getDate() &&
+            appointmentDate.getMonth() === todayDate.getMonth() &&
+            appointmentDate.getFullYear() === todayDate.getFullYear()
+        );
+
+        let appointmentIndex = this.appointments.findIndex((searchAppointment) => appointment.Id === searchAppointment.Id);
+        if (appointmentIndex === -1) {
+            console.error("Couldn't find appointment in list of appointments", appointment, JSON.parse(JSON.stringify(this.appointments)));
+            return;
+        }
+
+        let nextAppointment = (appointmentIndex + 1 <= this.appointments.length) ? this.appointments[appointmentIndex + 1] : null;
+        let nextAppointmentDate = (nextAppointment) ? new Date(nextAppointment.appointmentDatetime) : null;
+        let isNextAppointmentStarted = (nextAppointmentDate) ? nextAppointmentDate >= Date.now() : false;
+
+        todayDate.setHours(0, 0, 0, 0);
+        appointmentDate.setHours(0, 0, 0, 0);
+
+        appointment.cantAddVisit = !(
+            appointmentDate >= todayDate &&
+            (appointment.availability > 0 || appointment.loyaltyAvailability > 0) &&
+            (
+                (nextAppointment && isNextAppointmentStarted) || !nextAppointment
+            )
+        );
+
+        appointment.cantRescheduleTo = !((appointment.availability > 0 || appointment.loyaltyAvailability > 0) && isAppointmentToday);
+    }
+
     @track filters = {
         start: '',
         end: '',
@@ -219,7 +253,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         }
 
         let appointmentData = this.appointments.find((appointment) => appointment.Id === newAppointmentId);
-        if (!appointmentData || appointmentData.cantAddVisit) {
+        if (!appointmentData || appointmentData.cantRescheduleTo) {
             alert("This appointment slot doesn't have any remaining capacity");
             return;
         }
@@ -271,7 +305,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         let newAppointmentId = event.target.dataset.appointment;
         let appointmentData = this.appointments.find((appointment) => appointment.Id === newAppointmentId);
 
-        if (appointmentData && !appointmentData.cantAddVisit) {
+        if (appointmentData && !appointmentData.cantRescheduleTo) {
             event.target.classList.add('drop-ok');
         }
     }
@@ -374,10 +408,12 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             timeStop: this.filters.end
         });
 
+        this.appointments = queriedAppointments;
         let generateUrlPromises = [];
+
         for(let appointment of queriedAppointments) {
             // Used to show/hide Add Visit on per row basis
-            appointment.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability > 0) && !appointment.isInThePast);
+            this.calculateAppointmentAddRescheduleDisabled(appointment);
 
             appointment.incrementDisabled = !!appointment.isInThePast;
             appointment.decrementDisabled = appointment.isInThePast || appointment.capacity <= 0;
@@ -402,7 +438,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         } catch(generateUrlError) {
             console.log("generateUrlError", generateUrlPromises);
         } finally {
-            this.appointments = queriedAppointments;
+            // this.appointments = queriedAppointments;
             if (this.filters.hasActiveFilters()) {
                 this.applyFilters();
             }
@@ -494,9 +530,11 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appRow.capacity = appointment.capacity;
             appRow.loyaltyCapacity = appointment.loyaltyCapacity;
 
-            appRow.cantAddVisit = !((appointment.availability > 0 || appointment.loyaltyAvailability) && !appointment.isInThePast);
+            // appRow.cantAddVisit = !(appointment.availability > 0 || appointment.loyaltyAvailability);
             appointment.incrementDisabled = !!appointment.isInThePast;
             appointment.decrementDisabled = appointment.isInThePast || appointment.capacity <= 0;
+
+            this.calculateAppointmentAddRescheduleDisabled(appRow);
 
             if (this.filters.hasActiveFilters()) {
                 this.applyFilters();

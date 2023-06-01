@@ -167,7 +167,11 @@
         <type>Text</type>
     </nameField>
     <pluralLabel>Payment Requests</pluralLabel>
-    <searchLayouts></searchLayouts>
+    <searchLayouts>
+        <searchResultsAdditionalFields>Donor__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Reason_Description__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields>Status__c</searchResultsAdditionalFields>
+    </searchLayouts>
     <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>

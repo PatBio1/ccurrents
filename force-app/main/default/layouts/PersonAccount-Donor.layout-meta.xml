@@ -617,13 +617,24 @@
         <fields>OWNER_NAME</fields>
         <relatedList>RelatedCaseList</relatedList>
     </relatedLists>
+    <relatedLists>
+        <excludeButtons>MassChangeOwner</excludeButtons>
+        <excludeButtons>New</excludeButtons>
+        <fields>NAME</fields>
+        <fields>Reason_Description__c</fields>
+        <fields>Status__c</fields>
+        <fields>CREATED_DATE</fields>
+        <relatedList>Payment_Request__c.Donor__c</relatedList>
+        <sortField>CREATED_DATE</sortField>
+        <sortOrder>Desc</sortOrder>
+    </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showHighlightsPanel>true</showHighlightsPanel>
     <showInteractionLogPanel>true</showInteractionLogPanel>
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00hDE000009bw3t</masterLabel>
+        <masterLabel>00hDH000003I4jl</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

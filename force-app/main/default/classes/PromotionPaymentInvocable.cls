@@ -1,4 +1,4 @@
-public with sharing class PromotionPaymentInvocable {
+public without sharing class PromotionPaymentInvocable {
 
     @InvocableMethod(Label='Promotion Payment' Category='Payment' Description='Calls Promotion Payment in Donor Payment Service.')
     public static List<PromotionPaymentResponse> invoke(List<PromotionPaymentRequest> promotionPaymentRequests) {

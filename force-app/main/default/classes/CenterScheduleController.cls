@@ -249,7 +249,7 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
-    public static void linkPaymentCard(String cardId, Id donorId, String initalPIN) {
+    public static void linkPaymentCard(String cardId, Id donorId, String initalPIN, Boolean blockCards) {
         // We can assume that if the donor has a payment method record, even if it's inactive, that an account has been created
         Integer existingPaymentMethodCount = [SELECT count() FROM Payment_Method__c WHERE Donor__c = :donorId];
         Boolean hasPaymentAccount = existingPaymentMethodCount > 0;
@@ -257,13 +257,13 @@ public with sharing class CenterScheduleController {
         OnbePaymentService linkPaymentCardService = new OnbePaymentService();
         if (hasPaymentAccount) {
             try {
-                linkPaymentCardService.linkPhysicalCard(cardId, donorId, initalPIN);
+                linkPaymentCardService.linkPhysicalCard(cardId, donorId, initalPIN, blockCards);
             } catch (Exception e) {
                 throw new AuraHandledException(e.getMessage());
             }
         } else {
             try {
-                linkPaymentCardService.setupPaymentServiceAccount(cardId, donorId, 0, initalPIN);
+                linkPaymentCardService.setupPaymentServiceAccount(cardId, donorId, 0, initalPIN, blockCards);
             } catch (Exception e) {
                 throw new AuraHandledException(e.getMessage());
             }
@@ -401,6 +401,59 @@ public with sharing class CenterScheduleController {
         }
 
         return new UpdateCapacityResult(shouldRescheduleDonors, appointmentSlotsRescheduledTo);
+    }
+
+    @AuraEnabled
+    public static void updateVisitOutcome(Id visitId, String outcome) {
+        Visit__c existingVisitRecord;
+
+        try {
+            existingVisitRecord = [
+                SELECT Id, Status__c, Outcome__c, Appointment__c, Appointment__r.Booked__c, Appointment__r.Booked_Loyalty__c, Donor__r.Loyalty_Level__c 
+                FROM Visit__c 
+                WHERE Id = :visitId 
+                LIMIT 1
+            ];
+        } catch(Exception e) {
+            throw new AuraHandledException('Error while accessing visit to update - ' + e.getMessage());
+        }
+
+        if (existingVisitRecord.Status__c == 'Complete') {
+            if (existingVisitRecord.Outcome__c == outcome) {
+                return;
+            }
+        } else {
+            // TODO: At this point, this function isn't expected to be used with the canceled status or rescheduled
+            // but if it is in the future then we should integrate the CoreSchedulerHandler.cancelVisit / CoreSchedulerHandler.rescheduleVisit functions here
+            if (outcome == 'No Show') {
+                Appointment__c appointmentSlot = existingVisitRecord.Appointment__r;
+
+                if (
+                    LoyaltyLevelService.getLoyaltyLevel(existingVisitRecord.Donor__r.Loyalty_Level__c) > 0 &&
+                    appointmentSlot.Booked_Loyalty__c != null &&
+                    appointmentSlot.Booked_Loyalty__c > 0
+                ) {
+                    appointmentSlot.Booked_Loyalty__c -= 1;
+                } else {
+                    appointmentSlot.Booked__c -= 1;
+                }
+
+                try {
+                    update appointmentSlot;
+                } catch (Exception e) {
+                    throw new AuraHandledException(e.getMessage());
+                }
+            }
+        }
+
+        existingVisitRecord.Status__c = 'Complete';
+        existingVisitRecord.Outcome__c = outcome;
+
+        try {
+            update existingVisitRecord;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
     }
 
     public class RescheduleSlot {

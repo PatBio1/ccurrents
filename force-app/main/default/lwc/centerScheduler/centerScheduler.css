@@ -18,7 +18,7 @@
 }
 
 .scheduler-container {
-    height: calc(100vh - 240px);
+    height: calc(100vh - 160px); /* The 160px accounts for the top nav bar */
     display: flex;
     flex-direction: column;
 }

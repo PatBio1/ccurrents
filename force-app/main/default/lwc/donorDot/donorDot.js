@@ -4,6 +4,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import { visitStatusToDisplayClass, visitOutcomeToDisplayClass } from "c/constants";
 import RescheduleVisitModal from "c/rescheduleVisitModal";
 import EnrollCardModal from "c/enrollCardModal";
+import UpdateVisitOutcomeModal from "c/updateVisitOutcomeModal";
 
 export default class DonorDot extends NavigationMixin(LightningElement)  {
     @track showpopover = false;
@@ -15,6 +16,7 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
     @api popFlipYPoint;
 
     visitLink;
+    donorLink;
     isPopupConfigured = false;
     popUpDirection;
 
@@ -30,12 +32,36 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         return (this.donorLoyaltyLevel) ? this.donorLoyaltyLevel : "No Loyalty";
     }
 
+    get cantUpdateOutcome() {
+        let appointmentDatetime = new Date(this.appointment.appointmentDatetime);
+        let targetDate = new Date();
+
+        return (
+            appointmentDatetime.getDate() !== targetDate.getDate() ||
+            appointmentDatetime.getMonth() !== targetDate.getMonth() ||
+            appointmentDatetime.getFullYear() !== targetDate.getFullYear() ||
+            this.donor.status === "Complete" ||
+            this.donor.outcome
+        );
+    }
+
     get cantReschedule() {
         return !this.canReschedule;
     }
 
     get canReschedule() {
-        return (!this.appointment.isInThePast && (this.donor.status !== "Complete" && this.donor.status !== "Checked-In"));
+        let appointmentDatetime = new Date(this.appointment.appointmentDatetime);
+        let targetDate = new Date();
+
+        return (
+            (
+                appointmentDatetime.getDate() === targetDate.getDate() &&
+                appointmentDatetime.getMonth() === targetDate.getMonth() &&
+                appointmentDatetime.getFullYear() === targetDate.getFullYear()
+            ) &&
+            this.donor.status !== "Complete" &&
+            !this.donor.outcome
+        );
     }
 
     get displayStatus() {
@@ -98,9 +124,26 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         if (this.showpopover && !this.isPopupConfigured) {
             this.calculatePopupPosition();
         }
+
+        this[NavigationMixin.GenerateUrl]({
+            type: "standard__recordPage",
+            attributes: {
+                objectApiName: 'Contact',
+                recordId: this.donor.donorId,
+                actionName: 'view'
+            }
+        }).then(url => {
+            if (this.donorLink !== url) {
+                this.donorLink = url;
+            }
+        });
     }
 
     togglePopover() {
+        if (!this.showpopover) {
+            this.dispatchEvent(new CustomEvent('donorpopupopen'));
+        }
+
         this.showpopover = !this.showpopover;
         this.isPopupConfigured = false;
     }
@@ -173,15 +216,18 @@ export default class DonorDot extends NavigationMixin(LightningElement)  {
         });
     }
 
-    async handleNavigateToDonorPage(event) {
-        this[NavigationMixin.GenerateUrl]({
-            type: "standard__recordPage",
-            attributes: {
-                recordId: this.donor.donorId,
-                actionName: 'view'
+    handleInitOutcomeUpdate(event) {
+        UpdateVisitOutcomeModal.open({
+            visitId: this.donor.visitId,
+
+            onvisitoutcomeupdated: (event) => {
+                this.dispatchEvent(new CustomEvent("visitoutcomeupdated", { detail: {...event.detail, appointmentId: this.appointment.Id} }));
             }
-        }).then(url => {
-            window.open(url, "_blank");
         });
+    }
+
+    @api closePopover() {
+        this.showpopover = false;
+        this.isPopupConfigured = false;
     }
 }

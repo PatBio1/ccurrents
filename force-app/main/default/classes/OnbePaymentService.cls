@@ -35,7 +35,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         return 'Onbe Payment Service supports stored value card transfers.';
     }
 
-    public String setupPaymentServiceAccount(String cardPackageId, Id donorId, Decimal initialAccountLoad, String initialPIN) {
+    public String setupPaymentServiceAccount(String cardPackageId, Id donorId, Decimal initialAccountLoad, String initialPIN, Boolean blockCards) {
         String partnerUserId = (String)donorId;
 
         OnbeDomainPrepaid.Load newLoad;
@@ -46,7 +46,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         }
 
         OnbeDomainPrepaid.Link newLink = new OnbeDomainPrepaid.Link();
-        newLink.block = 'NONE';  // either ALL or NONE
+        newLink.block = (blockCards) ? 'ALL' : 'NONE';  // either ALL or NONE
         newLink.cardPackageId = cardPackageId;
 
         Account donorRecord;
@@ -141,7 +141,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         return '';
     }
 
-    public void linkPhysicalCard(String cardPackageId, Id donorId, String initialPIN) {
+    public void linkPhysicalCard(String cardPackageId, Id donorId, String initialPIN, Boolean blockCards) {
         Id donorContactId = donorId;
         List<Payment_Method__c> existingPaymentMethods = [
             SELECT Id, Is_Active__c, isDefault__c, Account_Number__c
@@ -158,7 +158,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         }
 
         OnbeDomainPrepaid.Link newLink = new OnbeDomainPrepaid.Link();
-        newLink.block = 'ALL';
+        newLink.block = (blockCards) ? 'ALL' : 'NONE';
         newLink.cardPackageId = cardPackageId;
 
         OnbeWsPrepaid.AccountManagementApiWebServices accountManagementAPI = new OnbeWsPrepaid.AccountManagementApiWebServices();

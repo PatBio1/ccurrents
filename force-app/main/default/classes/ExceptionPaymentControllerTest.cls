@@ -127,7 +127,7 @@ public class ExceptionPaymentControllerTest {
     @IsTest 
     static void testGetBaseVisitExceptionPaymentInfo() {
         Visit__c targetVisit = [
-            SELECT Id, Appointment_Datetime__c, Donor__c, Donor__r.Name, Center_Donation_Type__r.Center__r.Name, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c 
+            SELECT Id, Appointment_Datetime__c, Donor__c, Donor__r.Name, Center_Donation_Type__r.Center__r.Name, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c, Age_in_Days__c 
             FROM Visit__c 
             LIMIT 1
         ];
@@ -148,7 +148,7 @@ public class ExceptionPaymentControllerTest {
         Assert.areEqual(targetVisit.Id, exceptionPaymentInfo.visitId, 'Visit id in exception payment info should be equal to target visit id');
         Assert.areEqual(targetVisit.Donor__c, exceptionPaymentInfo.visitDonorId, 'Donor id in exception payment info should be equal to target visit donor id');
         Assert.areEqual(targetVisit.Donor__r.Name, exceptionPaymentInfo.visitDonorName, 'Donor name in exception payment info should be equal to target visit donor name');
-        Assert.areEqual(targetVisit.Appointment_Datetime__c, exceptionPaymentInfo.visitDatetime, 'Datetime in exception payment info should be equal to target visit datetime');
+        Assert.areEqual(targetVisit.Age_in_Days__c, exceptionPaymentInfo.visitAge, 'Datetime in exception payment info should be equal to target visit datetime');
         Assert.areEqual(targetVisit.Center_Donation_Type__r.Center__r.Name, exceptionPaymentInfo.visitCenterName, 'Center name in exception payment info should be equal to target visit center name');
 
         Assert.areEqual(exceptionRates.size(), exceptionPaymentInfo.availableExceptionPaymentTypes.size(), 'Amount of exception rates in exception payment info should be equal to amount of exception rates for target visit');

@@ -4,16 +4,17 @@
     <lightning-modal-body>
         <lightning-input if:false={loading} type="text" label={labels.zipCode} value={postalCode} max-length="5" onkeydown={util.validateZipCode} onchange={onPostalCodeChange}></lightning-input>
         <lightning-input if:true={loading} type="text" label={labels.zipCode} value={postalCode} disabled></lightning-input>
+
+        <div if:true={errorMessage} class="slds-text-color_error slds-m-top_small">{errorMessage}</div>
     </lightning-modal-body>
     <lightning-modal-footer>
         <div class="slds-grid slds-gutters slds-grid_vertical-align-center">
-            <div class="slds-col slds-size_1-of-3 slds-text-align_left">
+            <div class="slds-col slds-size_1-of-4 slds-text-align_left">
                 <div if:true={loading} class="modal-spinner">
                     <lightning-spinner size="x-small"></lightning-spinner>
                 </div>
-                <div if:true={errorMessage} class="slds-text-color_error">{errorMessage}</div>
             </div>
-            <div class="slds-col slds-size_2-of-3">
+            <div class="slds-col slds-size_3-of-4">
                 <lightning-button if:false={loading} label={labels.cancel} class="secondary-button slds-p-right_small" onclick={onCancelButtonClick}></lightning-button>
                 <lightning-button if:true={loading} label={labels.cancel} class="secondary-button slds-p-right_small" disabled></lightning-button>
                 <lightning-button if:false={changeDisabled} label={labels.change} variant="brand" class="primary-button" onclick={onChangeButtonClick}></lightning-button>

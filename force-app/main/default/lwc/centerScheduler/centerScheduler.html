@@ -178,7 +178,8 @@
                 <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
                     <c-donor-dot 
                       if:false={donor.filtered} pop-flip-y-point={popYFlipPoint} oncancelvisit={handleCancelVisit} key={donor.Id} icon={donor.icon} donor={donor} center-id={selectedCenterId} 
-                      appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString} onvisitrescheduled={handleDifferentDayReschedule}
+                      appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString} onvisitrescheduled={handleDifferentDayReschedule} onvisitoutcomeupdated={handleVisitOutcomeUpdated}
+                      ondonorpopupopen={handleDonorPopupOpen}
                     >
                     </c-donor-dot>
                 </template>

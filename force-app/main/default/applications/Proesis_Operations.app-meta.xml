@@ -252,6 +252,24 @@
         <type>Flexipage</type>
         <pageOrSobjectType>Visit__c</pageOrSobjectType>
     </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Payment_Request_Org_Wide_Record_Page</content>
+        <formFactor>Small</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Payment_Request__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>Payment_Request_Org_Wide_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Payment_Request__c</pageOrSobjectType>
+    </actionOverrides>
     <brand>
         <headerColor>#5C3E99</headerColor>
         <logo>ProesisAppLogoSquare</logo>
@@ -284,6 +302,7 @@
     <tabs>standard-report</tabs>
     <tabs>standard-Dashboard</tabs>
     <tabs>standard-Feed</tabs>
+    <tabs>Payment_Request__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Proesis_Operations_UtilityBar</utilityBar>
 </CustomApplication>

@@ -8,7 +8,8 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
         incentiveCampaignPromotion((Map<Id, CampaignMember>) newMap, (Map<Id, CampaignMember>) oldMap);
     }
 
-    // Move to helper class if & when necessary
+    // Move to helper class if & when necessary.
+    // We're trusting that DonorCompInvocable.updateCampaignVisitCounter is firing only on ACTIVE Incentive Type Campaigns.
     public static void incentiveCampaignPromotion(Map<Id, CampaignMember> newCampaignMemberMap, Map<Id, CampaignMember> oldCampaignMemberMap) {
         Set<Id> campaignsToCheck = new Set<Id>();
         Map<Id, CampaignMember> campaignMemberMap = new Map<Id, CampaignMember>();
@@ -35,7 +36,9 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
                 Award_Dollar_Amount__c,
                 Campaign__c,
                 Minimum_Donation_Amount__c,
-                Next_Campaign_Level__c
+                Next_Campaign_Level__c,
+                Campaign__r.Enable_Payment_Requests__c,
+                Campaign__r.Member_Incentive_Life_Days__c
             FROM Campaign_Level__c
             WHERE Campaign__c IN :campaignsToCheck AND
             isActive__c = TRUE
@@ -44,10 +47,14 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
         }
 
         for (CampaignMember cm : campaignMemberMap.values()) {
-            if (campaignLevelMap.get(String.valueOf(cm.CampaignId + '-' + cm.Eligible_Donation_Count__c)) != null) {
+            Campaign_Level__c clDetail = campaignLevelMap.get(String.valueOf(cm.CampaignId + '-' + cm.Eligible_Donation_Count__c));
+            if (clDetail != null &&
+                ((Date.valueOf(cm.CreatedDate).daysBetween(Date.today()) <= clDetail.Campaign__r.Member_Incentive_Life_Days__c) ||
+                    clDetail.Campaign__r.Member_Incentive_Life_Days__c == null)
+            ) {
                 CampaignMember cmUpdate = new CampaignMember(
                     Id = cm.Id,
-                    Campaign_Level__c = campaignLevelMap.get(String.valueOf(cm.CampaignId + '-' + cm.Eligible_Donation_Count__c)).Id
+                    Campaign_Level__c = clDetail.Id
                 );
                 campaignMemberUpdates.add(cmUpdate);
             }

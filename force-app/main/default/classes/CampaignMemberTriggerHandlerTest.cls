@@ -14,7 +14,9 @@ public without sharing class CampaignMemberTriggerHandlerTest {
         Campaign incentiveCampaign = new Campaign(
             Name = 'Test Campaign',
             Type = Constants.CAMPAIGN_TYPE_INCENTIVE,
-            IsActive = true
+            IsActive = true,
+            Enable_Payment_Requests__c = true,
+            Member_Incentive_Life_Days__c = 10
         );
 
         insert incentiveCampaign;
@@ -86,6 +88,24 @@ public without sharing class CampaignMemberTriggerHandlerTest {
         // Verify no change from 2 to 3, because no level exists for this
         CampaignMember cmUpdate3Check = [SELECT Id, Eligible_Donation_Count__c, Campaign_Level__c FROM CampaignMember WHERE Id = :testCampaignMember.Id][0];
 
+        Assert.areEqual(incentiveCampaignLevelMap.get(2), cmUpdate3Check.Campaign_Level__c);
+
+        // Change Incentive Life, test result
+        Campaign incentiveCampaignUpdate = new Campaign(
+            Id = incentiveCampaign.Id,
+            Member_Incentive_Life_Days__c = -1
+        );
+
+        update incentiveCampaignUpdate;
+
+        CampaignMember cmUpdate4 = new CampaignMember(
+          Id = testCampaignMember.Id,
+            Eligible_Donation_Count__c = 1
+        );
+
+        CampaignMember cmUpdate4Check = [SELECT Id, Eligible_Donation_Count__c, Campaign_Level__c FROM CampaignMember WHERE Id = :testCampaignMember.Id][0];
+
+        // Should be no change
         Assert.areEqual(incentiveCampaignLevelMap.get(2), cmUpdate3Check.Campaign_Level__c);
 
         Test.stopTest();

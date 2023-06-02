@@ -68,12 +68,9 @@ public with sharing class Constants {
 
     public static final String REPLACE_PAYMENT_METHOD_TASK_SUBJECT = 'Renew Payment Method';
     public static final String REPLACE_PAYMENT_METHOD_TASK_DESCRIPTION = 'The existing payment method for this donor has been cancelled or is set to expire soon. Please update the donor\'s payment method.';
-<<<<<<< Updated upstream
 
     public static final String CAMPAIGN_TYPE_INCENTIVE = 'Incentive';
 
     public static final String PAYMENTREQUEST_STATUS_NEW = 'New';
 
-=======
->>>>>>> Stashed changes
 }

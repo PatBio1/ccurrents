@@ -76,7 +76,7 @@ public without sharing class AddFundsBatchableTest {
         Test.stopTest();
 
         List<Transaction__c> createdDebitTransactions = [
-            SELECT Id, Amount_Currency__c, Status__c, SubType__c, (SELECT Id FROM Txn_Line_Items__r)
+            SELECT Id, Amount_Currency__c, Status__c, SubType__c, Onbe_Transaction_Id__c, (SELECT Id FROM Txn_Line_Items__r)
             FROM Transaction__c
             WHERE Type__c = 'Debit' AND 
                 Donor__c IN :testDonors
@@ -84,6 +84,7 @@ public without sharing class AddFundsBatchableTest {
 
         Assert.areEqual(testDonors.size(), createdDebitTransactions.size(), 'There should be one debit transaction created for each donor');
         for(Transaction__c createdDebitTransaction : createdDebitTransactions) {
+            Assert.isNull(createdDebitTransaction.Onbe_Transaction_Id__c, 'The Onbe Transaction Id should be null if processing error is returned');
             Assert.areEqual(100.00, createdDebitTransaction.Amount_Currency__c, 'The debit transaction should have the correct amount');
             Assert.areEqual(1, createdDebitTransaction.Txn_Line_Items__r.size(), 'The debit transaction should have one line item');
             Assert.areEqual('Complete', createdDebitTransaction.Status__c, 'The debit transaction should have a status of Complete');
@@ -108,7 +109,7 @@ public without sharing class AddFundsBatchableTest {
             index++;
         }
 
-        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock(true));
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock(1, 'Error'));
         TestUtil.throwException = true; // OnbePaymentService requires this
 
         Test.startTest();
@@ -116,7 +117,7 @@ public without sharing class AddFundsBatchableTest {
         Test.stopTest();
 
         List<Transaction__c> createdDebitTransactions = [
-            SELECT Id, Amount_Currency__c, Status__c, SubType__c, Retry_Count__c, Retry_Next__c, (SELECT Id FROM Txn_Line_Items__r), (SELECT Id FROM Transaction_Logs__r)
+            SELECT Id, Amount_Currency__c, Status__c, SubType__c, Retry_Count__c, Retry_Next__c, Onbe_Transaction_Id__c, (SELECT Id FROM Txn_Line_Items__r), (SELECT Id FROM Transaction_Logs__r)
             FROM Transaction__c
             WHERE Type__c = 'Debit' AND 
                 Donor__c IN :testDonors
@@ -127,6 +128,57 @@ public without sharing class AddFundsBatchableTest {
         Datetime expectedRetryNext = System.now().addSeconds((Integer)(BASE_RETRY_INTERVAL * Math.pow((Double)RETRY_MULTIPLIER, (Double)expectedRetryCount)));
 
         for(Transaction__c createdDebitTransaction : createdDebitTransactions) {
+            Assert.isNull(createdDebitTransaction.Onbe_Transaction_Id__c, 'The Onbe Transaction Id should be null if processing error isn\'t returned');
+            Assert.areEqual(100.00, createdDebitTransaction.Amount_Currency__c, 'The debit transaction should have the correct amount');
+            Assert.areEqual(1, createdDebitTransaction.Txn_Line_Items__r.size(), 'The debit transaction should have one line item');
+            Assert.areEqual('Error', createdDebitTransaction.Status__c, 'The debit transaction should have a status of Error');
+            Assert.areEqual(targetTransactionSubType, createdDebitTransaction.SubType__c, 'The debit transaction should have the correct sub type');
+            Assert.areEqual(1, createdDebitTransaction.Transaction_Logs__r.size(), 'The debit transaction should have one transaction log detailing the error');
+            Assert.areEqual(expectedRetryCount, createdDebitTransaction.Retry_Count__c, 'The debit transaction should have a retry count of 1');
+
+            // The time is bound to be different by a couple of milliseconds, so allow for a small difference
+            Decimal difference = createdDebitTransaction.Retry_Next__c.getTime() - expectedRetryNext.getTime();
+            Assert.isTrue(difference < 100, 'The Retry Next field should have been set using BASE_RETRY * BASE_RETRY ^ Retry Count');
+        }
+    }
+
+    @IsTest
+    static void testAddFundsRunWithProcessing() {
+        String targetTransactionSubType = 'Donation Payment';
+
+        List<Contact> testDonors = [SELECT Id, (SELECT Id FROM Visits__r) FROM Contact WHERE Account.DonorId__c != null];
+        List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
+        Integer index = 0;
+
+        for(Contact testDonor : testDonors) {
+            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', targetTransactionSubType);
+            newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
+            newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
+
+            addFundsRequests.add(newAddFundsRequest);
+            index++;
+        }
+
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock(Constants.ONBE_PROCESSING_ACCOUNT_MANAGEMENT, 'Processing'));
+        TestUtil.throwException = true; // OnbePaymentService requires this
+
+        Test.startTest();
+        Database.executeBatch(new AddFundsBatchable(addFundsRequests), 100);
+        Test.stopTest();
+
+        List<Transaction__c> createdDebitTransactions = [
+            SELECT Id, Amount_Currency__c, Status__c, SubType__c, Retry_Count__c, Retry_Next__c, Onbe_Transaction_Id__c, (SELECT Id FROM Txn_Line_Items__r), (SELECT Id FROM Transaction_Logs__r)
+            FROM Transaction__c
+            WHERE Type__c = 'Debit' AND 
+                Donor__c IN :testDonors
+        ];
+
+        Assert.areEqual(testDonors.size(), createdDebitTransactions.size(), 'There should be one debit transaction created for each donor');
+        Integer expectedRetryCount = 0;
+        Datetime expectedRetryNext = System.now().addSeconds((Integer)(BASE_RETRY_INTERVAL * Math.pow((Double)RETRY_MULTIPLIER, (Double)expectedRetryCount)));
+
+        for(Transaction__c createdDebitTransaction : createdDebitTransactions) {
+            Assert.isNotNull(createdDebitTransaction.Onbe_Transaction_Id__c, 'The Onbe Transaction Id should\'nt be null if processing error is returned');
             Assert.areEqual(100.00, createdDebitTransaction.Amount_Currency__c, 'The debit transaction should have the correct amount');
             Assert.areEqual(1, createdDebitTransaction.Txn_Line_Items__r.size(), 'The debit transaction should have one line item');
             Assert.areEqual('Error', createdDebitTransaction.Status__c, 'The debit transaction should have a status of Error');
@@ -224,7 +276,7 @@ public without sharing class AddFundsBatchableTest {
 
         insert allTxnLineItems;
 
-        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock(true));
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock(1, 'Error'));
         TestUtil.throwException = true; // OnbePaymentService requires this
 
         Test.startTest();

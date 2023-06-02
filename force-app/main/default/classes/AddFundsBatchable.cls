@@ -43,7 +43,7 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
             }
 
             for(Transaction__c erroredTransaction : [
-                SELECT Id, Donor__c, Visit__c, SubType__c, (SELECT Id, Type__c, Item__c, Total__c FROM Txn_Line_Items__r)
+                SELECT Id, Donor__c, Visit__c, SubType__c, Onbe_Transaction_Id__c, (SELECT Id, Type__c, Item__c, Total__c FROM Txn_Line_Items__r)
                 FROM Transaction__c 
                 WHERE Status__c = 'Error' AND 
                     Type__c = 'Debit' AND 
@@ -57,6 +57,10 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
                     erroredTransaction.SubType__c,
                     erroredTransaction.Id
                 );
+
+                if (!String.isEmpty(erroredTransaction.Onbe_Transaction_Id__c)) {
+                    newRetryRequest.setOnbeTransactionId(erroredTransaction.Onbe_Transaction_Id__c);
+                }
 
                 for(Txn_Line_Item__c lineItem : erroredTransaction.Txn_Line_Items__r) {
                     newRetryRequest.comments.add(lineItem.Item__c);

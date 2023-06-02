@@ -32,9 +32,11 @@ export default class EnrollCardModal extends LightningModal {
     }
 
     async handleSubmitCardEnrollment() {
+        let linkPaymentCardResult;
+        
         try {
             this.loading = true;
-            await linkPaymentCard({ cardId: this.cardPackageId, donorId: this.donorId, initalPIN: this.initalPIN, blockCards: this.blockExistingCards });
+            linkPaymentCardResult = await linkPaymentCard({ cardId: this.cardPackageId, donorId: this.donorId, initalPIN: this.initalPIN, blockCards: this.blockExistingCards });
         } catch (error) {
             this.dispatchEvent(new ShowToastEvent({
                 title: 'Error',
@@ -47,11 +49,22 @@ export default class EnrollCardModal extends LightningModal {
             this.loading = false;
         }
 
-        this.dispatchEvent(new ShowToastEvent({
-            title: 'Success',
-            message: 'Card enrollment submitted',
-            variant: 'success'
-        }));
+        if (linkPaymentCardResult) {
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Success',
+                message: 'Card enrollment submitted',
+                variant: 'success'
+            }));
+        } else {
+            // As of writing, the only way this will return null is if a processing code is returned
+            // Normal errors will throw an exception
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Error',
+                message: 'Card enrollment is still processing, contact Onbe with the tranasction id on the payment method to verify enrollment.',
+                variant: 'error'
+            }));
+        }
+        
         this.close("success")
     }
 

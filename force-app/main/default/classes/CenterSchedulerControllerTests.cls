@@ -449,6 +449,23 @@ public with sharing class CenterSchedulerControllerTests {
     }
 
     @IsTest 
+    static void testLinkPaymentCardProcessing() {
+        Contact targetDonor = [SELECT Id FROM Contact LIMIT 1];
+        String testCardPackage = '0123';
+        String initialPIN = '1111';
+
+        Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock(Constants.ONBE_PROCESSING_ACCOUNT_MANAGEMENT, 'Processing'));
+
+        Boolean result;
+        Test.startTest();
+        result = CenterScheduleController.linkPaymentCard(testCardPackage, targetDonor.Id, initialPIN, true);
+        Test.stopTest();
+
+        Assert.isFalse(result, 'The Link Card method should have returned false, indicating processing error');
+        Assert.areEqual(1, [SELECT count() FROM Payment_Method__c WHERE Donor__c = :targetDonor.Id AND Onbe_Transaction_Id__c != null], 'The payment method should have been created');
+    }
+
+    @IsTest 
     static void testPositiveAppointmentSlotCapacityUpdate() {
         Appointment__c targetAppointmentSlot = [SELECT Id, Booked__c, Capacity__c FROM Appointment__c LIMIT 1];
         Decimal startingCapacity = targetAppointmentSlot.Capacity__c;

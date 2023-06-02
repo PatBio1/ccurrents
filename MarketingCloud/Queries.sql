@@ -568,3 +568,33 @@ WHERE
 p.Name LIKE 'ProesisCustomer%' AND
 u.IsActive = 1 AND
 wnd.SubscriberKey IS NULL
+
+-- 6 Visits in a Month Query
+SELECT
+v.Donor__c AS SubscriberKey,
+CONCAT(MONTH(GETDATE()),'-',YEAR(GETDATE())) AS MonthYear,
+CONCAT(v.Donor__c,'-', MONTH(GETUTCDATE()),'-',YEAR(GETUTCDATE())) AS MailingKey,
+COUNT(v.Id) AS VisitCount,
+c.FirstName AS FirstName,
+c.Email AS Email
+
+FROM Visit__c_Salesforce AS v
+
+INNER JOIN
+(SELECT Id,
+FirstName,
+Email
+FROM Contact_Salesforce)
+AS c
+ON v.Donor__c = c.Id
+
+WHERE YEAR(v.Appointment_Datetime__c) = YEAR(GETDATE()) AND
+MONTH(v.Appointment_Datetime__c) = MONTH(GETDATE()) AND
+v.Status__c = 'Complete' AND
+v.Outcome__c = 'Donation'
+
+GROUP BY v.Donor__c,
+c.FirstName,
+c.Email
+
+HAVING COUNT(v.Id) >= 6

@@ -213,6 +213,24 @@
         <relatedList>Visit__c.Rescheduled_Visit__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <excludeButtons>MassChangeOwner</excludeButtons>
+        <excludeButtons>New</excludeButtons>
+        <fields>NAME</fields>
+        <fields>Donor__c</fields>
+        <fields>Reason_Description__c</fields>
+        <fields>Status__c</fields>
+        <relatedList>Payment_Request__c.Visit__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>NAME</fields>
+        <fields>STATUS</fields>
+        <fields>COMPANY</fields>
+        <fields>TITLE</fields>
+        <fields>MEMBER_TYPE</fields>
+        <fields>LAST_UPDATE</fields>
+        <relatedList>CampaignMember.Last_Related_Visit__c</relatedList>
+    </relatedLists>
+    <relatedLists>
         <relatedList>RelatedFileList</relatedList>
     </relatedLists>
     <relatedLists>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Enable_Payment_Requests__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>For Incentive Type Campaigns, indicates if Payment Requests should be created automatically when new Campaign Levels are achieved for Campaign Members.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>For Incentive Type Campaigns, indicates if Payment Requests should be created automatically when new Campaign Levels are achieved for Campaign Members.</inlineHelpText>
+    <label>Enable Payment Requests</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

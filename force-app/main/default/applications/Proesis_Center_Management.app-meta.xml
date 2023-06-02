@@ -284,7 +284,7 @@
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
     <label>Proesis Center Management</label>
     <navType>Standard</navType>
-    <tabs>Center_Scheduling</tabs>
+    <tabs>Center_Scheduler</tabs>
     <tabs>standard-Lead</tabs>
     <tabs>standard-Account</tabs>
     <tabs>Appointment__c</tabs>

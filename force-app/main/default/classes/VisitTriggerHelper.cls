@@ -114,6 +114,7 @@ public without sharing class VisitTriggerHelper {
                 ) 
                 FROM Contact 
                 WHERE Id IN :donorIds
+                FOR UPDATE
             ]) {
                 if (donor.Visits__r.size() > 0) {
                     Visit__c intendedFirstVisit = donor.Visits__r[0];
@@ -193,6 +194,7 @@ public without sharing class VisitTriggerHelper {
                 ) 
                 FROM Contact 
                 WHERE Id IN :donorIds
+                FOR UPDATE
             ]) {
                 if (donor.Payment_Methods__r != null && donor.Payment_Methods__r.size() > 0) {
                     for(Visit__c visit : donor.Visits__r) {
@@ -348,15 +350,16 @@ public without sharing class VisitTriggerHelper {
 
         for (Contact donor : [
             SELECT Last_Previous_Donation__c, Last_Previous_Scheduled_Visit__c, (
-                SELECT Id, Status__c, Outcome__c 
+                SELECT Id, Status__c, Outcome__c
                 FROM Visits__r 
-                WHERE (Status__c = 'Complete' AND Outcome__c IN ('Donation', 'No Donation')) OR 
+                WHERE (Status__c = 'Complete' AND Outcome__c IN ('Donation', 'No Donation') AND Donation_Volume__c != null) OR 
                     Status__c IN ('New', 'Scheduled', 'Checked-In') 
                 ORDER BY Appointment_Datetime__c DESC
                 LIMIT 4
             ) 
             FROM Contact 
             WHERE Id IN :donorIds
+            FOR UPDATE
         ]) {
             if (donor.Visits__r != null && donor.Visits__r.size() >= 2) {
                 for (Visit__c visit : donor.Visits__r) {

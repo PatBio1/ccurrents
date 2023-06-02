@@ -403,7 +403,8 @@ public class VisitTriggerHandlerTest {
                 Donor__c = targetDonors[i].PersonContactId,
                 Appointment__c = targetAppointments[0].Id,
                 Status__c = 'Complete',
-                Outcome__c = 'Donation'
+                Outcome__c = 'Donation',
+                Donation_Volume__c = 1000
             ));
         }
         insert testVisits;
@@ -415,7 +416,8 @@ public class VisitTriggerHandlerTest {
                 Donor__c = targetDonors[i].PersonContactId,
                 Appointment__c = targetAppointments[1].Id,
                 Status__c = 'Complete',
-                Outcome__c = 'Donation'
+                Outcome__c = 'Donation',
+                Donation_Volume__c = 1000
             ));
         }
 
@@ -442,7 +444,8 @@ public class VisitTriggerHandlerTest {
                 Donor__c = targetDonors[i].PersonContactId,
                 Appointment__c = targetAppointments[0].Id,
                 Status__c = 'Complete',
-                Outcome__c = 'Donation'
+                Outcome__c = 'Donation',
+                Donation_Volume__c = 1000
             ));
         }
 

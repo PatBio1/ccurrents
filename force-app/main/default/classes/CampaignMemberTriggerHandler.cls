@@ -104,11 +104,16 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
             Donor__c = cm.ContactId,
             Visit__c = cm.Last_Related_Visit__c,
             Campaign_Member_Id__c = String.valueOf(cm.Id),
-            Status__c = Constants.PAYMENTREQUEST_STATUS_NEW,
             Message_Subject__c = cl.Message_Subject_Default__c,
             Message_Body__c = cl.Message_Body_Default__c,
             Approval_Required__c = cl.Approval_Required__c
         );
+
+        if(cl.Approval_Required__c) {
+            newPaymentRequest.Status__c = Constants.PAYMENTREQUEST_STATUS_NEW;
+        } else {
+            newPaymentRequest.Status__c = Constants.PAYMENTREQUEST_STATUS_APPROVED;
+        }
 
         return newPaymentRequest;
     }

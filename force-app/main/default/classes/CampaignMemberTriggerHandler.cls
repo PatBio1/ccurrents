@@ -132,7 +132,7 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
             inputCM.Starting_Donation_Count__c = 0;
         }
 
-        inputCM.Total_Eligible_Donation_Count__c = Integer.valueOf(inputCM.Starting_Donation_Count__c + inputCM.Total_Eligible_Donation_Count__c);
+        inputCM.Total_Eligible_Donation_Count__c = getCorrectTotalCount(inputCM);
 
         return inputCM;
     }

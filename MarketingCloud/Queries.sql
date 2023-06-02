@@ -3,7 +3,8 @@ SELECT
 c.Id AS SubscriberKey,
 c.Email AS Email,
 c.FirstName AS FirstName,
-c.Last_Physical_Exam_Date__c AS LastPhysicalExamDate
+c.Last_Physical_Exam_Date__c AS LastPhysicalExamDate,
+CONCAT(c.Id,c.Last_Physical_Exam_Date__c) AS MailingKey
 
 FROM Contact_Salesforce AS c
 
@@ -17,7 +18,7 @@ ON vis.Donor__c = c.Id
 
 LEFT JOIN
 (SELECT a.SubscriberKey
-FROM "Annual Physical Reminder" AS a
+FROM [Annual Physical Reminder] AS a
 WHERE DATEDIFF(DAY, GETDATE(), a.DateAdded) < 28)
 AS apr
 ON apr.SubscriberKey = c.Id
@@ -188,7 +189,10 @@ v.Id AS VisitId,
 v.Appointment_Datetime__c AS AppointmentDateTime,
 c.Email AS Email,
 c.FirstName AS FirstName,
-cent.Name AS CenterName
+cent.Name AS CenterName,
+v.SPE_Analysis__c AS SPEAnalysis,
+v.Physical_Exam__c AS PhysicalExam,
+cent.Site__c AS SiteId
 
 FROM Visit__c_Salesforce as v
 
@@ -204,21 +208,22 @@ ON v.Donor__c = c.Id
 
 INNER JOIN
 (SELECT Id,
-Name
+Name,
+Site__c
 FROM Account_Salesforce)
 AS cent
-ON v.Center__c = cent.Id
+ON v.Center__c = cent.Name
 
 LEFT JOIN
 (SELECT VisitId
-FROM "Appointment Reminder 7 Days"
+FROM [Appointment Reminder 7 Days]
 )
-AS ar7
-ON v.Id = ar7.VisitId
+AS ar7d
+ON v.Id = ar7d.VisitId
 
-WHERE ar7.VisitId IS NULL AND
+WHERE ar7d.VisitId IS NULL AND
 v.Status__c = 'Scheduled' AND
-DATEDIFF(DAY, v.Appointment_Datetime__c, GETUTCDATE()) = 7
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 7
 
 -- 72 Hour Appointment Reminder
 SELECT v.Donor__c AS SubscriberKey,
@@ -226,7 +231,10 @@ v.Id AS VisitId,
 v.Appointment_Datetime__c AS AppointmentDateTime,
 c.Email AS Email,
 c.FirstName AS FirstName,
-cent.Name AS CenterName
+cent.Name AS CenterName,
+v.SPE_Analysis__c AS SPEAnalysis,
+v.Physical_Exam__c AS PhysicalExam,
+cent.Site__c AS SiteId
 
 FROM Visit__c_Salesforce as v
 
@@ -242,66 +250,30 @@ ON v.Donor__c = c.Id
 
 INNER JOIN
 (SELECT Id,
-Name
+Name,
+Site__c
 FROM Account_Salesforce)
 AS cent
-ON v.Center__c = cent.Id
+ON v.Center__c = cent.Name
 
 LEFT JOIN
 (SELECT VisitId
-FROM "Appointment Reminder 72 Hours"
+FROM [Appointment Reminder 72 Hours]
 )
 AS ar72
 ON v.Id = ar72.VisitId
 
 WHERE ar72.VisitId IS NULL AND
 v.Status__c = 'Scheduled' AND
-DATEDIFF(DAY, v.Appointment_Datetime__c, GETUTCDATE()) = 3
-
--- 24 Hour Appointment Reminder
-SELECT v.Donor__c AS SubscriberKey,
-v.Id AS VisitId,
-v.Appointment_Datetime__c AS AppointmentDateTime,
-c.Email AS Email,
-c.FirstName AS FirstName,
-cent.Name AS CenterName
-
-FROM Visit__c_Salesforce as v
-
-INNER JOIN
-(SELECT Id,
-Email,
-FirstName
-FROM Contact_Salesforce
-WHERE Enable_Appointment_Reminders__c = 1
-)
-AS c
-ON v.Donor__c = c.Id
-
-INNER JOIN
-(SELECT Id,
-Name
-FROM Account_Salesforce)
-AS cent
-ON v.Center__c = cent.Id
-
-LEFT JOIN
-(SELECT VisitId
-FROM "Appointment Reminder 24 Hours"
-)
-AS ar24
-ON v.Id = ar24.VisitId
-
-WHERE ar24.VisitId IS NULL AND
-v.Status__c = 'Scheduled' AND
-DATEDIFF(DAY, v.Appointment_Datetime__c, GETUTCDATE()) = 3
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 3
 
 -- SPE Reminder
 SELECT
 c.Id AS SubscriberKey,
 c.Email AS Email,
 c.FirstName AS FirstName,
-c.Last_SPE_Sample_Date__c AS LastSPESampleDate
+c.Last_SPE_Sample_Date__c AS LastSPESampleDate,
+CONCAT(c.Id,c.Last_SPE_Sample_Date__c) AS MailingKey
 
 FROM Contact_Salesforce AS c
 
@@ -315,7 +287,7 @@ ON vis.Donor__c = c.Id
 
 LEFT JOIN
 (SELECT a.SubscriberKey
-FROM "SPE Reminder" AS a
+FROM [SPE Reminder] AS a
 WHERE DATEDIFF(DAY, GETDATE(), a.DateAdded) < 28)
 AS apr
 ON apr.SubscriberKey = c.Id
@@ -598,3 +570,45 @@ c.FirstName,
 c.Email
 
 HAVING COUNT(v.Id) >= 6
+
+-- SCRATCH
+SELECT v.Donor__c AS SubscriberKey,
+v.Id AS VisitId,
+FORMAT(v.Appointment_Datetime__c, 'MM/dd/yyyy') AS AppointmentDateTime,
+c.Email AS Email,
+c.FirstName AS FirstName,
+cent.Name AS CenterName,
+v.SPE_Analysis__c AS SPEAnalysis,
+v.Physical_Exam__c AS PhysicalExam,
+cent.Site__c AS SiteId
+
+FROM Visit__c_Salesforce as v
+
+INNER JOIN
+(SELECT Id,
+Email,
+FirstName
+FROM Contact_Salesforce
+WHERE Enable_Appointment_Reminders__c = 1
+)
+AS c
+ON v.Donor__c = c.Id
+
+INNER JOIN
+(SELECT Id,
+Name,
+Site__c
+FROM Account_Salesforce)
+AS cent
+ON v.Center__c = cent.Name
+
+LEFT JOIN
+(SELECT VisitId
+FROM [Appointment Reminder 24 Hours]
+)
+AS ar24
+ON v.Id = ar24.VisitId
+
+WHERE ar24.VisitId IS NULL AND
+v.Status__c = 'Scheduled' AND
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 1

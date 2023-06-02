@@ -554,11 +554,11 @@
     </relatedLists>
     <relatedLists>
         <fields>CAMPAIGN.NAME</fields>
-        <fields>CAMPAIGN.START_DATE</fields>
         <fields>CAMPAIGN.CAMPAIGN_TYPE</fields>
-        <fields>CM.STATUS</fields>
-        <fields>CM.RESPONDED</fields>
-        <fields>CM.LAST_UPDATE</fields>
+        <fields>Incentive_Eligible__c</fields>
+        <fields>Last_Related_Visit__c</fields>
+        <fields>Total_Eligible_Donation_Count__c</fields>
+        <fields>Campaign_Level__c</fields>
         <relatedList>RelatedCampaignList</relatedList>
     </relatedLists>
     <relatedLists>

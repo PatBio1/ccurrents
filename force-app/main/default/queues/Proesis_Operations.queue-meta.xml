@@ -3,6 +3,9 @@
     <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>Proesis Operations</name>
     <queueSobject>
+        <sobjectType>Payment_Request__c</sobjectType>
+    </queueSobject>
+    <queueSobject>
         <sobjectType>Task</sobjectType>
     </queueSobject>
 </Queue>

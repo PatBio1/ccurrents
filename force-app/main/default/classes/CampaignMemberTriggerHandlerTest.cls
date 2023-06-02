@@ -5,6 +5,45 @@
 public without sharing class CampaignMemberTriggerHandlerTest {
 
     @IsTest
+    static void testTotalEligibleCountUpdate() {
+        Account testPerson = TestUtil.createDonor('234567');
+        insert testPerson;
+
+        Id personContactId = [SELECT PersonContactId FROM Account WHERE Id = :testPerson.Id][0].PersonContactId;
+
+        Campaign testCampaign = new Campaign(
+            Name = 'Test Campaign',
+            IsActive = true
+        );
+
+        insert testCampaign;
+
+        CampaignMember testCampaignMember = new CampaignMember(
+            CampaignId = testCampaign.Id,
+            ContactId = personContactId
+        );
+
+        insert testCampaignMember;
+
+        update new CampaignMember(
+            Id = testCampaignMember.Id,
+            Starting_Donation_Count__c = 1
+        );
+
+        CampaignMember cmCheck1 = [
+            SELECT Id,
+                Starting_Donation_Count__c,
+                Eligible_Donation_Count__c,
+                Total_Eligible_Donation_Count__c
+            FROM CampaignMember
+        ]
+            [0];
+
+        Assert.areEqual(0, cmCheck1.Eligible_Donation_Count__c);
+        Assert.areEqual(1, cmCheck1.Total_Eligible_Donation_Count__c);
+    }
+
+    @IsTest
     static void testIncentivePromotion() {
         Account testPerson = TestUtil.createDonor('123456');
         insert testPerson;

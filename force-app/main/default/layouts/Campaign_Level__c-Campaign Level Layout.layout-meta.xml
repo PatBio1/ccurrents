@@ -50,6 +50,10 @@
         <layoutColumns>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>Approval_Required__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>Award_Dollar_Amount__c</field>
             </layoutItems>
             <layoutItems>

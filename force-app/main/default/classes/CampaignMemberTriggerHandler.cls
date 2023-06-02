@@ -3,6 +3,9 @@
  */
 
 public without sharing class CampaignMemberTriggerHandler extends TriggerFactory.BaseHandler {
+    public override void beforeUpdate(Map<Id, SObject> oldMap, Map<Id, SObject> newMap) {
+        updateTotalEligibleDonationCount((Map<Id, CampaignMember>) newMap);
+    }
 
     public override void afterUpdate(Map<Id, SObject> oldMap, Map<Id, SObject> newMap) {
         incentiveCampaignPromotion((Map<Id, CampaignMember>) newMap, (Map<Id, CampaignMember>) oldMap);
@@ -20,8 +23,12 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
         for (CampaignMember cm : newCampaignMemberMap.values()) {
             CampaignMember oldCampaignMember = oldCampaignMemberMap.get(cm.Id);
             if (cm.Incentive_Eligible__c &&
-                ((cm.Eligible_Donation_Count__c > oldCampaignMember.Eligible_Donation_Count__c) ||
-                    (cm.Eligible_Donation_Count__c >= 1 && oldCampaignMember.Eligible_Donation_Count__c == null))) {
+                (
+                    (cm.Total_Eligible_Donation_Count__c > oldCampaignMember.Total_Eligible_Donation_Count__c) ||
+                        (cm.Starting_Donation_Count__c > oldCampaignMember.Starting_Donation_Count__c) ||
+                        (cm.Eligible_Donation_Count__c > oldCampaignMember.Eligible_Donation_Count__c)
+                )
+            ) {
                 campaignsToCheck.add(cm.CampaignId);
                 campaignMemberMap.put(cm.Id, cm);
             }
@@ -42,6 +49,7 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
                 Next_Campaign_Level__c,
                 Message_Subject_Default__c,
                 Message_Body_Default__c,
+                Approval_Required__c,
                 Campaign__r.Enable_Payment_Requests__c,
                 Campaign__r.Member_Incentive_Life_Days__c,
                 Campaign__r.Name
@@ -53,7 +61,10 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
         }
 
         for (CampaignMember cm : campaignMemberMap.values()) {
-            Campaign_Level__c clDetail = campaignLevelMap.get(String.valueOf(cm.CampaignId + '-' + cm.Eligible_Donation_Count__c));
+            // Fix Total Eligible Count due to before & after update trigger timing; this won't be correct in this context, so we have to re-calc again here in this one.
+            Integer totalCount = getCorrectTotalCount(cm);
+
+            Campaign_Level__c clDetail = campaignLevelMap.get(String.valueOf(cm.CampaignId + '-' + totalCount));
             if (clDetail != null &&
                 ((Date.valueOf(cm.CreatedDate).daysBetween(Date.today()) <= clDetail.Campaign__r.Member_Incentive_Life_Days__c) ||
                     clDetail.Campaign__r.Member_Incentive_Life_Days__c == null)
@@ -95,9 +106,56 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
             Campaign_Member_Id__c = String.valueOf(cm.Id),
             Status__c = Constants.PAYMENTREQUEST_STATUS_NEW,
             Message_Subject__c = cl.Message_Subject_Default__c,
-            Message_Body__c = cl.Message_Body_Default__c
+            Message_Body__c = cl.Message_Body_Default__c,
+            Approval_Required__c = cl.Approval_Required__c
         );
 
         return newPaymentRequest;
+    }
+
+    public static void updateTotalEligibleDonationCount(Map<Id, CampaignMember> newCMMap) {
+        for (CampaignMember cm : newCMMap.values()) {
+            fixCountValues(cm);
+        }
+    }
+
+    public static CampaignMember fixCountValues(CampaignMember inputCM) {
+        if (inputCM.Total_Eligible_Donation_Count__c == null) {
+            inputCM.Total_Eligible_Donation_Count__c = 0;
+        }
+
+        if (inputCM.Eligible_Donation_Count__c == null) {
+            inputCM.Eligible_Donation_Count__c = 0;
+        }
+
+        if (inputCM.Starting_Donation_Count__c == null) {
+            inputCM.Starting_Donation_Count__c = 0;
+        }
+
+        inputCM.Total_Eligible_Donation_Count__c = Integer.valueOf(inputCM.Starting_Donation_Count__c + inputCM.Total_Eligible_Donation_Count__c);
+
+        return inputCM;
+    }
+
+    public static Integer getCorrectTotalCount(CampaignMember inputCM) {
+        Integer totalCount = 0;
+        Integer startCount = 0;
+        Integer eligibleCount = 0;
+
+        if (inputCM.Total_Eligible_Donation_Count__c != null) {
+            totalCount = Integer.valueOf(inputCM.Total_Eligible_Donation_Count__c);
+        }
+
+        if (inputCM.Eligible_Donation_Count__c != null) {
+            eligibleCount = Integer.valueOf(inputCM.Eligible_Donation_Count__c);
+        }
+
+        if (inputCM.Starting_Donation_Count__c != null) {
+            startCount = Integer.valueOf(inputCM.Starting_Donation_Count__c);
+        }
+
+        totalCount = startCount + eligibleCount;
+
+        return totalCount;
     }
 }

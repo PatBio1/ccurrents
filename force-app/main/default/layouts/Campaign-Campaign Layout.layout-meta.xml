@@ -309,12 +309,11 @@
     </relatedLists>
     <relatedLists>
         <fields>MEMBER_TYPE</fields>
-        <fields>STATUS</fields>
-        <fields>FULL_NAME</fields>
-        <fields>TITLE</fields>
         <fields>FIRST_NAME</fields>
         <fields>LAST_NAME</fields>
-        <fields>COMPANY</fields>
+        <fields>Incentive_Eligible__c</fields>
+        <fields>Total_Eligible_Donation_Count__c</fields>
+        <fields>Campaign_Level__c</fields>
         <relatedList>RelatedCampaignMemberList</relatedList>
     </relatedLists>
     <relatedLists>

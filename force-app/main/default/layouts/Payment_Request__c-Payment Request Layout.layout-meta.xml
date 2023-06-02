@@ -47,6 +47,10 @@
                 <field>Donor__c</field>
             </layoutItems>
             <layoutItems>
+                <behavior>Readonly</behavior>
+                <field>Donor_Last_Used_Center_Name__c</field>
+            </layoutItems>
+            <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Visit__c</field>
             </layoutItems>
@@ -59,6 +63,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Campaign_Member_Id__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Approval_Required__c</field>
             </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>

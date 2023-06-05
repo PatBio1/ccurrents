@@ -1,4 +1,4 @@
-public without sharing class CancelCardController {
+public without sharing class CancelCardController { 
     @AuraEnabled
     public static PaymentMethod getDonorDefaultPaymentMethod(String donorId) {
         Payment_Method__c targetPaymentMethod;

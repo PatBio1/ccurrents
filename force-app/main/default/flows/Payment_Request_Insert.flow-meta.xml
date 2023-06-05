@@ -4,7 +4,7 @@
         <name>Submit_for_Approval</name>
         <label>Submit for Approval</label>
         <locationX>50</locationX>
-        <locationY>1151</locationY>
+        <locationY>935</locationY>
         <actionName>submit</actionName>
         <actionType>submit</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -36,19 +36,19 @@
     </actionCalls>
     <apiVersion>57.0</apiVersion>
     <assignments>
-        <name>Add_Id_to_Approver_Collection</name>
-        <label>Add Id to Approver Collection</label>
-        <locationX>138</locationX>
-        <locationY>935</locationY>
+        <name>Add_Queue_Id_to_Collection</name>
+        <label>Add Queue Id to Collection</label>
+        <locationX>50</locationX>
+        <locationY>815</locationY>
         <assignmentItems>
             <assignToReference>approverIds</assignToReference>
             <operator>Add</operator>
             <value>
-                <elementReference>Loop_Queue_Ids.Id</elementReference>
+                <elementReference>Get_Dallas_Queue_Id.Id</elementReference>
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Loop_Queue_Ids</targetReference>
+            <targetReference>Submit_for_Approval</targetReference>
         </connector>
     </assignments>
     <decisions>
@@ -120,20 +120,6 @@
     <environments>Default</environments>
     <interviewLabel>Payment Request Insert {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Payment Request Insert</label>
-    <loops>
-        <name>Loop_Queue_Ids</name>
-        <label>Loop Queue Ids</label>
-        <locationX>50</locationX>
-        <locationY>815</locationY>
-        <collectionReference>Get_Dallas_Queue_Id</collectionReference>
-        <iterationOrder>Asc</iterationOrder>
-        <nextValueConnector>
-            <targetReference>Add_Id_to_Approver_Collection</targetReference>
-        </nextValueConnector>
-        <noMoreValuesConnector>
-            <targetReference>Submit_for_Approval</targetReference>
-        </noMoreValuesConnector>
-    </loops>
     <processMetadataValues>
         <name>BuilderType</name>
         <value>
@@ -181,7 +167,7 @@
         <locationY>695</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Loop_Queue_Ids</targetReference>
+            <targetReference>Add_Queue_Id_to_Collection</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -198,7 +184,7 @@
                 <stringValue>Queue</stringValue>
             </value>
         </filters>
-        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Group</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>

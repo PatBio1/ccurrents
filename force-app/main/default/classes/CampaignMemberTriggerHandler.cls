@@ -98,7 +98,7 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
         ).left(80);
         Payment_Request__c newPaymentRequest = new Payment_Request__c(
             Name = nameString,
-            Reason_Description__c = nameString,
+            Reason_Description__c = nameString.left(50),
             Amount_Dollars__c = cl.Award_Dollar_Amount__c,
             Amount_Points__c = cl.Award_Point_Amount__c,
             Donor__c = cm.ContactId,

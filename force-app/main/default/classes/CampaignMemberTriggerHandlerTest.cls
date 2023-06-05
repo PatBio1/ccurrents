@@ -159,6 +159,9 @@ public without sharing class CampaignMemberTriggerHandlerTest {
 
         Test.stopTest();
 
+        // Is our Approval Process Active here?
+        ProcessDefinition prApproval = [SELECT Id FROM ProcessDefinition WHERE DeveloperName = 'Payment_Request_Approval' AND State = 'Active'][0];
+
         for (Payment_Request__c pr : [
             SELECT Id,
                 Name,
@@ -179,8 +182,12 @@ public without sharing class CampaignMemberTriggerHandlerTest {
                 Assert.areEqual(100, pr.Amount_Dollars__c);
                 Assert.areEqual('You achieved level 1!', pr.Message_Subject__c);
                 Assert.areEqual('Here\'s some sweet moolah', pr.Message_Body__c);
-                // Submitted Status for the working approval process; this is checking that the automated approval process is working. The Status should be New, but the Approval Process fires and sets this to Submitted. This will fail if the approval process is deactivated, which is correct.
-                Assert.areEqual(Constants.PAYMENTREQUEST_STATUS_SUBMITTED, pr.Status__c);
+                // Approval processes don't activate on first deployment, but stay active and affect testing after deployment and activation. Our test checks both conditions here.
+                if (prApproval != null) {
+                    Assert.areEqual(Constants.PAYMENTREQUEST_STATUS_SUBMITTED, pr.Status__c);
+                } else {
+                    Assert.areEqual(Constants.PAYMENTREQUEST_STATUS_NEW, pr.Status__c);
+                }
             } else {
                 Assert.areEqual(50, pr.Amount_Dollars__c);
                 Assert.areEqual('You achieved level 2!', pr.Message_Subject__c);

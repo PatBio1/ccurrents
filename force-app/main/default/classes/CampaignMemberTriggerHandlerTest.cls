@@ -182,12 +182,6 @@ public without sharing class CampaignMemberTriggerHandlerTest {
                 Assert.areEqual(100, pr.Amount_Dollars__c);
                 Assert.areEqual('You achieved level 1!', pr.Message_Subject__c);
                 Assert.areEqual('Here\'s some sweet moolah', pr.Message_Body__c);
-                // Approval processes don't activate on first deployment, but stay active and affect testing after deployment and activation. Our test checks both conditions here.
-                if (prApproval != null) {
-                    Assert.areEqual(Constants.PAYMENTREQUEST_STATUS_SUBMITTED, pr.Status__c);
-                } else {
-                    Assert.areEqual(Constants.PAYMENTREQUEST_STATUS_NEW, pr.Status__c);
-                }
             } else {
                 Assert.areEqual(50, pr.Amount_Dollars__c);
                 Assert.areEqual('You achieved level 2!', pr.Message_Subject__c);

@@ -178,12 +178,12 @@ public without sharing class VisitTriggerHelper {
                 }
             }
 
-            Map<Id, Id> donorIdToExpectedPaymentReplacementVisitId = new Map<Id, Id>();
+            Map<Id, Visit__c> donorIdToExpectedPaymentReplacementVisit = new Map<Id, Visit__c>();
             Map<Id, Date> donorIdToPaymentMethodExpirationDate = new Map<Id, Date>();
 
             for (Contact donor : [
                 SELECT Id, Account.Days_Until_Annum__pc, Account.Days_until_Triannum__pc, (
-                    SELECT Name, Donor__c, Appointment_Datetime__c, Physical_Exam__c, SPE_Analysis__c, Status__c 
+                    SELECT Name, Donor__c, Appointment_Datetime__c, Physical_Exam__c, SPE_Analysis__c, Status__c, Center_Donation_Type__r.Center__c 
                     FROM Visits__r 
                     ORDER BY Appointment_Datetime__c ASC
                 ), (
@@ -202,7 +202,7 @@ public without sharing class VisitTriggerHelper {
                             continue;
                         }
 
-                        donorIdToExpectedPaymentReplacementVisitId.put(donor.Id, visit.Id);
+                        donorIdToExpectedPaymentReplacementVisit.put(donor.Id, visit);
                         donorIdToPaymentMethodExpirationDate.put(donor.Id, donor.Payment_Methods__r[0].Expiration__c);
                         break;
                     }
@@ -286,12 +286,12 @@ public without sharing class VisitTriggerHelper {
             }
 
             Map<Id, Task> tasksToUpdate = new Map<Id, Task>();
-            if (donorIdToExpectedPaymentReplacementVisitId.size() > 0) {
-                Set<Id> donorIdsWithoutPaymentReplacementTask = new Set<Id>(donorIdToExpectedPaymentReplacementVisitId.keySet());
+            if (donorIdToExpectedPaymentReplacementVisit.size() > 0) {
+                Set<Id> donorIdsWithoutPaymentReplacementTask = new Set<Id>(donorIdToExpectedPaymentReplacementVisit.keySet());
 
-                for(Task paymentRenewalTask : [SELECT Id, WhoId, WhatId FROM Task WHERE Subject = :Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT AND WhoId IN :donorIdToExpectedPaymentReplacementVisitId.keySet()]) {
+                for(Task paymentRenewalTask : [SELECT Id, WhoId, WhatId FROM Task WHERE Subject = :Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT AND WhoId IN :donorIdToExpectedPaymentReplacementVisit.keySet()]) {
                     donorIdsWithoutPaymentReplacementTask.remove(paymentRenewalTask.WhoId);
-                    Id expectedPaymentReplacementVisitId = donorIdToExpectedPaymentReplacementVisitId.get(paymentRenewalTask.WhoId);
+                    Id expectedPaymentReplacementVisitId = donorIdToExpectedPaymentReplacementVisit.get(paymentRenewalTask.WhoId).Id;
 
                     if (expectedPaymentReplacementVisitId != null && paymentRenewalTask.WhatId != expectedPaymentReplacementVisitId) {
                         paymentRenewalTask.WhatId = expectedPaymentReplacementVisitId;
@@ -301,9 +301,10 @@ public without sharing class VisitTriggerHelper {
 
                 for(Id missingReplacementTaskDonor : donorIdsWithoutPaymentReplacementTask) {
                     tasksToCreate.add(CancelCardController.createReplacePaymentMethodTask(
-                        donorIdToExpectedPaymentReplacementVisitId.get(missingReplacementTaskDonor),
+                        donorIdToExpectedPaymentReplacementVisit.get(missingReplacementTaskDonor).Id,
                         donorIdToPaymentMethodExpirationDate.get(missingReplacementTaskDonor),
-                        missingReplacementTaskDonor
+                        missingReplacementTaskDonor,
+                        donorIdToExpectedPaymentReplacementVisit.get(missingReplacementTaskDonor).Center_Donation_Type__r.Center__c
                     ));
                 }
             }

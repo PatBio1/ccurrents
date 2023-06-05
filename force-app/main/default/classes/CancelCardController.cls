@@ -68,7 +68,7 @@ public without sharing class CancelCardController {
 
         // Look for an existing visit, if we find one we need to attach a special note to the visit
         List<Visit__c> futureDonorVisits = [
-            SELECT Id 
+            SELECT Id, Center_Donation_Type__r.Center__c 
             FROM Visit__c 
             WHERE Donor__c = :paymentMethod.Donor__c AND 
                 Status__c IN ('New', 'Scheduled') AND 
@@ -78,19 +78,25 @@ public without sharing class CancelCardController {
         ];
 
         if (!futureDonorVisits.isEmpty()) {
+            Visit__c targetVisit = futureDonorVisits[0];
             insert CancelCardController.createReplacePaymentMethodTask(
-                futureDonorVisits[0].Id, targetPaymentMethod[0].Expiration__c, paymentMethod.Donor__c
+                targetVisit.Id, targetPaymentMethod[0].Expiration__c, paymentMethod.Donor__c, targetVisit.Center_Donation_Type__r.Center__c
             );
         }
     }
 
-    public static Task createReplacePaymentMethodTask(Id targetReplacementVisitId, Date paymentExpirationDate, Id paymentDonorId) {
+    public static Task createReplacePaymentMethodTask(Id targetReplacementVisitId, Date paymentExpirationDate, Id paymentDonorId, Id centerId) {
         Task replacePaymentMethodTask = new Task();
         replacePaymentMethodTask.Subject = Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT;
         replacePaymentMethodTask.Description = Constants.REPLACE_PAYMENT_METHOD_TASK_DESCRIPTION;
         replacePaymentMethodTask.WhatId = targetReplacementVisitId;
         replacePaymentMethodTask.WhoId = paymentDonorId;
         replacePaymentMethodTask.ActivityDate = paymentExpirationDate;
+        
+        Group foundCenterManagerQueue = QueueSelector.getCenterManagerQueue(centerId);
+        if (foundCenterManagerQueue != null) {
+            replacePaymentMethodTask.OwnerId = foundCenterManagerQueue.Id;
+        }
 
         return replacePaymentMethodTask;
     }

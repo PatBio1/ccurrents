@@ -61,7 +61,7 @@ public with sharing class OnbePaymentServiceTest {
 
         Test.startTest();
         OnbePaymentService onbePayService = new OnbePaymentService();
-        onbePayService.processPayment(testDonor.Id, comment, (Long)(targetAmount * 100));
+        onbePayService.processPayment(testDonor.Id, comment, (Long)(targetAmount * 100), 'transaction-12476123');
         Test.stopTest();
     }
 

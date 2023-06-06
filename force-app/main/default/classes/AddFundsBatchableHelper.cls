@@ -70,11 +70,21 @@ public without sharing class AddFundsBatchableHelper {
 
             // We are multiplying by 100 because the payment service expects the amount in cents
             try {
-                paymentService.processPayment(addFundsRequest.accountNumber, completeComment, (Long)(addFundsRequest.total * 100));
+                String onbeTransactionId = (String.isEmpty(addFundsRequest.existingOnbeTransactionId)) ? addFundsRequest.accountNumber + '-' + String.valueOf(System.currentTimeMillis()) : addFundsRequest.existingOnbeTransactionId;
+                String message = paymentService.processPayment(addFundsRequest.accountNumber, completeComment, (Long)(addFundsRequest.total * 100), onbeTransactionId);
+
+                if (message == Constants.ONBE_ACCOUNT_MANAGEMENT_PROCESSING_STATUS) {
+                    addFundsRequest.recordAPIResponse(false, 'Payment is still processing.');
+                    addFundsRequest.setOnbeTransactionId(onbeTransactionId); // Setting transactions id to ensure we grab this transaction again, should only be done with 2 code
+                    continue;
+                }
+
                 addFundsRequest.recordAPIResponse(true, '');
+                addFundsRequest.setOnbeTransactionId(null); // Setting transaction id to null to ensure we don't reuse the transaction
             } catch(Exception e) {
                 System.debug('Error processing payment: ' + e.getMessage());
                 addFundsRequest.recordAPIResponse(false, e.getMessage());
+                addFundsRequest.setOnbeTransactionId(null); // Setting transaction id to null to ensure we don't reuse the transaction
             }
             
         }
@@ -101,6 +111,7 @@ public without sharing class AddFundsBatchableHelper {
         for(DonorCompInvocable.AddFundsRequest request : addFundsRequestToTransaction.keySet()) {
             Transaction__c transactionRecord = addFundsRequestToTransaction.get(request);
             transactionRecord.Status__c = (request.isSuccessfullyProcessed) ? 'Complete' : 'Error';
+            transactionRecord.Onbe_Transaction_Id__c = request.existingOnbeTransactionId; // Even if the onbeTransaction is null we want to set this, a null onbeTransactionId indicates that the transaction finished processing
 
             if (!request.isSuccessfullyProcessed) {
                 Datetime nextRetryDatetime = System.now();

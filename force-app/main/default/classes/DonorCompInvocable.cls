@@ -520,6 +520,7 @@ public without sharing class DonorCompInvocable {
         public Id donorContactId;
         public Id visitId;
         public Id existingDebitTransactionId;
+        public String existingOnbeTransactionId;
 
         public List<AddFundsLineItem> lineItems;
         public String accountNumber;
@@ -541,11 +542,16 @@ public without sharing class DonorCompInvocable {
             this.accountNumber = accountNumber;
             this.transactionSubType = transactionSubType;
             this.existingDebitTransactionId = existingDebitTransactionId;
+            this.existingOnbeTransactionId = '';
 
             this.comments = new List<String>();
             this.lineItems = new List<AddFundsLineItem>();
             this.total = 0;
             this.isExceptionPayment = false;
+        }
+
+        public void setOnbeTransactionId(String transactionId) {
+            this.existingOnbeTransactionId = transactionId;
         }
 
         public void recordAPIResponse(Boolean wasSuccessful, String response) {

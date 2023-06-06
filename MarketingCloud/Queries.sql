@@ -142,23 +142,25 @@ GROUP BY v2.Donor__c
 SELECT v.Id AS VisitId,
 v.Donor__c AS SubscriberKey,
 c.FirstName AS FirstName,
-c.Email AS Email
+c.Email AS Email,
+v.Appointment_Datetime__c
 
 FROM Visit__c_Salesforce AS v
 
 INNER JOIN Contact_Salesforce AS c
-ON v.Id = c.Id
+ON v.Donor__c = c.Id
 
 LEFT JOIN
 (SELECT VisitId
-FROM "Post Visit Satisfaction Email"
+FROM [Post Visit Satisfaction Email]
 )
 AS pvse
 ON v.Id = pvse.VisitId
 
 WHERE v.Status__c = 'Complete' AND
 v.Outcome__c = 'Donation' AND
-pvse.VisitId IS NULL
+pvse.VisitId IS NULL AND
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 0
 
 -- Welcome New Donor
 SELECT c.Id AS SubscriberKey,

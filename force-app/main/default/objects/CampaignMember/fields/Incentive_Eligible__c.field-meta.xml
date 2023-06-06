@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Incentive_Eligible__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>Indicates whether this Campaign Member is eligible for incentives in this Campaign. For Incentive Type Campaigns only. Defaults to checked (true).</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Indicates whether this Campaign Member is eligible for incentives in this Campaign.</inlineHelpText>
+    <label>Incentive Eligible?</label>
+    <type>Checkbox</type>
+</CustomField>

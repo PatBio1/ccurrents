@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Approval_Required__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indicates if an approval is required for this payment request. Set by automation, and triggers other automation to initiate an approval process.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Indicates if an approval is required for this payment request.</inlineHelpText>
+    <label>Approval Required</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

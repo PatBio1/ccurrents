@@ -118,19 +118,17 @@ public without sharing class DonorCompInvocable {
 
         List<Contact> targetContacts = [
             SELECT Id, Name, AccountId, Account.Last_Used_Center__pc, Loyalty_Level__c, Loyalty_Level__r.Donation_Points__c, Loyalty_Level__r.Donation_Payment__c, Total_Visits_365d__c,
-                Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, Loyalty_Level__r.Next_Level__c, Loyalty_Level__r.Next_Level__r.Threshold_Payment__c, Loyalty_Level__r.Next_Level__r.Threshold_Points__c,
-                (
-                    SELECT Id, Name, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c
-                    FROM Visits__r
-                    WHERE Status__c = 'Complete' AND Outcome__c = 'Donation'
-                    ORDER BY Appointment_Datetime__c DESC
-                ),
-                (
-                    SELECT Id, Account_Number__c
-                    FROM Payment_Methods__r
-                    WHERE Is_Active__c = true AND Days_Until_Expiration__c > 0 AND isDefault__c = true
-                    LIMIT 1
-                )
+                Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, Loyalty_Level__r.Next_Level__c, Loyalty_Level__r.Next_Level__r.Threshold_Payment__c, Loyalty_Level__r.Next_Level__r.Threshold_Points__c, (
+                SELECT Id, Name, Center_Donation_Type__r.Center__c, Center_Donation_Type__r.Donation_Type__c
+                FROM Visits__r
+                WHERE Status__c = 'Complete' AND Outcome__c = 'Donation'
+                ORDER BY Appointment_Datetime__c DESC
+            ), (
+                SELECT Id, Account_Number__c
+                FROM Payment_Methods__r
+                WHERE Is_Active__c = true AND Days_Until_Expiration__c > 0 AND isDefault__c = true
+                LIMIT 1
+            )
             FROM Contact
             WHERE Account.DonorId__c IN :donorNumbersToQuery
         ];
@@ -143,19 +141,19 @@ public without sharing class DonorCompInvocable {
         Map<Id, Map<Id, AggregateResult>> donorIdToActiveLastPromotionDatesByTier = new Map<Id, Map<Id, AggregateResult>>();
         Datetime loyaltyThresholdDate = Datetime.now().addDays(-Integer.valueOf(loyaltyThresholdWindow));
 
-        for(AggregateResult result : [
-            SELECT Transaction__r.Donor__c donor, Promotion_Level__c loyaltyTier, MAX(CreatedDate) lastPromotionDate 
-            FROM Txn_Line_Item__c 
+        for (AggregateResult result : [
+            SELECT Transaction__r.Donor__c donor, Promotion_Level__c loyaltyTier, MAX(CreatedDate) lastPromotionDate
+            FROM Txn_Line_Item__c
             WHERE Promotion_Level__c != null AND CreatedDate >= :loyaltyThresholdDate AND Transaction__r.Donor__c IN :targetContacts
             GROUP BY Transaction__r.Donor__c, Promotion_Level__c
         ]) {
-            Map<Id, AggregateResult> activeLastPromotionDatesByTier = donorIdToActiveLastPromotionDatesByTier.get((Id)result.get('donor'));
+            Map<Id, AggregateResult> activeLastPromotionDatesByTier = donorIdToActiveLastPromotionDatesByTier.get((Id) result.get('donor'));
             if (activeLastPromotionDatesByTier == null) {
                 activeLastPromotionDatesByTier = new Map<Id, AggregateResult>();
             }
 
-            activeLastPromotionDatesByTier.put((Id)result.get('loyaltyTier'), result);
-            donorIdToActiveLastPromotionDatesByTier.put((Id)result.get('donor'), activeLastPromotionDatesByTier);
+            activeLastPromotionDatesByTier.put((Id) result.get('loyaltyTier'), result);
+            donorIdToActiveLastPromotionDatesByTier.put((Id) result.get('donor'), activeLastPromotionDatesByTier);
         }
 
         Map<Id, Integer> donorIdToTotalVisitCount = DonorBatchableHelper.calculateDonor365DayVisitTotals(targetContacts);
@@ -170,8 +168,8 @@ public without sharing class DonorCompInvocable {
             // If there isn't a payment method that is active/not expired, then we need to notify the center managers that a donation couldn't be processed
             Boolean hasPaymentMethod = (foundContact.Payment_Methods__r != null && foundContact.Payment_Methods__r.size() > 0);
             addFundsRequest = new AddFundsRequest(
-                foundContact.Id, 
-                targetVisitRecord.Id, 
+                foundContact.Id,
+                targetVisitRecord.Id,
                 hasPaymentMethod ? foundContact.Payment_Methods__r[0].Account_Number__c : '',
                 'Donation Payment'
             );
@@ -179,7 +177,7 @@ public without sharing class DonorCompInvocable {
 
             Map<Id, AggregateResult> activeLastPromotionDatesByTier = donorIdToActiveLastPromotionDatesByTier.get(foundContact.Id);
             Integer totalVisitCount = donorIdToTotalVisitCount.get(foundContact.Id);
-            
+
             Rate__c targetRateRecord = centerAndDonationTypeToRate.get(
                 targetVisitRecord.Center_Donation_Type__r.Center__c + '-' + targetVisitRecord.Center_Donation_Type__r.Donation_Type__c
             );
@@ -218,8 +216,8 @@ public without sharing class DonorCompInvocable {
 
             Decimal loyaltyLevelPaymentBonus = (foundContact.Loyalty_Level__r.Donation_Payment__c != null) ? foundContact.Loyalty_Level__r.Donation_Payment__c : 0;
             if (targetRateRecord != null && targetRateRecord.Base_Payment__c != null && targetRateRecord.Base_Payment__c > 0) {
-                Decimal donationPaymentTotal = targetRateRecord.Base_Payment__c + loyaltyLevelPaymentBonus;                
-                
+                Decimal donationPaymentTotal = targetRateRecord.Base_Payment__c + loyaltyLevelPaymentBonus;
+
                 txnLineItems.add(new Txn_Line_Item__c(
                     Item__c = 'Donation Payment',
                     Quantity__c = 1,
@@ -303,8 +301,8 @@ public without sharing class DonorCompInvocable {
             // If it is and there is another level, promote the donor!
             if (
                 foundContact.Loyalty_Level__c != null &&
-                targetPromotionLevel != null &&
-                totalVisitCount == targetPromotionLevel.Donation_Threshold__c
+                    targetPromotionLevel != null &&
+                    totalVisitCount == targetPromotionLevel.Donation_Threshold__c
             ) {
                 wasPromotionTriggered = true;
 
@@ -322,8 +320,8 @@ public without sharing class DonorCompInvocable {
                 AggregateResult lastPromotionDate = activeLastPromotionDatesByTier?.get(targetPromotionLevel.Id);
                 if (
                     activeLastPromotionDatesByTier == null ||
-                    lastPromotionDate == null ||
-                    lastPromotionDate.get('lastPromotionDate') == null
+                        lastPromotionDate == null ||
+                        lastPromotionDate.get('lastPromotionDate') == null
                 ) {
                     List<Txn_Line_Item__c> lineItems = donorIdToTxnLineItems.get(foundContact.Id);
 
@@ -407,7 +405,7 @@ public without sharing class DonorCompInvocable {
             txnLineItems.addAll(donorIdToTxnLineItems.get(transactionRecord.Donor__c));
 
             // Relate the transaction to the message
-            for(Message__c message : donorIdToMessages.get(transactionRecord.Donor__c)) {
+            for (Message__c message : donorIdToMessages.get(transactionRecord.Donor__c)) {
                 message.Transaction__c = transactionRecord.Id;
             }
 
@@ -418,7 +416,7 @@ public without sharing class DonorCompInvocable {
         insert messages;
 
         if (donorIdToMissingPaymentMethodLogs.size() > 0) {
-            for(Id donorIdWithTransactionLog : donorIdToMissingPaymentMethodLogs.keySet()) {
+            for (Id donorIdWithTransactionLog : donorIdToMissingPaymentMethodLogs.keySet()) {
                 Transaction_Log__c transactionLog = donorIdToMissingPaymentMethodLogs.get(donorIdWithTransactionLog);
                 Transaction__c transactionRecord = donorIdToTransaction.get(donorIdWithTransactionLog);
 
@@ -442,7 +440,8 @@ public without sharing class DonorCompInvocable {
             donorToCampaignMembers.put(visit.Donor__c, new List<CampaignMember>());
             donorToVisitsInRange.put(visit.Donor__c, new List<Visit__c>());
         }
-    
+
+        // The Campaign Member Trigger assumes the visit counter assumes this query (below) is looking only at active Incentive Type Campaigns. If this changes, verify the login in the Campaign Member Trigger Handler class is correct.
         for (CampaignMember cm : [
             SELECT Id,
                 ContactId,
@@ -451,14 +450,14 @@ public without sharing class DonorCompInvocable {
                 CreatedDate
             FROM CampaignMember
             WHERE Campaign.IsActive = TRUE
-            AND Campaign.Type = 'Incentive'
+            AND Campaign.Type = :Constants.CAMPAIGN_TYPE_INCENTIVE
             AND ContactId IN :donorToCampaignMembers.keySet()
         ]) {
             List<CampaignMember> donorCMs = donorToCampaignMembers.get(cm.ContactId);
             cm.Eligible_Donation_Count__c = 0; // set to zero; we want to recount these in case something changes
             donorCMs.add(cm);
             donorToCampaignMembers.put(cm.ContactId, donorCMs);
-            datesInRange.add(Date.valueOf(cm.CreatedDate));
+            datesInRange.add(cm.CreatedDate.date());
         }
 
         if (datesInRange.size() == 0) {
@@ -489,17 +488,24 @@ public without sharing class DonorCompInvocable {
             if (donorToCampaignMembers.get(donorId).size() >= 1) {
                 for (CampaignMember cm : donorToCampaignMembers.get(donorId)) {
                     Integer campaignMemberVisitCounter = 0;
-                    Date checkDate = Date.valueOf(cm.CreatedDate);
+                    String latestVisitId = null;
+                    Datetime maxDateTime = Datetime.newInstance(1900, 01, 01, 00, 00, 00);
+                    Date checkDate = cm.CreatedDate.date();
                     if (donorToVisitsInRange.get(cm.ContactId).size() >= 1) {
                         for (Visit__c visit : donorToVisitsInRange.get(cm.ContactId)) {
                             if (Date.valueOf(visit.Appointment_Datetime__c) >= checkDate) {
                                 campaignMemberVisitCounter++;
+                                if (visit.Appointment_Datetime__c > maxDateTime) {
+                                    maxDateTime = visit.Appointment_Datetime__c;
+                                    latestVisitId = visit.Id;
+                                }
                             }
                         }
                     }
                     CampaignMember cmUpdate = new CampaignMember(
                         Id = cm.Id,
-                        Eligible_Donation_Count__c = campaignMemberVisitCounter
+                        Eligible_Donation_Count__c = campaignMemberVisitCounter,
+                        Last_Related_Visit__c = latestVisitId
                     );
                     finalCampaignMemberUpdates.add(cmUpdate);
                 }
@@ -514,6 +520,7 @@ public without sharing class DonorCompInvocable {
         public Id donorContactId;
         public Id visitId;
         public Id existingDebitTransactionId;
+        public String existingOnbeTransactionId;
 
         public List<AddFundsLineItem> lineItems;
         public String accountNumber;
@@ -535,11 +542,16 @@ public without sharing class DonorCompInvocable {
             this.accountNumber = accountNumber;
             this.transactionSubType = transactionSubType;
             this.existingDebitTransactionId = existingDebitTransactionId;
+            this.existingOnbeTransactionId = '';
 
             this.comments = new List<String>();
             this.lineItems = new List<AddFundsLineItem>();
             this.total = 0;
             this.isExceptionPayment = false;
+        }
+
+        public void setOnbeTransactionId(String transactionId) {
+            this.existingOnbeTransactionId = transactionId;
         }
 
         public void recordAPIResponse(Boolean wasSuccessful, String response) {
@@ -561,7 +573,7 @@ public without sharing class DonorCompInvocable {
         public String type;
         public Decimal amount;
         public Integer quantity;
-        
+
         public AddFundsLineItem(String item, String type, Decimal amount) {
             this(item, type, amount, 1);
         }

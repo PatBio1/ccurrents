@@ -7,7 +7,7 @@
     <isNameField>false</isNameField>
     <isSortingDisabled>false</isSortingDisabled>
     <label>Reason</label>
-    <length>40</length>
+    <length>50</length>
     <required>false</required>
     <type>Text</type>
     <unique>false</unique>

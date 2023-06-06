@@ -151,7 +151,7 @@
             <targetReference>Message_Type_Decision</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Obsolete</status>
     <textTemplates>
         <name>Donation_Notification_Body</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>

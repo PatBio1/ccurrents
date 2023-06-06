@@ -157,6 +157,15 @@
         <excludeButtons>New</excludeButtons>
         <fields>NAME</fields>
         <fields>Donor__c</fields>
+        <fields>Reason_Description__c</fields>
+        <fields>Status__c</fields>
+        <relatedList>Payment_Request__c.Transaction_Result__c</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <excludeButtons>MassChangeOwner</excludeButtons>
+        <excludeButtons>New</excludeButtons>
+        <fields>NAME</fields>
+        <fields>Donor__c</fields>
         <fields>Visit__c</fields>
         <fields>Body__c</fields>
         <fields>CREATED_DATE</fields>

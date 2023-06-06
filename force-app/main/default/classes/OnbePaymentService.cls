@@ -88,19 +88,47 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         
 
         OnbeWsPrepaid.AccountManagementApiWebServices accountManagementAPI = new OnbeWsPrepaid.AccountManagementApiWebServices();
-        OnbeResponsePrepaid.CreateAccountResponse createActivateCardResponse = accountManagementAPI.createAccount_Http(
-            PROGRAM_ID, PROMOTION_ID, donorId + '-' + String.valueOf(System.currentTimeMillis()), partnerUserId, ACCESS_LEVEL, true, null, newLoad, newLink, newReg
-        );
+        String transactionId = String.valueOf(donorId) + '-' + String.valueOf(System.currentTimeMillis());
 
-        if (createActivateCardResponse.code != 0) {
-            if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
-                throw new OnbeServiceException('Error received from Onbe: ' + createActivateCardResponse.code + '-' + createActivateCardResponse.sub_code);
+        OnbeResponsePrepaid.CreateAccountResponse processedCreateAccountResponse;
+        Integer maxSyncAttempts = 5, currentSyncAttemptCount = 0;
+
+        while(processedCreateAccountResponse == null && (currentSyncAttemptCount < maxSyncAttempts)) {
+            OnbeResponsePrepaid.CreateAccountResponse createActivateCardResponse = accountManagementAPI.createAccount_Http(
+                PROGRAM_ID, PROMOTION_ID, transactionId, partnerUserId, ACCESS_LEVEL, true, null, newLoad, newLink, newReg
+            );
+
+            if (createActivateCardResponse.code == Constants.ONBE_PROCESSING_ACCOUNT_MANAGEMENT) {
+                // This is a code that is returned when the transaction is still being processed by Onbe, so we need to wait and try again
+                currentSyncAttemptCount++;
+                continue;
+            } else {
+                processedCreateAccountResponse = createActivateCardResponse;
             }
         }
 
-        if (!String.isEmpty(createActivateCardResponse.accountNumber) && !String.isEmpty(initialPIN)) {
+        if (processedCreateAccountResponse == null) {
+            // Create a Payment Method with the transaction id for a manual retry later
+            Payment_Method__c newPaymentMethod = new Payment_Method__c();
+            newPaymentMethod.Name = PaymentService__mdt.getInstance('OnbePaymentService').PaymentServiceLabel__c;
+            newPaymentMethod.Account_Token__c = cardPackageId;
+            newPaymentMethod.Account_Number__c = '0000000000000000'; // Enter a bogus number that can be edited later
+            newPaymentMethod.Onbe_Transaction_Id__c = transactionId;
+            newPaymentMethod.Donor__c = donorId;
+            newPaymentMethod.Is_Active__c = false;
+            newPaymentMethod.isDefault__c = false;
+            insert newPaymentMethod;
+
+            return 'Processing';
+        } else if (processedCreateAccountResponse.code != 0) {
+            if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
+                throw new OnbeServiceException('Error received from Onbe: ' + processedCreateAccountResponse.code + '-' + processedCreateAccountResponse.sub_code);
+            }
+        }
+
+        if (!String.isEmpty(processedCreateAccountResponse.accountNumber) && !String.isEmpty(initialPIN)) {
             OnbeResponsePrepaid.SetPinResponse setPinResponse = accountManagementAPI.setPin_Http(
-                PROGRAM_ID, PROMOTION_ID, createActivateCardResponse.accountNumber, donorId + '-' + String.valueOf(System.currentTimeMillis()), initialPIN
+                PROGRAM_ID, PROMOTION_ID, processedCreateAccountResponse.accountNumber, donorId + '-' + String.valueOf(System.currentTimeMillis()), initialPIN
             );
 
             if (setPinResponse.code != 0) {
@@ -130,7 +158,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         Payment_Method__c newPaymentMethod = new Payment_Method__c();
         newPaymentMethod.Name = PaymentService__mdt.getInstance('OnbePaymentService').PaymentServiceLabel__c;
         newPaymentMethod.Account_Token__c = cardPackageId;
-        newPaymentMethod.Account_Number__c = createActivateCardResponse.accountNumber;
+        newPaymentMethod.Account_Number__c = processedCreateAccountResponse.accountNumber;
         newPaymentMethod.Card_Number__c = accountInquiryResponse.cardNumber4Digits;
         newPaymentMethod.Expiration__c = expirationDate;
         newPaymentMethod.Is_Active__c = true;
@@ -141,7 +169,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         return '';
     }
 
-    public void linkPhysicalCard(String cardPackageId, Id donorId, String initialPIN, Boolean blockCards) {
+    public Boolean linkPhysicalCard(String cardPackageId, Id donorId, String initialPIN, Boolean blockCards) {
         Id donorContactId = donorId;
         List<Payment_Method__c> existingPaymentMethods = [
             SELECT Id, Is_Active__c, isDefault__c, Account_Number__c
@@ -162,13 +190,40 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         newLink.cardPackageId = cardPackageId;
 
         OnbeWsPrepaid.AccountManagementApiWebServices accountManagementAPI = new OnbeWsPrepaid.AccountManagementApiWebServices();
-        OnbeResponsePrepaid.LinkCardResponse linkCardResponse = accountManagementAPI.linkCard_Http(
-            String.valueOf(donorContactId), PROGRAM_ID, PROMOTION_ID, String.valueOf(donorContactId) + '-' + String.valueOf(System.currentTimeMillis()), newLink
-        );
+        String transactionId = String.valueOf(donorContactId) + '-' + String.valueOf(System.currentTimeMillis());
+        Integer maxSyncAttempts = 5, currentSyncAttemptCount = 0;
 
-        if (linkCardResponse.code != 0) {
+        OnbeResponsePrepaid.LinkCardResponse processedLinkCardResponse;
+        while(processedLinkCardResponse == null && (currentSyncAttemptCount < maxSyncAttempts)) {
+            OnbeResponsePrepaid.LinkCardResponse linkCardResponse = accountManagementAPI.linkCard_Http(
+                String.valueOf(donorContactId), PROGRAM_ID, PROMOTION_ID, transactionId, newLink
+            );
+
+            if (linkCardResponse.code == Constants.ONBE_PROCESSING_ACCOUNT_MANAGEMENT) {
+                // This is a code that is returned when the transaction is still being processed by Onbe, so we need to wait and try again
+                currentSyncAttemptCount++;
+                continue;
+            } else {
+                processedLinkCardResponse = linkCardResponse;
+            }
+        }
+
+        if (processedLinkCardResponse == null) {
+            // Create a Payment Method with the transaction id for a manual retry later
+            Payment_Method__c newPaymentMethod = new Payment_Method__c();
+            newPaymentMethod.Name = PaymentService__mdt.getInstance('OnbePaymentService').PaymentServiceLabel__c;
+            newPaymentMethod.Account_Token__c = cardPackageId;
+            newPaymentMethod.Account_Number__c = '0000000000000000'; // Enter a bogus number that can be edited later
+            newPaymentMethod.Onbe_Transaction_Id__c = transactionId;
+            newPaymentMethod.Donor__c = donorContactId;
+            newPaymentMethod.Is_Active__c = false;
+            newPaymentMethod.isDefault__c = false;
+            insert newPaymentMethod;
+
+            return false;
+        } else if (processedLinkCardResponse.code != 0) {
             if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
-                throw new OnbeServiceException('Error received from Onbe: ' + linkCardResponse.code + '-' + linkCardResponse.sub_code);
+                throw new OnbeServiceException('Error received from Onbe: ' + processedLinkCardResponse.code + '-' + processedLinkCardResponse.sub_code);
             }
         }
 
@@ -223,23 +278,28 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         newPaymentMethod.isDefault__c = true;
         newPaymentMethod.Donor__c = donorContactId;
         insert newPaymentMethod;
+
+        return true;
     }
 
-    public String processPayment(String accountNumber, String comment, Long amount) {
-        String transactionId = accountNumber + '-' + String.valueOf(System.currentTimeMillis());
-        
+    public String processPayment(String accountNumber, String comment, Long amount, String onbeTransactionId) {
         OnbeDomainPrepaid.Load addFundsLoad = new OnbeDomainPrepaid.Load();
         addFundsLoad.amount = amount;
         addFundsLoad.comment = comment;
         
         OnbeWsPrepaid.AccountManagementApiWebServices accountManagementServices = new OnbeWsPrepaid.AccountManagementApiWebServices();
-        OnbeResponsePrepaid.AddFundsResponse addFundsReponse = accountManagementServices.addFunds_Http(
-            accountNumber, null, PROGRAM_ID, PROMOTION_ID, transactionId, addFundsLoad
+        OnbeResponsePrepaid.AddFundsResponse addFundsResponse = accountManagementServices.addFunds_Http(
+            accountNumber, null, PROGRAM_ID, PROMOTION_ID, onbeTransactionId, addFundsLoad
         );
 
-        if (addFundsReponse.code != 0) {
+        if (addFundsResponse.code != 0) {
+            if (addFundsResponse.code == Constants.ONBE_PROCESSING_ACCOUNT_MANAGEMENT) {
+                // This is a code that is returned when the transaction is still being processed by Onbe, so we need to wait and try again
+                return Constants.ONBE_ACCOUNT_MANAGEMENT_PROCESSING_STATUS;
+            }
+
             if (!Test.isRunningTest() || Test.isRunningTest() && TestUtil.throwException) {
-                throw new OnbeServiceException('Error received from Onbe: ' + addFundsReponse.code + '-' + addFundsReponse.sub_code);
+                throw new OnbeServiceException('Error received from Onbe: ' + addFundsResponse.code + '-' + addFundsResponse.sub_code);
             }
         }
 

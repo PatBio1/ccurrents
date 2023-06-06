@@ -4,7 +4,7 @@
         <name>Send_Default_Notification</name>
         <label>Send Default Notification</label>
         <locationX>314</locationX>
-        <locationY>242</locationY>
+        <locationY>278</locationY>
         <actionName>customNotificationAction</actionName>
         <actionType>customNotificationAction</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -43,7 +43,7 @@
         <name>Send_Donation_Notification</name>
         <label>Send Donation Notification</label>
         <locationX>50</locationX>
-        <locationY>458</locationY>
+        <locationY>518</locationY>
         <actionName>customNotificationAction</actionName>
         <actionType>customNotificationAction</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -83,7 +83,7 @@
         <name>Create_Donation_Message_Update</name>
         <label>Create Donation Message Update</label>
         <locationX>50</locationX>
-        <locationY>242</locationY>
+        <locationY>278</locationY>
         <assignmentItems>
             <assignToReference>Message_Record_Update.Id</assignToReference>
             <operator>Assign</operator>
@@ -113,7 +113,7 @@
         <name>Message_Handler_Type_Decision</name>
         <label>Message Handler Type Decision</label>
         <locationX>182</locationX>
-        <locationY>134</locationY>
+        <locationY>158</locationY>
         <defaultConnector>
             <targetReference>Send_Default_Notification</targetReference>
         </defaultConnector>
@@ -123,7 +123,7 @@
             <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>Message_Record_Input.Message_Handler_Type__c</leftValueReference>
-                <operator>EqualTo</operator>
+                <operator>Contains</operator>
                 <rightValue>
                     <stringValue>Donation Payment</stringValue>
                 </rightValue>
@@ -160,7 +160,7 @@
         <name>Update_Donation_Message_Record_Text</name>
         <label>Update Donation Message Record Text</label>
         <locationX>50</locationX>
-        <locationY>350</locationY>
+        <locationY>398</locationY>
         <connector>
             <targetReference>Send_Donation_Notification</targetReference>
         </connector>
@@ -173,7 +173,7 @@
             <targetReference>Message_Handler_Type_Decision</targetReference>
         </connector>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
     <textTemplates>
         <name>Notification_Body</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>

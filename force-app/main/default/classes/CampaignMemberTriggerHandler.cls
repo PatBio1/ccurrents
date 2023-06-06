@@ -66,7 +66,7 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
 
             Campaign_Level__c clDetail = campaignLevelMap.get(String.valueOf(cm.CampaignId + '-' + totalCount));
             if (clDetail != null &&
-                ((Date.valueOf(cm.CreatedDate).daysBetween(Date.today()) <= clDetail.Campaign__r.Member_Incentive_Life_Days__c) ||
+                (((cm.CreatedDate).date().daysBetween(Date.today()) <= clDetail.Campaign__r.Member_Incentive_Life_Days__c) ||
                     clDetail.Campaign__r.Member_Incentive_Life_Days__c == null)
             ) {
                 CampaignMember cmUpdate = new CampaignMember(
@@ -109,7 +109,7 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
             Approval_Required__c = cl.Approval_Required__c
         );
 
-        if(cl.Approval_Required__c) {
+        if (cl.Approval_Required__c) {
             newPaymentRequest.Status__c = Constants.PAYMENTREQUEST_STATUS_NEW;
         } else {
             newPaymentRequest.Status__c = Constants.PAYMENTREQUEST_STATUS_APPROVED;

@@ -70,5 +70,7 @@ public with sharing class Constants {
     public static final String CAMPAIGN_TYPE_INCENTIVE = 'Incentive';
 
     public static final String PAYMENTREQUEST_STATUS_NEW = 'New';
+    public static final String PAYMENTREQUEST_STATUS_APPROVED = 'Approved';
+    public static final String PAYMENTREQUEST_STATUS_SUBMITTED = 'Submitted';
 
 }

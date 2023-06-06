@@ -45,7 +45,11 @@ public without sharing class CampaignMemberTriggerHandlerTest {
 
     @IsTest
     static void testIncentivePromotion() {
+        Account proesisDallas = TestUtil.createDallasCenter();
+        insert proesisDallas;
+
         Account testPerson = TestUtil.createDonor('123456');
+        testPerson.Last_Used_Center__pc = proesisDallas.Id;
         insert testPerson;
 
         Id personContactId = [SELECT PersonContactId FROM Account WHERE Id = :testPerson.Id][0].PersonContactId;
@@ -68,7 +72,8 @@ public without sharing class CampaignMemberTriggerHandlerTest {
                 isActive__c = true,
                 Minimum_Donation_Amount__c = 1,
                 Message_Subject_Default__c = 'You achieved level 1!',
-                Message_Body_Default__c = 'Here\'s some sweet moolah'
+                Message_Body_Default__c = 'Here\'s some sweet moolah',
+                Approval_Required__c = true
             ),
             new Campaign_Level__c(
                 Name = 'Level 2',
@@ -154,6 +159,9 @@ public without sharing class CampaignMemberTriggerHandlerTest {
 
         Test.stopTest();
 
+        // Is our Approval Process Active here?
+        ProcessDefinition prApproval = [SELECT Id FROM ProcessDefinition WHERE DeveloperName = 'Payment_Request_Approval' AND State = 'Active'][0];
+
         for (Payment_Request__c pr : [
             SELECT Id,
                 Name,
@@ -170,7 +178,6 @@ public without sharing class CampaignMemberTriggerHandlerTest {
         ]) {
             Assert.areEqual(pr.Donor__c, personContactId);
             Assert.areEqual(testCampaignMember.Id, pr.Campaign_Member_Id__c);
-            Assert.areEqual(Constants.PAYMENTREQUEST_STATUS_NEW, pr.Status__c);
             if (pr.Name.contains('Level 1')) {
                 Assert.areEqual(100, pr.Amount_Dollars__c);
                 Assert.areEqual('You achieved level 1!', pr.Message_Subject__c);
@@ -179,6 +186,7 @@ public without sharing class CampaignMemberTriggerHandlerTest {
                 Assert.areEqual(50, pr.Amount_Dollars__c);
                 Assert.areEqual('You achieved level 2!', pr.Message_Subject__c);
                 Assert.areEqual('Here\'s some more sweet moolah', pr.Message_Body__c);
+                Assert.areEqual(Constants.PAYMENTREQUEST_STATUS_APPROVED, pr.Status__c);
             }
         }
     }

@@ -17,7 +17,7 @@
             <assignToReference>NewDonorPaymentPlatformEvent.Reason__c</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>NewDonorPaymentPlatformEvent.Reason__c</elementReference>
+                <elementReference>$Record.Reason_Description__c</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>

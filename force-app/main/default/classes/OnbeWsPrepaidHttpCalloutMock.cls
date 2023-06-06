@@ -5,19 +5,18 @@ global class OnbeWsPrepaidHttpCalloutMock implements HttpCalloutMock {
 
     // Constants
     private static final String uriXmlSoapSchema = 'http://schemas.xmlsoap.org/soap/envelope/';
-    private static final String uriAccountManagementMainEndpoint = 'https://webservice-qa.northlane.com:4005/accountmanagementapiws/services/AccountManagementApiWebServices';
     private static final String uriAccountManagementPrepaidWs = 'http://ws.accountmanagementapi.prepaid.citi.com';
 
-	public static final String TEST_ACCOUNT_NUMBER = '1234567890123456';
-
-	public static Boolean returnError = false;
+	public static Integer returnCode;
+	public static String returnSubCode;
 
 	public OnbeWsPrepaidHttpCalloutMock() {
-		returnError = false;
+		this(0, 'OK');
 	}
 
-	public OnbeWsPrepaidHttpCalloutMock(Boolean returnError) {
-		OnbeWsPrepaidHttpCalloutMock.returnError = returnError;
+	public OnbeWsPrepaidHttpCalloutMock(Integer returnCode, String returnSubCode) {
+		OnbeWsPrepaidHttpCalloutMock.returnCode = returnCode;
+		OnbeWsPrepaidHttpCalloutMock.returnSubCode = returnSubCode;
 	}
 
 	global HTTPResponse respond(HTTPRequest req){
@@ -31,59 +30,63 @@ global class OnbeWsPrepaidHttpCalloutMock implements HttpCalloutMock {
 		DOM.XmlNode rootNode = reqDoc.getRootElement();
 		DOM.XmlNode reqBodyNode = rootNode.getChildElement('Body', uriXmlSoapSchema);
 		DOM.XmlNode[] methodNode = reqBodyNode.getChildElements();
+
+		DOM.XmlNode ResponseNode;
 		if(methodNode[0].getName() == 'activateCard'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('activateCardReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('activateCardReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'activationStatusInquiry'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('activationStatusInquiryReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('activationStatusInquiryReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'addFunds'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('addFundsReturn', uriAccountManagementPrepaidWs, null);
-
-			if (returnError) {
-				ResponseNode.addChildElement('code', 'http://response.accountmanagementapi.prepaid.citi.com', null).addTextNode('1');
-				ResponseNode.addChildElement('sub_code', 'http://response.accountmanagementapi.prepaid.citi.com', null).addTextNode('Error Message');
-			}
+			ResponseNode = bodyNode.addChildElement('addFundsReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'assignPackage'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('assignPackageReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('assignPackageReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'cardInquiry'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('cardInquiryReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('cardInquiryReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'createAccount'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('createAccountReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('createAccountReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'createBulkOrder'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('createBulkOrderReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('createBulkOrderReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'createPackage'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('createPackageReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('createPackageReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'cvvInquiry'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('cvvInquiryReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('cvvInquiryReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'getRequestStatus'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('serviceReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('serviceReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'linkCard'){
 			responseDoc = new DOM.Document();
 			responseDoc.load('<?xml version="1.0" encoding="UTF-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><soapenv:Body><linkCardReturn xmlns="http://ws.accountmanagementapi.prepaid.citi.com"><ns1:code xmlns:ns1="http://response.accountmanagementapi.prepaid.citi.com">0</ns1:code><ns2:description xmlns:ns2="http://response.accountmanagementapi.prepaid.citi.com">Processed Successfully</ns2:description><ns3:existingTransaction xmlns:ns3="http://response.accountmanagementapi.prepaid.citi.com">false</ns3:existingTransaction><ns4:keyValue xmlns:ns4="http://response.accountmanagementapi.prepaid.citi.com"><item><ns5:key xmlns:ns5="http://common.accountmanagementapi.prepaid.citi.com">update-inventory</ns5:key><ns6:value xmlns:ns6="http://common.accountmanagementapi.prepaid.citi.com">processed</ns6:value></item><item><ns7:key xmlns:ns7="http://common.accountmanagementapi.prepaid.citi.com">link-card</ns7:key><ns8:value xmlns:ns8="http://common.accountmanagementapi.prepaid.citi.com">processed</ns8:value></item></ns4:keyValue><ns9:sub_code xmlns:ns9="http://response.accountmanagementapi.prepaid.citi.com">PROCESSED_SUCCESSFULLY</ns9:sub_code></linkCardReturn></soapenv:Body></soapenv:Envelope>');
 		}
 		else if(methodNode[0].getName() == 'setPin'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('setPinReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('setPinReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'updateAccountStatus'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('updateAccountStatusReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('updateAccountStatusReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'updateRegistration'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('updateRegistrationReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('updateRegistrationReturn', uriAccountManagementPrepaidWs, null);
 		}
 		else if(methodNode[0].getName() == 'withdraw'){
-			DOM.XmlNode ResponseNode = bodyNode.addChildElement('withdrawReturn', uriAccountManagementPrepaidWs, null);
+			ResponseNode = bodyNode.addChildElement('withdrawReturn', uriAccountManagementPrepaidWs, null);
 		}
+
+		if (ResponseNode != null) {
+			ResponseNode.addChildElement('code', 'http://response.accountmanagementapi.prepaid.citi.com', null).addTextNode(String.valueOf(returnCode));
+			ResponseNode.addChildElement('sub_code', 'http://response.accountmanagementapi.prepaid.citi.com', null).addTextNode(returnSubCode);
+		}
+
 		res.setBody(responseDoc.toXmlString());
 		res.setStatusCode(200);
+
 		return res;
 	}
 }

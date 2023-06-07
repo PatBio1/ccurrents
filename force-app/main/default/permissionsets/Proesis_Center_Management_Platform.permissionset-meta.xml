@@ -253,6 +253,21 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>Transaction__c.Onbe_Transaction_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Transaction__c.Retry_Count__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Transaction__c.Retry_Next__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>Transaction__c.Service__c</field>
         <readable>true</readable>
@@ -275,6 +290,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Txn_Line_Item__c.Item__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Txn_Line_Item__c.Promotion_Level__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

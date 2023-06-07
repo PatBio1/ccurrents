@@ -298,4 +298,27 @@ public class DonorEventHelperTest {
         Assert.areEqual(AMOUNT_OF_DONORS, missingVisits.size(), 'There should be ' + AMOUNT_OF_DONORS + ' missing visits');
         Assert.areEqual(AMOUNT_OF_DONORS, [SELECT count() FROM Task WHERE WhatId IN :missingVisits AND Subject LIKE 'Missing Visit%'], 'There should be ' + AMOUNT_OF_DONORS + ' missing visit tasks');
     }
+
+    @IsTest
+    static void testDonorCompMissingVisitWithMissingBECS() {
+        List<Contact> validDonors = [SELECT Id, Account.DonorId__c FROM Contact WHERE Account.DonorId__c != null];
+        Appointment__c targetAppointment = [SELECT Id, Datetime__c FROM Appointment__c LIMIT 1];
+
+        List<List<Donor_Comp__e>> donorCompEvents = new List<List<Donor_Comp__e>>();
+        for(Contact donor : validDonors) {
+            Donor_Comp__e donorCompEvent = new Donor_Comp__e();
+            donorCompEvent.Donor_Number__c = donor.Account.DonorId__c;
+            donorCompEvent.Timestamp__c = targetAppointment.Datetime__c;
+            donorCompEvent.BECS_Device__c = '2837562837623';
+
+            donorCompEvents.add(new List<Donor_Comp__e> { donorCompEvent });
+        }
+
+        Test.startTest();
+        List<List<SObject>> validatedEvents = DonorEventHelper.validateDonorAndVisitReferences(donorCompEvents);
+        Test.stopTest();
+
+        Assert.areEqual(0, validatedEvents.size(), 'There should be 0 valid events');
+        Assert.areEqual(donorCompEvents.size(), [SELECT count() FROM ErrorLog__c], 'There should have been an error log for each event');
+    }
 }

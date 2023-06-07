@@ -123,7 +123,11 @@ export default class MyRewards extends NavigationMixin(LightningElement) {
     }
 
     onLostCardButtonClick() {
-        LostMyCardModal.open();
+        LostMyCardModal.open({
+            oncardcancelled: (event) => {
+                this.initMyRewards();
+            }
+        });
     }
 
     onWatchVideoButtonClick() {

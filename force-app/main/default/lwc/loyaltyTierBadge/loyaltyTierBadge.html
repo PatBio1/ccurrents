@@ -1,3 +1,5 @@
 <template>
-    <img if:true={fullBadgeFilePath} width={badgeWidth} height={badgeHeight} src={fullBadgeFilePath} alt={loyaltyTierName}/>
+    <template if:true={fullBadgeFilePath}>
+        <img width={badgeWidth} height={badgeHeight} src={fullBadgeFilePath} alt={loyaltyTierName}/>
+    </template>
 </template>

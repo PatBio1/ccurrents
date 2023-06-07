@@ -57,6 +57,8 @@ public with sharing class Constants {
     public static final String MISSING_PAYMENT_METHOD_TASK_SUBJECT = 'Missing Payment Method';
 
     public static final String ONBE_CUSTOMER_SERVICE_SUCCESS_MESSAGE = 'OK';
+    public static final String ONBE_ACCOUNT_MANAGEMENT_PROCESSING_STATUS = 'PROCESSING';
+    public static final Integer ONBE_PROCESSING_ACCOUNT_MANAGEMENT = 2;
 
     public static final String ONBE_REISSUE_CARD_LOST_CODE = 'lost';
     public static final String ONBE_REISSUE_CARD_REVOKED_CODE = 'revoked';
@@ -70,5 +72,7 @@ public with sharing class Constants {
     public static final String CAMPAIGN_TYPE_INCENTIVE = 'Incentive';
 
     public static final String PAYMENTREQUEST_STATUS_NEW = 'New';
+    public static final String PAYMENTREQUEST_STATUS_APPROVED = 'Approved';
+    public static final String PAYMENTREQUEST_STATUS_SUBMITTED = 'Submitted';
 
 }

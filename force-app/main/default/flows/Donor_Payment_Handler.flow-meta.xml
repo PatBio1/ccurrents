@@ -64,7 +64,7 @@
         <actionName>PromotionPaymentInvocable</actionName>
         <actionType>apex</actionType>
         <connector>
-            <targetReference>Build_Message_Record_Promotion</targetReference>
+            <targetReference>Has_Payment_Request_Id_Decision</targetReference>
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
@@ -114,10 +114,33 @@
     </actionCalls>
     <apiVersion>57.0</apiVersion>
     <assignments>
+        <name>Assign_Message_Record_Values</name>
+        <label>Assign Message Record Values</label>
+        <locationX>314</locationX>
+        <locationY>914</locationY>
+        <assignmentItems>
+            <assignToReference>inputMessageValues.Name</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Payment_Request_Record_Values.Message_Subject__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>inputMessageValues.Body__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Payment_Request_Record_Values.Message_Body__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Build_Message_Record_Promotion</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
         <name>Assign_Payment_Request_Values</name>
         <label>Assign Payment Request Values</label>
         <locationX>314</locationX>
-        <locationY>794</locationY>
+        <locationY>674</locationY>
         <assignmentItems>
             <assignToReference>Payment_Request_Update_Record.Id</assignToReference>
             <operator>Assign</operator>
@@ -190,8 +213,8 @@
     <assignments>
         <name>Build_Message_Record_Promotion</name>
         <label>Build Message Record Promotion</label>
-        <locationX>446</locationX>
-        <locationY>434</locationY>
+        <locationX>314</locationX>
+        <locationY>1034</locationY>
         <assignmentItems>
             <assignToReference>Message_Record.Body__c</assignToReference>
             <operator>Assign</operator>
@@ -238,11 +261,65 @@
             <targetReference>Create_Message_Promotion_Payment</targetReference>
         </connector>
     </assignments>
+    <assignments>
+        <name>Default_Build_Message_Record_Promotion</name>
+        <label>(Default) Build Message Record Promotion</label>
+        <locationX>578</locationX>
+        <locationY>554</locationY>
+        <assignmentItems>
+            <assignToReference>Message_Record.Body__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Notification_Body_Promotion</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message_Record.Donor__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Donor_Id__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message_Record.Name</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Notification_Title</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message_Record.Transaction__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Transaction_Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message_Record.Visit__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Visit_Id__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message_Record.Message_Handler_Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Promotion Payment</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Default_Create_Message_Promotion_Payment</targetReference>
+        </connector>
+    </assignments>
     <decisions>
         <name>Has_Payment_Request_Id_Decision</name>
         <label>Has Payment Request Id Decision</label>
         <locationX>446</locationX>
-        <locationY>674</locationY>
+        <locationY>434</locationY>
+        <defaultConnector>
+            <targetReference>Default_Build_Message_Record_Promotion</targetReference>
+        </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Has_Payment_Request_Id</name>
@@ -255,7 +332,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Assign_Payment_Request_Values</targetReference>
+                <targetReference>Get_Payment_Request_Record_Values</targetReference>
             </connector>
             <label>Has Payment Request Id</label>
         </rules>
@@ -263,7 +340,7 @@
     <decisions>
         <name>Type_Routes</name>
         <label>Type Routes</label>
-        <locationX>402</locationX>
+        <locationX>446</locationX>
         <locationY>194</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -345,22 +422,50 @@
     <recordCreates>
         <name>Create_Message_Promotion_Payment</name>
         <label>Create Message Promotion Payment</label>
-        <locationX>446</locationX>
-        <locationY>554</locationY>
-        <connector>
-            <targetReference>Has_Payment_Request_Id_Decision</targetReference>
-        </connector>
+        <locationX>314</locationX>
+        <locationY>1154</locationY>
         <inputReference>Message_Record</inputReference>
     </recordCreates>
+    <recordCreates>
+        <name>Default_Create_Message_Promotion_Payment</name>
+        <label>(Default) Create Message Promotion Payment</label>
+        <locationX>578</locationX>
+        <locationY>674</locationY>
+        <inputReference>Message_Record</inputReference>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_Payment_Request_Record_Values</name>
+        <label>Get Payment Request Record Values</label>
+        <locationX>314</locationX>
+        <locationY>554</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Assign_Payment_Request_Values</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Payment_Request_Id__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Payment_Request__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
     <recordUpdates>
         <name>Update_Payment_Request</name>
         <label>Update Payment Request</label>
         <locationX>314</locationX>
-        <locationY>914</locationY>
+        <locationY>794</locationY>
+        <connector>
+            <targetReference>Assign_Message_Record_Values</targetReference>
+        </connector>
         <inputReference>Payment_Request_Update_Record</inputReference>
     </recordUpdates>
     <start>
-        <locationX>276</locationX>
+        <locationX>320</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Type_Routes</targetReference>

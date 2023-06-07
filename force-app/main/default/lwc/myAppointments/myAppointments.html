@@ -2,11 +2,19 @@
     <div class="slds-var-p-around_medium">
         <div class="title-medium">
             {labels.myAppointments}
+
+            <button class="slds-button slds-button_icon slds-button_icon-brand" onclick={handleRefreshAppointments}>
+                <lightning-icon style="--slds-c-icon-color-foreground-default: white !important" icon-name="utility:refresh" size="x-small">
+                </lightning-icon>
+            </button>
         </div>
     </div>
 
     <lightning-tabset>
         <lightning-tab label={labels.scheduled}>
+            <lightning-spinner if:true={loading}>
+            </lightning-spinner>
+
             <div class="slds-var-p-horizontal_medium appointment-tab">
 
                 <!-- Hiding this feature as it's out of scope for MVP (based on the last sprint planning call) -->
@@ -58,6 +66,9 @@
         </lightning-tab>
 
         <lightning-tab label={labels.past}>
+            <lightning-spinner if:true={loading}>
+            </lightning-spinner>
+
             <div class="slds-var-p-horizontal_medium">
                 <div if:false={hasPastVisits} class="slds-illustration slds-illustration_small no-appointments">
                     <img src="/img/chatter/Desert.svg" class="slds-illustration__svg" alt=""/>

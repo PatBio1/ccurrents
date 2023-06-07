@@ -12,6 +12,7 @@ export default class MyRewards extends LightningElement {
     scheduledVisits;
     pastVisits;
 
+    loading = false;
     scheduledView = 'list';
     pastView = 'list';
 
@@ -66,5 +67,9 @@ export default class MyRewards extends LightningElement {
                 this.loadVisits();
             }
         });
+    }
+
+    handleRefreshAppointments() {
+        this.loadVisits();
     }
 }

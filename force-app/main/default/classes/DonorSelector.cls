@@ -50,7 +50,7 @@ public without sharing class DonorSelector {
                 Loyalty_Level__r.Next_Level__r.Name, Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, (
                     SELECT Id, Expiration__c, Card_Number__c
                     FROM Payment_Methods__r
-                    WHERE Is_Active__c = true AND isDefault__c = true AND Is_Expired__c = false
+                    WHERE Is_Active__c = true AND isDefault__c = true AND Is_Expired__c = false AND User_Requested_Replace_Card__c = false
                     LIMIT 1
                 )
             FROM Contact 

@@ -75,20 +75,17 @@ export default class LoyaltyTiers extends LightningElement {
         await loadScript(this, chartJs);
         await loadScript(this, chartJsDatalabels);
 
-        let reverseOrderLevels = [...this.loyaltyLevels].reverse();
-        let colors
-
         new Chart(this.template.querySelector("canvas[data-loyalty-tier-chart]"), {
             plugins: [ChartDataLabels],
             type: 'bar',
             data: {
-                labels: [labels.myDonations, ...reverseOrderLevels.map((level) => level.levelName)],
+                labels: [labels.myDonations, ...this.loyaltyLevels.map((level) => level.levelName)],
                 datasets: [{
                     label: '# of Donations',
-                    data: [this.rewardsInfo.donorVisitCount, ...reverseOrderLevels.map((level) => level.levelThreshold)], // Need to fetch these from the backend
+                    data: [this.rewardsInfo.donorVisitCount, ...this.loyaltyLevels.map((level) => level.levelThreshold)], // Need to fetch these from the backend
                     borderWidth: 0,
                     minBarLength: 5,
-                    backgroundColor: ["#88D3FF", ...reverseOrderLevels.map((level) => { return LEVEL_NAME_TO_BACKGROUND_STYLE.get(level.levelName); })],
+                    backgroundColor: ["#88D3FF", ...this.loyaltyLevels.map((level) => { return LEVEL_NAME_TO_BACKGROUND_STYLE.get(level.levelName); })],
                     datalabels: {
                         anchor: "end",
                         align: "end"
@@ -100,7 +97,7 @@ export default class LoyaltyTiers extends LightningElement {
                 scales: {
                     x: {
                         display: false,
-                        max: Math.max(...reverseOrderLevels.map((level) => level.levelThreshold)) + 10
+                        max: Math.max(...this.loyaltyLevels.map((level) => level.levelThreshold)) + 10
                     },
                     y: {
                         grid: {

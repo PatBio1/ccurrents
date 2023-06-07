@@ -4,14 +4,14 @@
         <name>Submit_for_Approval</name>
         <label>Submit for Approval</label>
         <locationX>50</locationX>
-        <locationY>1271</locationY>
+        <locationY>863</locationY>
         <actionName>submit</actionName>
         <actionType>submit</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>processDefinitionNameOrId</name>
             <value>
-                <elementReference>approvalProcessId</elementReference>
+                <stringValue>Payment_Request_Approval</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -36,55 +36,90 @@
     </actionCalls>
     <apiVersion>57.0</apiVersion>
     <assignments>
-        <name>Add_Id_to_Approver_Collection</name>
-        <label>Add Id to Approver Collection</label>
-        <locationX>138</locationX>
-        <locationY>1055</locationY>
+        <name>Add_Queue_Id_to_Collection</name>
+        <label>Add Queue Id to Collection</label>
+        <locationX>50</locationX>
+        <locationY>755</locationY>
         <assignmentItems>
             <assignToReference>approverIds</assignToReference>
             <operator>Add</operator>
             <value>
-                <elementReference>Loop_Queue_Ids.Id</elementReference>
+                <elementReference>Get_Dallas_Queue_Id.Id</elementReference>
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Loop_Queue_Ids</targetReference>
+            <targetReference>Submit_for_Approval</targetReference>
         </connector>
     </assignments>
     <assignments>
-        <name>Assign_Approval_Process_Id</name>
-        <label>Assign Approval Process Id</label>
-        <locationX>182</locationX>
-        <locationY>575</locationY>
+        <name>Assign_Donor_Payment_Platform_Event_Values</name>
+        <label>Assign Donor Payment Platform Event Values</label>
+        <locationX>578</locationX>
+        <locationY>431</locationY>
         <assignmentItems>
-            <assignToReference>approvalProcessId</assignToReference>
+            <assignToReference>New_Donor_Payment_Platform_Event.Amount__c</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Get_Approval_Process_Id.Id</elementReference>
+                <elementReference>$Record.Amount_Dollars__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Donor_Payment_Platform_Event.Reason__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Reason_Description__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Donor_Payment_Platform_Event.Donor_Id__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Donor__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Donor_Payment_Platform_Event.Visit_Id__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Visit__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Donor_Payment_Platform_Event.Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Promotion</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Donor_Payment_Platform_Event.Payment_Request_Id__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Center_Queue_Decision</targetReference>
+            <targetReference>Fire_Donor_Payment_Platform_Event</targetReference>
         </connector>
     </assignments>
     <decisions>
         <name>Center_Queue_Decision</name>
         <label>Center Queue Decision</label>
         <locationX>182</locationX>
-        <locationY>695</locationY>
+        <locationY>539</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Dallas</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.Donor__r.Last_Used_Center__c</leftValueReference>
+                <leftValueReference>Get_Center_Account_Name.Name</leftValueReference>
                 <operator>Contains</operator>
                 <rightValue>
                     <stringValue>Dallas</stringValue>
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Get_Dallas_Ops_Queue_Id</targetReference>
+                <targetReference>Get_Dallas_Queue_Id</targetReference>
             </connector>
             <label>Dallas</label>
         </rules>
@@ -92,8 +127,8 @@
     <decisions>
         <name>Insert_Evaluation</name>
         <label>Insert Evaluation</label>
-        <locationX>336</locationX>
-        <locationY>335</locationY>
+        <locationX>512</locationX>
+        <locationY>323</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Automate_Approval_Process_Decision</name>
@@ -126,37 +161,59 @@
                     <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
+            <connector>
+                <targetReference>Get_Center_Account_Name</targetReference>
+            </connector>
+            <label>Automate Approval Process Decision</label>
+        </rules>
+        <rules>
+            <name>Automate_Payment_Decision</name>
+            <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.Donor__r.Last_Used_Center__c</leftValueReference>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Amount_Dollars__c</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
                 </rightValue>
             </conditions>
+            <conditions>
+                <leftValueReference>$Record.Donor__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Transaction_Result__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Approval_Required__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
             <connector>
-                <targetReference>Get_Approval_Process_Id</targetReference>
+                <targetReference>Assign_Donor_Payment_Platform_Event_Values</targetReference>
             </connector>
-            <label>Automate Approval Process Decision</label>
+            <label>Automate Payment Decision</label>
         </rules>
     </decisions>
     <description>Fires on inserts of Payment Request records.</description>
     <environments>Default</environments>
     <interviewLabel>Payment Request Insert {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Payment Request Insert</label>
-    <loops>
-        <name>Loop_Queue_Ids</name>
-        <label>Loop Queue Ids</label>
-        <locationX>50</locationX>
-        <locationY>935</locationY>
-        <collectionReference>Get_Dallas_Ops_Queue_Id</collectionReference>
-        <iterationOrder>Asc</iterationOrder>
-        <nextValueConnector>
-            <targetReference>Add_Id_to_Approver_Collection</targetReference>
-        </nextValueConnector>
-        <noMoreValuesConnector>
-            <targetReference>Submit_for_Approval</targetReference>
-        </noMoreValuesConnector>
-    </loops>
     <processMetadataValues>
         <name>BuilderType</name>
         <value>
@@ -176,49 +233,49 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Fire_Donor_Payment_Platform_Event</name>
+        <label>Fire Donor Payment Platform Event</label>
+        <locationX>578</locationX>
+        <locationY>539</locationY>
+        <inputReference>New_Donor_Payment_Platform_Event</inputReference>
+    </recordCreates>
     <recordLookups>
-        <name>Get_Approval_Process_Id</name>
-        <label>Get Approval Process Id</label>
+        <name>Get_Center_Account_Name</name>
+        <label>Get Center Account Name</label>
         <locationX>182</locationX>
-        <locationY>455</locationY>
+        <locationY>431</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Assign_Approval_Process_Id</targetReference>
+            <targetReference>Center_Queue_Decision</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Donor__r.Last_Used_Center__r.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Account</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Dallas_Queue_Id</name>
+        <label>Get Dallas Queue Id</label>
+        <locationX>50</locationX>
+        <locationY>647</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Add_Queue_Id_to_Collection</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
             <field>DeveloperName</field>
             <operator>EqualTo</operator>
             <value>
-                <stringValue>Payment_Request_Approval</stringValue>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>ProcessDefinition</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
-        <name>Get_Dallas_Ops_Queue_Id</name>
-        <label>Get Dallas &amp; Ops Queue Id</label>
-        <locationX>50</locationX>
-        <locationY>815</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Loop_Queue_Ids</targetReference>
-        </connector>
-        <filterLogic>(1 OR 2) AND 3</filterLogic>
-        <filters>
-            <field>DeveloperName</field>
-            <operator>EqualTo</operator>
-            <value>
                 <stringValue>Center_Manager_Dallas</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>DeveloperName</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Proesis_Operations</stringValue>
             </value>
         </filters>
         <filters>
@@ -228,12 +285,12 @@
                 <stringValue>Queue</stringValue>
             </value>
         </filters>
-        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Group</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
-        <locationX>210</locationX>
+        <locationX>386</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Insert_Evaluation</targetReference>
@@ -256,5 +313,13 @@
         <isCollection>true</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>New_Donor_Payment_Platform_Event</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Donor_Payment__e</objectType>
     </variables>
 </Flow>

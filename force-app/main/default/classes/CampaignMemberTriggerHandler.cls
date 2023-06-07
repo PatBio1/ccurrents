@@ -66,7 +66,7 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
 
             Campaign_Level__c clDetail = campaignLevelMap.get(String.valueOf(cm.CampaignId + '-' + totalCount));
             if (clDetail != null &&
-                ((Date.valueOf(cm.CreatedDate).daysBetween(Date.today()) <= clDetail.Campaign__r.Member_Incentive_Life_Days__c) ||
+                (((cm.CreatedDate).date().daysBetween(Date.today()) <= clDetail.Campaign__r.Member_Incentive_Life_Days__c) ||
                     clDetail.Campaign__r.Member_Incentive_Life_Days__c == null)
             ) {
                 CampaignMember cmUpdate = new CampaignMember(
@@ -98,17 +98,22 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
         ).left(80);
         Payment_Request__c newPaymentRequest = new Payment_Request__c(
             Name = nameString,
-            Reason_Description__c = nameString,
+            Reason_Description__c = nameString.left(50),
             Amount_Dollars__c = cl.Award_Dollar_Amount__c,
             Amount_Points__c = cl.Award_Point_Amount__c,
             Donor__c = cm.ContactId,
             Visit__c = cm.Last_Related_Visit__c,
             Campaign_Member_Id__c = String.valueOf(cm.Id),
-            Status__c = Constants.PAYMENTREQUEST_STATUS_NEW,
             Message_Subject__c = cl.Message_Subject_Default__c,
             Message_Body__c = cl.Message_Body_Default__c,
             Approval_Required__c = cl.Approval_Required__c
         );
+
+        if (cl.Approval_Required__c) {
+            newPaymentRequest.Status__c = Constants.PAYMENTREQUEST_STATUS_NEW;
+        } else {
+            newPaymentRequest.Status__c = Constants.PAYMENTREQUEST_STATUS_APPROVED;
+        }
 
         return newPaymentRequest;
     }
@@ -132,7 +137,7 @@ public without sharing class CampaignMemberTriggerHandler extends TriggerFactory
             inputCM.Starting_Donation_Count__c = 0;
         }
 
-        inputCM.Total_Eligible_Donation_Count__c = Integer.valueOf(inputCM.Starting_Donation_Count__c + inputCM.Total_Eligible_Donation_Count__c);
+        inputCM.Total_Eligible_Donation_Count__c = getCorrectTotalCount(inputCM);
 
         return inputCM;
     }

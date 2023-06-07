@@ -457,7 +457,7 @@ public without sharing class DonorCompInvocable {
             cm.Eligible_Donation_Count__c = 0; // set to zero; we want to recount these in case something changes
             donorCMs.add(cm);
             donorToCampaignMembers.put(cm.ContactId, donorCMs);
-            datesInRange.add(Date.valueOf(cm.CreatedDate));
+            datesInRange.add(cm.CreatedDate.date());
         }
 
         if (datesInRange.size() == 0) {
@@ -490,7 +490,7 @@ public without sharing class DonorCompInvocable {
                     Integer campaignMemberVisitCounter = 0;
                     String latestVisitId = null;
                     Datetime maxDateTime = Datetime.newInstance(1900, 01, 01, 00, 00, 00);
-                    Date checkDate = Date.valueOf(cm.CreatedDate);
+                    Date checkDate = cm.CreatedDate.date();
                     if (donorToVisitsInRange.get(cm.ContactId).size() >= 1) {
                         for (Visit__c visit : donorToVisitsInRange.get(cm.ContactId)) {
                             if (Date.valueOf(visit.Appointment_Datetime__c) >= checkDate) {
@@ -520,6 +520,7 @@ public without sharing class DonorCompInvocable {
         public Id donorContactId;
         public Id visitId;
         public Id existingDebitTransactionId;
+        public String existingOnbeTransactionId;
 
         public List<AddFundsLineItem> lineItems;
         public String accountNumber;
@@ -541,11 +542,16 @@ public without sharing class DonorCompInvocable {
             this.accountNumber = accountNumber;
             this.transactionSubType = transactionSubType;
             this.existingDebitTransactionId = existingDebitTransactionId;
+            this.existingOnbeTransactionId = '';
 
             this.comments = new List<String>();
             this.lineItems = new List<AddFundsLineItem>();
             this.total = 0;
             this.isExceptionPayment = false;
+        }
+
+        public void setOnbeTransactionId(String transactionId) {
+            this.existingOnbeTransactionId = transactionId;
         }
 
         public void recordAPIResponse(Boolean wasSuccessful, String response) {

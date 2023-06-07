@@ -51,6 +51,57 @@
             <targetReference>Submit_for_Approval</targetReference>
         </connector>
     </assignments>
+    <assignments>
+        <name>Assign_Donor_Payment_Platform_Event_Values</name>
+        <label>Assign Donor Payment Platform Event Values</label>
+        <locationX>578</locationX>
+        <locationY>455</locationY>
+        <assignmentItems>
+            <assignToReference>New_Donor_Payment_Platform_Event.Amount__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Amount_Dollars__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Donor_Payment_Platform_Event.Reason__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Reason_Description__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Donor_Payment_Platform_Event.Donor_Id__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Donor__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Donor_Payment_Platform_Event.Visit_Id__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Visit__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Donor_Payment_Platform_Event.Type__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Promotion</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>New_Donor_Payment_Platform_Event.Payment_Request_Id__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Fire_Donor_Payment_Platform_Event</targetReference>
+        </connector>
+    </assignments>
     <decisions>
         <name>Center_Queue_Decision</name>
         <label>Center Queue Decision</label>
@@ -76,7 +127,7 @@
     <decisions>
         <name>Insert_Evaluation</name>
         <label>Insert Evaluation</label>
-        <locationX>380</locationX>
+        <locationX>512</locationX>
         <locationY>335</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
@@ -115,6 +166,49 @@
             </connector>
             <label>Automate Approval Process Decision</label>
         </rules>
+        <rules>
+            <name>Automate_Payment_Decision</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Approved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Amount_Dollars__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Donor__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Transaction_Result__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Approval_Required__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Donor_Payment_Platform_Event_Values</targetReference>
+            </connector>
+            <label>Automate Payment Decision</label>
+        </rules>
     </decisions>
     <description>Fires on inserts of Payment Request records.</description>
     <environments>Default</environments>
@@ -139,6 +233,13 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Fire_Donor_Payment_Platform_Event</name>
+        <label>Fire Donor Payment Platform Event</label>
+        <locationX>578</locationX>
+        <locationY>575</locationY>
+        <inputReference>New_Donor_Payment_Platform_Event</inputReference>
+    </recordCreates>
     <recordLookups>
         <name>Get_Center_Account_Name</name>
         <label>Get Center Account Name</label>
@@ -189,7 +290,7 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
-        <locationX>254</locationX>
+        <locationX>386</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Insert_Evaluation</targetReference>
@@ -212,5 +313,13 @@
         <isCollection>true</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>New_Donor_Payment_Platform_Event</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Donor_Payment__e</objectType>
     </variables>
 </Flow>

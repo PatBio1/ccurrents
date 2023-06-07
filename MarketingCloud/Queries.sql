@@ -142,23 +142,25 @@ GROUP BY v2.Donor__c
 SELECT v.Id AS VisitId,
 v.Donor__c AS SubscriberKey,
 c.FirstName AS FirstName,
-c.Email AS Email
+c.Email AS Email,
+v.Appointment_Datetime__c
 
 FROM Visit__c_Salesforce AS v
 
 INNER JOIN Contact_Salesforce AS c
-ON v.Id = c.Id
+ON v.Donor__c = c.Id
 
 LEFT JOIN
 (SELECT VisitId
-FROM "Post Visit Satisfaction Email"
+FROM [Post Visit Satisfaction Email]
 )
 AS pvse
 ON v.Id = pvse.VisitId
 
 WHERE v.Status__c = 'Complete' AND
 v.Outcome__c = 'Donation' AND
-pvse.VisitId IS NULL
+pvse.VisitId IS NULL AND
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 0
 
 -- Welcome New Donor
 SELECT c.Id AS SubscriberKey,
@@ -223,7 +225,10 @@ ON v.Id = ar7d.VisitId
 
 WHERE ar7d.VisitId IS NULL AND
 v.Status__c = 'Scheduled' AND
-DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 7
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 7 AND
+c.Email IS NOT NULL AND
+c.FirstName IS NOT NULL AND
+cent.Name IS NOT NULL
 
 -- 72 Hour Appointment Reminder
 SELECT v.Donor__c AS SubscriberKey,
@@ -265,7 +270,10 @@ ON v.Id = ar72.VisitId
 
 WHERE ar72.VisitId IS NULL AND
 v.Status__c = 'Scheduled' AND
-DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 3
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 3 AND
+c.Email IS NOT NULL AND
+c.FirstName IS NOT NULL AND
+cent.Name IS NOT NULL
 
 -- SPE Reminder
 SELECT
@@ -441,10 +449,10 @@ SELECT p.[Visit Id] AS VisitId,
 p.Rating AS Rating,
 p.Feedback AS Feedback
 
-FROM "Post Donation Survey Responses" as p
+FROM [Post Donation Survey Responses] as p
 
 LEFT JOIN (Select p2.VisitId AS VisitId
-FROM "Post Donation Survey Response Processing" AS p2)
+FROM [Post Donation Survey Response Processing] AS p2)
 AS pdsrp
 ON p.[Visit Id] = pdsrp.VisitId
 
@@ -571,7 +579,7 @@ c.Email
 
 HAVING COUNT(v.Id) >= 6
 
--- SCRATCH
+-- Appointment Reminder 24 hours
 SELECT v.Donor__c AS SubscriberKey,
 v.Id AS VisitId,
 FORMAT(v.Appointment_Datetime__c, 'MM/dd/yyyy') AS AppointmentDateTime,
@@ -611,4 +619,7 @@ ON v.Id = ar24.VisitId
 
 WHERE ar24.VisitId IS NULL AND
 v.Status__c = 'Scheduled' AND
-DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 1
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 1 AND
+c.Email IS NOT NULL AND
+c.FirstName IS NOT NULL AND
+cent.Name IS NOT NULL

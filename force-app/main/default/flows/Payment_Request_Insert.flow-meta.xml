@@ -4,7 +4,7 @@
         <name>Submit_for_Approval</name>
         <label>Submit for Approval</label>
         <locationX>50</locationX>
-        <locationY>935</locationY>
+        <locationY>863</locationY>
         <actionName>submit</actionName>
         <actionType>submit</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
@@ -39,7 +39,7 @@
         <name>Add_Queue_Id_to_Collection</name>
         <label>Add Queue Id to Collection</label>
         <locationX>50</locationX>
-        <locationY>815</locationY>
+        <locationY>755</locationY>
         <assignmentItems>
             <assignToReference>approverIds</assignToReference>
             <operator>Add</operator>
@@ -55,7 +55,7 @@
         <name>Assign_Donor_Payment_Platform_Event_Values</name>
         <label>Assign Donor Payment Platform Event Values</label>
         <locationX>578</locationX>
-        <locationY>455</locationY>
+        <locationY>431</locationY>
         <assignmentItems>
             <assignToReference>New_Donor_Payment_Platform_Event.Amount__c</assignToReference>
             <operator>Assign</operator>
@@ -106,7 +106,7 @@
         <name>Center_Queue_Decision</name>
         <label>Center Queue Decision</label>
         <locationX>182</locationX>
-        <locationY>575</locationY>
+        <locationY>539</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Dallas</name>
@@ -128,7 +128,7 @@
         <name>Insert_Evaluation</name>
         <label>Insert Evaluation</label>
         <locationX>512</locationX>
-        <locationY>335</locationY>
+        <locationY>323</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Automate_Approval_Process_Decision</name>
@@ -194,7 +194,7 @@
                 <leftValueReference>$Record.Transaction_Result__c</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
-                    <booleanValue>false</booleanValue>
+                    <booleanValue>true</booleanValue>
                 </rightValue>
             </conditions>
             <conditions>
@@ -237,14 +237,14 @@
         <name>Fire_Donor_Payment_Platform_Event</name>
         <label>Fire Donor Payment Platform Event</label>
         <locationX>578</locationX>
-        <locationY>575</locationY>
+        <locationY>539</locationY>
         <inputReference>New_Donor_Payment_Platform_Event</inputReference>
     </recordCreates>
     <recordLookups>
         <name>Get_Center_Account_Name</name>
         <label>Get Center Account Name</label>
         <locationX>182</locationX>
-        <locationY>455</locationY>
+        <locationY>431</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Center_Queue_Decision</targetReference>
@@ -265,7 +265,7 @@
         <name>Get_Dallas_Queue_Id</name>
         <label>Get Dallas Queue Id</label>
         <locationX>50</locationX>
-        <locationY>695</locationY>
+        <locationY>647</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Add_Queue_Id_to_Collection</targetReference>

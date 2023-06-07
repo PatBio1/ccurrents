@@ -623,3 +623,37 @@ DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 1 AND
 c.Email IS NOT NULL AND
 c.FirstName IS NOT NULL AND
 cent.Name IS NOT NULL
+
+-- New Donor Program Query (1st Donation)
+SELECT v.Id AS VisitId,
+v.Donor__c AS SubscriberKey,
+c.FirstName AS FirstName,
+c.Email AS Email
+
+FROM Visit__c_Salesforce AS v
+
+INNER JOIN
+(SELECT Id,
+FirstName,
+Email,
+Total_Donations__c,
+isLegacyDonor__c,
+CreatedDate
+FROM Contact_Salesforce
+)
+AS c
+ON v.Id = c.Id
+
+LEFT JOIN
+(SELECT SubscriberKey
+FROM [NDP First Donation]
+)
+AS ndp1
+ON v.Donor__c = ndp1.SubscriberKey
+
+WHERE v.Status__c = 'Complete' AND
+v.Outcome__c = 'Donation' AND
+ndp1.SubscriberKey IS NULL AND
+c.Total_Donations__c = 1 AND
+c.isLegacyDonor__c = 0 AND
+c.CreatedDate >=  DATEFROMPARTS(2023, 06, 01)

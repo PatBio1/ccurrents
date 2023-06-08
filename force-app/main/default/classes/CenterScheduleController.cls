@@ -1,51 +1,48 @@
 public with sharing class CenterScheduleController {
-    
-    @AuraEnabled
-    public static Center[] getCenters(){
-        Center[] centers = new Center[]{};
-        try {
 
-            for( Account a: [
-                Select Id, Name 
-                FROM Account 
-                WHERE RecordType.DeveloperName = 'Center' AND
-                    isActive__c = true
+    @AuraEnabled
+    public static Center[] getCenters() {
+        try {
+            Center[] centers = new Center[]{};
+
+            for (Account a : [
+                SELECT Name, Center_Timezone__c
+                FROM Account
+                WHERE RecordType.DeveloperName = 'Center'
+                AND isActive__c = true
                 WITH SECURITY_ENFORCED
-            ]){
+            ]) {
                 centers.add(new Center(a));
             }
+
             return centers;
-            
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            throw Util.createAuraHandledException(e);
         }
     }
 
     @AuraEnabled
-    public static AppointmentSlot getAppointmentSlot(Id appointmentId){
+    public static AppointmentSlot getAppointmentSlot(Id appointmentId) {
         AppointmentSlot appt;
         try {
-            
-            for (Appointment__c appointment: [
-                SELECT  Id,
-                        Name,
+            for (Appointment__c appointment : [
+                SELECT  Name,
                         Datetime__c,
                         Availability__c,
                         Availability_Loyalty__c,
                         Booked__c,
                         Booked_Loyalty__c,
                         Capacity__c,
-                        Capacity_Loyalty__c
-
+                        Capacity_Loyalty__c,
+                        Schedule__r.Center__r.Center_Timezone__c
                 FROM Appointment__c
                 WHERE Id =: appointmentId
                 WITH SECURITY_ENFORCED
-            ]){
-                appt = new AppointmentSlot(appointment);
+            ]) {
+                appt = new AppointmentSlot(appointment, appointment.Schedule__r.Center__r.Center_Timezone__c);
             }
-            for(Visit__c visit : [
-                SELECT Id,
-                        Name,
+            for (Visit__c visit : [
+                SELECT  Name,
                         Appointment__c,
                         isFirstVisit__c,
                         Donor__c,
@@ -58,42 +55,42 @@ public with sharing class CenterScheduleController {
                         Status__c,
                         Outcome__c,
                         (
-                            SELECT Id, Subject, Description
+                            SELECT Subject, Description
                             FROM Tasks
                         )
                 FROM Visit__c
                 WHERE Appointment__c =: appointmentId
                 ORDER BY lastmodifieddate
-            ]){
+            ]) {
                 appt.visits.add(new Visit(visit));
             }
-            
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            throw Util.createAuraHandledException(e);
         }
 
         return appt;
     }
 
     @AuraEnabled
-    public static AppointmentSlot[] getAppointments(Id centerId, Date appointmentDay, String timeStart, String timeStop){
-        Appointment__c[] appointments = new Appointment__c[]{};
-        Set<Id> appointmentIds = new Set<Id>{};
-        Map<Id, AppointmentSlot> appMap = new Map<Id, AppointmentSlot>{};
-        String[] startParts = new String[]{'0','0'};
-        if(!String.isBlank(timeStart)){
-            startParts  = timeStart.split(':');
-        }
-        String[] endParts = new String[]{'23','59'};
-        if(!String.isBlank(timeStop)){
-            endParts  = timeStop.split(':');
-        }
-        Datetime beginDay = Datetime.newInstance(appointmentDay.year(), appointmentDay.month(),appointmentDay.day(), Integer.valueOf(startParts[0]),Integer.valueOf(startParts[1]),0);
-        Datetime endDay = Datetime.newInstance(appointmentDay.year(), appointmentDay.month(),appointmentDay.day(), Integer.valueOf(endParts[0]),Integer.valueOf(endParts[1]),59);
+    public static AppointmentSlot[] getAppointments(Id centerId, Date appointmentDay, String timeStart, String timeStop) {
         try {
-            for(Appointment__c app: [
-                SELECT  Id,
-                        Name,
+            Map<Id, AppointmentSlot> appMap = new Map<Id, AppointmentSlot>{};
+            String[] startParts = new String[]{'0','0'};
+            if (String.isNotBlank(timeStart)) {
+                startParts = timeStart.split(':');
+            }
+            String[] endParts = new String[]{'23','59'};
+            if (String.isNotBlank(timeStop)) {
+                endParts = timeStop.split(':');
+            }
+
+            Account center = [SELECT Center_Timezone__c FROM Account WHERE Id = :centerId];
+
+            DateTime beginDay = Util.getTimeZoneDateTime(appointmentDay, Time.newInstance(Integer.valueOf(startParts[0]), Integer.valueOf(startParts[1]), 0, 0), center.Center_Timezone__c);
+            DateTime endDay = Util.getTimeZoneDateTime(appointmentDay, Time.newInstance(Integer.valueOf(endParts[0]), Integer.valueOf(endParts[1]), 59, 0), center.Center_Timezone__c);
+
+            for (Appointment__c app: [
+                SELECT  Name,
                         Datetime__c,
                         Availability__c,
                         Availability_Loyalty__c,
@@ -101,22 +98,19 @@ public with sharing class CenterScheduleController {
                         Booked_Loyalty__c,
                         Capacity__c,
                         Capacity_Loyalty__c
-
                 FROM Appointment__c
                 WHERE Schedule__r.Center__c =: centerId
                 AND Datetime__c >=: beginDay
-                AND Datetime__c <=: endDay 
+                AND Datetime__c <=: endDay
                 WITH SECURITY_ENFORCED
                 ORDER BY Datetime__c ASC
-                
-            ]){
-                AppointmentSlot appt = new AppointmentSlot(app);
-                appMap.put(app.id,appt);
+            ]) {
+                AppointmentSlot appt = new AppointmentSlot(app, center.Center_Timezone__c);
+                appMap.put(app.id, appt);
             }
 
-            for(Visit__c visit : [
-                SELECT Id,
-                        Name,
+            for (Visit__c visit : [
+                SELECT  Name,
                         Appointment__c,
                         isFirstVisit__c,
                         Donor__c,
@@ -129,25 +123,23 @@ public with sharing class CenterScheduleController {
                         Status__c,
                         Outcome__c,
                         (
-                            SELECT Id, Subject, Description
+                            SELECT Subject, Description
                             FROM Tasks
                         )
                 FROM Visit__c
                 WHERE Appointment__c in: appMap.keyset()
                 ORDER BY lastmodifieddate
-            ]){
+            ]) {
                 AppointmentSlot appt = appMap.get(visit.Appointment__c);
                 appt.visits.add(new Visit(visit));
             }
-            
+
             system.debug(appMap);
-        } catch(System.QueryException qe){
-            throw new AuraHandledException(qe.getMessage() + qe.getStackTraceString());
+
+            return appMap.values();
         } catch (Exception e) {
-            
-            throw new AuraHandledException(e.getMessage() + e.getStackTraceString());
+            throw Util.createAuraHandledException(e);
         }
-        return  appMap.values();
     }
 
     @AuraEnabled
@@ -159,8 +151,8 @@ public with sharing class CenterScheduleController {
                 Appointment__c = appointmentSlotId,
                 Status__c = 'Scheduled'
             ));
-        } catch(Exception addVisitException) {
-            throw Util.createAuraHandledException(addVisitException);
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
         }
     }
 
@@ -174,12 +166,12 @@ public with sharing class CenterScheduleController {
         try {
             CoreSchedulerHandler.cancelVisit(visitId);
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            throw Util.createAuraHandledException(e);
         }
     }
 
     @AuraEnabled
-    public static Appointment__c[]  createAppointmentSlots(Id centerId, Date startDate, Date endDate, Integer intervalsPerHour, Integer slotsPerInterval, Id loyaltyTier){
+    public static Appointment__c[] createAppointmentSlots(Id centerId, Date startDate, Date endDate, Integer intervalsPerHour, Integer slotsPerInterval, Id loyaltyTier) {
         try {
             system.debug('' + centerId + startDate + endDate + loyaltyTier + intervalsPerHour + slotsPerInterval);
 
@@ -188,20 +180,17 @@ public with sharing class CenterScheduleController {
             insert schedule;
 
             //attach appointments to the new schedule
-            Appointment__c[] appointments = ScheduleUtils.scheduleRange(centerId,schedule.Id,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
+            Appointment__c[] appointments = ScheduleUtils.scheduleRange(centerId, schedule.Id, startDate, endDate, loyaltyTier, intervalsPerHour, slotsPerInterval);
             insert appointments;
             return appointments;
-
-        } catch (ScheduleUtils.ScheduleException se) {
-            throw new AuraHandledException(se.getMessage());
-        }catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+        } catch (Exception e) {
+            throw Util.createAuraHandledException(e);
         }
     }
 
     @AuraEnabled
     public static List<RescheduleSlot> getAvailableRescheduleAppointmentRange(Id centerId, DateTime currentDateTime, DateTime soonestNextVisit, DateTime searchStartDateTime, DateTime searchEndDateTime, Boolean isLoyaltyDonor) {
-        String appointmentQuery = 'SELECT Id, DateTime__c FROM Appointment__c WHERE Schedule__r.Center__c = :centerId AND  DateTime__c >= :currentDateTime AND DateTime__c >= :soonestNextVisit AND DateTime__c >= :targetStartTime AND DateTime__c <= :targetEndTime';
+        String appointmentQuery = 'SELECT DateTime__c FROM Appointment__c WHERE Schedule__r.Center__c = :centerId AND  DateTime__c >= :currentDateTime AND DateTime__c >= :soonestNextVisit AND DateTime__c >= :targetStartTime AND DateTime__c <= :targetEndTime';
         if (isLoyaltyDonor) {
             appointmentQuery += ' AND (Availability__c > 0 OR Availability_Loyalty__c > 0)';
         } else {
@@ -209,20 +198,20 @@ public with sharing class CenterScheduleController {
         }
         appointmentQuery += ' ORDER BY DateTime__c ASC';
 
-        List<Appointment__c> queriedAppointments = (List<Appointment__c>)Database.queryWithBinds(
+        List<Appointment__c> queriedAppointments = (List<Appointment__c>) Database.queryWithBinds(
             appointmentQuery,
             new Map<String, Object> {
                 'centerId' => centerId,
-                'currentDateTime' => currentDateTime, 
+                'currentDateTime' => currentDateTime,
                 'soonestNextVisit' => soonestNextVisit,
-                'targetStartTime' => searchStartDateTime, 
+                'targetStartTime' => searchStartDateTime,
                 'targetEndTime' => searchEndDateTime
-            }, 
+            },
             AccessLevel.USER_MODE
         );
 
         List<RescheduleSlot> rescheduleSlots = new List<RescheduleSlot>();
-        for(Appointment__c appointment : queriedAppointments) {
+        for (Appointment__c appointment : queriedAppointments) {
             rescheduleSlots.add(new RescheduleSlot(appointment));
         }
 
@@ -235,7 +224,7 @@ public with sharing class CenterScheduleController {
             SELECT Id
             FROM Appointment__c
             WHERE Schedule__r.Center__c = :centerId AND
-                Datetime__c >= :System.now() AND 
+                Datetime__c >= :System.now() AND
                 Availability__c > 0
             ORDER BY Datetime__c ASC
             LIMIT 1
@@ -261,14 +250,14 @@ public with sharing class CenterScheduleController {
             try {
                 calloutResult = linkPaymentCardService.linkPhysicalCard(cardId, donorId, initalPIN, blockCards);
             } catch (Exception e) {
-                throw new AuraHandledException(e.getMessage());
+                throw Util.createAuraHandledException(e);
             }
         } else {
             try {
                 String returnedMessage = linkPaymentCardService.setupPaymentServiceAccount(cardId, donorId, 0, initalPIN, blockCards);
                 calloutResult = String.isEmpty(returnedMessage);
             } catch (Exception e) {
-                throw new AuraHandledException(e.getMessage());
+                throw Util.createAuraHandledException(e);
             }
         }
 
@@ -281,18 +270,18 @@ public with sharing class CenterScheduleController {
 
         try {
             targetAppointmentSlot = [
-                SELECT Id, Schedule__r.Center__c, Capacity__c, Booked__c, Booked_Loyalty__c, Datetime__c, (
-                    SELECT Id, Donor__c, Donor__r.Loyalty_Level__c 
+                SELECT Schedule__r.Center__c, Capacity__c, Booked__c, Booked_Loyalty__c, Datetime__c, (
+                    SELECT Donor__c, Donor__r.Loyalty_Level__c
                     FROM Appointments__r
                     WHERE Status__c IN ('New', 'Scheduled') AND Outcome__c = null
                     ORDER BY Donor__r.Total_Visits_365d__c ASC NULLS FIRST, Donor__r.CreatedDate DESC
                 ) 
-                FROM Appointment__c 
+                FROM Appointment__c
                 WHERE Id = :appointmentId
                 LIMIT 1
             ];
         } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
+            throw Util.createAuraHandledException(e);
         }
 
         targetAppointmentSlot.Capacity__c += capacityChange;
@@ -482,10 +471,15 @@ public with sharing class CenterScheduleController {
         @AuraEnabled
         public String label {get; set;}
 
-        public Center(Account a){
-            this.value = a.id;
-            this.label = a.name;
+        @AuraEnabled
+        public String timeZoneRegion {get; set;}
+
+        public Center(Account a) {
+            this.value = a.Id;
+            this.label = a.Name;
+            this.timeZoneRegion = Constants.TIME_ZONE_REGIONS.get(a.Center_Timezone__c);
         }
+
     }
 
     public class AppointmentSlot{
@@ -527,11 +521,11 @@ public with sharing class CenterScheduleController {
         @AuraEnabled
         public Boolean filtered {get;set;}
 
-        public AppointmentSlot(Appointment__c app){
+        public AppointmentSlot(Appointment__c app, String timeZone) {
             this.Id = app.Id;
             this.appointmentDatetime = app.Datetime__c;
-            TimeZone tz =  UserInfo.getTimeZone();
-            this.timeString =  this.appointmentDatetime.format('h:mm a');
+            this.timeString = this.appointmentDatetime.format('h:mm a', timeZone);
+
             this.visits = new Visit[]{};
 
             this.availability = (app.Availability__c == null) ? 0 : app.Availability__c;

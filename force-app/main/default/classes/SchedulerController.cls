@@ -7,7 +7,7 @@ public without sharing class SchedulerController {
 
             List<AccountContactRelation> relations = [
                 SELECT
-                    Account.Name, Account.BillingStreet
+                    Account.Name, Account.BillingStreet, Account.Center_Timezone__c
                 FROM
                     AccountContactRelation
                 WHERE
@@ -22,6 +22,7 @@ public without sharing class SchedulerController {
             center.id = account.Id;
             center.name = account.Name;
             center.address = account.BillingStreet;
+            center.timeZone = Constants.TIME_ZONE_REGIONS.get(account.Center_Timezone__c);
             return center;
         } catch (Exception e) {
             throw Util.createAuraHandledException(e);
@@ -51,7 +52,9 @@ public without sharing class SchedulerController {
             };
 
             if (appointmentDate >= Date.today()) {
-                DateTime startTime = DateTime.newInstanceGmt(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 0, 0, 0);
+                Account center = [SELECT Center_Timezone__c FROM Account WHERE Id = :centerId];
+
+                DateTime startTime = Util.getTimeZoneDateTime(appointmentDate, Time.newInstance(0, 0, 0, 0), center.Center_Timezone__c);
                 DateTime endTime = startTime.addDays(1).addSeconds(-1);
 
                 List<Appointment__c> appointmentRecords = [
@@ -61,7 +64,9 @@ public without sharing class SchedulerController {
                         Appointment__c
                     WHERE
                         Schedule__r.Center__c = :centerId
-                    AND 
+                    AND
+                        Datetime__c > :DateTime.now()
+                    AND
                         Datetime__c >= :soonestNextVisit
                     AND
                         Datetime__c >= :startTime
@@ -71,16 +76,16 @@ public without sharing class SchedulerController {
                         Datetime__c ASC
                 ];
 
-                DateTime elevenAM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 11, 0, 0);
-                DateTime twoPM = DateTime.newInstance(appointmentDate.year(), appointmentDate.month(), appointmentDate.day(), 14, 0, 0);
+                DateTime elevenAM = Util.getTimeZoneDateTime(appointmentDate, Time.newInstance(11, 0, 0, 0), center.Center_Timezone__c);
+                DateTime twoPM = Util.getTimeZoneDateTime(appointmentDate, Time.newInstance(14, 0, 0, 0), center.Center_Timezone__c);
 
-                Contact targetDonor = [SELECT Id, Loyalty_Level__c FROM Contact WHERE Id IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()) LIMIT 1];
+                Contact targetDonor = [SELECT Loyalty_Level__c FROM Contact WHERE Id IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()) LIMIT 1];
                 Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(targetDonor.Loyalty_Level__c);
 
                 for (Appointment__c appointmentRecord : appointmentRecords) {
                     Appointment appointment = new Appointment();
                     appointment.id = appointmentRecord.Id;
-                    appointment.name = appointmentRecord.Datetime__c.format('h:mm');
+                    appointment.name = appointmentRecord.Datetime__c.format('h:mm', center.Center_Timezone__c);
 
                     appointment.availability = (appointmentRecord.Availability__c == null ? 0 : appointmentRecord.Availability__c.intValue());
                     if (loyaltyLevel > 0) {
@@ -111,9 +116,13 @@ public without sharing class SchedulerController {
             List<Visit__c> visitRecords = [
                 SELECT
                     isFirstVisit__c, Appointment__r.Datetime__c, Status__c, Appointment__r.Schedule__r.Center__r.Name,
-                    Appointment__r.Schedule__r.Center__r.BillingStreet, Donor__r.Account.First_Visit_Code__c, Outcome__c, (
-                        SELECT Id, Amount_Points__c, Amount_Currency__c
-                        FROM Transactions__r
+                    Appointment__r.Schedule__r.Center__r.BillingStreet, Appointment__r.Schedule__r.Center__r.Center_Timezone__c,
+                    Donor__r.Account.First_Visit_Code__c, Outcome__c,
+                    (
+                        SELECT
+                            Amount_Points__c, Amount_Currency__c
+                        FROM
+                            Transactions__r
                     )
                 FROM
                     Visit__c
@@ -130,8 +139,8 @@ public without sharing class SchedulerController {
             for (Visit__c visitRecord : visitRecords) {
                 Visit visit = new Visit();
                 visit.id = visitRecord.Id;
-                visit.appointmentDate = visitRecord.Appointment__r.Datetime__c.format('E, d MMM ‘YY');
-                visit.appointmentTime = visitRecord.Appointment__r.Datetime__c.format('h:mm a');
+                visit.appointmentDate = visitRecord.Appointment__r.Datetime__c.format('E, d MMM ‘YY', visitRecord.Appointment__r.Schedule__r.Center__r.Center_Timezone__c);
+                visit.appointmentTime = visitRecord.Appointment__r.Datetime__c.format('h:mm a', visitRecord.Appointment__r.Schedule__r.Center__r.Center_Timezone__c);
                 visit.centerName = visitRecord.Appointment__r.Schedule__r.Center__r.Name;
                 visit.centerAddress = visitRecord.Appointment__r.Schedule__r.Center__r.BillingStreet;
                 visit.status = visitRecord.Status__c;

@@ -65,6 +65,7 @@
             <lightning-input type="date" label={labels.chooseDate} value={appointmentDate} onchange={onAppointmentDateChange}></lightning-input>
 
             <div class="title-small slds-m-top_medium">{labels.selectTimeSlot}</div>
+            <div><em>{timesShowInLabel}</em></div>
 
             <lightning-tabset>
                 <template for:each={appointmentGroups} for:item="appointmentGroup" for:index="appointmentGroupIndex">

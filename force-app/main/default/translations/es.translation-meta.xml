@@ -721,6 +721,18 @@
         <name>Thursday_Abbreviation</name>
     </customLabels>
     <customLabels>
+        <label>Los horarios que se muestran están en la zona horaria {0}.</label>
+        <name>Times_Shown_In</name>
+    </customLabels>
+    <customLabels>
+        <label>Central</label>
+        <name>Time_Zone_Central</name>
+    </customLabels>
+    <customLabels>
+        <label>Oriental</label>
+        <name>Time_Zone_Eastern</name>
+    </customLabels>
+    <customLabels>
         <label>Seguimiento de su progreso</label>
         <name>Track_Your_Progress</name>
     </customLabels>

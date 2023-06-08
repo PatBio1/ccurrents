@@ -482,7 +482,7 @@ public without sharing class ProfileController {
 
             List<Visit__c> visits = [
                 SELECT
-                    Appointment__r.Datetime__c
+                    Appointment__r.Datetime__c, Appointment__r.Schedule__r.Center__r.Center_Timezone__c
                 FROM
                     Visit__c
                 WHERE
@@ -540,7 +540,7 @@ public without sharing class ProfileController {
             task.Description = String.join(fieldValues, '\n');
             insert task;
 
-            String nextVisitTime = visits[0].Appointment__r.Datetime__c.format('E, d MMM ‘YY h:mm a');
+            String nextVisitTime = visits[0].Appointment__r.Datetime__c.format('E, d MMM ‘YY h:mm a', visits[0].Appointment__r.Schedule__r.Center__r.Center_Timezone__c);
 
             return String.format(Label.Profile_Change_Confirmation, new List<String>{nextVisitTime});
         } catch (Exception e) {

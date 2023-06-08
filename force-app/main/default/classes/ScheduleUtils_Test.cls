@@ -1,14 +1,13 @@
 @isTest
 public with sharing class ScheduleUtils_Test {
-    
+
     @TestSetup
-    static void makeData(){
-        Id centerRecordTypeID =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Center').getRecordTypeId();
-        Id personAccountRecordTypeId =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Donor').getRecordTypeId();
+    static void makeData() {
+        Id centerRecordTypeID = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Center').getRecordTypeId();
+        Id personAccountRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Donor').getRecordTypeId();
 
         system.debug('centerRecordTypeID' + centerRecordTypeID);
         system.debug('personAccountRecordTypeId' + personAccountRecordTypeId);
-
 
         // Create Donors
         Account[] donors = new Account[]{
@@ -34,19 +33,22 @@ public with sharing class ScheduleUtils_Test {
                 Name = 'Center 1',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '111 1st St',
-                CenterId__c = 'center-111'
+                CenterId__c = 'center-111',
+                Center_Timezone__c = 'America/Chicago'
             ),
             new Account(
                 Name = 'Center 2',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '222 @nd St',
-                CenterId__c = 'center-222'
+                CenterId__c = 'center-222',
+                Center_Timezone__c = 'America/Chicago'
             ),
             new Account(
                 Name = 'Center 3',
                 RecordTypeID = centerRecordTypeID,
                 ShippingStreet = '333 3rd St',
-                CenterId__c = 'center-333'
+                CenterId__c = 'center-333',
+                Center_Timezone__c = 'America/Chicago'
             )
         };
 
@@ -58,7 +60,7 @@ public with sharing class ScheduleUtils_Test {
                 String todayString = String.valueOf(Datetime.now().date());
                 Datetime closingTime = Datetime.valueOf(String.valueOf(todayString + ' ' + defaultTime.Close__c) + ':00');
                 Datetime openTime = Datetime.valueOf(String.valueOf(todayString + ' ' + defaultTime.Open__c + ':00'));
-        
+
                 Business_Hours__c newBH = new Business_Hours__c();
                 newBH.Name = defaultTime.Label;
                 newBH.Center__c = centerId;
@@ -66,11 +68,11 @@ public with sharing class ScheduleUtils_Test {
                 newBH.Index__c = defaultTime.Index__c;
                 newBH.isClosed__c = defaultTime.IsClosed__c;
                 newBH.Open__c = Time.newInstance(openTime.hour(), openTime.minute(), openTime.second(), openTime.millisecond());
-        
+
                 businessHours.add(newBH);
             }
         }
-        
+
         insert businessHours;
     }
 
@@ -86,10 +88,10 @@ public with sharing class ScheduleUtils_Test {
         Integer intervalsPerHour = 6; //10 minutes apart
         Integer slotsPerInterval = 5;
 
-        Account center1 = [SELECT Id FROM Account WHERE Name = 'Center 1'];
+        Account center1 = [SELECT Center_Timezone__c FROM Account WHERE Name = 'Center 1'];
 
         Schedule__c schedule = ScheduleUtils.createScheduleRecord(center1.Id, startDate, endDate);
-            insert schedule;
+        insert schedule;
         //scheduleRange(Id centerId, Date startDate, Date endDate, Id loyaltyTier, Integer intervalsPerHour, Integer slotsPerInterval)
         appointments = ScheduleUtils.scheduleRange(center1.id,schedule.id,startDate,endDate,loyaltyTier,intervalsPerHour,slotsPerInterval);
 
@@ -97,21 +99,20 @@ public with sharing class ScheduleUtils_Test {
 
         Test.stopTest();
         //2 days *
-         
+
         // 2 days * 15 hours * 1
         system.assertEquals(120,appointments.size());
         system.assertEquals(slotsPerInterval, appointments[0].Capacity__c);
-        
-        
+
         //first appointment should be 9:00AM on first day
-        DateTime firstTime = DateTime.newInstance(startDate, Time.newInstance(8, 0, 0, 0));
-        system.assertEquals(firstTime, appointments[0].Datetime__c);
+        DateTime firstTime = Util.getTimeZoneDateTime(startDate, Time.newInstance(8, 0, 0, 0), center1.Center_Timezone__c);
+        System.assertEquals(firstTime, appointments[0].Datetime__c);
 
         //last appointment should be 8:50PM on last day
-        DateTime lastTime = DateTime.newInstance(endDate, Time.newInstance(17, 50, 0, 0));
-        system.assertEquals(lastTime, appointments[119].Datetime__c);
-        
-        system.assertEquals(slotsPerInterval, appointments[119].Capacity__c);
+        DateTime lastTime = Util.getTimeZoneDateTime(endDate, Time.newInstance(17, 50, 0, 0), center1.Center_Timezone__c);
+        System.assertEquals(lastTime, appointments[119].Datetime__c);
+
+        System.assertEquals(slotsPerInterval, appointments[119].Capacity__c);
     }
 
     @isTest
@@ -123,7 +124,6 @@ public with sharing class ScheduleUtils_Test {
         Date startDate =  Date.newInstance(2023, 1, 1);
         Date endDate = Date.newInstance(2023, 1, 31);
         Id loyaltyTier = null;
-    
 
         Account center1 = [SELECT Id FROM Account WHERE Name = 'Center 1'];
 
@@ -157,12 +157,12 @@ public with sharing class ScheduleUtils_Test {
         Date newStartDate =  Date.newInstance(2023, 2, 1);
         Date newEndDate = Date.newInstance(2023, 3, 1);
         Schedule__c sched = ScheduleUtils.createScheduleRecord(center1.Id, newStartDate, newEndDate);
-       
     }
 
     @isTest
-    static void testCreateFirstVisitCode(){
+    static void testCreateFirstVisitCode() {
         String firstVisitCode = ScheduleUtils.createFirstVisitCode();
         system.assertEquals(7, firstVisitCode.length());
     }
+
 }

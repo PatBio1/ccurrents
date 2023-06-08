@@ -75,4 +75,9 @@ public with sharing class Constants {
     public static final String PAYMENTREQUEST_STATUS_APPROVED = 'Approved';
     public static final String PAYMENTREQUEST_STATUS_SUBMITTED = 'Submitted';
 
+    public static final Map<String, String> TIME_ZONE_REGIONS = new Map<String, String>{
+        'America/Chicago' => 'Central',
+        'America/New_York' => 'Eastern'
+    };
+
 }

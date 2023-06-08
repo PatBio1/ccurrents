@@ -9,7 +9,7 @@ public with sharing class CenterSchedulerControllerTests {
     static Integer slotsPerInterval = 1;
 
     @TestSetup
-    static void makeData(){
+    static void makeData() {
         Id centerRecordTypeID =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Center').getRecordTypeId();
         Id personAccountRecordTypeId =  Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Donor').getRecordTypeId();
 

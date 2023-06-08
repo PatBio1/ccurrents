@@ -171,6 +171,9 @@ import sundayAbbreviation from '@salesforce/label/c.Sunday_Abbreviation';
 import taxi from '@salesforce/label/c.Taxi';
 import tellUsAboutYou from '@salesforce/label/c.Tell_Us_About_You';
 import thursdayAbbreviation from '@salesforce/label/c.Thursday_Abbreviation';
+import timesShownIn from '@salesforce/label/c.Times_Shown_In';
+import timeZoneCentral from '@salesforce/label/c.Time_Zone_Central';
+import timeZoneEastern from '@salesforce/label/c.Time_Zone_Eastern';
 import trackYourProgress from '@salesforce/label/c.Track_Your_Progress';
 import transactionColumnCurrency from '@salesforce/label/c.Transaction_Column_Currency';
 import transactionColumnItem from '@salesforce/label/c.Transaction_Column_Item';
@@ -379,6 +382,9 @@ const labels = {
     taxi,
     tellUsAboutYou,
     thursdayAbbreviation,
+    timesShownIn,
+    timeZoneCentral,
+    timeZoneEastern,
     trackYourProgress,
     transactionColumnCurrency,
     transactionColumnItem,

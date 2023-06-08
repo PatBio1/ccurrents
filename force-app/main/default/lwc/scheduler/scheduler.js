@@ -28,6 +28,14 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
     existingVisitCount;
     appointmentSelected = false;
 
+    get timesShowInLabel() {
+        if (this.center.timeZone) {
+            return labels.formatLabel(labels.timesShownIn, [labels['timeZone' + this.center.timeZone]]);
+        } else {
+            return '';
+        }
+    }
+
     get submitButtonLabel() {
         if (this.isInRescheduleMode) {
             return labels.rescheduleAction;
@@ -192,9 +200,13 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
             centerId: this.center.id,
             appointmentDate: this.appointmentDate
         };
-    
+
         if (!this.isInRescheduleMode) {
+            console.log('getAppointments request', JSON.parse(JSON.stringify(request)));
+
             getAppointments(request).then(response => {
+                console.log('getAppointments response', response);
+
                 this.appointmentGroups = response;
 
                 this.appointmentGroups.forEach((appointmentGroup) => {
@@ -211,7 +223,11 @@ export default class Scheduler extends NavigationMixin(LightningElement) {
         } else {
             request.visitToReschedule = this.pageRef.state.rescheduleVisitId;
 
+            console.log('getRescheduleAppointments request', JSON.parse(JSON.stringify(request)));
+
             getRescheduleAppointments(request).then(response => {
+                console.log('getRescheduleAppointments response', response);
+
                 this.appointmentGroups = response;
 
                 this.appointmentGroups.forEach((appointmentGroup) => {

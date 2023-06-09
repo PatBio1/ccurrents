@@ -29,14 +29,7 @@ public with sharing class DonorSelectorTest {
             String targetDonorRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId();
             String targetCenterRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByName().get('Center').getRecordTypeId();
 
-            List<Account> donorsAndCenter = new List<Account> {
-                new Account(
-                    Name = 'Test Donor Center',
-                    RecordTypeId = targetCenterRecordTypeId,
-                    Services__c = 'Donation',
-                    IsActive__c = true
-                )
-            };
+            List<Account> donorsAndCenter = new List<Account> { TestUtil.createMiramarCenter() };
 
             for(Integer i = 0; i < EXPECTED_SEARCH_RESULT_COUNT / 2; i++) {
                 donorsAndCenter.add(
@@ -129,10 +122,11 @@ public with sharing class DonorSelectorTest {
 
     @IsTest
     static void searchVisitElgibleDonorByNameSuccessTest() {
+        Id centerAccountId = [SELECT Id FROM Account WHERE RecordType.DeveloperName = 'Center' LIMIT 1]?.Id;
         List<DonorSelector.DonorSearchResult> foundDonors;
 
         Test.startTest();
-        foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now(), true, true);
+        foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now(), true, true, centerAccountId);
         Test.stopTest();
 
         Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT, foundDonors.size(), 'Expected to find ' + EXPECTED_SEARCH_RESULT_COUNT + ' donors.');
@@ -140,10 +134,11 @@ public with sharing class DonorSelectorTest {
 
     @IsTest
     static void searchVisitElgibleDonorByNameNoResultsTest() {
+        Id centerAccountId = [SELECT Id FROM Account WHERE RecordType.DeveloperName = 'Center' LIMIT 1]?.Id;
         List<DonorSelector.DonorSearchResult> foundDonors;
 
         Test.startTest();
-        foundDonors = DonorSelector.searchVisitElgibleDonorByName('RandomTermThatHasNoResultsHere', DateTime.now(), true, true);
+        foundDonors = DonorSelector.searchVisitElgibleDonorByName('RandomTermThatHasNoResultsHere', DateTime.now(), true, true, centerAccountId);
         Test.stopTest();
 
         Assert.areEqual(0, foundDonors.size(), 'Expected No Results when a nonsense string is provided');
@@ -151,10 +146,11 @@ public with sharing class DonorSelectorTest {
 
     @IsTest
     static void searchVisitElgibleDonorByNameNoSearchTermTest() {
+        Id centerAccountId = [SELECT Id FROM Account WHERE RecordType.DeveloperName = 'Center' LIMIT 1]?.Id;
         List<DonorSelector.DonorSearchResult> foundDonors;
 
         Test.startTest();
-        foundDonors = DonorSelector.searchVisitElgibleDonorByName(null, DateTime.now(), true, true);
+        foundDonors = DonorSelector.searchVisitElgibleDonorByName(null, DateTime.now(), true, true, centerAccountId);
         Assert.areEqual(0, Limits.getQueries(), 'If nothing is passed, no queries should be executed');
         Test.stopTest();
 
@@ -163,10 +159,11 @@ public with sharing class DonorSelectorTest {
 
     @IsTest
     static void searchVisitElgibleDonorByNameLoyaltyOnlySearch() {
+        Id centerAccountId = [SELECT Id FROM Account WHERE RecordType.DeveloperName = 'Center' LIMIT 1]?.Id;
         List<DonorSelector.DonorSearchResult> foundDonors;
 
         Test.startTest();
-        foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now(), true, false);
+        foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now(), true, false, centerAccountId);
         Test.stopTest();
 
         Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT / 2, foundDonors.size(), 'Expected to only find ' + EXPECTED_SEARCH_RESULT_COUNT / 2 + ' loyalty donors.');
@@ -174,10 +171,11 @@ public with sharing class DonorSelectorTest {
 
     @IsTest
     static void searchVisitElgibleDonorByNameRegularOnlySearch() {
+        Id centerAccountId = [SELECT Id FROM Account WHERE RecordType.DeveloperName = 'Center' LIMIT 1]?.Id;
         List<DonorSelector.DonorSearchResult> foundDonors;
 
         Test.startTest();
-        foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now(), false, true);
+        foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now(), false, true, centerAccountId);
         Test.stopTest();
 
         Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT / 2, foundDonors.size(), 'Expected to only find ' + EXPECTED_SEARCH_RESULT_COUNT / 2 + ' regular donors.');

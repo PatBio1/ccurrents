@@ -190,7 +190,7 @@ public with sharing class CenterScheduleController {
 
     @AuraEnabled
     public static List<RescheduleSlot> getAvailableRescheduleAppointmentRange(Id centerId, DateTime currentDateTime, DateTime soonestNextVisit, DateTime searchStartDateTime, DateTime searchEndDateTime, Boolean isLoyaltyDonor) {
-        String appointmentQuery = 'SELECT DateTime__c FROM Appointment__c WHERE Schedule__r.Center__c = :centerId AND  DateTime__c >= :currentDateTime AND DateTime__c >= :soonestNextVisit AND DateTime__c >= :targetStartTime AND DateTime__c <= :targetEndTime';
+        String appointmentQuery = 'SELECT DateTime__c, Schedule__r.Center__r.Center_Timezone__c FROM Appointment__c WHERE Schedule__r.Center__c = :centerId AND  DateTime__c >= :currentDateTime AND DateTime__c >= :soonestNextVisit AND DateTime__c >= :targetStartTime AND DateTime__c <= :targetEndTime';
         if (isLoyaltyDonor) {
             appointmentQuery += ' AND (Availability__c > 0 OR Availability_Loyalty__c > 0)';
         } else {
@@ -457,9 +457,13 @@ public with sharing class CenterScheduleController {
         @AuraEnabled
         public DateTime appointmentDateTime;
 
+        @AuraEnabled
+        public String centerTimeZone;
+
         public RescheduleSlot(Appointment__c source) {
             appointmentId = source.Id;
             appointmentDateTime = source.DateTime__c;
+            centerTimeZone = source.Schedule__r.Center__r.Center_Timezone__c;
         }
     }
 

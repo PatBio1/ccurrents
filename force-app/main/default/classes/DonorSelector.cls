@@ -1,17 +1,21 @@
 public without sharing class DonorSelector {
     @AuraEnabled
-    public static List<DonorSearchResult> searchVisitElgibleDonorByName(String nameSearchString, DateTime targetVisitDateString, Boolean allowLoyaltyDonors, Boolean allowDonors) {
+    public static List<DonorSearchResult> searchVisitElgibleDonorByName(String nameSearchString, DateTime targetVisitDateString, Boolean allowLoyaltyDonors, Boolean allowDonors, String centerAccountId) {
         if (String.isEmpty(nameSearchString)) {
             return null;
         }
 
+        String centerTimeZoneKey = [SELECT Center_Timezone__c FROM Account WHERE Id = :centerAccountId LIMIT 1]?.Center_Timezone__c;
+        DateTime adjustedVisitDateTime = Util.getTimeZoneDateTime(targetVisitDateString.date(), targetVisitDateString.time(), centerTimeZoneKey);
+
+        adjustedVisitDateTime = adjustedVisitDateTime.addHours(23 - adjustedVisitDateTime.hourGmt());
+        adjustedVisitDateTime = adjustedVisitDateTime.addMinutes(59 - adjustedVisitDateTime.minuteGmt());
+        adjustedVisitDateTime = adjustedVisitDateTime.addSeconds(59 - adjustedVisitDateTime.secondGmt());
+
+        System.debug('adjustedVisitDateTime: ' + adjustedVisitDateTime);
+        System.debug('targetVisitDateString: ' + targetVisitDateString);
+
         List<DonorSearchResult> donorSearchResults = new List<DonorSearchResult>();
-
-        // We'll search for eligible donors up to the end of the day of the target visit date as the soonest next visit time component doesn't matter
-        DateTime adjustedVisitDateTime = targetVisitDateString.addHours(23);
-        adjustedVisitDateTime = adjustedVisitDateTime.addMinutes(59);
-        adjustedVisitDateTime = adjustedVisitDateTime.addSeconds(59);
-
         for(Account donor : [
             SELECT Id, Name, PersonEmail, PersonMobilePhone, Soonest_Next_Visit__pc, Loyalty_Level__pc, Loyalty_Level__pr.Name
             FROM Account

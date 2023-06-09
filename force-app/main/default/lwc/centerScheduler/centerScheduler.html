@@ -40,7 +40,6 @@
                 value={filters.start}
                 min="06:00:00.000"
                 max="22:00:00.000"
-                timezone={tz}
                 onchange={changeFilterStart}
                 increment="10"
                 placeholder="Start Time"
@@ -57,7 +56,6 @@
                 value={filters.end}
                 min="06:00:00.000"
                 max="22:00:00.000"
-                timezone={tz}
                 onchange={changeFilterEnd}
                 placeholder="End Time"
                 variant="label-hidden"
@@ -146,7 +144,7 @@
           <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
             <div key={appointment.key} if:false={appointment.filtered} style="background: #F5F0FF;" class="appointment-data-cell">
                 <a href={appointment.link} target="_blank">
-                  <lightning-formatted-time value={appointment.timeString} timezone={tz}></lightning-formatted-time>
+                  <lightning-formatted-time value={appointment.timeString} timezone={selectedCenterTimezone}></lightning-formatted-time>
                 </a>
             </div>
 

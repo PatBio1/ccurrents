@@ -63,6 +63,14 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
         }
     }
 
+    get selectedCenterTimezone() {
+        if (!this.selectedCenterId) {
+            return null;
+        }
+
+        return this.centers.find((center) => center.value === this.selectedCenterId).timeZoneRegion;
+    }
+
     @track selectedCenterId;
     @track selectedDate
     @track appointments;
@@ -587,6 +595,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appointmentSlotId: targetAppointmentId,
             appointmentSlotDate: this.selectedDate,
             appointmentSlotTime: event.currentTarget.dataset.appointmenttime,
+            fullAppointmentDateTimeString: appointmentRecord.appointmentDatetime,
             centerId: this.selectedCenterId,
             hasLoyaltyAvailability: appointmentRecord.loyaltyAvailability > 0,
             hasAvailability: appointmentRecord.availability > 0,

@@ -563,12 +563,12 @@ public class OnbeWsPrepaid {
           req.setMethod('POST');
           req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
           req.setHeader('SOAPAction', 'blank');
-          //System.debug(doc.toXmlString());
+          req.setTimeout(60000);
           req.setBodyDocument(doc);
-          //System.debug(req.getBody());
+
           Http http = new Http();
           HTTPResponse res = http.send(req);
-          //System.debug(res.getBody());
+
           Dom.Document responseDoc = res.getBodyDocument();
           Dom.XmlNode rootNode = responseDoc.getRootElement();
           Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');
@@ -822,12 +822,12 @@ public class OnbeWsPrepaid {
           req.setMethod('POST');
           req.setHeader('Content-Type', 'text/xml; charset=UTF-8');
           req.setHeader('SOAPAction', 'blank');
-          //System.debug(doc.toXmlString());
+          req.setTimeout(60000);
           req.setBodyDocument(doc);
-          //System.debug(req.getBody());
+
           Http http = new Http();
           HTTPResponse res = http.send(req);
-          //System.debug(res.getBody());
+
           Dom.Document responseDoc = res.getBodyDocument();
           Dom.XmlNode rootNode = responseDoc.getRootElement();
           Dom.XmlNode bodyNode = rootNode.getChildElement('Body','http://schemas.xmlsoap.org/soap/envelope/');

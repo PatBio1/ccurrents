@@ -1,4 +1,7 @@
 public without sharing class AddFundsBatchableHelper {
+    @TestVisible
+    private static Boolean throwSalesforceException = false;
+    
     public static Map<DonorCompInvocable.AddFundsRequest, Transaction__c> createDebitTransactions(List<DonorCompInvocable.AddFundsRequest> requests) {
         Map<DonorCompInvocable.AddFundsRequest, Transaction__c> addFundsRequestToTransaction = new Map<DonorCompInvocable.AddFundsRequest, Transaction__c>();
         Map<Id, Transaction__c> existingTransactions = new Map<Id, Transaction__c>();
@@ -70,6 +73,12 @@ public without sharing class AddFundsBatchableHelper {
 
             // We are multiplying by 100 because the payment service expects the amount in cents
             try {
+                // Using this instead of TestUtils.throwException as we need a separate boolean for this class to control this exception indendently
+                // TestUtils.throwException is already being used to surpress Onbe Exceptions in the payment service class
+                if (throwSalesforceException) {
+                    Util.testExceptionHandling();
+                }
+
                 String onbeTransactionId = (String.isEmpty(addFundsRequest.existingOnbeTransactionId)) ? addFundsRequest.accountNumber + '-' + String.valueOf(System.currentTimeMillis()) : addFundsRequest.existingOnbeTransactionId;
                 String message = paymentService.processPayment(addFundsRequest.accountNumber, completeComment, (Long)(addFundsRequest.total * 100), onbeTransactionId);
 
@@ -81,12 +90,16 @@ public without sharing class AddFundsBatchableHelper {
 
                 addFundsRequest.recordAPIResponse(true, '');
                 addFundsRequest.setOnbeTransactionId(null); // Setting transaction id to null to ensure we don't reuse the transaction
+            } catch(OnbePaymentService.OnbeServiceException onbeError) {
+                System.debug('Error processing payment: ' + onbeError.getMessage());
+
+                addFundsRequest.recordAPIResponse(false, onbeError.getMessage());
+                addFundsRequest.setOnbeTransactionId(null); // Setting transaction id to null to ensure we don't reuse the transaction
             } catch(Exception e) {
-                System.debug('Error processing payment: ' + e.getMessage());
-                addFundsRequest.recordAPIResponse(false, e.getMessage());
+                // If we get a Salesforce exception, we don't wanna queue the transaction up for a retry... in case the Onbe transaction did get processed
+                addFundsRequest.recordAPIResponse(true, 'Salesforce Exception - ' + e.getMessage());
                 addFundsRequest.setOnbeTransactionId(null); // Setting transaction id to null to ensure we don't reuse the transaction
             }
-            
         }
     }
     
@@ -147,12 +160,12 @@ public without sharing class AddFundsBatchableHelper {
         for(DonorCompInvocable.AddFundsRequest request : addFundsRequestToTransaction.keySet()) {
             Transaction__c transactionRecord = addFundsRequestToTransaction.get(request);
 
-            if (!request.isSuccessfullyProcessed) {
+            if (!String.isEmpty(request.processResponse)) {
                 transactionLogs.add(new Transaction_Log__c(
                     Transaction__c = transactionRecord.Id,
                     Datetime__c = System.now(),
                     Message__c = request.processResponse,
-                    Payment_Service__c = 'Onbe'
+                    Payment_Service__c = 'OnbePaymentService'
                 ));
             }
         }

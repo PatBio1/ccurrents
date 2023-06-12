@@ -3,6 +3,21 @@
  */
 @IsTest
 public with sharing class LeadTriggerHandlerTest {
+    final static String DEFAULT_LEVEL_NAME = 'Default Level';
+
+    @TestSetup
+    static void createTestData() {
+        List<Level__c> levelRecords = new List<Level__c> {
+            new Level__c(
+                Name = DEFAULT_LEVEL_NAME,
+                Donation_Threshold__c = 0,
+                isActive__c = true,
+                isVisible__c = true
+            )
+        };
+        insert levelRecords;
+    }
+    
     @IsTest
     static void testConsentTransactionBehavior() {
         Test.startTest();
@@ -37,7 +52,6 @@ public with sharing class LeadTriggerHandlerTest {
         for (Consent_Transaction__c ct : [SELECT Id, Lead__c, Contact__c FROM Consent_Transaction__c WHERE Contact__c != NULL]) {
             Assert.areEqual(convertedLead.ConvertedContactId, ct.Contact__c);
         }
-
     }
 
     @IsTest
@@ -104,5 +118,28 @@ public with sharing class LeadTriggerHandlerTest {
         Assert.areEqual(testLead.Donations_Last_365_Days_Migrated__c, convertedAccount.Donations_Last_365_Days_Migrated__pc);
         Assert.areEqual(testLead.First_Visit_Code__c, convertedAccount.First_Visit_Code__c);
         Assert.areEqual(testLead.First_Visit_Code__c, convertedTask.Description);
+    }
+
+    @IsTest
+    static void testUpdateConvertLeadAccountLoyaltyLevel() {
+        LeadStatus convertStatus = [SELECT Id, MasterLabel FROM LeadStatus WHERE IsConverted = TRUE LIMIT 1];
+        Level__c level = [SELECT Id FROM Level__c WHERE Name = :DEFAULT_LEVEL_NAME LIMIT 1];
+
+        Lead testLead = new Lead (
+            FirstName = 'Test',
+            LastName = 'Two'
+        );
+        insert testLead;
+
+        Database.LeadConvert leadConvertProcess = new Database.LeadConvert();
+        leadConvertProcess.setLeadId(testLead.Id);
+        leadConvertProcess.setConvertedStatus(convertStatus.MasterLabel);
+
+        Test.startTest();
+        Database.LeadConvertResult leadConvertResult = Database.convertLead(leadConvertProcess);
+        Test.stopTest();
+
+        Assert.isTrue([SELECT IsConverted FROM Lead WHERE Id = :testLead.Id][0].IsConverted, 'Lead was not converted');
+        Assert.areEqual(level.Id, [SELECT Loyalty_Level__pc FROM Account WHERE Id = :leadConvertResult.getAccountId()][0].Loyalty_Level__pc, 'Loyalty Level was not set on converted Account');
     }
 }

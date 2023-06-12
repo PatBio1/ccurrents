@@ -1,18 +1,28 @@
 public without sharing class LoyaltyLevelService {
 
     private static Map<Id, Integer> loyaltyLevelIdToIndex;
+    private static Level__c defaultLoyaltyLevel;
 
     public static Level__c getDefault() {
-        return [
-            SELECT
-                Id, Donation_Points__c, Donation_Payment__c
-            FROM
-                Level__c
-            WHERE
-                Donation_Threshold__c = 0
-            LIMIT
-                1
-        ];
+        if (defaultLoyaltyLevel == null) {
+            try {
+                defaultLoyaltyLevel = [
+                    SELECT
+                        Id, Donation_Points__c, Donation_Payment__c
+                    FROM
+                        Level__c
+                    WHERE
+                        Donation_Threshold__c = 0
+                    LIMIT
+                        1
+                ];
+            } catch(Exception e) {
+                System.debug('Couldn\'t find default loyalty level');
+                System.debug(e);
+            }
+        }
+
+        return defaultLoyaltyLevel;
     }
 
     public static Integer getLoyaltyLevel(Id loyaltyLevelId) {

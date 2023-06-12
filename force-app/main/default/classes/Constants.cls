@@ -80,4 +80,6 @@ public with sharing class Constants {
         'America/New_York' => 'Eastern'
     };
 
+    public static final String CANT_SCHEDULE_LOYALTY_MESSAGE = 'Can\'t schedule donor due to loyalty level.';
+    public static final String CANT_SCHEDULE_SOONEST_NEXT_VISIT_MESSAGE = 'Can\'t schedule donor until {0}.';
 }

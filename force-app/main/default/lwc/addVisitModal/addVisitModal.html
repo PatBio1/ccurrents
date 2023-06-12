@@ -70,8 +70,10 @@
                                 </td>
 
                                 <td style="text-align: end;">
-                                    <lightning-button variant="brand" label="Select" onclick={handleSelectDonor} data-donor-id={donor.donorId}>
+                                    <lightning-button if:false={donor.cantScheduleReason} variant="brand" label="Select" onclick={handleSelectDonor} data-donor-id={donor.donorId}>
                                     </lightning-button>
+
+                                    <p if:true={donor.cantScheduleReason}>{donor.cantScheduleReason}</p>
                                 </td>
                             </tr>
                         </template>

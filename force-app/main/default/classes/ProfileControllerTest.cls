@@ -1005,6 +1005,7 @@ public with sharing class ProfileControllerTest {
             profile.city = 'Test City';
             profile.state = 'Test State';
             profile.postalCode = '12345';
+            profile.email = 'ctester@ccurrents.com.testing';
 
             Test.startTest();
             accountId = ProfileController.createUserFromScheduler(profile);

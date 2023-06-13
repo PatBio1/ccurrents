@@ -1,0 +1,43 @@
+<template>
+    <lightning-quick-action-panel header="Create Donor User" class="slds-is-relative">
+        <lightning-spinner if:true={isLoading}>
+        </lightning-spinner>
+        
+        <template if:false={centerOptions}>
+            <p>No available centers were found for this user.</p>
+        </template>
+
+        <template if:true={centerOptions}>
+            <lightning-radio-group
+                style="margin-bottom: 1rem;"
+                name="center"
+                label="User Default Center"
+                options={centerOptions}
+                value={selectedCenterId}
+                onchange={handleSelectCenter}
+                type="radio"
+                required
+            >
+            </lightning-radio-group>
+
+            <lightning-combobox
+                name="language"
+                label="User Default Language"
+                value={selectedLanguage}
+                placeholder="Select Language"
+                options={languageOptions}
+                onchange={handleSelectLanguage}
+                required>
+            >
+            </lightning-combobox>
+        </template>
+
+        <div slot="footer">
+            <lightning-button variant="neutral" label="Cancel" onclick={handleCancelAction}>
+            </lightning-button>
+
+            <lightning-button variant="brand" label="Create" class="slds-m-left_x-small" onclick={handleCreateUser} disabled={cantCreateUser}>
+            </lightning-button>
+        </div>
+    </lightning-quick-action-panel>
+</template>

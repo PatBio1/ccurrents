@@ -392,7 +392,9 @@ public without sharing class ProfileController {
                 PersonMailingCountry = 'US' // We are hard coding US as that is what the Onbe API requires for the createAccount callout
             );
 
-            commitUserFromScheduler(profile.centerId, leadConvertResult.getAccountId(), profile.language);
+            if (!String.isEmpty(profile.email)) {
+                commitUserFromScheduler(profile.centerId, leadConvertResult.getAccountId(), profile.language);
+            }
 
             return leadConvertResult.getAccountId();
         } catch (Exception e) {
@@ -673,6 +675,16 @@ public without sharing class ProfileController {
     @future
     private static void commitUserFromScheduler(Id centerId, Id accountId, String language) {
         System.enqueueJob(new UserCreationQueueable(centerId, accountId, language));
+    }
+
+    // Used by a quick action on the account page to create a user for the account.
+    @AuraEnabled
+    public static void queueCreateUserFromScheduler(Id centerId, Id accountId, String language) {
+        try {
+            commitUserFromScheduler(centerId, accountId, language);
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
     }
 
     public class Profile {

@@ -125,7 +125,7 @@ export default class Profile extends LightningElement {
         return (
             util.isNotBlank(this.profile.firstName) &&
             util.isNotBlank(this.profile.lastName) &&
-            util.isNotBlank(this.profile.email) &&
+            ((!this.isSchedulerView && util.isNotBlank(this.profile.email)) || this.isSchedulerView) &&
             util.isNotBlank(this.profile.mobilePhone) &&
             this.phoneRegex.test(this.profile.mobilePhone)
         );

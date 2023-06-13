@@ -1005,6 +1005,7 @@ public with sharing class ProfileControllerTest {
             profile.city = 'Test City';
             profile.state = 'Test State';
             profile.postalCode = '12345';
+            profile.email = 'ctester@ccurrents.com.testing';
 
             Test.startTest();
             accountId = ProfileController.createUserFromScheduler(profile);
@@ -1071,4 +1072,52 @@ public with sharing class ProfileControllerTest {
         Assert.areEqual(Constants.DEFAULT_MARKETING_CONSENT_TYPE, marketingConsents[0].Type_of_Consent__c, 'The marketing consent\'s type should be ' + Constants.DEFAULT_MARKETING_CONSENT_TYPE);
     }
 
+    @isTest
+    static void testQueueCreateUserFromScheduler() {
+        String TEST_EMAIL = 'ctester@ccurrents.com.testing';
+
+        Id accountId;
+        Id expectedLastUsedCenterId;
+
+        System.runAs(TestUtil.createAdminUser()) {
+            Level__c level = new Level__c();
+            level.Donation_Threshold__c = 0;
+            level.isActive__c = true;
+            level.isVisible__c = true;
+            insert level;
+
+            Account centerAccount = TestUtil.createMiramarCenter();
+            insert centerAccount;
+
+            expectedLastUsedCenterId = centerAccount.Id;
+
+            Lead lead = new Lead();
+            lead.FirstName = 'Test First';
+            lead.LastName = 'Test Last';
+            insert lead;
+
+            ProfileController.Profile profile = new ProfileController.Profile();
+            profile.id = lead.Id;
+            profile.centerId = centerAccount.Id;
+            profile.nickname = 'testnick';
+            profile.language = 'en_US';
+            profile.street = '123 Test St';
+            profile.city = 'Test City';
+            profile.state = 'Test State';
+            profile.postalCode = '12345';
+
+            accountId = ProfileController.createUserFromScheduler(profile);
+
+            update new Account(
+                Id = accountId,
+                PersonEmail = TEST_EMAIL
+            );
+
+            Test.startTest();
+            ProfileController.queueCreateUserFromScheduler(centerAccount.Id, accountId, 'en_US');
+            Test.stopTest();
+
+            Assert.areEqual(1, [SELECT count() FROM User WHERE Email = :TEST_EMAIL], 'A user should have been created');
+        }
+    }
 }

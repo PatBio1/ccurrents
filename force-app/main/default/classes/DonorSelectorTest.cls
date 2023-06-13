@@ -166,7 +166,17 @@ public with sharing class DonorSelectorTest {
         foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now(), true, false, centerAccountId);
         Test.stopTest();
 
-        Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT / 2, foundDonors.size(), 'Expected to only find ' + EXPECTED_SEARCH_RESULT_COUNT / 2 + ' loyalty donors.');
+        Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT, foundDonors.size(), 'Expected to only find ' + EXPECTED_SEARCH_RESULT_COUNT / 2 + ' loyalty donors.');
+
+        Integer cantScheduleCount = 0;
+        for(DonorSelector.DonorSearchResult result : foundDonors) {
+            if (!String.isEmpty(result.cantScheduleReason)) {
+                Assert.areEqual(Constants.CANT_SCHEDULE_LOYALTY_MESSAGE, result.cantScheduleReason, 'Expected to find ' + Constants.CANT_SCHEDULE_LOYALTY_MESSAGE + ' for loyalty donors.');
+                cantScheduleCount++;
+            }
+        }
+
+        Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT / 2, cantScheduleCount, 'Expected to find ' + EXPECTED_SEARCH_RESULT_COUNT / 2 + ' loyalty donors.');
     }
 
     @IsTest
@@ -178,7 +188,17 @@ public with sharing class DonorSelectorTest {
         foundDonors = DonorSelector.searchVisitElgibleDonorByName(SEARCH_TERM, DateTime.now(), false, true, centerAccountId);
         Test.stopTest();
 
-        Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT / 2, foundDonors.size(), 'Expected to only find ' + EXPECTED_SEARCH_RESULT_COUNT / 2 + ' regular donors.');
+        Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT, foundDonors.size(), 'Expected to only find ' + EXPECTED_SEARCH_RESULT_COUNT / 2 + ' regular donors.');
+
+        Integer cantScheduleCount = 0;
+        for(DonorSelector.DonorSearchResult result : foundDonors) {
+            if (!String.isEmpty(result.cantScheduleReason)) {
+                Assert.areEqual(Constants.CANT_SCHEDULE_LOYALTY_MESSAGE, result.cantScheduleReason, 'Expected to find ' + Constants.CANT_SCHEDULE_LOYALTY_MESSAGE + ' for regular donors.');
+                cantScheduleCount++;
+            }
+        }
+
+        Assert.areEqual(EXPECTED_SEARCH_RESULT_COUNT / 2, cantScheduleCount, 'Expected to find ' + EXPECTED_SEARCH_RESULT_COUNT / 2 + ' regular donors.');
     }
 
     @IsTest

@@ -14,7 +14,7 @@
     <summaryFilterItems>
         <field>Transaction__c.Type__c</field>
         <operation>equals</operation>
-        <value>Debit</value>
+        <value>Credit</value>
     </summaryFilterItems>
     <summaryFilterItems>
         <field>Transaction__c.SubType__c</field>

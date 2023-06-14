@@ -61,16 +61,30 @@ public with sharing class PromotionPaymentInvocableTest {
             List<PromotionPaymentInvocable.PromotionPaymentResponse> promotionPaymentResponses = PromotionPaymentInvocable.invoke(new List<PromotionPaymentInvocable.PromotionPaymentRequest>{promotionPaymentRequest});
             Test.stopTest();
 
+            Map<Id, Transaction__c> createdTransactions = new Map<Id, Transaction__c>([
+                SELECT Id, Visit__c, Donor__c, Amount_Currency__c, Status__c, SubType__c
+                FROM Transaction__c
+                WHERE Donor__c = :experienceUser.ContactId AND 
+                    Visit__c = :visit.Id
+            ]);
+
             Assert.areEqual(1, promotionPaymentResponses.size(), 'Should have one response');
+
+            // Response wrapper checks
+            Assert.isNotNull(promotionPaymentResponses[0].transactionId, 'Should have a transaction id');
+
+            Transaction__c referencedTransaction = createdTransactions.get(promotionPaymentResponses[0].transactionId);
             Assert.areEqual(experienceUser.ContactId, promotionPaymentResponses[0].donorId, 'Should have the same donor id');
+            Assert.areEqual(referencedTransaction.Donor__c, promotionPaymentResponses[0].donorId, 'Should have the same donor id');
             Assert.areEqual(visit.Id, promotionPaymentResponses[0].visitId, 'Should have the same visit id');
+            Assert.areEqual(referencedTransaction.Visit__c, promotionPaymentResponses[0].visitId, 'Should have the same visit id');
+
             Assert.areEqual(testAmount, promotionPaymentResponses[0].amount, 'Should have the same amount');
             Assert.areEqual('reason', promotionPaymentResponses[0].reason, 'Should have the same reason');
 
-            List<Transaction__c> createdTransactions = [SELECT Id, Amount_Currency__c, Status__c, SubType__c FROM Transaction__c WHERE Donor__c = :experienceUser.ContactId AND Visit__c = :visit.Id];
+            // Transaction Checks
             Assert.areEqual(2, createdTransactions.size(), 'A debit and credit transaction record should have been created');
-
-            for(Transaction__c createdTransaction : createdTransactions) {
+            for(Transaction__c createdTransaction : createdTransactions.values()) {
                 Assert.areEqual('Complete', createdTransaction.Status__c, 'Transaction should be complete');
                 Assert.areEqual('Promotion Payment', createdTransaction.SubType__c, 'Transaction should be a Promotion Payment');
                 Assert.areEqual(testAmount, createdTransaction.Amount_Currency__c, 'Transaction amount should be the same as the request amount');

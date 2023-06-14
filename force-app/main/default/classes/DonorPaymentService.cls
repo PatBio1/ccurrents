@@ -10,9 +10,9 @@ public with sharing class DonorPaymentService {
         DonationService.createExceptionTransactions(exceptionRequests);
     }
 
-    public static void createPromotionPayment(List<PromotionPaymentRequest> promotionRequests) {
+    public static List<PromotionPaymentInvocable.PromotionPaymentResponse> createPromotionPayment(List<PromotionPaymentInvocable.PromotionPaymentRequest> promotionRequests) {
         Map<Id, String> donorIdToAccountNumber = new Map<Id, String>();
-        for (PromotionPaymentRequest request : promotionRequests) {
+        for (PromotionPaymentInvocable.PromotionPaymentRequest request : promotionRequests) {
             donorIdToAccountNumber.put(request.donorId, null);
         }
 
@@ -20,10 +20,10 @@ public with sharing class DonorPaymentService {
             donorIdToAccountNumber.put(activePaymentMethod.Donor__c, activePaymentMethod.Account_Number__c);
         }
         
-        Map<PromotionPaymentRequest, Transaction__c> promotionPaymentRequestToTransaction = new Map<PromotionPaymentRequest, Transaction__c>();
-        Map<PromotionPaymentRequest, List<Txn_Line_Item__c>> promotionPaymentRequestToTxnLineItems = new Map<PromotionPaymentRequest, List<Txn_Line_Item__c>>();
+        Map<PromotionPaymentInvocable.PromotionPaymentRequest, Transaction__c> promotionPaymentRequestToTransaction = new Map<PromotionPaymentInvocable.PromotionPaymentRequest, Transaction__c>();
+        Map<PromotionPaymentInvocable.PromotionPaymentRequest, List<Txn_Line_Item__c>> promotionPaymentRequestToTxnLineItems = new Map<PromotionPaymentInvocable.PromotionPaymentRequest, List<Txn_Line_Item__c>>();
 
-        for (PromotionPaymentRequest request : promotionRequests) {
+        for (PromotionPaymentInvocable.PromotionPaymentRequest request : promotionRequests) {
             promotionPaymentRequestToTransaction.put(request, new Transaction__c(
                 Donor__c = request.donorId,
                 Visit__c = request.visitId,
@@ -45,7 +45,7 @@ public with sharing class DonorPaymentService {
         insert promotionPaymentRequestToTransaction.values();
         
         List<Txn_Line_Item__c> allTxnLineItems = new List<Txn_Line_Item__c>();
-        for(PromotionPaymentRequest promotionPaymentRequestWithLineItems : promotionPaymentRequestToTxnLineItems.keySet()) {
+        for(PromotionPaymentInvocable.PromotionPaymentRequest promotionPaymentRequestWithLineItems : promotionPaymentRequestToTxnLineItems.keySet()) {
             Transaction__c txnRecord = promotionPaymentRequestToTransaction.get(promotionPaymentRequestWithLineItems);
             List<Txn_Line_Item__c> lineItems = promotionPaymentRequestToTxnLineItems.get(promotionPaymentRequestWithLineItems);
 
@@ -59,8 +59,10 @@ public with sharing class DonorPaymentService {
 
         // Process the payments through Onbe
         List<DonorCompInvocable.AddFundsRequest> addFundsRequest = new List<DonorCompInvocable.AddFundsRequest>();
+        List<PromotionPaymentInvocable.PromotionPaymentResponse> promotionPaymentResponses = new List<PromotionPaymentInvocable.PromotionPaymentResponse>();
+
         for(Transaction__c updatedTransaction : [
-            SELECT Id, Donor__c, Visit__c, (
+            SELECT Id, Donor__c, Visit__c, Amount_Currency__c, (
                 SELECT Id, Unit_Cost__c, Type__c, Item__c 
                 FROM Txn_Line_Items__r
             ) 
@@ -75,24 +77,19 @@ public with sharing class DonorPaymentService {
                 newRequest.comments.add(lineItem.Item__c);
                 newRequest.addLineItem(lineItem.Item__c, lineItem.Type__c, lineItem.Unit_Cost__c);
             }
+            
+            PromotionPaymentInvocable.PromotionPaymentResponse promotionResponse = new PromotionPaymentInvocable.PromotionPaymentResponse();
+            promotionResponse.donorId = updatedTransaction.Donor__c;
+            promotionResponse.visitId = updatedTransaction.Visit__c;
+            promotionResponse.amount = updatedTransaction.Amount_Currency__c;
+            promotionResponse.reason = String.join(newRequest.comments, ', ');
+            promotionResponse.transactionId = updatedTransaction.Id;
 
             addFundsRequest.add(newRequest);
+            promotionPaymentResponses.add(promotionResponse);
         }
 
         Database.executeBatch(new AddFundsBatchable(addFundsRequest), 100);
-    }
-
-    public class PromotionPaymentRequest {
-        public Id donorId;
-        public Id visitId;
-        public Decimal amount;
-        public String reason;
-
-        public PromotionPaymentRequest(Id donorId, Id visitId, Decimal amount, String reason) {
-            this.donorId = donorId;
-            this.visitId = visitId;
-            this.amount = amount;
-            this.reason = reason;
-        }
+        return promotionPaymentResponses;
     }
 }

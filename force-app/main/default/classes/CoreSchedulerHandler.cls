@@ -46,7 +46,7 @@ public without sharing class CoreSchedulerHandler {
             donorIds.add(visit.Donor__c);
         }
 
-        Map<Id, Appointment__c> appointments = new Map<Id, Appointment__c>([SELECT Id, Capacity__c, Capacity_Loyalty__c FROM Appointment__c WHERE Id IN :appointmentIds]);
+        Map<Id, Appointment__c> appointments = new Map<Id, Appointment__c>([SELECT Id, Availability__c, Availability_Loyalty__c FROM Appointment__c WHERE Id IN :appointmentIds]);
         Map<Id, Contact> donors = new Map<Id, Contact>([SELECT Id, Loyalty_Level__c FROM Contact WHERE Id IN :donorIds]);
 
         for(Visit__c visit : newVisits) {
@@ -55,8 +55,8 @@ public without sharing class CoreSchedulerHandler {
             Integer donorLoyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donors.get(visit.Donor__c).Loyalty_Level__c);
             Boolean qualifiesForLoyalty = donorLoyaltyLevel > 0;
 
-            if (appointment.Capacity__c == 0 && (!qualifiesForLoyalty || (qualifiesForLoyalty && appointment.Capacity_Loyalty__c == 0))) {
-                throw new AuraHandledException('Appointment is full');
+            if (appointment.Availability__c == 0 && (!qualifiesForLoyalty || (qualifiesForLoyalty && appointment.Availability_Loyalty__c == 0))) {
+                throw new AuraHandledException(Constants.OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE);
             }
         }
 

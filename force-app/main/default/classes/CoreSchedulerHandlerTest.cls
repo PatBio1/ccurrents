@@ -188,7 +188,6 @@ public class CoreSchedulerHandlerTest {
                 Status__c = 'Scheduled'
             ));
         }
-        insert testVisits;
 
         Boolean wasExceptionThrown = false;
         Test.startTest();
@@ -196,6 +195,7 @@ public class CoreSchedulerHandlerTest {
             CoreSchedulerHandler.createVisit(testVisits[0]);
         } catch (Exception e) {
             wasExceptionThrown = true;
+            Assert.areEqual(Constants.OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE, e.getMessage(), 'An unexpected exception was thrown.');
         }
         Test.stopTest();
 

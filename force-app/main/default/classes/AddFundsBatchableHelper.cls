@@ -84,12 +84,12 @@ public without sharing class AddFundsBatchableHelper {
 
                 if (message == Constants.ONBE_ACCOUNT_MANAGEMENT_PROCESSING_STATUS) {
                     addFundsRequest.recordAPIResponse(false, 'Payment is still processing.');
-                    addFundsRequest.setOnbeTransactionId(onbeTransactionId); // Setting transactions id to ensure we grab this transaction again, should only be done with 2 code
+                    addFundsRequest.setOnbeTransactionId(onbeTransactionId); // Setting transactions id to ensure we grab this transaction again
                     continue;
                 }
 
                 addFundsRequest.recordAPIResponse(true, '');
-                addFundsRequest.setOnbeTransactionId(null); // Setting transaction id to null to ensure we don't reuse the transaction
+                addFundsRequest.setOnbeTransactionId(onbeTransactionId); // Setting transaction id to allow for reconciliation on Onbe reports
             } catch(OnbePaymentService.OnbeServiceException onbeError) {
                 System.debug('Error processing payment: ' + onbeError.getMessage());
 

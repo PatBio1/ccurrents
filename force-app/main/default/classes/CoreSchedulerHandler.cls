@@ -38,6 +38,28 @@ public without sharing class CoreSchedulerHandler {
     }
 
     public static List<Visit__c> createVisits(List<Visit__c> newVisits) {
+        Set<Id> appointmentIds = new Set<Id>();
+        Set<Id> donorIds = new Set<Id>();
+
+        for(Visit__c visit : newVisits) {
+            appointmentIds.add(visit.Appointment__c);
+            donorIds.add(visit.Donor__c);
+        }
+
+        Map<Id, Appointment__c> appointments = new Map<Id, Appointment__c>([SELECT Id, Capacity__c, Capacity_Loyalty__c FROM Appointment__c WHERE Id IN :appointmentIds]);
+        Map<Id, Contact> donors = new Map<Id, Contact>([SELECT Id, Loyalty_Level__c FROM Contact WHERE Id IN :donorIds]);
+
+        for(Visit__c visit : newVisits) {
+            Appointment__c appointment = appointments.get(visit.Appointment__c);
+            
+            Integer donorLoyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donors.get(visit.Donor__c).Loyalty_Level__c);
+            Boolean qualifiesForLoyalty = donorLoyaltyLevel > 0;
+
+            if (appointment.Capacity__c == 0 && (!qualifiesForLoyalty || (qualifiesForLoyalty && appointment.Capacity_Loyalty__c == 0))) {
+                throw new AuraHandledException('Appointment is full');
+            }
+        }
+
         insert newVisits;
         return newVisits;
     }

@@ -173,6 +173,35 @@ public class CoreSchedulerHandlerTest {
         }
     }
 
+    @IsTest
+    static void testCreateVisitOverCapacity() {
+        List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c LIMIT 1];
+        List<Contact> targetDonors = [SELECT Id FROM Contact LIMIT :(BASE_CAPACITY + 1)];
+        Center_Donation_Type__c targetCenterDonationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        List<Visit__c> testVisits = new List<Visit__c>();
+        for (Integer i = 0; i < targetDonors.size(); i++) {
+            testVisits.add(new Visit__c(
+                Appointment__c = targetAppointments[0].Id,
+                Donor__c = targetDonors[i].Id,
+                Center_Donation_Type__c = targetCenterDonationType.Id,
+                Status__c = 'Scheduled'
+            ));
+        }
+        insert testVisits;
+
+        Boolean wasExceptionThrown = false;
+        Test.startTest();
+        try {
+            CoreSchedulerHandler.createVisit(testVisits[0]);
+        } catch (Exception e) {
+            wasExceptionThrown = true;
+        }
+        Test.stopTest();
+
+        Assert.isTrue(wasExceptionThrown, 'An exception should be thrown when trying to create a visit over capacity.');
+    }
+
     @IsTest 
     static void testCancelVisit() {
         Appointment__c targetAppointment = [SELECT Id, Datetime__c FROM Appointment__c LIMIT 1];

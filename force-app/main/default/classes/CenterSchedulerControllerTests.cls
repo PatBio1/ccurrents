@@ -228,7 +228,7 @@ public with sharing class CenterSchedulerControllerTests {
 
             Assert.areEqual('Complete', visit.Status__c, 'Old Visit record should be complete');
             Assert.areEqual('Rescheduled', visit.Outcome__c, 'Old Visit record should be marked as rescheduled');
-            Assert.areEqual(-1, visit.Appointment__r.Booked__c, 'Old Appointment should be marked as not booked'); // Since we are inserting the visit directly, the booked count is not updated to 1. Therefore we expect -1
+            Assert.areEqual(0, visit.Appointment__r.Booked__c, 'Old Appointment should be marked as not booked');
 
             Assert.isNotNull(newVisit, 'Should have found a new visit record');
             Assert.areEqual('Scheduled', newVisit.Status__c, 'New Visit record should be scheduled');
@@ -561,9 +561,7 @@ public with sharing class CenterSchedulerControllerTests {
         Assert.isNotNull(updatedTestVisit, 'Couldn\'t find the desired visit record. Either it wasn\'t created or the data wasn\'t set correctly.');
         Assert.areEqual('No Show', updatedTestVisit.Outcome__c, 'The outcome of the visit should have been updated');
         Assert.areEqual('Complete', updatedTestVisit.Status__c, 'The status of the visit should have been updated to \'Complete\'');
-
-        // Note, this should be -1 since we are inserting the visit directly therefore it was never incremented
-        Assert.areEqual(-1, updatedTestVisit.Appointment__r.Booked__c, 'The booked count should have been decremented');
+        Assert.areEqual(0, updatedTestVisit.Appointment__r.Booked__c, 'The booked count should have been decremented');
     }
 
     @IsTest
@@ -657,8 +655,6 @@ public with sharing class CenterSchedulerControllerTests {
         Assert.isNotNull(updatedTestVisit, 'Couldn\'t find the desired visit record. Either it wasn\'t created or the data wasn\'t set correctly.');
         Assert.areEqual('No Show', updatedTestVisit.Outcome__c, 'The outcome of the visit should have been updated');
         Assert.areEqual('Complete', updatedTestVisit.Status__c, 'The status of the visit should have been updated to \'Complete\'');
-
-        // Note, this should be -1 since we are inserting the visit directly therefore it was never incremented
-        Assert.areEqual(-1, updatedTestVisit.Appointment__r.Booked__c, 'The booked loyalty count should have been decremented'); 
+        Assert.areEqual(0, updatedTestVisit.Appointment__r.Booked__c, 'The booked loyalty count should have been decremented'); 
     }
 }

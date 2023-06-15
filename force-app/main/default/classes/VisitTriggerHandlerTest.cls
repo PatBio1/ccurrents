@@ -688,6 +688,32 @@ public class VisitTriggerHandlerTest {
             Assert.areEqual(donorIdToVisitId.get(createdTask.WhoId), createdTask.WhatId, 'The task whoId was not the expected value');
         }
     }
+
+    @IsTest
+    static void testBookedValuesUpdateAfterDelete() {
+        List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c ORDER BY Datetime__c DESC LIMIT 2];
+        Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+        List<Contact> targetDonorContacts = [SELECT Id FROM Contact WHERE Id IN (SELECT PersonContactId FROM Account WHERE DonorId__c != NULL) LIMIT 1];
+
+        List<Visit__c> testVisits = new List<Visit__c>();
+        for(Contact targetDonorContact : targetDonorContacts) {
+            testVisits.add(new Visit__c(
+                Center_Donation_Type__c = donationType.Id,
+                Donor__c = targetDonorContact.Id,
+                Appointment__c = targetAppointments[0].Id,
+                Status__c = 'Scheduled'
+            ));
+        }
+
+        insert testVisits;
+        Assert.areEqual(targetDonorContacts.size(), [SELECT Booked__c FROM Appointment__c WHERE Id = :targetAppointments[0].Id]?.Booked__c, 'The appointment booked value was not the expected value');
+
+        Test.startTest();
+        delete testVisits;
+        Test.stopTest();
+
+        Assert.areEqual(0, [SELECT Booked__c FROM Appointment__c WHERE Id = :targetAppointments[0].Id]?.Booked__c, 'The appointment booked value was not the expected value');
+    }
 /*
     @isTest
     static void testShareRecords() {

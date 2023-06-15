@@ -192,10 +192,10 @@ public class CoreSchedulerHandlerTest {
         Boolean wasExceptionThrown = false;
         Test.startTest();
         try {
-            CoreSchedulerHandler.createVisit(testVisits[0]);
-        } catch (Exception e) {
+            CoreSchedulerHandler.createVisits(testVisits);
+        } catch (AuraHandledException createVisitException) {
             wasExceptionThrown = true;
-            Assert.areEqual(Constants.OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE, e.getMessage(), 'An unexpected exception was thrown.');
+            Assert.areEqual(Constants.OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE, createVisitException.getMessage(), 'An unexpected exception was thrown.');
         }
         Test.stopTest();
 

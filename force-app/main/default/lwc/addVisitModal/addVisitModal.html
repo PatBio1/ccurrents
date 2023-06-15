@@ -60,7 +60,7 @@
 
                                 <td>
                                     <div class="slds-truncate">
-                                        <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={donor.donorSoonestNextVisit} time-zone="UTC">
+                                        <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={donor.donorSoonestNextVisit} time-zone={donor.soonestNextVisitTimezone}>
                                         </lightning-formatted-date-time>
                                     </div>
                                 </td>

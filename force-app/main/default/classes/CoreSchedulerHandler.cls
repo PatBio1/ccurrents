@@ -46,8 +46,11 @@ public without sharing class CoreSchedulerHandler {
             donorIds.add(visit.Donor__c);
         }
 
-        Map<Id, Appointment__c> appointments = new Map<Id, Appointment__c>([SELECT Id, Capacity__c, Capacity_Loyalty__c FROM Appointment__c WHERE Id IN :appointmentIds]);
+        Map<Id, Appointment__c> appointments = new Map<Id, Appointment__c>([SELECT Id, Availability__c, Availability_Loyalty__c FROM Appointment__c WHERE Id IN :appointmentIds]);
         Map<Id, Contact> donors = new Map<Id, Contact>([SELECT Id, Loyalty_Level__c FROM Contact WHERE Id IN :donorIds]);
+
+        Map<Id, Decimal> appointmentAvailabilities = new Map<Id, Decimal>();
+        Map<Id, Decimal> appointmentLoyaltyAvailabilities = new Map<Id, Decimal>();
 
         for(Visit__c visit : newVisits) {
             Appointment__c appointment = appointments.get(visit.Appointment__c);
@@ -55,8 +58,23 @@ public without sharing class CoreSchedulerHandler {
             Integer donorLoyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donors.get(visit.Donor__c).Loyalty_Level__c);
             Boolean qualifiesForLoyalty = donorLoyaltyLevel > 0;
 
-            if (appointment.Capacity__c == 0 && (!qualifiesForLoyalty || (qualifiesForLoyalty && appointment.Capacity_Loyalty__c == 0))) {
-                throw new AuraHandledException('Appointment is full');
+            Decimal availabilityAdjustment = appointmentAvailabilities.containsKey(visit.Appointment__c) ? appointmentAvailabilities.get(visit.Appointment__c) : 0;
+            Decimal loyaltyAvailabilityAdjustment = appointmentLoyaltyAvailabilities.containsKey(visit.Appointment__c) ? appointmentLoyaltyAvailabilities.get(visit.Appointment__c) : 0;
+
+            Decimal adjustedAvailability = appointment.Availability__c - availabilityAdjustment;
+            Decimal adjustedLoyaltyAvailability = appointment.Availability_Loyalty__c - loyaltyAvailabilityAdjustment;
+
+            if (adjustedAvailability == 0 && (!qualifiesForLoyalty || (qualifiesForLoyalty && adjustedLoyaltyAvailability == 0))) {
+                AuraHandledException overCapacityException = new AuraHandledException(Constants.OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE);
+                overCapacityException.setMessage(Constants.OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE);
+                
+                throw overCapacityException;
+            } else {
+                if (adjustedAvailability > 0) {
+                    appointmentAvailabilities.put(visit.Appointment__c, availabilityAdjustment + 1);
+                } else if (qualifiesForLoyalty && adjustedLoyaltyAvailability > 0) {
+                    appointmentLoyaltyAvailabilities.put(visit.Appointment__c, loyaltyAvailabilityAdjustment + 1);
+                }
             }
         }
 

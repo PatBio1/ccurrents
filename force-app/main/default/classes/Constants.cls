@@ -82,4 +82,6 @@ public with sharing class Constants {
 
     public static final String CANT_SCHEDULE_LOYALTY_MESSAGE = 'Can\'t schedule donor due to loyalty level.';
     public static final String CANT_SCHEDULE_SOONEST_NEXT_VISIT_MESSAGE = 'Can\'t schedule donor until {0}.';
+
+    public static final String OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE = 'The selected appointment slot is full. Please select another slot.';
 }

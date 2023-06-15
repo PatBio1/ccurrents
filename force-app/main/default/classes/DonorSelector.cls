@@ -23,17 +23,22 @@ public without sharing class DonorSelector {
             DonorSearchResult newSearchResult = new DonorSearchResult(donor);
 
             Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__pc);
-            Datetime adjustedSoonestNextVisit = donor.Soonest_Next_Visit__pc != null ? Util.getTimeZoneDateTime(donor.Soonest_Next_Visit__pc.date(), donor.Soonest_Next_Visit__pc.time(), centerTimeZoneKey) : null;
-            newSearchResult.setDonorSoonestNextVisit(adjustedSoonestNextVisit);
+            Datetime adjustedSoonestNextVisit = Datetime.newInstanceGmt(donor.Soonest_Next_Visit__pc.date(), donor.Soonest_Next_Visit__pc.time());
+            newSearchResult.setDonorSoonestNextVisit(donor.Soonest_Next_Visit__pc, centerTimeZoneKey);
 
             if (
                 (loyaltyLevel > 0 && !allowLoyaltyDonors) ||
                 ((loyaltyLevel == 0 || String.isEmpty(donor.Loyalty_Level__pc)) && !allowDonors)
             ) {
                 newSearchResult.setCantScheduleReason(Constants.CANT_SCHEDULE_LOYALTY_MESSAGE);
-            } else if (adjustedSoonestNextVisit != null && adjustedSoonestNextVisit > adjustedVisitDateTime) {
-                newSearchResult.setCantScheduleReason(String.format(Constants.CANT_SCHEDULE_SOONEST_NEXT_VISIT_MESSAGE, new List<Object> { adjustedSoonestNextVisit.format('MM/dd/yyyy') }));
-            }
+            } else {
+                System.debug(adjustedSoonestNextVisit);
+                System.debug(adjustedVisitDateTime);
+
+                if (adjustedSoonestNextVisit != null && adjustedSoonestNextVisit > adjustedVisitDateTime) {
+                    newSearchResult.setCantScheduleReason(String.format(Constants.CANT_SCHEDULE_SOONEST_NEXT_VISIT_MESSAGE, new List<Object> { adjustedSoonestNextVisit.format('MM/dd/yyyy') }));
+                }
+            } 
 
             donorSearchResults.add(newSearchResult);
         }
@@ -111,6 +116,8 @@ public without sharing class DonorSelector {
         public String donorLoyaltyLevel;
         @AuraEnabled
         public String cantScheduleReason;
+        @AuraEnabled
+        public String soonestNextVisitTimezone;
 
         public DonorSearchResult(Account donor) {
             this.donorId = donor.Id;
@@ -124,8 +131,9 @@ public without sharing class DonorSelector {
             this.cantScheduleReason = reason;
         }
 
-        public void setDonorSoonestNextVisit(DateTime adjustedSoonestNextVisit) {
-            this.donorSoonestNextVisit = adjustedSoonestNextVisit;
+        public void setDonorSoonestNextVisit(DateTime soonestNextVisit, String timezone) {
+            this.donorSoonestNextVisit = soonestNextVisit;
+            this.soonestNextVisitTimezone = timezone;
         }
     }
 

@@ -412,32 +412,8 @@ public with sharing class CenterScheduleController {
             throw new AuraHandledException('Error while accessing visit to update - ' + e.getMessage());
         }
 
-        if (existingVisitRecord.Status__c == 'Complete') {
-            if (existingVisitRecord.Outcome__c == outcome) {
-                return;
-            }
-        } else {
-            // TODO: At this point, this function isn't expected to be used with the canceled status or rescheduled
-            // but if it is in the future then we should integrate the CoreSchedulerHandler.cancelVisit / CoreSchedulerHandler.rescheduleVisit functions here
-            if (outcome == 'No Show') {
-                Appointment__c appointmentSlot = existingVisitRecord.Appointment__r;
-
-                if (
-                    LoyaltyLevelService.getLoyaltyLevel(existingVisitRecord.Donor__r.Loyalty_Level__c) > 0 &&
-                    appointmentSlot.Booked_Loyalty__c != null &&
-                    appointmentSlot.Booked_Loyalty__c > 0
-                ) {
-                    appointmentSlot.Booked_Loyalty__c -= 1;
-                } else {
-                    appointmentSlot.Booked__c -= 1;
-                }
-
-                try {
-                    update appointmentSlot;
-                } catch (Exception e) {
-                    throw new AuraHandledException(e.getMessage());
-                }
-            }
+        if (existingVisitRecord.Status__c == 'Complete' && existingVisitRecord.Outcome__c == outcome) {
+            return;
         }
 
         existingVisitRecord.Status__c = 'Complete';

@@ -46,16 +46,29 @@ public without sharing class CoreSchedulerHandler {
             donorIds.add(visit.Donor__c);
         }
 
-        Map<Id, Appointment__c> appointments = new Map<Id, Appointment__c>([SELECT Id, Availability__c, Availability_Loyalty__c FROM Appointment__c WHERE Id IN :appointmentIds]);
-        Map<Id, Contact> donors = new Map<Id, Contact>([SELECT Id, Loyalty_Level__c FROM Contact WHERE Id IN :donorIds]);
+        Map<Id, Appointment__c> appointments = new Map<Id, Appointment__c>([SELECT Id, Availability__c, Availability_Loyalty__c, Datetime__c, Schedule__r.Center__r.Center_Timezone__c FROM Appointment__c WHERE Id IN :appointmentIds FOR UPDATE]);
+        Map<Id, Contact> donors = new Map<Id, Contact>([SELECT Id, Loyalty_Level__c, Soonest_Next_Visit__c FROM Contact WHERE Id IN :donorIds]);
 
         Map<Id, Decimal> appointmentAvailabilities = new Map<Id, Decimal>();
         Map<Id, Decimal> appointmentLoyaltyAvailabilities = new Map<Id, Decimal>();
 
         for(Visit__c visit : newVisits) {
             Appointment__c appointment = appointments.get(visit.Appointment__c);
+            Contact donor = donors.get(visit.Donor__c);
             
-            Integer donorLoyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donors.get(visit.Donor__c).Loyalty_Level__c);
+            if (donor.Soonest_Next_Visit__c != null) {
+                Datetime adjustedSoonestNextVisit = Datetime.newInstanceGmt(donor.Soonest_Next_Visit__c.date(), donor.Soonest_Next_Visit__c.time());
+                Datetime adjustedAppointmentDatetime = Util.getTimeZoneDateTime(appointment.Datetime__c.date(), appointment.Datetime__c.time(), appointment.Schedule__r.Center__r.Center_Timezone__c);
+
+                if (adjustedAppointmentDatetime.date() < adjustedSoonestNextVisit.date()) {
+                    AuraHandledException beforeSoonestNextVisitException = new AuraHandledException(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE);
+                    beforeSoonestNextVisitException.setMessage(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE);
+                    
+                    throw beforeSoonestNextVisitException;
+                }
+            }
+
+            Integer donorLoyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__c);
             Boolean qualifiesForLoyalty = donorLoyaltyLevel > 0;
 
             Decimal availabilityAdjustment = appointmentAvailabilities.containsKey(visit.Appointment__c) ? appointmentAvailabilities.get(visit.Appointment__c) : 0;

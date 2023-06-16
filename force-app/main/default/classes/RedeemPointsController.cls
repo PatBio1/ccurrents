@@ -45,6 +45,6 @@ public without sharing class RedeemPointsController {
 
         addFundsRequests.add(redeemPointsRequest);
 
-        Database.executeBatch(new AddFundsBatchable(addFundsRequests));
+        Database.executeBatch(new AddFundsBatchable(addFundsRequests), 100);
     }
 }

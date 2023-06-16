@@ -97,7 +97,7 @@ public with sharing class DonorSelectorTest {
                 Amount_Points__c = 1000,
                 Amount_Currency__c = 10,
                 Visit__c = testRewardVisit.Id,
-                Type__c = 'Debit',
+                Type__c = 'Credit',
                 Status__c = 'Complete'
             );
             insert testRewardTransaction;

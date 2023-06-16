@@ -519,7 +519,7 @@ public without sharing class DonorCompInvocable {
     public class AddFundsRequest {
         public Id donorContactId;
         public Id visitId;
-        public Id existingDebitTransactionId;
+        public Id debitTransactionId;
         public String existingOnbeTransactionId;
 
         public List<AddFundsLineItem> lineItems;
@@ -536,12 +536,12 @@ public without sharing class DonorCompInvocable {
             this(donorContactId, visitId, accountNumber, transactionSubType, null);
         }
 
-        public AddFundsRequest(Id donorContactId, Id visitId, String accountNumber, String transactionSubType, Id existingDebitTransactionId) {
+        public AddFundsRequest(Id donorContactId, Id visitId, String accountNumber, String transactionSubType, Id debitTransactionId) {
             this.donorContactId = donorContactId;
             this.visitId = visitId;
             this.accountNumber = accountNumber;
             this.transactionSubType = transactionSubType;
-            this.existingDebitTransactionId = existingDebitTransactionId;
+            this.debitTransactionId = debitTransactionId;
             this.existingOnbeTransactionId = '';
 
             this.comments = new List<String>();

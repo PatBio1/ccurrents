@@ -11,6 +11,8 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
     }
 
     public AddFundsBatchable(List<DonorCompInvocable.AddFundsRequest> addFundRequests) {
+        AddFundsBatchableHelper.createDebitTransactionsWithLineItems(addFundRequests);
+
         this.addFundRequests = addFundRequests;
         this.isRetry = false;
     }
@@ -83,15 +85,8 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
     }
 
     public void execute(Database.BatchableContext info, List<DonorCompInvocable.AddFundsRequest> scope) {
-        Map<DonorCompInvocable.AddFundsRequest, Transaction__c> debitTransactions = AddFundsBatchableHelper.createDebitTransactions(scope);
-        Map<DonorCompInvocable.AddFundsRequest, List<Txn_Line_Item__c>> transactionLineItems;
-
-        if (!isRetry) {
-            transactionLineItems = AddFundsBatchableHelper.createDebitTransactionLineItems(scope);
-        }
-
         AddFundsBatchableHelper.processAddFundsCallouts(scope);
-        AddFundsBatchableHelper.handleAddFundsResponses(debitTransactions, transactionLineItems, isRetry);
+        AddFundsBatchableHelper.handleAddFundsResponses(scope);
     }
 
     public void finish(Database.BatchableContext bc) {

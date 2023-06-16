@@ -84,7 +84,7 @@ public without sharing class AddFundsBatchableTest {
 
         Assert.areEqual(testDonors.size(), createdDebitTransactions.size(), 'There should be one debit transaction created for each donor');
         for(Transaction__c createdDebitTransaction : createdDebitTransactions) {
-            Assert.isNull(createdDebitTransaction.Onbe_Transaction_Id__c, 'The Onbe Transaction Id should be null if processing error is returned');
+            Assert.isNotNull(createdDebitTransaction.Onbe_Transaction_Id__c, 'The Onbe Transaction Id should be populated for successful transactions');
             Assert.areEqual(100.00, createdDebitTransaction.Amount_Currency__c, 'The debit transaction should have the correct amount');
             Assert.areEqual(1, createdDebitTransaction.Txn_Line_Items__r.size(), 'The debit transaction should have one line item');
             Assert.areEqual('Complete', createdDebitTransaction.Status__c, 'The debit transaction should have a status of Complete');
@@ -167,8 +167,8 @@ public without sharing class AddFundsBatchableTest {
         ];
 
         Assert.areEqual(testDonors.size(), createdDebitTransactions.size(), 'There should be one debit transaction created for each donor');
-        Integer expectedRetryCount = 0;
-        Datetime expectedRetryNext = System.now().addSeconds((Integer)(BASE_RETRY_INTERVAL * Math.pow((Double)RETRY_MULTIPLIER, (Double)expectedRetryCount)));
+        Integer expectedRetryCount = 1;
+        Datetime expectedRetryNext = System.now().addSeconds((Integer)(BASE_RETRY_INTERVAL * Math.pow((Double)RETRY_MULTIPLIER, (Double)(expectedRetryCount - 1))));
 
         for(Transaction__c createdDebitTransaction : createdDebitTransactions) {
             Assert.isNull(createdDebitTransaction.Onbe_Transaction_Id__c, 'The Onbe Transaction Id should be null if processing error isn\'t returned');
@@ -217,8 +217,8 @@ public without sharing class AddFundsBatchableTest {
         ];
 
         Assert.areEqual(testDonors.size(), createdDebitTransactions.size(), 'There should be one debit transaction created for each donor');
-        Integer expectedRetryCount = 0;
-        Datetime expectedRetryNext = System.now().addSeconds((Integer)(BASE_RETRY_INTERVAL * Math.pow((Double)RETRY_MULTIPLIER, (Double)expectedRetryCount)));
+        Integer expectedRetryCount = 1;
+        Datetime expectedRetryNext = System.now().addSeconds((Integer)(BASE_RETRY_INTERVAL * Math.pow((Double)RETRY_MULTIPLIER, (Double)(expectedRetryCount - 1))));
 
         for(Transaction__c createdDebitTransaction : createdDebitTransactions) {
             Assert.isNotNull(createdDebitTransaction.Onbe_Transaction_Id__c, 'The Onbe Transaction Id should\'nt be null if processing error is returned');
@@ -247,7 +247,7 @@ public without sharing class AddFundsBatchableTest {
                 Type__c = 'Debit',
                 Status__c = 'Error',
                 Amount_Currency__c = 100.00,
-                Retry_Count__c = 0
+                Retry_Count__c = 1
             );
 
             mockedErrorTransactions.add(newTransaction);

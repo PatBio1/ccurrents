@@ -4,7 +4,7 @@
         <name>Fire_Exception_Payment</name>
         <label>Fire Exception Payment</label>
         <locationX>50</locationX>
-        <locationY>314</locationY>
+        <locationY>278</locationY>
         <actionName>ExceptionPaymentInvocable</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -60,7 +60,7 @@
         <name>Fire_Promotion_Payment</name>
         <label>Fire Promotion Payment</label>
         <locationX>446</locationX>
-        <locationY>314</locationY>
+        <locationY>278</locationY>
         <actionName>PromotionPaymentInvocable</actionName>
         <actionType>apex</actionType>
         <connector>
@@ -117,7 +117,7 @@
         <name>Assign_Message_Record_Values</name>
         <label>Assign Message Record Values</label>
         <locationX>314</locationX>
-        <locationY>914</locationY>
+        <locationY>818</locationY>
         <assignmentItems>
             <assignToReference>inputMessageValues.Name</assignToReference>
             <operator>Assign</operator>
@@ -140,7 +140,7 @@
         <name>Assign_Payment_Request_Values</name>
         <label>Assign Payment Request Values</label>
         <locationX>314</locationX>
-        <locationY>674</locationY>
+        <locationY>602</locationY>
         <assignmentItems>
             <assignToReference>Payment_Request_Update_Record.Id</assignToReference>
             <operator>Assign</operator>
@@ -155,6 +155,13 @@
                 <elementReference>Transaction_Id</elementReference>
             </value>
         </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Payment_Request_Update_Record.Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Paid</stringValue>
+            </value>
+        </assignmentItems>
         <connector>
             <targetReference>Update_Payment_Request</targetReference>
         </connector>
@@ -163,7 +170,7 @@
         <name>Build_Message_Record_Exception</name>
         <label>Build Message Record Exception</label>
         <locationX>50</locationX>
-        <locationY>434</locationY>
+        <locationY>386</locationY>
         <assignmentItems>
             <assignToReference>Message_Record.Body__c</assignToReference>
             <operator>Assign</operator>
@@ -214,7 +221,7 @@
         <name>Build_Message_Record_Promotion</name>
         <label>Build Message Record Promotion</label>
         <locationX>314</locationX>
-        <locationY>1034</locationY>
+        <locationY>926</locationY>
         <assignmentItems>
             <assignToReference>Message_Record.Body__c</assignToReference>
             <operator>Assign</operator>
@@ -265,7 +272,7 @@
         <name>Default_Build_Message_Record_Promotion</name>
         <label>(Default) Build Message Record Promotion</label>
         <locationX>578</locationX>
-        <locationY>554</locationY>
+        <locationY>494</locationY>
         <assignmentItems>
             <assignToReference>Message_Record.Body__c</assignToReference>
             <operator>Assign</operator>
@@ -316,7 +323,7 @@
         <name>Has_Payment_Request_Id_Decision</name>
         <label>Has Payment Request Id Decision</label>
         <locationX>446</locationX>
-        <locationY>434</locationY>
+        <locationY>386</locationY>
         <defaultConnector>
             <targetReference>Default_Build_Message_Record_Promotion</targetReference>
         </defaultConnector>
@@ -341,7 +348,7 @@
         <name>Type_Routes</name>
         <label>Type Routes</label>
         <locationX>446</locationX>
-        <locationY>194</locationY>
+        <locationY>170</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Exception</name>
@@ -416,28 +423,28 @@
         <name>Create_Message_Exception_Payment</name>
         <label>Create Message Exception Payment</label>
         <locationX>50</locationX>
-        <locationY>554</locationY>
+        <locationY>494</locationY>
         <inputReference>Message_Record</inputReference>
     </recordCreates>
     <recordCreates>
         <name>Create_Message_Promotion_Payment</name>
         <label>Create Message Promotion Payment</label>
         <locationX>314</locationX>
-        <locationY>1154</locationY>
+        <locationY>1034</locationY>
         <inputReference>Message_Record</inputReference>
     </recordCreates>
     <recordCreates>
         <name>Default_Create_Message_Promotion_Payment</name>
         <label>(Default) Create Message Promotion Payment</label>
         <locationX>578</locationX>
-        <locationY>674</locationY>
+        <locationY>602</locationY>
         <inputReference>Message_Record</inputReference>
     </recordCreates>
     <recordLookups>
         <name>Get_Payment_Request_Record_Values</name>
         <label>Get Payment Request Record Values</label>
         <locationX>314</locationX>
-        <locationY>554</locationY>
+        <locationY>494</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Assign_Payment_Request_Values</targetReference>
@@ -458,7 +465,7 @@
         <name>Update_Payment_Request</name>
         <label>Update Payment Request</label>
         <locationX>314</locationX>
-        <locationY>794</locationY>
+        <locationY>710</locationY>
         <connector>
             <targetReference>Assign_Message_Record_Values</targetReference>
         </connector>

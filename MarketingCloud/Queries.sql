@@ -310,7 +310,8 @@ v.Id AS VisitId,
 v.Appointment_Datetime__c AS AppointmentDateTime,
 c.Email AS Email,
 c.FirstName AS FirstName,
-cent.Name AS CenterName
+cent.Name AS CenterName,
+cent.Site__c AS SiteId
 
 FROM Visit__c_Salesforce as v
 
@@ -325,20 +326,22 @@ ON v.Donor__c = c.Id
 
 INNER JOIN
 (SELECT Id,
-Name
+Name,
+Site__c
 FROM Account_Salesforce)
 AS cent
-ON v.Center__c = cent.Id
+ON v.Center__c = cent.Name
 
 LEFT JOIN
 (SELECT VisitId
-FROM "Reschedule Appointment"
+FROM [Reschedule Appointment]
 )
 AS ra
 ON v.Id = ra.VisitId
 
 WHERE ra.VisitId IS NULL AND
-v.Outcome__c = 'No Show'
+v.Outcome__c = 'No Show' AND
+DATEDIFF(DAY, v.Appointment_Datetime__c, GETUTCDATE()) = 0
 
 -- Donation Payment
 
@@ -445,9 +448,10 @@ dpeEmail.TransactionId IS NULL AND
 DATEDIFF(DAY, DATEADD(DAY, -7, t.CreatedDate), t.CreatedDate) <= 7
 
 -- Post Donation Survey Response Processing
-SELECT p.[Visit Id] AS VisitId,
+SELECT DISTINCT p.[Visit Id] AS VisitId,
 p.Rating AS Rating,
-p.Feedback AS Feedback
+p.Feedback AS Feedback,
+p.SubscriberKey AS SubscriberKey
 
 FROM [Post Donation Survey Responses] as p
 

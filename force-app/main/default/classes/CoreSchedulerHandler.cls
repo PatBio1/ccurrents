@@ -61,10 +61,7 @@ public without sharing class CoreSchedulerHandler {
                 Datetime adjustedAppointmentDatetime = Util.getTimeZoneDateTime(appointment.Datetime__c.date(), appointment.Datetime__c.time(), appointment.Schedule__r.Center__r.Center_Timezone__c);
 
                 if (adjustedAppointmentDatetime.date() < adjustedSoonestNextVisit.date()) {
-                    AuraHandledException beforeSoonestNextVisitException = new AuraHandledException(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE);
-                    beforeSoonestNextVisitException.setMessage(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE);
-                    
-                    throw beforeSoonestNextVisitException;
+                    throw new CoreScheduleException(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE);
                 }
             }
 
@@ -78,10 +75,7 @@ public without sharing class CoreSchedulerHandler {
             Decimal adjustedLoyaltyAvailability = appointment.Availability_Loyalty__c - loyaltyAvailabilityAdjustment;
 
             if (adjustedAvailability == 0 && (!qualifiesForLoyalty || (qualifiesForLoyalty && adjustedLoyaltyAvailability == 0))) {
-                AuraHandledException overCapacityException = new AuraHandledException(Constants.OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE);
-                overCapacityException.setMessage(Constants.OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE);
-                
-                throw overCapacityException;
+                throw new CoreScheduleException(Constants.OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE);
             } else {
                 if (adjustedAvailability > 0) {
                     appointmentAvailabilities.put(visit.Appointment__c, availabilityAdjustment + 1);
@@ -221,4 +215,6 @@ public without sharing class CoreSchedulerHandler {
             return originalVisit;
         }
     }
+
+    public class CoreScheduleException extends Exception { }
 }

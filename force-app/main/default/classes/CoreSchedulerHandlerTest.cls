@@ -193,7 +193,7 @@ public class CoreSchedulerHandlerTest {
         Test.startTest();
         try {
             CoreSchedulerHandler.createVisits(testVisits);
-        } catch (AuraHandledException createVisitException) {
+        } catch (CoreSchedulerHandler.CoreScheduleException createVisitException) {
             wasExceptionThrown = true;
             Assert.areEqual(Constants.OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE, createVisitException.getMessage(), 'An unexpected exception was thrown.');
         }
@@ -238,7 +238,7 @@ public class CoreSchedulerHandlerTest {
                 Center_Donation_Type__c = targetCenterDonationType.Id,
                 Status__c = 'Scheduled'
             ));
-        } catch (AuraHandledException createVisitException) {
+        } catch (CoreSchedulerHandler.CoreScheduleException createVisitException) {
             wasExceptionThrown = true;
             Assert.areEqual(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE, createVisitException.getMessage(), 'An unexpected exception was thrown.');
         }

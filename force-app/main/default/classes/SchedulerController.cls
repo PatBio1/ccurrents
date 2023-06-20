@@ -120,7 +120,7 @@ public without sharing class SchedulerController {
                     Donor__r.Account.First_Visit_Code__c, Outcome__c,
                     (
                         SELECT
-                            Amount_Points__c, Amount_Currency__c
+                            Amount_Points__c, Amount_Currency__c, Type__c, SubType__c
                         FROM
                             Transactions__r
                     )
@@ -152,11 +152,11 @@ public without sharing class SchedulerController {
                 Decimal totalCurrencyReward = 0;
 
                 for (Transaction__c transactionRecord : visitRecord.Transactions__r) {
-                    if (transactionRecord.Amount_Points__c != null) {
+                    if (transactionRecord.Amount_Points__c != null && transactionRecord.Type__c == 'Credit' && transactionRecord.SubType__c != 'Point Redemption') {
                         totalPointReward += transactionRecord.Amount_Points__c;
                     }
 
-                    if (transactionRecord.Amount_Currency__c != null) {
+                    if (transactionRecord.Amount_Currency__c != null && transactionRecord.Type__c == 'Debit') {
                         totalCurrencyReward += transactionRecord.Amount_Currency__c;
                     }
                 }

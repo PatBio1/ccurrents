@@ -1,34 +1,46 @@
 public without sharing class DonorSelector {
     @AuraEnabled
-    public static List<DonorSearchResult> searchVisitElgibleDonorByName(String nameSearchString, DateTime targetVisitDateString, Boolean allowLoyaltyDonors, Boolean allowDonors) {
+    public static List<DonorSearchResult> searchVisitElgibleDonorByName(String nameSearchString, DateTime targetVisitDateString, Boolean allowLoyaltyDonors, Boolean allowDonors, String centerAccountId) {
         if (String.isEmpty(nameSearchString)) {
             return null;
         }
 
+        String centerTimeZoneKey = [SELECT Center_Timezone__c FROM Account WHERE Id = :centerAccountId LIMIT 1]?.Center_Timezone__c;
+        DateTime adjustedVisitDateTime = Util.getTimeZoneDateTime(targetVisitDateString.date(), targetVisitDateString.time(), centerTimeZoneKey);
+
+        adjustedVisitDateTime = adjustedVisitDateTime.addHours(23 - adjustedVisitDateTime.hourGmt());
+        adjustedVisitDateTime = adjustedVisitDateTime.addMinutes(59 - adjustedVisitDateTime.minuteGmt());
+        adjustedVisitDateTime = adjustedVisitDateTime.addSeconds(59 - adjustedVisitDateTime.secondGmt());
+
         List<DonorSearchResult> donorSearchResults = new List<DonorSearchResult>();
-
-        // We'll search for eligible donors up to the end of the day of the target visit date as the soonest next visit time component doesn't matter
-        DateTime adjustedVisitDateTime = targetVisitDateString.addHours(23);
-        adjustedVisitDateTime = adjustedVisitDateTime.addMinutes(59);
-        adjustedVisitDateTime = adjustedVisitDateTime.addSeconds(59);
-
         for(Account donor : [
             SELECT Id, Name, PersonEmail, PersonMobilePhone, Soonest_Next_Visit__pc, Loyalty_Level__pc, Loyalty_Level__pr.Name
             FROM Account
             WHERE Name LIKE :(nameSearchString + '%') AND
-                RecordTypeId = :Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId() AND
-                Soonest_Next_Visit__pc <= :adjustedVisitDateTime
+                RecordTypeId = :Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId()
+            ORDER BY Name ASC
         ]) {
+            DonorSearchResult newSearchResult = new DonorSearchResult(donor);
+
             Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__pc);
+            Datetime adjustedSoonestNextVisit = Datetime.newInstanceGmt(donor.Soonest_Next_Visit__pc.date(), donor.Soonest_Next_Visit__pc.time());
+            newSearchResult.setDonorSoonestNextVisit(donor.Soonest_Next_Visit__pc, centerTimeZoneKey);
 
             if (
                 (loyaltyLevel > 0 && !allowLoyaltyDonors) ||
                 ((loyaltyLevel == 0 || String.isEmpty(donor.Loyalty_Level__pc)) && !allowDonors)
             ) {
-                continue;
-            }
+                newSearchResult.setCantScheduleReason(Constants.CANT_SCHEDULE_LOYALTY_MESSAGE);
+            } else {
+                System.debug(adjustedSoonestNextVisit);
+                System.debug(adjustedVisitDateTime);
 
-            donorSearchResults.add(new DonorSearchResult(donor));
+                if (adjustedSoonestNextVisit != null && adjustedSoonestNextVisit > adjustedVisitDateTime) {
+                    newSearchResult.setCantScheduleReason(String.format(Constants.CANT_SCHEDULE_SOONEST_NEXT_VISIT_MESSAGE, new List<Object> { adjustedSoonestNextVisit.format('MM/dd/yyyy') }));
+                }
+            } 
+
+            donorSearchResults.add(newSearchResult);
         }
 
         return donorSearchResults;
@@ -50,7 +62,7 @@ public without sharing class DonorSelector {
                 Loyalty_Level__r.Next_Level__r.Name, Loyalty_Level__r.Next_Level__r.Donation_Threshold__c, (
                     SELECT Id, Expiration__c, Card_Number__c
                     FROM Payment_Methods__r
-                    WHERE Is_Active__c = true AND isDefault__c = true AND Is_Expired__c = false
+                    WHERE Is_Active__c = true AND isDefault__c = true AND Is_Expired__c = false AND User_Requested_Replace_Card__c = false
                     LIMIT 1
                 )
             FROM Contact 
@@ -102,14 +114,26 @@ public without sharing class DonorSelector {
         public DateTime donorSoonestNextVisit;
         @AuraEnabled
         public String donorLoyaltyLevel;
+        @AuraEnabled
+        public String cantScheduleReason;
+        @AuraEnabled
+        public String soonestNextVisitTimezone;
 
         public DonorSearchResult(Account donor) {
             this.donorId = donor.Id;
             this.donorName = donor.Name;
             this.donorEmail = donor.PersonEmail;
             this.donorPhone = donor.PersonMobilePhone;
-            this.donorSoonestNextVisit = donor.Soonest_Next_Visit__pc;
             this.donorLoyaltyLevel = (!String.isEmpty(donor.Loyalty_Level__pr.Name)) ? donor.Loyalty_Level__pr.Name : 'Donor (Default)';
+        }
+
+        public void setCantScheduleReason(String reason) {
+            this.cantScheduleReason = reason;
+        }
+
+        public void setDonorSoonestNextVisit(DateTime soonestNextVisit, String timezone) {
+            this.donorSoonestNextVisit = soonestNextVisit;
+            this.soonestNextVisitTimezone = timezone;
         }
     }
 

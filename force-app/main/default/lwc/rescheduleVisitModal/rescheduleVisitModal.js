@@ -137,7 +137,8 @@ export default class RescheduleVisitModal extends LightningModal {
             availableAppointment.timeDisplay = availableAppointment.appointmentDateTime.toLocaleTimeString('en-US', {
                 hour: "2-digit",
                 minute: "2-digit",
-                hour12: true
+                hour12: true,
+                timeZone: availableAppointment.centerTimeZone
             });
 
             let appointmentKey = `${availableAppointment.appointmentDateTime.getFullYear()}-${availableAppointment.appointmentDateTime.getMonth()}-${availableAppointment.appointmentDateTime.getDate()}`;

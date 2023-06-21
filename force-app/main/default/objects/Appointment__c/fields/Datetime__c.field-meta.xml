@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Datetime__c</fullName>
-    <description>The date and time of this Appointment.</description>
+    <description>Date and Time of this appointment in the current user&apos;s time zone.</description>
     <externalId>false</externalId>
-    <label>Datetime</label>
+    <label>Datetime (Local)</label>
     <required>true</required>
     <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>

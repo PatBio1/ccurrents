@@ -142,23 +142,25 @@ GROUP BY v2.Donor__c
 SELECT v.Id AS VisitId,
 v.Donor__c AS SubscriberKey,
 c.FirstName AS FirstName,
-c.Email AS Email
+c.Email AS Email,
+v.Appointment_Datetime__c
 
 FROM Visit__c_Salesforce AS v
 
 INNER JOIN Contact_Salesforce AS c
-ON v.Id = c.Id
+ON v.Donor__c = c.Id
 
 LEFT JOIN
 (SELECT VisitId
-FROM "Post Visit Satisfaction Email"
+FROM [Post Visit Satisfaction Email]
 )
 AS pvse
 ON v.Id = pvse.VisitId
 
 WHERE v.Status__c = 'Complete' AND
 v.Outcome__c = 'Donation' AND
-pvse.VisitId IS NULL
+pvse.VisitId IS NULL AND
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 0
 
 -- Welcome New Donor
 SELECT c.Id AS SubscriberKey,
@@ -223,7 +225,10 @@ ON v.Id = ar7d.VisitId
 
 WHERE ar7d.VisitId IS NULL AND
 v.Status__c = 'Scheduled' AND
-DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 7
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 7 AND
+c.Email IS NOT NULL AND
+c.FirstName IS NOT NULL AND
+cent.Name IS NOT NULL
 
 -- 72 Hour Appointment Reminder
 SELECT v.Donor__c AS SubscriberKey,
@@ -265,7 +270,10 @@ ON v.Id = ar72.VisitId
 
 WHERE ar72.VisitId IS NULL AND
 v.Status__c = 'Scheduled' AND
-DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 3
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 3 AND
+c.Email IS NOT NULL AND
+c.FirstName IS NOT NULL AND
+cent.Name IS NOT NULL
 
 -- SPE Reminder
 SELECT
@@ -302,7 +310,8 @@ v.Id AS VisitId,
 v.Appointment_Datetime__c AS AppointmentDateTime,
 c.Email AS Email,
 c.FirstName AS FirstName,
-cent.Name AS CenterName
+cent.Name AS CenterName,
+cent.Site__c AS SiteId
 
 FROM Visit__c_Salesforce as v
 
@@ -317,20 +326,22 @@ ON v.Donor__c = c.Id
 
 INNER JOIN
 (SELECT Id,
-Name
+Name,
+Site__c
 FROM Account_Salesforce)
 AS cent
-ON v.Center__c = cent.Id
+ON v.Center__c = cent.Name
 
 LEFT JOIN
 (SELECT VisitId
-FROM "Reschedule Appointment"
+FROM [Reschedule Appointment]
 )
 AS ra
 ON v.Id = ra.VisitId
 
 WHERE ra.VisitId IS NULL AND
-v.Outcome__c = 'No Show'
+v.Outcome__c = 'No Show' AND
+DATEDIFF(DAY, v.Appointment_Datetime__c, GETUTCDATE()) = 0
 
 -- Donation Payment
 
@@ -437,14 +448,15 @@ dpeEmail.TransactionId IS NULL AND
 DATEDIFF(DAY, DATEADD(DAY, -7, t.CreatedDate), t.CreatedDate) <= 7
 
 -- Post Donation Survey Response Processing
-SELECT p.[Visit Id] AS VisitId,
+SELECT DISTINCT p.[Visit Id] AS VisitId,
 p.Rating AS Rating,
-p.Feedback AS Feedback
+p.Feedback AS Feedback,
+p.SubscriberKey AS SubscriberKey
 
-FROM "Post Donation Survey Responses" as p
+FROM [Post Donation Survey Responses] as p
 
 LEFT JOIN (Select p2.VisitId AS VisitId
-FROM "Post Donation Survey Response Processing" AS p2)
+FROM [Post Donation Survey Response Processing] AS p2)
 AS pdsrp
 ON p.[Visit Id] = pdsrp.VisitId
 
@@ -571,7 +583,7 @@ c.Email
 
 HAVING COUNT(v.Id) >= 6
 
--- SCRATCH
+-- Appointment Reminder 24 hours
 SELECT v.Donor__c AS SubscriberKey,
 v.Id AS VisitId,
 FORMAT(v.Appointment_Datetime__c, 'MM/dd/yyyy') AS AppointmentDateTime,
@@ -611,4 +623,41 @@ ON v.Id = ar24.VisitId
 
 WHERE ar24.VisitId IS NULL AND
 v.Status__c = 'Scheduled' AND
-DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 1
+DATEDIFF(DAY, GETUTCDATE(), v.Appointment_Datetime__c) = 1 AND
+c.Email IS NOT NULL AND
+c.FirstName IS NOT NULL AND
+cent.Name IS NOT NULL
+
+-- New Donor Program Query (1st Donation)
+SELECT v.Id AS VisitId,
+v.Donor__c AS SubscriberKey,
+c.FirstName AS FirstName,
+c.Email AS Email
+
+FROM Visit__c_Salesforce AS v
+
+INNER JOIN
+(SELECT Id,
+FirstName,
+Email,
+Total_Donations__c,
+isLegacyDonor__c,
+CreatedDate
+FROM Contact_Salesforce
+)
+AS c
+ON v.Id = c.Id
+
+LEFT JOIN
+(SELECT SubscriberKey
+FROM [NDP First Donation]
+)
+AS ndp1
+ON v.Donor__c = ndp1.SubscriberKey
+
+WHERE v.Status__c = 'Complete' AND
+v.Outcome__c = 'Donation' AND
+ndp1.SubscriberKey IS NULL AND
+c.Total_Donations__c = 1 AND
+c.isLegacyDonor__c = 0 AND
+c.CreatedDate >=  DATEFROMPARTS(2023, 06, 01)

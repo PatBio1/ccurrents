@@ -3,30 +3,23 @@ public without sharing class PromotionPaymentInvocable {
     @InvocableMethod(Label='Promotion Payment' Category='Payment' Description='Calls Promotion Payment in Donor Payment Service.')
     public static List<PromotionPaymentResponse> invoke(List<PromotionPaymentRequest> promotionPaymentRequests) {
         List<PromotionPaymentResponse> promotionPaymentResponses = new List<PromotionPaymentResponse>();
-        List<DonorPaymentService.PromotionPaymentRequest> promotionPaymentDonorServiceRequests = new List<DonorPaymentService.PromotionPaymentRequest>();
+        List<PromotionPaymentRequest> promotionPaymentDonorServiceRequests = new List<PromotionPaymentRequest>();
 
         for (PromotionPaymentRequest promotionPaymentRequest : promotionPaymentRequests) {
-            promotionPaymentDonorServiceRequests.add(new DonorPaymentService.PromotionPaymentRequest(
-                promotionPaymentRequest.donorId,
-                promotionPaymentRequest.visitId,
-                promotionPaymentRequest.amount,
-                promotionPaymentRequest.reason
-            ));
+            PromotionPaymentRequest promotionRequest = new PromotionPaymentRequest();
 
-            PromotionPaymentResponse promotionPaymentResponse = new PromotionPaymentResponse();
-            promotionPaymentResponse.donorId = promotionPaymentRequest.donorId;
-            promotionPaymentResponse.visitId = promotionPaymentRequest.visitId;
-            promotionPaymentResponse.amount = promotionPaymentRequest.amount;
-            promotionPaymentResponse.reason = promotionPaymentRequest.reason;
-            promotionPaymentResponses.add(promotionPaymentResponse);
+            promotionRequest.donorId = promotionPaymentRequest.donorId;
+            promotionRequest.visitId = promotionPaymentRequest.visitId;
+            promotionRequest.amount = promotionPaymentRequest.amount;
+            promotionRequest.reason = promotionPaymentRequest.reason;
+            
+            promotionPaymentDonorServiceRequests.add(promotionRequest);
         }
 
-        DonorPaymentService.createPromotionPayment(promotionPaymentDonorServiceRequests);
-        return promotionPaymentResponses;
+        return DonorPaymentService.createPromotionPayment(promotionPaymentDonorServiceRequests);
     }
 
     public class PromotionPaymentRequest {
-
         @InvocableVariable
         public Id donorId;
 
@@ -38,11 +31,9 @@ public without sharing class PromotionPaymentInvocable {
 
         @InvocableVariable
         public String reason;
-
     }
 
     public class PromotionPaymentResponse {
-
         @InvocableVariable
         public Id donorId;
 
@@ -57,8 +48,5 @@ public without sharing class PromotionPaymentInvocable {
 
         @InvocableVariable
         public Id transactionId;
-
-
     }
-
 }

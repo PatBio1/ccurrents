@@ -35,6 +35,8 @@ export default class LostMyCardModal extends NavigationMixin(LightningModal) {
                 variant: 'success',
                 mode: 'dismissable'
             }));
+
+            this.dispatchEvent(new CustomEvent('cardcancelled'));
             this.close("success");
         } catch(e) {
             this.dispatchEvent(new ShowToastEvent({

@@ -6,10 +6,9 @@ public without sharing class TransactionSelector {
             Id targetDonorId = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId() LIMIT 1]?.ContactId;
 
             transactionRecords = [
-                SELECT Id, Name, Amount_Currency__c, Amount_Points__c, CreatedDate, (SELECT Id, Item__c, Total__c, Type__c FROM Txn_Line_Items__r) 
+                SELECT Id, Name, Amount_Currency__c, Amount_Points__c, CreatedDate, (SELECT Id, Item__c, Total__c, Type__c FROM Txn_Line_Items__r), Visit__c, Type__c, SubType__c 
                 FROM Transaction__c 
                 WHERE Donor__c = :targetDonorId AND
-                    Type__c = 'Debit' AND 
                     Status__c = 'Complete'
                 ORDER BY CreatedDate DESC
             ];
@@ -18,8 +17,44 @@ public without sharing class TransactionSelector {
         }
 
         List<DonorTransaction> transactionWrappers = new List<DonorTransaction>();
+        Map<Id, DonorTransaction> visitIdToTransactionWrapper = new Map<Id, DonorTransaction>();
+
         for (Transaction__c transactionRecord : transactionRecords) {
-            transactionWrappers.add(new DonorTransaction(transactionRecord));
+            DonorTransaction transactionWrapper;
+
+            if (transactionRecord.SubType__c == 'Point Redemption') {
+                if (transactionRecord.Type__c == 'Credit') {
+                    continue;
+                }
+
+                transactionWrapper = new DonorTransaction(transactionRecord);
+                transactionWrappers.add(transactionWrapper);
+
+                for(Txn_Line_Item__c transactionLineItemRecord : transactionRecord.Txn_Line_Items__r) {
+                    if (transactionLineItemRecord.Type__c == 'Currency') {
+                        transactionWrapper.addCurrency(transactionLineItemRecord);
+                    } else if (transactionLineItemRecord.Type__c == 'Points') {
+                        transactionWrapper.addPoints(transactionLineItemRecord);
+                    }
+                }
+            } else {
+                transactionWrapper = visitIdToTransactionWrapper.get(transactionRecord.Visit__c);
+
+                if (transactionWrapper == null) {
+                    transactionWrapper = new DonorTransaction(transactionRecord);
+
+                    visitIdToTransactionWrapper.put(transactionRecord.Visit__c, transactionWrapper);
+                    transactionWrappers.add(transactionWrapper);
+                }
+
+                for(Txn_Line_Item__c transactionLineItemRecord : transactionRecord.Txn_Line_Items__r) {
+                    if (transactionLineItemRecord.Type__c == 'Currency' && transactionRecord.Type__c == 'Debit') {
+                        transactionWrapper.addCurrency(transactionLineItemRecord);
+                    } else if (transactionLineItemRecord.Type__c == 'Points' && transactionRecord.Type__c == 'Credit') {
+                        transactionWrapper.addPoints(transactionLineItemRecord);
+                    }
+                }
+            }
         }
 
         return transactionWrappers;
@@ -42,16 +77,22 @@ public without sharing class TransactionSelector {
         public DonorTransaction(Transaction__c transactionRecord) {
             this.transactionId = transactionRecord.Id;
             this.name = transactionRecord.Name;
-            this.currencyTotal = transactionRecord.Amount_Currency__c;
-            this.pointTotal = transactionRecord.Amount_Points__c;
             this.transactionDate = transactionRecord.CreatedDate;
 
+            this.currencyTotal = 0;
+            this.pointTotal = 0;
+
             transactionLineItems = new List<TransactionLineItem>();
-            if (transactionRecord.Txn_Line_Items__r != null) {
-                for (Txn_Line_Item__c transactionLineItemRecord : transactionRecord.Txn_Line_Items__r) {
-                    transactionLineItems.add(new TransactionLineItem(transactionLineItemRecord));
-                }
-            }
+        }
+
+        public void addPoints(Txn_Line_Item__c pointLineItem) {
+            this.pointTotal += pointLineItem.Total__c;
+            transactionLineItems.add(new TransactionLineItem(pointLineItem));
+        }
+
+        public void addCurrency(Txn_Line_Item__c currencyLineItem) {
+            this.currencyTotal += currencyLineItem.Total__c;
+            transactionLineItems.add(new TransactionLineItem(currencyLineItem));
         }
     }
 

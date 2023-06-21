@@ -20,11 +20,11 @@
             </lightning-combobox>
 
             <lightning-input
-              style="flex: 1;" 
-              type="date" 
-              name="input8"  
+              style="flex: 1;"
+              type="date"
+              name="input8"
               value={selectedDate}
-              min="2023-01-01" 
+              min="2023-01-01"
               disabled={dateDisabled}
               onchange={changeDate}
               placeholder="Choose Date"
@@ -33,31 +33,29 @@
             </lightning-input>
 
             <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
-              <lightning-input 
+              <lightning-input
                 style="flex: 1;"
-                type="time" 
-                name="start" 
+                type="time"
+                name="start"
                 value={filters.start}
                 min="06:00:00.000"
                 max="22:00:00.000"
-                timezone={tz}
                 onchange={changeFilterStart}
                 increment="10"
                 placeholder="Start Time"
                 variant="label-hidden"
               >
               </lightning-input>
-    
+
               <p>-</p>
-    
-              <lightning-input 
+
+              <lightning-input
                 style="flex: 1;"
-                type="time" 
-                name="end" 
+                type="time"
+                name="end"
                 value={filters.end}
                 min="06:00:00.000"
                 max="22:00:00.000"
-                timezone={tz}
                 onchange={changeFilterEnd}
                 placeholder="End Time"
                 variant="label-hidden"
@@ -75,7 +73,7 @@
               disabled={createDonorDisabled}
               onclick={handleInitCreateDonor}>
             </lightning-button>
-            
+
             <lightning-button
               if:true={isCenterManager}
               variant="brand"
@@ -111,8 +109,11 @@
       <div class="appointment-list-container">
         <div style="display: flex; flex-direction: column; position: sticky; top: 0; z-index: 2;">
           <div class="appointment-date-header">
-            <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={selectedDate} time-zone="UTC">
-            </lightning-formatted-date-time>
+            <span>
+              <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={selectedDate} time-zone="UTC">
+              </lightning-formatted-date-time><br/>
+              <span style="font-size: 13px; font-weight: normal; font-style: italic;">{timesShowInLabel}</span>
+            </span>
 
             <div class="legend-header">
               <template for:each={statusOptions} for:item="status">
@@ -143,7 +144,7 @@
           <template for:each={appointments} for:item="appointment" for:index="appointmentIndex">
             <div key={appointment.key} if:false={appointment.filtered} style="background: #F5F0FF;" class="appointment-data-cell">
                 <a href={appointment.link} target="_blank">
-                  <lightning-formatted-time value={appointment.timeString} timezone={tz}></lightning-formatted-time>
+                  <lightning-formatted-time value={appointment.timeString} timezone={selectedCenterTimezone}></lightning-formatted-time>
                 </a>
             </div>
 
@@ -177,7 +178,7 @@
             >
                 <template for:each={appointment.visits} for:item="donor" for:index="donorIndex">
                     <c-donor-dot 
-                      if:false={donor.filtered} pop-flip-y-point={popYFlipPoint} oncancelvisit={handleCancelVisit} key={donor.Id} icon={donor.icon} donor={donor} center-id={selectedCenterId} 
+                      if:false={donor.filtered} pop-flip-y-point={popYFlipPoint} oncancelvisit={handleCancelVisit} key={donor.visitId} icon={donor.icon} donor={donor} center-id={selectedCenterId} 
                       appointment={appointment} data-appointment={appointment.Id} data-appointmenttime={appointment.timeString} onvisitrescheduled={handleDifferentDayReschedule} onvisitoutcomeupdated={handleVisitOutcomeUpdated}
                       ondonorpopupopen={handleDonorPopupOpen}
                     >

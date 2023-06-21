@@ -1,4 +1,6 @@
 public without sharing class AddFundsBatchable implements System.Schedulable, Database.Batchable<DonorCompInvocable.AddFundsRequest>, Database.AllowsCallouts, Database.Stateful {
+    public static String jobNameSearchString = 'Onbe - Add Funds Retry%';
+    
     List<DonorCompInvocable.AddFundsRequest> addFundRequests;
     Boolean isRetry;
 
@@ -9,6 +11,8 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
     }
 
     public AddFundsBatchable(List<DonorCompInvocable.AddFundsRequest> addFundRequests) {
+        AddFundsBatchableHelper.createDebitTransactionsWithLineItems(addFundRequests);
+
         this.addFundRequests = addFundRequests;
         this.isRetry = false;
     }
@@ -81,26 +85,17 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
     }
 
     public void execute(Database.BatchableContext info, List<DonorCompInvocable.AddFundsRequest> scope) {
-        Map<DonorCompInvocable.AddFundsRequest, Transaction__c> debitTransactions = AddFundsBatchableHelper.createDebitTransactions(scope);
-        Map<DonorCompInvocable.AddFundsRequest, List<Txn_Line_Item__c>> transactionLineItems;
-
-        if (!isRetry) {
-            transactionLineItems = AddFundsBatchableHelper.createDebitTransactionLineItems(scope);
-        }
-
         AddFundsBatchableHelper.processAddFundsCallouts(scope);
-        AddFundsBatchableHelper.handleAddFundsResponses(debitTransactions, transactionLineItems, isRetry);
+        AddFundsBatchableHelper.handleAddFundsResponses(scope);
     }
 
     public void finish(Database.BatchableContext bc) {
-        String jobNameSearchString = 'Onbe - Add Funds Retry%';
-
         // Make sure to abort any existing scheduled jobs to avoid a naming exception down below
         for(CronTrigger existingOnbeScheduledJob : [SELECT Id FROM CronTrigger WHERE CronJobDetail.Name LIKE 'Onbe - Add Funds Retry%' AND State IN ('COMPLETE', 'ERROR', 'PAUSED')]) {
             System.abortJob(existingOnbeScheduledJob.Id);
         }
 
-        if (!Test.isRunningTest() && [SELECT count() FROM CronTrigger WHERE CronJobDetail.Name LIKE :jobNameSearchString AND State IN ('WAITING', 'ACQUIRED')] > 0) {
+        if (!Test.isRunningTest() && getScheduledRetryJobInstanceCount() > 0) {
             // If there is already another retry scheduled job that hasn't fired yet, then we don't need to schedule another one
             return;
         }
@@ -120,47 +115,55 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
         ];
         
         if (remainingErroredTransactions > 0) {
-            Datetime currentDateTime = DateTime.now();
-            Datetime nextRetryDateTime = currentDateTime.addMinutes(10);
-
-            String cronExpression = String.format('{0} {1} {2} {3} {4} ? {5}', new List<object> {
-                nextRetryDateTime.second(),
-                nextRetryDateTime.minute(),
-                nextRetryDateTime.hour(),
-                nextRetryDateTime.day(),
-                nextRetryDateTime.month(),
-                nextRetryDateTime.year()
-            });
-
-            String adjustedHours;
-            if (nextRetryDateTime.hour() > 12) {
-                adjustedHours = String.valueOf(nextRetryDateTime.hour() - 12);
-            } else {
-                if (nextRetryDateTime.hour() < 10) {
-                    adjustedHours = '0' + nextRetryDateTime.hour();
-                } else {
-                    adjustedHours = String.valueOf(nextRetryDateTime.hour());
-                }
-            }
-
-            String adjustedMinutes = (nextRetryDateTime.minute() < 10) ? '0' + nextRetryDateTime.minute() : String.valueOf(nextRetryDateTime.minute());
-            String adjustedSeconds = (nextRetryDateTime.second() < 10) ? '0' + nextRetryDateTime.second() : String.valueOf(nextRetryDateTime.second());
-            String adjustedMonth = (nextRetryDateTime.month() < 10) ? '0' + nextRetryDateTime.month() : String.valueOf(nextRetryDateTime.month());
-            String adjustedDay = (nextRetryDateTime.day() < 10) ? '0' + nextRetryDateTime.day() : String.valueOf(nextRetryDateTime.day());
-
-            String jobDateKey = String.format(
-                '{0}:{1}:{2} {3}/{4}/{5}', new List<object> { 
-                    adjustedHours, adjustedMinutes, adjustedSeconds, 
-                    adjustedMonth, adjustedDay, nextRetryDateTime.year() 
-                }
-            );
-
-            if (Test.isRunningTest() && [SELECT count() FROM CronTrigger WHERE CronJobDetail.Name LIKE :jobNameSearchString] > 0) {
-                // Multiple jobs will get queued over and over again in a test context, so we need to make sure we don't schedule more than one
-                return;
-            } 
-
-            System.schedule(jobNameSearchString.replace('%', '') + ' - ' + jobDateKey, cronExpression, new AddFundsBatchable());
+            scheduledRetryRun();
         }
+    }
+
+    public static Integer getScheduledRetryJobInstanceCount() {
+        return [SELECT count() FROM CronTrigger WHERE CronJobDetail.Name LIKE :jobNameSearchString AND State IN ('WAITING', 'ACQUIRED')];
+    }
+
+    public static void scheduledRetryRun() {
+        Datetime currentDateTime = DateTime.now();
+        Datetime nextRetryDateTime = currentDateTime.addMinutes(10);
+
+        String cronExpression = String.format('{0} {1} {2} {3} {4} ? {5}', new List<object> {
+            nextRetryDateTime.second(),
+            nextRetryDateTime.minute(),
+            nextRetryDateTime.hour(),
+            nextRetryDateTime.day(),
+            nextRetryDateTime.month(),
+            nextRetryDateTime.year()
+        });
+
+        String adjustedHours;
+        if (nextRetryDateTime.hour() > 12) {
+            adjustedHours = String.valueOf(nextRetryDateTime.hour() - 12);
+        } else {
+            if (nextRetryDateTime.hour() < 10) {
+                adjustedHours = '0' + nextRetryDateTime.hour();
+            } else {
+                adjustedHours = String.valueOf(nextRetryDateTime.hour());
+            }
+        }
+
+        String adjustedMinutes = (nextRetryDateTime.minute() < 10) ? '0' + nextRetryDateTime.minute() : String.valueOf(nextRetryDateTime.minute());
+        String adjustedSeconds = (nextRetryDateTime.second() < 10) ? '0' + nextRetryDateTime.second() : String.valueOf(nextRetryDateTime.second());
+        String adjustedMonth = (nextRetryDateTime.month() < 10) ? '0' + nextRetryDateTime.month() : String.valueOf(nextRetryDateTime.month());
+        String adjustedDay = (nextRetryDateTime.day() < 10) ? '0' + nextRetryDateTime.day() : String.valueOf(nextRetryDateTime.day());
+
+        String jobDateKey = String.format(
+            '{0}:{1}:{2} {3}/{4}/{5}', new List<object> { 
+                adjustedHours, adjustedMinutes, adjustedSeconds, 
+                adjustedMonth, adjustedDay, nextRetryDateTime.year() 
+            }
+        );
+
+        if (Test.isRunningTest() && [SELECT count() FROM CronTrigger WHERE CronJobDetail.Name LIKE :jobNameSearchString] > 0) {
+            // Multiple jobs will get queued over and over again in a test context, so we need to make sure we don't schedule more than one
+            return;
+        } 
+
+        System.schedule(jobNameSearchString.replace('%', '') + ' - ' + jobDateKey, cronExpression, new AddFundsBatchable());
     }
 }

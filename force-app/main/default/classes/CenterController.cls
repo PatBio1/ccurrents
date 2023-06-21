@@ -131,6 +131,9 @@ public without sharing class CenterController {
         public String address {get; set;}
 
         @AuraEnabled
+        public String timeZone {get; set;}
+
+        @AuraEnabled
         public Decimal distance {get; set;}
 
         @AuraEnabled

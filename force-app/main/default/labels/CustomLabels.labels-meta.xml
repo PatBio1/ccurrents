@@ -995,6 +995,27 @@
         <value>Thu</value>
     </labels>
     <labels>
+        <fullName>Times_Shown_In</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Times Shown In</shortDescription>
+        <value>Times shown are in the {0} time zone.</value>
+    </labels>
+    <labels>
+        <fullName>Time_Zone_Central</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Time Zone - Central</shortDescription>
+        <value>Central</value>
+    </labels>
+    <labels>
+        <fullName>Time_Zone_Eastern</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Time Zone - Eastern</shortDescription>
+        <value>Eastern</value>
+    </labels>
+    <labels>
         <fullName>Track_Your_Progress</fullName>
         <language>en_US</language>
         <protected>true</protected>

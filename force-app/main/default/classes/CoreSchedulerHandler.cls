@@ -6,21 +6,12 @@ public without sharing class CoreSchedulerHandler {
     public static void rescheduleVisits(RescheduleBatchRequest rescheduleBatchRequest) {
         rescheduleBatchRequest.initializeRescheduleRequestData();
 
-        Map<Id, Appointment__c> appointmentSlotIdToRecord = new Map<Id, Appointment__c>();
         List<Visit__c> visitsToUpdate = new List<Visit__c>();
         List<Visit__c> visitsToInsert = new List<Visit__c>();
         List<Task> tasksToUpdate = new List<Task>();
 
         for(RescheduleRequest request : rescheduleBatchRequest.rescheduleRequests) {
-            for(Appointment__c appointmentSlot : request.updateAppointmentSlotCapacities()) {
-                appointmentSlotIdToRecord.put(appointmentSlot.Id, appointmentSlot);
-            }
-            
             visitsToInsert.add(request.createNewVisit());
-        }
-
-        if (appointmentSlotIdToRecord.size() > 0) {
-            update appointmentSlotIdToRecord.values();
         }
 
         if (visitsToInsert.size() > 0) {
@@ -47,45 +38,54 @@ public without sharing class CoreSchedulerHandler {
     }
 
     public static List<Visit__c> createVisits(List<Visit__c> newVisits) {
+        Set<Id> appointmentIds = new Set<Id>();
         Set<Id> donorIds = new Set<Id>();
-        Set<Id> appointmentSlotIds = new Set<Id>();
 
-        for(Visit__c newVisit : newVisits) {
-            donorIds.add(newVisit.Donor__c);
-            appointmentSlotIds.add(newVisit.Appointment__c);
+        for(Visit__c visit : newVisits) {
+            appointmentIds.add(visit.Appointment__c);
+            donorIds.add(visit.Donor__c);
         }
 
-        Map<Id, Appointment__c> appointmentSlots = new Map<Id, Appointment__c>([SELECT Id, Booked__c, Booked_Loyalty__c, Capacity__c, Capacity_Loyalty__c FROM Appointment__c WHERE Id IN :appointmentSlotIds]);
-        Map<Id, Integer> donorIdToLoyaltyLevel = new Map<Id, Integer>();
+        Map<Id, Appointment__c> appointments = new Map<Id, Appointment__c>([SELECT Id, Availability__c, Availability_Loyalty__c, Datetime__c, Schedule__r.Center__r.Center_Timezone__c FROM Appointment__c WHERE Id IN :appointmentIds FOR UPDATE]);
+        Map<Id, Contact> donors = new Map<Id, Contact>([SELECT Id, Loyalty_Level__c, Soonest_Next_Visit__c FROM Contact WHERE Id IN :donorIds]);
 
-        for(Contact donor : [SELECT Id, Loyalty_Level__c FROM Contact WHERE Id IN :donorIds]) {
-            donorIdToLoyaltyLevel.put(donor.Id, LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__c));
-        }
+        Map<Id, Decimal> appointmentAvailabilities = new Map<Id, Decimal>();
+        Map<Id, Decimal> appointmentLoyaltyAvailabilities = new Map<Id, Decimal>();
 
-        for(Visit__c newVisit : newVisits) {
-            Integer loyaltyLevel = donorIdToLoyaltyLevel.get(newVisit.Donor__c);
-            Appointment__c targetAppointmentSlot = appointmentSlots.get(newVisit.Appointment__c);
+        for(Visit__c visit : newVisits) {
+            Appointment__c appointment = appointments.get(visit.Appointment__c);
+            Contact donor = donors.get(visit.Donor__c);
+            
+            if (donor.Soonest_Next_Visit__c != null) {
+                Datetime adjustedSoonestNextVisit = Datetime.newInstanceGmt(donor.Soonest_Next_Visit__c.date(), donor.Soonest_Next_Visit__c.time());
+                Datetime adjustedAppointmentDatetime = Util.getTimeZoneDateTime(appointment.Datetime__c.date(), appointment.Datetime__c.time(), appointment.Schedule__r.Center__r.Center_Timezone__c);
 
-            if (targetAppointmentSlot.Booked__c == null || targetAppointmentSlot.Booked__c < targetAppointmentSlot.Capacity__c) {
-                if (targetAppointmentSlot.Booked__c == null) {
-                    targetAppointmentSlot.Booked__c = 1;
-                } else {
-                    targetAppointmentSlot.Booked__c += 1;
-                }
-            } else if (loyaltyLevel > 0 && (targetAppointmentSlot.Booked_Loyalty__c == null || targetAppointmentSlot.Booked_Loyalty__c < targetAppointmentSlot.Capacity_Loyalty__c)) {
-                if (targetAppointmentSlot.Booked_Loyalty__c == null) {
-                    targetAppointmentSlot.Booked_Loyalty__c = 1;
-                } else {
-                    targetAppointmentSlot.Booked_Loyalty__c += 1;
+                if (adjustedAppointmentDatetime.date() < adjustedSoonestNextVisit.date()) {
+                    throw new CoreScheduleException(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE);
                 }
             }
 
-            appointmentSlots.put(newVisit.Appointment__c, targetAppointmentSlot);
-        }
-    
-        update appointmentSlots.values();
-        insert newVisits;
+            Integer donorLoyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__c);
+            Boolean qualifiesForLoyalty = donorLoyaltyLevel > 0;
 
+            Decimal availabilityAdjustment = appointmentAvailabilities.containsKey(visit.Appointment__c) ? appointmentAvailabilities.get(visit.Appointment__c) : 0;
+            Decimal loyaltyAvailabilityAdjustment = appointmentLoyaltyAvailabilities.containsKey(visit.Appointment__c) ? appointmentLoyaltyAvailabilities.get(visit.Appointment__c) : 0;
+
+            Decimal adjustedAvailability = appointment.Availability__c - availabilityAdjustment;
+            Decimal adjustedLoyaltyAvailability = appointment.Availability_Loyalty__c - loyaltyAvailabilityAdjustment;
+
+            if (adjustedAvailability == 0 && (!qualifiesForLoyalty || (qualifiesForLoyalty && adjustedLoyaltyAvailability == 0))) {
+                throw new CoreScheduleException(Constants.OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE);
+            } else {
+                if (adjustedAvailability > 0) {
+                    appointmentAvailabilities.put(visit.Appointment__c, availabilityAdjustment + 1);
+                } else if (qualifiesForLoyalty && adjustedLoyaltyAvailability > 0) {
+                    appointmentLoyaltyAvailabilities.put(visit.Appointment__c, loyaltyAvailabilityAdjustment + 1);
+                }
+            }
+        }
+
+        insert newVisits;
         return newVisits;
     }
 
@@ -94,42 +94,17 @@ public without sharing class CoreSchedulerHandler {
     }
 
     public static void cancelVisits(List<Id> visitIds) {
-        Map<Id, Appointment__c> appointmentSlotIdToRecord = new Map<Id, Appointment__c>();
         List<Visit__c> visitsToUpdate = new List<Visit__c>();
 
-        for(Visit__c visit : [
-            SELECT Id, Status__c, Outcome__c, Appointment__c, Appointment__r.Booked__c, Appointment__r.Booked_Loyalty__c, Donor__r.Loyalty_Level__c 
-            FROM Visit__c 
-            WHERE Id IN :visitIds AND Status__c IN ( 'New', 'Scheduled' )
-        ]) {
-            // Adjust Appointment Booked counts
-            Appointment__c targetAppointmentSlot = appointmentSlotIdToRecord.get(visit.Appointment__c);
-            if (targetAppointmentSlot == null) {
-                targetAppointmentSlot = visit.Appointment__r;
-            }
-
-            if (LoyaltyLevelService.getLoyaltyLevel(visit.Donor__r.Loyalty_Level__c) > 0 && targetAppointmentSlot.Booked_Loyalty__c != null && targetAppointmentSlot.Booked_Loyalty__c > 0) {
-                targetAppointmentSlot.Booked_Loyalty__c -= 1;
-            } else {
-                targetAppointmentSlot.Booked__c -= 1;
-            }
-
-            appointmentSlotIdToRecord.put(targetAppointmentSlot.Id, targetAppointmentSlot);
-
-            // Update Status and Outcome
-            visit.Status__c = 'Complete';
-            visit.Outcome__c = 'Canceled';
-
-            visitsToUpdate.add(visit);
+        for(Id visitId : visitIds) {
+            visitsToUpdate.add(new Visit__c(
+                Id = visitId,
+                Status__c = 'Complete',
+                Outcome__c = 'Canceled'
+            ));
         }
 
-        if (appointmentSlotIdToRecord.size() > 0) {
-            update appointmentSlotIdToRecord.values();
-        }
-
-        if (visitsToUpdate.size() > 0) {
-            update visitsToUpdate;
-        }
+        update visitsToUpdate;
     }
 
     @AuraEnabled
@@ -213,37 +188,6 @@ public without sharing class CoreSchedulerHandler {
             this.originalVisit = originalVisit;
         }
     
-        public List<Appointment__c> updateAppointmentSlotCapacities() {
-            List<Appointment__c> updatedAppointments = new List<Appointment__c>();
-            Integer donorLoyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(originalVisit.Donor__r.Loyalty_Level__c);
-    
-            // Old Appointment Slot
-            if (donorLoyaltyLevel > 0 && oldAppointmentSlot.Booked_Loyalty__c != null && oldAppointmentSlot.Booked_Loyalty__c > 0) {
-                oldAppointmentSlot.Booked_Loyalty__c -= 1;
-            } else {
-                oldAppointmentSlot.Booked__c -= 1;
-            }
-            updatedAppointments.add(oldAppointmentSlot);
-    
-            // New Appointment Slot
-            if (newAppointmentSlot.Booked__c == null || newAppointmentSlot.Booked__c < newAppointmentSlot.Capacity__c) {
-                if (newAppointmentSlot.Booked__c == null) {
-                    newAppointmentSlot.Booked__c = 1;
-                } else {
-                    newAppointmentSlot.Booked__c += 1;
-                }
-            } else if (donorLoyaltyLevel > 0 && (newAppointmentSlot.Booked_Loyalty__c == null || newAppointmentSlot.Booked_Loyalty__c < newAppointmentSlot.Capacity_Loyalty__c)) {
-                if (newAppointmentSlot.Booked_Loyalty__c == null) {
-                    newAppointmentSlot.Booked_Loyalty__c = 1;
-                } else {
-                    newAppointmentSlot.Booked_Loyalty__c += 1;
-                }
-            }
-
-            updatedAppointments.add(newAppointmentSlot);
-            return updatedAppointments;
-        }
-    
         public Visit__c createNewVisit() {
             this.newVisit = originalVisit.clone(false, true, false, false);
     
@@ -271,4 +215,6 @@ public without sharing class CoreSchedulerHandler {
             return originalVisit;
         }
     }
+
+    public class CoreScheduleException extends Exception { }
 }

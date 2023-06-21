@@ -179,22 +179,35 @@ public with sharing class SchedulerControllerTest {
             visit.Center_Donation_Type__c = centerDonationType.Id;
             insert visit;
 
-            Transaction__c transactionRecord = new Transaction__c();
-            transactionRecord.Visit__c = visit.Id;
-            transactionRecord.Donor__c = experienceUser.ContactId;
-            transactionRecord.Type__c = 'Credit';
-            insert transactionRecord;
+            Transaction__c creditTransactionRecord = new Transaction__c();
+            creditTransactionRecord.Visit__c = visit.Id;
+            creditTransactionRecord.Donor__c = experienceUser.ContactId;
+            creditTransactionRecord.Type__c = 'Credit';
+            insert creditTransactionRecord;
+
+            Transaction__c debitTransactionRecord = new Transaction__c();
+            debitTransactionRecord.Visit__c = visit.Id;
+            debitTransactionRecord.Donor__c = experienceUser.ContactId;
+            debitTransactionRecord.Type__c = 'Debit';
+            insert debitTransactionRecord;
 
             List<Txn_Line_Item__c> lineItems = new List<Txn_Line_Item__c> {
                 new Txn_Line_Item__c(
-                    Transaction__c = transactionRecord.Id,
+                    Transaction__c = creditTransactionRecord.Id,
                     Item__c = 'Donation Points',
                     Quantity__c = 1,
                     Unit_Cost__c = 500,
                     Type__c = 'Points'
                 ),
                 new Txn_Line_Item__c(
-                    Transaction__c = transactionRecord.Id,
+                    Transaction__c = creditTransactionRecord.Id,
+                    Item__c = 'Donation Currency',
+                    Quantity__c = 1,
+                    Unit_Cost__c = 50,
+                    Type__c = 'Currency'
+                ),
+                new Txn_Line_Item__c(
+                    Transaction__c = debitTransactionRecord.Id,
                     Item__c = 'Donation Currency',
                     Quantity__c = 1,
                     Unit_Cost__c = 50,
@@ -202,7 +215,6 @@ public with sharing class SchedulerControllerTest {
                 )
             };
             insert lineItems;
-
         }
 
         System.runAs(experienceUser) {

@@ -1,4 +1,62 @@
 public without sharing class VisitTriggerHelper {
+    public static void updateAppointmentBookedValues(Map<Id, Visit__c> newVisits, Map<Id, Visit__c> oldVisits) {
+        // We need to check each appointment related to a visit (Appointment__c) and set the booked value to the total amount of related visits (Visits__r) that has a Status__c of ('New', 'Scheduled' or 'Complete' (Outcome__c must be 'Donation' or 'No Donation' for 'Complete')). If the donor attached to the visit has a loyalty level > 0 (LoyaltyLevelService.getLoyaltyLevel(visit.Donor__r.Loyalty_Level__c)), then it should increment the Booked_Loyalty__c field instead of the Booked__c field IF Booked_Loyalty__c < Capacity_Loyalty__c.
+
+        Set<Id> appointmentIds = new Set<Id>();
+        for (Visit__c visit : newVisits.values()) {
+            if (visit.Appointment__c != null) {
+                if (oldVisits != null) {
+                    Visit__c oldVisitRecord = oldVisits.get(visit.Id);
+
+                    // Only check if a relevant field has changed
+                    if (visit.Appointment__c == oldVisitRecord.Appointment__c && visit.Status__c == oldVisitRecord.Status__c && visit.Outcome__c == oldVisitRecord.Outcome__c) {
+                        continue;
+                    }
+
+                    if (oldVisitRecord.Appointment__c != null && !appointmentIds.contains(oldVisitRecord.Appointment__c)) {
+                        appointmentIds.add(oldVisitRecord.Appointment__c);
+                    }
+                }
+
+                appointmentIds.add(visit.Appointment__c);
+            }
+        }
+
+        if (appointmentIds.size() > 0) {
+            List<Appointment__c> appointmentsToUpdate = new List<Appointment__c>();
+
+            for (Appointment__c appointment : [
+                SELECT Id, Capacity__c, Capacity_Loyalty__c, Booked__c, Booked_Loyalty__c, (
+                    SELECT Id, Status__c, Outcome__c, Donor__r.Loyalty_Level__c
+                    FROM Appointments__r
+                    WHERE Status__c IN ('New', 'Scheduled', 'Checked-In') OR 
+                        (Status__c = 'Complete' AND Outcome__c IN ('Donation', 'No Donation'))
+                )
+                FROM Appointment__c
+                WHERE Id IN :appointmentIds
+            ]) {
+                Integer booked = 0;
+                Integer bookedLoyalty = 0;
+
+                for (Visit__c visit : appointment.Appointments__r) {
+                    if (LoyaltyLevelService.getLoyaltyLevel(visit.Donor__r.Loyalty_Level__c) > 0 && appointment.Booked_Loyalty__c < appointment.Capacity_Loyalty__c) {
+                        bookedLoyalty++;
+                    } else {
+                        booked++;
+                    }
+                }
+
+                if (appointment.Booked__c != booked || appointment.Booked_Loyalty__c != bookedLoyalty) {
+                    appointment.Booked__c = booked;
+                    appointment.Booked_Loyalty__c = bookedLoyalty;
+
+                    appointmentsToUpdate.add(appointment);
+                }
+            }
+
+            update appointmentsToUpdate;
+        }
+    }    
 
     public static void updateAppointmentDateTime(List<Visit__c> visits) {
         Map<Id, List<Visit__c>> appointmentIdToVisitRecord = new Map<Id, List<Visit__c>>(); 
@@ -178,12 +236,12 @@ public without sharing class VisitTriggerHelper {
                 }
             }
 
-            Map<Id, Id> donorIdToExpectedPaymentReplacementVisitId = new Map<Id, Id>();
+            Map<Id, Visit__c> donorIdToExpectedPaymentReplacementVisit = new Map<Id, Visit__c>();
             Map<Id, Date> donorIdToPaymentMethodExpirationDate = new Map<Id, Date>();
 
             for (Contact donor : [
                 SELECT Id, Account.Days_Until_Annum__pc, Account.Days_until_Triannum__pc, (
-                    SELECT Name, Donor__c, Appointment_Datetime__c, Physical_Exam__c, SPE_Analysis__c, Status__c 
+                    SELECT Name, Donor__c, Appointment_Datetime__c, Physical_Exam__c, SPE_Analysis__c, Status__c, Center_Donation_Type__r.Center__c 
                     FROM Visits__r 
                     ORDER BY Appointment_Datetime__c ASC
                 ), (
@@ -202,7 +260,7 @@ public without sharing class VisitTriggerHelper {
                             continue;
                         }
 
-                        donorIdToExpectedPaymentReplacementVisitId.put(donor.Id, visit.Id);
+                        donorIdToExpectedPaymentReplacementVisit.put(donor.Id, visit);
                         donorIdToPaymentMethodExpirationDate.put(donor.Id, donor.Payment_Methods__r[0].Expiration__c);
                         break;
                     }
@@ -286,12 +344,12 @@ public without sharing class VisitTriggerHelper {
             }
 
             Map<Id, Task> tasksToUpdate = new Map<Id, Task>();
-            if (donorIdToExpectedPaymentReplacementVisitId.size() > 0) {
-                Set<Id> donorIdsWithoutPaymentReplacementTask = new Set<Id>(donorIdToExpectedPaymentReplacementVisitId.keySet());
+            if (donorIdToExpectedPaymentReplacementVisit.size() > 0) {
+                Set<Id> donorIdsWithoutPaymentReplacementTask = new Set<Id>(donorIdToExpectedPaymentReplacementVisit.keySet());
 
-                for(Task paymentRenewalTask : [SELECT Id, WhoId, WhatId FROM Task WHERE Subject = :Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT AND WhoId IN :donorIdToExpectedPaymentReplacementVisitId.keySet()]) {
+                for(Task paymentRenewalTask : [SELECT Id, WhoId, WhatId FROM Task WHERE Subject = :Constants.REPLACE_PAYMENT_METHOD_TASK_SUBJECT AND WhoId IN :donorIdToExpectedPaymentReplacementVisit.keySet()]) {
                     donorIdsWithoutPaymentReplacementTask.remove(paymentRenewalTask.WhoId);
-                    Id expectedPaymentReplacementVisitId = donorIdToExpectedPaymentReplacementVisitId.get(paymentRenewalTask.WhoId);
+                    Id expectedPaymentReplacementVisitId = donorIdToExpectedPaymentReplacementVisit.get(paymentRenewalTask.WhoId).Id;
 
                     if (expectedPaymentReplacementVisitId != null && paymentRenewalTask.WhatId != expectedPaymentReplacementVisitId) {
                         paymentRenewalTask.WhatId = expectedPaymentReplacementVisitId;
@@ -301,9 +359,10 @@ public without sharing class VisitTriggerHelper {
 
                 for(Id missingReplacementTaskDonor : donorIdsWithoutPaymentReplacementTask) {
                     tasksToCreate.add(CancelCardController.createReplacePaymentMethodTask(
-                        donorIdToExpectedPaymentReplacementVisitId.get(missingReplacementTaskDonor),
+                        donorIdToExpectedPaymentReplacementVisit.get(missingReplacementTaskDonor).Id,
                         donorIdToPaymentMethodExpirationDate.get(missingReplacementTaskDonor),
-                        missingReplacementTaskDonor
+                        missingReplacementTaskDonor,
+                        donorIdToExpectedPaymentReplacementVisit.get(missingReplacementTaskDonor).Center_Donation_Type__r.Center__c
                     ));
                 }
             }
@@ -431,83 +490,4 @@ public without sharing class VisitTriggerHelper {
             update donorsToUpdate.values();
         }
     }
-/*
-    public static void shareRecords(List<Visit__c> visits) {
-        visits = [
-            SELECT
-                Appointment__r.Schedule__r.Center__c, Donor__r.AccountId
-            FROM
-                Visit__c
-            WHERE
-                Id IN :visits
-        ];
-
-        Set<Id> centerAccountIds = new Set<Id>();
-        Set<Id> donorAccountIds = new Set<Id>();
-
-        for (Visit__c visit : visits) {
-            centerAccountIds.add(visit.Appointment__r.Schedule__r.Center__c);
-            donorAccountIds.add(visit.Donor__r.AccountId);
-        }
-
-        List<AccountShare> accountShares = [
-            SELECT
-                AccountId, UserOrGroupId, AccountAccessLevel, CaseAccessLevel, OpportunityAccessLevel
-            FROM
-                AccountShare
-            WHERE
-                (AccountId IN :centerAccountIds OR AccountId IN :donorAccountIds)
-            AND
-                RowCause = 'Manual'
-        ];
-
-        Map<Id, List<AccountShare>> centerAccountShares = new Map<Id, List<AccountShare>>();
-        Set<String> accountUserOrGroupIds = new Set<String>();
-
-        for (AccountShare accountShare : accountShares) {
-            if (centerAccountIds.contains(accountShare.AccountId)) {
-                List<AccountShare> accountShareList = centerAccountShares.get(accountShare.AccountId);
-                if (accountShareList == null) {
-                    accountShareList = new List<AccountShare>();
-                    centerAccountShares.put(accountShare.AccountId, accountShareList);
-                }
-
-                accountShareList.add(accountShare);
-            } else {
-                String accountUserOrGroupId = accountShare.AccountId + '-' + accountShare.UserOrGroupId;
-                accountUserOrGroupIds.add(accountUserOrGroupId);
-            }
-        }
-
-        List<AccountShare> accountSharesToInsert = new List<AccountShare>();
-
-        for (Visit__c visit : visits) {
-            List<AccountShare> centerAccountShareList = centerAccountShares.get(visit.Appointment__r.Schedule__r.Center__c);
-            List<AccountShare> donorAccountShareList = centerAccountShares.get(visit.Donor__r.AccountId);
-
-            if (centerAccountShareList != null) {
-                for (AccountShare centerAccountShare : centerAccountShareList) {
-                    String accountUserOrGroupId = visit.Donor__r.AccountId + '-' + centerAccountShare.UserOrGroupId;
-
-                    if (!accountUserOrGroupIds.contains(accountUserOrGroupId)) {
-                        AccountShare accountShare = new AccountShare();
-                        accountShare.AccountId = visit.Donor__r.AccountId;
-                        accountShare.UserOrGroupId = centerAccountShare.UserOrGroupId;
-                        accountShare.RowCause = 'Manual';
-                        accountShare.AccountAccessLevel = centerAccountShare.AccountAccessLevel;
-                        accountShare.CaseAccessLevel = centerAccountShare.CaseAccessLevel;
-                        accountShare.OpportunityAccessLevel = centerAccountShare.OpportunityAccessLevel;
-                        accountSharesToInsert.add(accountShare);
-
-                        accountUserOrGroupIds.add(accountUserOrGroupId);
-                    }
-                }
-            }
-        }
-
-        if (accountSharesToInsert.size() > 0) {
-            insert accountSharesToInsert;
-        }
-    }
-*/
 }

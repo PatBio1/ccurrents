@@ -41,7 +41,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             });
 
             console.log("Found Statuses", this.statusOptions);
-        } else if(error) {    
+        } else if (error) {
             console.log("Status Values Fetch", error);
         }
     }
@@ -58,19 +58,27 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             });
 
             console.log("Found Outcomes", this.outcomeOptions);
-        } else if(error) {    
+        } else if (error) {
             console.log("Outcome Values Fetch", error);
         }
     }
-    
+
+    get selectedCenterTimezone() {
+        if (!this.selectedCenterId) {
+            return null;
+        }
+
+        return this.centers.find((center) => center.value === this.selectedCenterId).timeZoneRegion;
+    }
+
     @track selectedCenterId;
     @track selectedDate
     @track appointments;
     centers = [];
-    tz=TIME_ZONE;
+    tz = TIME_ZONE;
 
-    showFilters=false;
-    initDefaultFilters=false;
+    showFilters = false;
+    initDefaultFilters = false;
     show = false;
     dateDisabled = true;
     loading = true;
@@ -90,6 +98,14 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
 
     get hasAppointmentsToDisplay() {
         return (this.appointments && this.appointments.length);
+    }
+
+    get timesShowInLabel() {
+        if (this.selectedCenterId) {
+            return 'Times shown are in the ' + this.centers.find((center) => center.value === this.selectedCenterId).timeZoneRegion + ' time zone.';
+        } else {
+            return '';
+        }
     }
 
     calculateAppointmentAddRescheduleDisabled(appointment) {
@@ -375,30 +391,28 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
                 }
             }
         }
-        
     }
-    changeFilterStart(event){
-        this.filters.start =  event.target.value;
+
+    changeFilterStart(event) {
+        this.filters.start = event.target.value;
     }
-    changeFilterEnd(event){
-        this.filters.end =  event.target.value;
+
+    changeFilterEnd(event) {
+        this.filters.end = event.target.value;
     }
 
     loadCenters() {
-        
         getCenters().then(centers => {
-
             this.centers = centers;
         }).catch((error) => {
             console.log(error);
         }).finally(() => {
             this.loading = false;
         });
-  
     }
 
-    async fetchAppointments(){
-        this.appointments = [];    
+    async fetchAppointments() {
+        this.appointments = [];
         this.loading = true;
 
         let queriedAppointments = await getAppointments({
@@ -581,6 +595,7 @@ export default class CenterScheduler extends NavigationMixin(LightningElement) {
             appointmentSlotId: targetAppointmentId,
             appointmentSlotDate: this.selectedDate,
             appointmentSlotTime: event.currentTarget.dataset.appointmenttime,
+            fullAppointmentDateTimeString: appointmentRecord.appointmentDatetime,
             centerId: this.selectedCenterId,
             hasLoyaltyAvailability: appointmentRecord.loyaltyAvailability > 0,
             hasAvailability: appointmentRecord.availability > 0,

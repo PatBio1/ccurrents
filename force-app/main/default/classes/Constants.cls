@@ -75,4 +75,14 @@ public with sharing class Constants {
     public static final String PAYMENTREQUEST_STATUS_APPROVED = 'Approved';
     public static final String PAYMENTREQUEST_STATUS_SUBMITTED = 'Submitted';
 
+    public static final Map<String, String> TIME_ZONE_REGIONS = new Map<String, String>{
+        'America/Chicago' => 'Central',
+        'America/New_York' => 'Eastern'
+    };
+
+    public static final String CANT_SCHEDULE_LOYALTY_MESSAGE = 'Can\'t schedule donor due to loyalty level.';
+    public static final String CANT_SCHEDULE_SOONEST_NEXT_VISIT_MESSAGE = 'Can\'t schedule donor until {0}.';
+
+    public static final String OVER_CAPACITY_ADD_VISIT_EXCEPTION_MESSAGE = 'The selected appointment slot is full. Please select another slot.';
+    public static final String BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE = 'The selected appointment slot is before the soonest next visit date. Please select another slot.';
 }

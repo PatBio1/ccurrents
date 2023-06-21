@@ -197,6 +197,7 @@ public without sharing class DonorEventHelper {
 
             // Create visits for donors that need to be scheduled
             List<Visit__c> visitsToInsert = new List<Visit__c>();
+            List<ErrorLog__c> errorLogsToInsert = new List<ErrorLog__c>();
             Map<Id, List<Task>> donorIdToTasksToParent = new Map<Id, List<Task>>();
             Map<SObject, Appointment__c> donorEventToTargetAppointmentTime = new Map<SObject, Appointment__c>();
 
@@ -230,6 +231,28 @@ public without sharing class DonorEventHelper {
                     Contact relatedDonor = validDonorNumbersToDonor.get((String)donorEvent.get('Donor_Number__c'));
                     if (donorEvent instanceof Donor_CheckIn__e && relatedDonor.Last_Used_Center__c == null) {
                         System.debug('Couldn\'t create visit for donor ' + relatedDonor.Id + ' because they don\'t have a Last_Used_Center__c');
+                        continue;
+                    }
+
+                    Appointment__c targetAppointment = donorEventToTargetAppointmentTime.get(donorEvent);
+                    if (targetAppointment == null) {
+                        String message = String.format(
+                            'We received a {0} event without a corresponding scheduled visit. Attempting to create a visit failed because we couldn\'t find a target appointment time. \nTimeStamp: {1} \nDonor Number: {2} \nBECS Device (Comp Only): {3}', 
+                            new List<object> { 
+                                (donorEvent instanceof Donor_Comp__e) ? 'Donor Comp' : 'Donor Check In',
+                                donorEvent.get('Timestamp__c'),
+                                donorEvent.get('Donor_Number__c'),
+                                (donorEvent instanceof Donor_Comp__e) ? donorEvent.get('BECS_Device__c') : 'N/A'
+                            }
+                        );
+
+                        errorLogsToInsert.add(ErrorLogService.createErrorLog(
+                            '', 'Donor Event Helper - Missing Visit Appointment', 'Error', message, message
+                        ));
+
+                        // Since the main scenario in which this happens is when a donor visit is manually marked as complete... we want to make sure this case doesn't result in that visit being processed
+                        // That could lead to multiple payments (one from Donor Comp, other manual) 
+                        validDonorNumbersToDonorEvent.remove((String)donorEvent.get('Donor_Number__c'));
                         continue;
                     }
 
@@ -276,6 +299,10 @@ public without sharing class DonorEventHelper {
 
                     donorIdToTasksToParent.put(relatedDonor.Id, tasksToParent);
                 }
+            }
+
+            if (errorLogsToInsert.size() > 0) {
+                insert errorLogsToInsert;
             }
 
             if (visitsToInsert.size() > 0) {

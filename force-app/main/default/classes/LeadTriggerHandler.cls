@@ -13,8 +13,15 @@ public without sharing class LeadTriggerHandler extends TriggerFactory.BaseHandl
         Set<Id> convertedLeadIds = getConvertedLeadIds((Map<Id, Lead>) oldMap, (Map<Id, Lead>) newMap);
 
         if (!convertedLeadIds.isEmpty()) {
+            Map<Id, Account> convertLeadAccounts = new Map<Id, Account>([
+                SELECT Id, Loyalty_Level__pc, PersonContactId
+                FROM Account 
+                WHERE Id IN (SELECT ConvertedAccountId FROM Lead WHERE Id IN :convertedLeadIds)
+            ]);
+
             updateConsentTransactionLinksOnConversion((Map<Id, Lead>) newMap, convertedLeadIds);
-            updateLegacyDonorMigratedData((Map<Id, Lead>) newMap);
+            updateLegacyDonorMigratedData((Map<Id, Lead>) newMap, convertLeadAccounts);
+            updateConvertLeadAccountLoyaltyLevel(convertLeadAccounts);
         }
     }
 
@@ -44,9 +51,8 @@ public without sharing class LeadTriggerHandler extends TriggerFactory.BaseHandl
         }
     }
 
-    public static void updateLegacyDonorMigratedData(Map<Id, Lead> newLeadMap) {
+    public static void updateLegacyDonorMigratedData(Map<Id, Lead> newLeadMap, Map<Id, Account> convertLeadAccounts) {
         List<Account> accountUpdates = new List<Account>();
-        Set<Id> accountIdsInScope = new Set<Id>();
         Set<Id> contactIdsInScope = new Set<Id>();
         Map<Id, Lead> convertedAccountIdToLeadMap = new Map<Id, Lead>();
         Map<Id, Lead> convertedContactIdToLeadMap = new Map<Id, Lead>();
@@ -55,25 +61,17 @@ public without sharing class LeadTriggerHandler extends TriggerFactory.BaseHandl
 
         for (Lead ld : newLeadMap.values()) {
             if (ld.isLegacyDonor__c) {
-                accountIdsInScope.add(ld.ConvertedAccountId);
                 convertedAccountIdToLeadMap.put(ld.ConvertedAccountId, ld);
             }
         }
 
-        if (!accountIdsInScope.isEmpty()) {
-            for (Account acct : [
-                SELECT Id,
-                    Date_Migrated__pc,
-                    Last_Donation_Date_Migrated__pc,
-                    Donations_Last_365_Days_Migrated__pc,
-                    First_Visit_Code__c,
-                    PersonContactId
-                FROM Account
-                WHERE Id IN :accountIdsInScope
-            ]) {
-                Lead convertedLead = convertedAccountIdToLeadMap.get(acct.Id);
+        if (!convertedAccountIdToLeadMap.isEmpty()) {
+            for (Id convertedAccountId : convertedAccountIdToLeadMap.keySet()) {
+                Account convertedAccount = convertLeadAccounts.get(convertedAccountId);
+                Lead convertedLead = convertedAccountIdToLeadMap.get(convertedAccountId);
+
                 Account acctUpdate = new Account (
-                    Id = acct.Id,
+                    Id = convertedAccount.Id,
                     isLegacyDonor__pc = true,
                     Date_Migrated__pc = convertedLead.Date_Migrated__c,
                     Last_Donation_Date_Migrated__pc = convertedLead.Last_Donation_Date_Migrated__c,
@@ -81,35 +79,57 @@ public without sharing class LeadTriggerHandler extends TriggerFactory.BaseHandl
                     First_Visit_Code__c = convertedLead.First_Visit_Code__c
                 );
 
-                contactIdsInScope.add(acct.PersonContactId);
-                convertedContactIdToLeadMap.put(acct.PersonContactId, convertedLead);
+                contactIdsInScope.add(convertedAccount.PersonContactId);
+                convertedContactIdToLeadMap.put(convertedAccount.PersonContactId, convertedLead);
                 accountUpdates.add(acctUpdate);
                 accountUpdateMap.put(acctUpdate.Id, acctUpdate);
             }
+
             update accountUpdates;
 
             for (Task tsk : [
-                SELECT Id,
-                    WhoId
+                SELECT Id, WhoId
                 FROM Task
                 WHERE WhoId IN :contactIdsInScope AND
-                Subject = :Constants.FIRST_VISIT_CODE_TASK_SUBJECT
+                    Subject = :Constants.FIRST_VISIT_CODE_TASK_SUBJECT
             ]) {
                 if (convertedContactIdToLeadMap.get(tsk.WhoId) != null) {
                     Id donorAccountId = convertedContactIdToLeadMap.get(tsk.WhoId).ConvertedAccountId;
                     String donorFirstVisitCode = accountUpdateMap?.get(donorAccountId).First_Visit_Code__c;
 
-                    Task tskUpdate = new Task (
+                    taskUpdates.add(new Task(
                         Id = tsk.Id,
                         Description = donorFirstVisitCode
-                    );
-                    taskUpdates.add(tskUpdate);
+                    ));
                 }
             }
 
             if (!taskUpdates.isEmpty()) {
                 update taskUpdates;
             }
+        }
+    }
+
+    public static void updateConvertLeadAccountLoyaltyLevel(Map<Id, Account> convertLeadAccounts) {
+        List<Account> accountUpdates = new List<Account>();
+        Level__c defaultLevel = LoyaltyLevelService.getDefault();
+
+        for (Account convertedAccount : convertLeadAccounts.values()) {
+            if (convertedAccount.Loyalty_Level__pc == null) {
+                if (defaultLevel == null) {
+                    System.debug('No loyalty level record is available to set the converted account\'s loyalty level to. Skipping update.');
+                    continue;
+                }
+                
+                accountUpdates.add(new Account(
+                    Id = convertedAccount.Id,
+                    Loyalty_Level__pc = defaultLevel.Id
+                ));
+            }
+        }
+
+        if (!accountUpdates.isEmpty()) {
+            update accountUpdates;
         }
     }
 }

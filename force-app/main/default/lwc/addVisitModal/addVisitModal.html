@@ -11,8 +11,9 @@
                 <lightning-input is-loading={isSearching} type="search" label="Donor Name" onchange={handleDonorSearchUpdate} data-donor-name-search>
                 </lightning-input>
 
-                <table if:true={hasDonorsToDisplay} class="slds-table slds-table_bordered slds-table_cell-buffer slds-no-row-hover">
-                    <thead>
+                <div class="search-results-table-container">
+                  <table if:true={hasDonorsToDisplay} class="slds-table slds-table_bordered slds-table_cell-buffer slds-no-row-hover">
+                    <thead class="search-results-table-header-row">
                       <tr>
                         <th scope="col">
                           <div class="slds-truncate">Donor Name</div>
@@ -60,7 +61,7 @@
 
                                 <td>
                                     <div class="slds-truncate">
-                                        <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={donor.donorSoonestNextVisit} time-zone="UTC">
+                                        <lightning-formatted-date-time year="numeric" month="long" day="2-digit" weekday="long" value={donor.donorSoonestNextVisit} time-zone={donor.soonestNextVisitTimezone}>
                                         </lightning-formatted-date-time>
                                     </div>
                                 </td>
@@ -70,13 +71,17 @@
                                 </td>
 
                                 <td style="text-align: end;">
-                                    <lightning-button variant="brand" label="Select" onclick={handleSelectDonor} data-donor-id={donor.donorId}>
+                                    <lightning-button if:false={donor.cantScheduleReason} variant="brand" label="Select" onclick={handleSelectDonor} data-donor-id={donor.donorId}>
                                     </lightning-button>
+
+                                    <p if:true={donor.cantScheduleReason}>{donor.cantScheduleReason}</p>
                                 </td>
                             </tr>
                         </template>
                     </tbody>
                   </table>
+                </div>
+                
 
                 <div if:false={hasDonorsToDisplay}>
                     <p class="no-search-results-message"><b>No Donor Names match the provided search term. Please try again with a different search.</b></p>

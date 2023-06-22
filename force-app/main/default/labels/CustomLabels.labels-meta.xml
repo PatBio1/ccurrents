@@ -1348,8 +1348,8 @@
         <fullName>Donor_Tip_DonorIdReqs_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>https://www.youtube.com/embed/8oMg69UavF0</shortDescription>
-        <value>https://www.youtube.com/embed/8oMg69UavF0</value>
+        <shortDescription>Donor Tip DonorIdReqs VideoId</shortDescription>
+        <value>https://www.youtube.com/embed/ufgmm33CW_s</value>
     </labels>
     <labels>
         <fullName>Donor_Tip_ApptRules_Text</fullName>
@@ -1390,8 +1390,8 @@
         <fullName>Donor_Tip_FirstAppointment_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>https://www.youtube.com/embed/y3ynYyX1Ins</shortDescription>
-        <value>https://www.youtube.com/embed/y3ynYyX1Ins</value>
+        <shortDescription>Donor Tip FirstAppointment VideoId</shortDescription>
+        <value>https://www.youtube.com/embed/0mXqnJl9P-k</value>
     </labels>
     <labels>
         <fullName>Donor_Tip_HealthHistory_Text</fullName>
@@ -1404,8 +1404,8 @@
         <fullName>Donor_Tip_HealthHistory_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>https://www.youtube.com/embed/N3JkWryjKqM</shortDescription>
-        <value>https://www.youtube.com/embed/N3JkWryjKqM</value>
+        <shortDescription>Donor Tip HealthHistory VideoId</shortDescription>
+        <value>https://www.youtube.com/embed/7WM8H5ssycU</value>
     </labels>
     <labels>
         <fullName>Donor_Tip_LoyaltyProgram_Text</fullName>
@@ -1460,8 +1460,8 @@
         <fullName>Donor_Tip_DonationDay_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>https://www.youtube.com/embed/iu4uvkT0ADE</shortDescription>
-        <value>https://www.youtube.com/embed/iu4uvkT0ADE</value>
+        <shortDescription>Donor Tip DonationDay VideoId</shortDescription>
+        <value>https://www.youtube.com/embed/m_b_iGjr3p8</value>
     </labels>
     <labels>
         <fullName>Transaction_View_Details</fullName>
@@ -1488,7 +1488,7 @@
         <fullName>Welcome_To_Westmore_VideoId</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>https://www.youtube.com/embed/aab7mUifSjw</shortDescription>
-        <value>https://www.youtube.com/embed/aab7mUifSjw</value>
+        <shortDescription>Welcome To Westmore VideoId</shortDescription>
+        <value>https://www.youtube.com/embed/Kv9In6AxGyo</value>
     </labels>
 </CustomLabels>

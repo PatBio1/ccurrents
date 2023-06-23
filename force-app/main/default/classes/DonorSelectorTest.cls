@@ -110,6 +110,7 @@ public with sharing class DonorSelectorTest {
             testPaymentMethod.Card_Number__c = '7890';
             testPaymentMethod.Is_Active__c = true;
             testPaymentMethod.isDefault__c = true;
+            testPaymentMethod.Partner_User_Id__c = testRewardDonorContactId;
             insert testPaymentMethod;
 
             Proesis_Wallet__c newWalletSettings = new Proesis_Wallet__c(

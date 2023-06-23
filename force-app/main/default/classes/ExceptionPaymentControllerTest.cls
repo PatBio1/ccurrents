@@ -53,7 +53,8 @@ public class ExceptionPaymentControllerTest {
                 Account_Number__c = '4968712468235235',
                 Card_Number__c = String.valueOf(1000 + (Math.random() * 8999).intValue()),
                 Is_Active__c = true,
-                isDefault__c = true
+                isDefault__c = true,
+                Partner_User_Id__c = contact.Id
             ));
 
             counter++;

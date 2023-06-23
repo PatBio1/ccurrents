@@ -23,10 +23,6 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         }
     }
 
-    public OnbePaymentService() {
-
-    }
-
     public String getPaymentServiceName() {
         return 'Onbe';
     }
@@ -113,6 +109,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
             newPaymentMethod.Name = PaymentService__mdt.getInstance('OnbePaymentService').PaymentServiceLabel__c;
             newPaymentMethod.Account_Token__c = cardPackageId;
             newPaymentMethod.Account_Number__c = '0000000000000000'; // Enter a bogus number that can be edited later
+            newPaymentMethod.Partner_User_Id__c = partnerUserId;
             newPaymentMethod.Onbe_Transaction_Id__c = transactionId;
             newPaymentMethod.Donor__c = donorId;
             newPaymentMethod.Is_Active__c = false;
@@ -159,6 +156,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         newPaymentMethod.Name = PaymentService__mdt.getInstance('OnbePaymentService').PaymentServiceLabel__c;
         newPaymentMethod.Account_Token__c = cardPackageId;
         newPaymentMethod.Account_Number__c = processedCreateAccountResponse.accountNumber;
+        newPaymentMethod.Partner_User_Id__c = partnerUserId;
         newPaymentMethod.Card_Number__c = accountInquiryResponse.cardNumber4Digits;
         newPaymentMethod.Expiration__c = expirationDate;
         newPaymentMethod.Is_Active__c = true;
@@ -171,12 +169,6 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
 
     public Boolean linkPhysicalCard(String cardPackageId, Id donorId, String initialPIN, Boolean blockCards) {
         Id donorContactId = donorId;
-        List<Payment_Method__c> existingPaymentMethods = [
-            SELECT Id, Is_Active__c, isDefault__c, Account_Number__c
-            FROM Payment_Method__c
-            WHERE Donor__c = :donorContactId AND 
-                Is_Active__c = true
-        ];
 
         // The donor contact id is stored as a Partner Id on the Onbe side, so we need to make sure we are getting or converting it correctly
         if (donorId.getSObjectType() == Schema.Account.getSObjectType()) {
@@ -184,6 +176,15 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         } else if (donorId.getSObjectType() != Schema.Contact.getSObjectType()) {
             throw new OnbeServiceException('An invalid Onbe Donor Id was provided: ' + donorId);
         }
+
+        List<Payment_Method__c> existingPaymentMethods = [
+            SELECT Id, Is_Active__c, isDefault__c, Account_Number__c, Partner_User_Id__c
+            FROM Payment_Method__c
+            WHERE Donor__c = :donorContactId AND 
+                Is_Active__c = true
+        ];
+
+        String existingPartnerUserId = !existingPaymentMethods.isEmpty() ? existingPaymentMethods[0].Partner_User_Id__c : String.valueOf(donorContactId);
 
         OnbeDomainPrepaid.Link newLink = new OnbeDomainPrepaid.Link();
         newLink.block = (blockCards) ? 'ALL' : 'NONE';
@@ -196,7 +197,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         OnbeResponsePrepaid.LinkCardResponse processedLinkCardResponse;
         while(processedLinkCardResponse == null && (currentSyncAttemptCount < maxSyncAttempts)) {
             OnbeResponsePrepaid.LinkCardResponse linkCardResponse = accountManagementAPI.linkCard_Http(
-                String.valueOf(donorContactId), PROGRAM_ID, PROMOTION_ID, transactionId, newLink
+                existingPartnerUserId, PROGRAM_ID, PROMOTION_ID, transactionId, newLink
             );
 
             if (linkCardResponse.code == Constants.ONBE_PROCESSING_ACCOUNT_MANAGEMENT) {
@@ -214,6 +215,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
             newPaymentMethod.Name = PaymentService__mdt.getInstance('OnbePaymentService').PaymentServiceLabel__c;
             newPaymentMethod.Account_Token__c = cardPackageId;
             newPaymentMethod.Account_Number__c = '0000000000000000'; // Enter a bogus number that can be edited later
+            newPaymentMethod.Partner_User_Id__c = existingPartnerUserId;
             newPaymentMethod.Onbe_Transaction_Id__c = transactionId;
             newPaymentMethod.Donor__c = donorContactId;
             newPaymentMethod.Is_Active__c = false;
@@ -229,6 +231,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
 
         // Set the pin for the new payment method
         String accountNumber = existingPaymentMethods[0].Account_Number__c;
+
         if (!String.isEmpty(accountNumber) && !String.isEmpty(initialPIN)) {
             OnbeResponsePrepaid.SetPinResponse setPinResponse = accountManagementAPI.setPin_Http(
                 PROGRAM_ID, PROMOTION_ID, accountNumber, donorId + '-' + String.valueOf(System.currentTimeMillis()), initialPIN
@@ -272,6 +275,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         newPaymentMethod.Name = PaymentService__mdt.getInstance('OnbePaymentService').PaymentServiceLabel__c;
         newPaymentMethod.Account_Token__c = cardPackageId;
         newPaymentMethod.Account_Number__c = accountNumber;
+        newPaymentMethod.Partner_User_Id__c = existingPartnerUserId;
         newPaymentMethod.Card_Number__c = accountInquiryResponse.cardNumber4Digits;
         newPaymentMethod.Expiration__c = expirationDate;
         newPaymentMethod.Is_Active__c = true;
@@ -324,7 +328,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
 
         try {
             targetPaymentMethod = [
-                SELECT Id, Donor__c, Account_Number__c
+                SELECT Id, Donor__c, Account_Number__c, Partner_User_Id__c
                 FROM Payment_Method__c
                 WHERE Id = :paymentMethodId
                 LIMIT 1
@@ -342,7 +346,7 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
         }
 
         OnbeWsManageCard.AccountManagement onbeManageCardBaseObject = new OnbeWsManageCard.AccountManagement();
-        String partnerUserId = targetPaymentMethod.Donor__c;
+        String partnerUserId = targetPaymentMethod.Partner_User_Id__c;
 
         return onbeManageCardBaseObject.reissueCard_Http(CUSTOMER_SERVICE_APPLICATION_ID, partnerUserId, blockCode);
     }
@@ -387,8 +391,19 @@ public without sharing class OnbePaymentService implements PaymentServiceInterfa
             throw new OnbeServiceException('An invalid Onbe Donor Id was provided: ' + donorId);
         }
 
+        List<Payment_Method__c> paymentMethodWithPUID;
+        try {
+            paymentMethodWithPUID = [SELECT Id, Partner_User_Id__c FROM Payment_Method__c WHERE Donor__c = :donorContactId AND Partner_User_Id__c != null LIMIT 1];
+        } catch(Exception e) {
+            throw new OnbeServiceException('Error while retrieving active/default payment method for donor: ' + donorContactId + ' - ' + e.getMessage());
+        }
+
+        if (paymentMethodWithPUID.size() > 0 && String.isEmpty(paymentMethodWithPUID[0].Partner_User_Id__c)) {
+            throw new OnbeServiceException('Onbe Partner User Id wasn\'t found for donor: ' + donorContactId);
+        }
+
         String card_number ='';
-        String puid = String.valueOf(donorContactId);
+        String puid = !paymentMethodWithPUID.isEmpty() ? paymentMethodWithPUID[0].Partner_User_Id__c : String.valueOf(donorContactId);
         String ppd = ''; // We are unsure of what this property is, we asked Onbe but they couldn't provide an answer. Leave blank for now.
         String mobile_phone = '';
         Integer balance_detail = 1;

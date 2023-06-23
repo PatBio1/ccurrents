@@ -143,7 +143,14 @@ public with sharing class DonorCompInvocableTest {
         List<Payment_Method__c> testPaymentMethods = new List<Payment_Method__c>();
         for(Account donorAccount : donorAccounts) {
             testPaymentMethods.add(new Payment_Method__c(
-                Name = 'Onbe Test Card', Donor__c = donorAccount.PersonContactId, Account_Number__c = '1234567890', Account_Token__c = '1050', Is_Active__c = true, isDefault__c = true, Expiration__c = Date.today().addYears(1)
+                Name = 'Onbe Test Card', 
+                Donor__c = donorAccount.PersonContactId, 
+                Account_Number__c = '1234567890', 
+                Account_Token__c = '1050', 
+                Is_Active__c = true, 
+                isDefault__c = true, 
+                Expiration__c = Date.today().addYears(1),
+                Partner_User_Id__c = donorAccount.PersonContactId
             ));
         }
         insert testPaymentMethods;

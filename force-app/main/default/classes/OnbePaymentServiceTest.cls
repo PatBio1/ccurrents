@@ -37,7 +37,12 @@ public with sharing class OnbePaymentServiceTest {
         onbePayService.setupPaymentServiceAccount('1040', testDonor.Id, 0, '1234', false);
         Test.stopTest();
 
-        Assert.areEqual(1, [SELECT count() FROM Payment_Method__c WHERE Donor__c = :testDonor.Id], 'Payment Method was not created.');
+        Payment_Method__c newPaymentMethod = [SELECT Id, Account_Token__c, Partner_User_Id__c, Is_Active__c FROM Payment_Method__c WHERE Donor__c = :testDonor.Id LIMIT 1];
+
+        Assert.isNotNull(newPaymentMethod, 'Payment Method was not created.');
+        Assert.areEqual(testDonor.Id, newPaymentMethod.Partner_User_Id__c, 'Partner User Id was not set correctly.');
+        Assert.areEqual('1040', newPaymentMethod.Account_Token__c, 'Account Token was not set correctly.');
+        Assert.isTrue(newPaymentMethod.Is_Active__c, 'Is Active was not set to true.');
     }
 
     @isTest 
@@ -52,6 +57,7 @@ public with sharing class OnbePaymentServiceTest {
         testPaymentMethod.Card_Number__c = '7890';
         testPaymentMethod.Is_Active__c = true;
         testPaymentMethod.isDefault__c = true;
+        testPaymentMethod.Partner_User_Id__c = testDonor.Id;
         insert testPaymentMethod;
         
         Decimal targetAmount = 50.00;
@@ -77,6 +83,7 @@ public with sharing class OnbePaymentServiceTest {
         testPaymentMethod.Card_Number__c = '7890';
         testPaymentMethod.Is_Active__c = true;
         testPaymentMethod.isDefault__c = true;
+        testPaymentMethod.Partner_User_Id__c = testDonor.Id;
         insert testPaymentMethod;
 
         Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
@@ -111,6 +118,7 @@ public with sharing class OnbePaymentServiceTest {
         testPaymentMethod.Card_Number__c = '7890';
         testPaymentMethod.Is_Active__c = true;
         testPaymentMethod.isDefault__c = true;
+        testPaymentMethod.Partner_User_Id__c = testDonor.Id;
         insert testPaymentMethod;
 
         Test.setMock(HttpCalloutMock.class, new OnbeWsManageCardHttpCalloutMock());
@@ -133,6 +141,7 @@ public with sharing class OnbePaymentServiceTest {
         testPaymentMethod.Card_Number__c = '7890';
         testPaymentMethod.Is_Active__c = true;
         testPaymentMethod.isDefault__c = true;
+        testPaymentMethod.Partner_User_Id__c = testDonor.Id;
         insert testPaymentMethod;
 
         Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
@@ -143,5 +152,13 @@ public with sharing class OnbePaymentServiceTest {
         Test.stopTest();
 
         Assert.areEqual(2, [SELECT count() FROM Payment_Method__c WHERE Donor__c = :testDonor.Id], 'Payment Method was not created.');
+
+        Payment_Method__c existingPaymentMethod = [SELECT Id, Is_Active__c FROM Payment_Method__c WHERE Donor__c = :testDonor.Id AND Account_Token__c = '1050'];
+        Payment_Method__c newPaymentMethod = [SELECT Id, Account_Token__c, Is_Active__c, Partner_User_Id__c FROM Payment_Method__c WHERE Donor__c = :testDonor.Id AND Account_Token__c = '1051'];
+
+        Assert.isFalse(existingPaymentMethod.Is_Active__c, 'Existing Payment Method was not deactivated.');
+        Assert.areEqual('1051', newPaymentMethod.Account_Token__c, 'New Payment Method was not created.');
+        Assert.areEqual(testDonor.Id, newPaymentMethod.Partner_User_Id__c, 'New Payment Method was not linked to the Donor.');
+        Assert.isTrue(newPaymentMethod.Is_Active__c, 'New Payment Method was not activated.');
     }
 }

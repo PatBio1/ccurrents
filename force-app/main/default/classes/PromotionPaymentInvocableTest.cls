@@ -47,6 +47,7 @@ public with sharing class PromotionPaymentInvocableTest {
             paymentMethod.Donor__c = experienceUser.ContactId;
             paymentMethod.Is_Active__c = true;
             paymentMethod.isDefault__c = true;
+            paymentMethod.Partner_User_Id__c = experienceUser.ContactId;
             insert paymentMethod;
 
             PromotionPaymentInvocable.PromotionPaymentRequest promotionPaymentRequest = new PromotionPaymentInvocable.PromotionPaymentRequest();

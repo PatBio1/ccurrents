@@ -10,8 +10,6 @@ public with sharing class DonationPaymentInvocable {
                 donationPaymentRequest.visitId
             );
 
-            // TODO, add line items to the request class
-
             servicePaymentRequests.add(servicePaymentRequest);
         }
 
@@ -23,6 +21,7 @@ public with sharing class DonationPaymentInvocable {
 
             donationPaymentResponse.donorId = serviceResponse.donorId;
             donationPaymentResponse.visitId = serviceResponse.visitId;
+            donationPaymentResponse.transactionId = serviceResponse.transactionRecord.Id;
 
             donationPaymentResponses.add(donationPaymentResponse);
         }

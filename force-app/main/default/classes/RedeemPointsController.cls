@@ -36,9 +36,9 @@ public without sharing class RedeemPointsController {
         update targetContact;
 
         // Queue up the addFunds callout to Onbe
-        List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
+        List<ProesisAddFundsRequest> addFundsRequests = new List<ProesisAddFundsRequest>();
 
-        DonorCompInvocable.AddFundsRequest redeemPointsRequest = new DonorCompInvocable.AddFundsRequest(donorId, null, accountNumber, 'Point Redemption');
+        ProesisAddFundsRequest redeemPointsRequest = new ProesisAddFundsRequest(donorId, null, accountNumber, 'Point Redemption');
         redeemPointsRequest.comments.add('PlasmaPoints Redeemed');
         redeemPointsRequest.addLineItem('PlasmaPoints Redeemed', 'Currency', dollorsToCredit);
         redeemPointsRequest.addLineItem('PlasmaPoints Redeemed', 'Points', roundedPointsToRedeem);

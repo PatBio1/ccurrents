@@ -70,129 +70,27 @@ public without sharing class DonorCompInvocable {
     }
 
     public static void handleCreateDonationTransactions(List<List<Donor_Comp__e>> inputRecords) {
-        Set<String> donorNumbersToQuery = DonorCompInvocableHelper.getDonorIds(inputRecords);
-        List<Contact> targetContacts = DonorCompInvocableHelper.queryDonorContactInformation(donorNumbersToQuery);
-        Map<Id, Integer> donorIdToTotalVisitCount = DonorBatchableHelper.calculateDonor365DayVisitTotals(targetContacts);
-
-        Map<String, Rate__c> centerAndDonationTypeToRate = DonorCompInvocableHelper.getRatesByCenterDonationType(); // Get All Rates stored by a composite key of Center__c + Donation_Type__c
-        Map<Decimal, List<Level__c>> donationThresholdToBonusLevels = DonorCompInvocableHelper.getBonusLevelsByDonationThreshold();
-        Map<Id, Map<Id, AggregateResult>> donorIdToActiveLastPromotionDatesByTier = DonorCompInvocableHelper.getDonorLastPromotionDateByLevel(targetContacts);
-
-        Level__c lowestLoyaltyLevel = DonorCompInvocableHelper.getLowestLoyaltyLevel();
-        Boolean wasPromotionTriggered = false;
-
-        Map<Id, Transaction__c> donorIdToTransaction = new Map<Id, Transaction__c>();
-        Map<Id, List<Txn_Line_Item__c>> donorIdToTxnLineItems = new Map<Id, List<Txn_Line_Item__c>>();
-        Map<Id, Transaction_Log__c> donorIdToMissingPaymentMethodLogs = new Map<Id, Transaction_Log__c>();
-        Map<Id, List<Message__c>> donorIdToMessages = new Map<Id, List<Message__c>>();
-
-        Map<Id, Account> donorsToUpdate = new Map<Id, Account>();
-        List<AddFundsRequest> addFundsRequests = new List<AddFundsRequest>();
-        List<DonorPaymentService.DonationPaymentRequest> donationPaymentRequests = new List<DonorPaymentService.DonationPaymentRequest>();
-        
-        for (Contact foundContact : targetContacts) {
-            if (foundContact.Visits__r == null || foundContact.Visits__r.size() == 0) {
-                continue;
-            }
-
-            Visit__c targetVisitRecord = foundContact.Visits__r[0];
-            AddFundsRequest addFundsRequest = DonorCompInvocableHelper.buildBaseAddFundsRequest(foundContact, targetVisitRecord);
-            addFundsRequests.add(addFundsRequest);
-
-            Map<Id, AggregateResult> activeLastPromotionDatesByTier = donorIdToActiveLastPromotionDatesByTier.get(foundContact.Id);
-            Integer totalVisitCount = donorIdToTotalVisitCount.get(foundContact.Id);
-
-            Rate__c targetRateRecord = centerAndDonationTypeToRate.get(
-                targetVisitRecord.Center_Donation_Type__r.Center__c + '-' + targetVisitRecord.Center_Donation_Type__r.Donation_Type__c
-            );
-
-            // Create the parent transaction record
-            donorIdToTransaction.put(foundContact.Id, DonorCompInvocableHelper.buildBaseTransaction(foundContact, targetVisitRecord));
-
-            // Two Txn Line items need to be created, one for points, one for currency
-            List<Txn_Line_Item__c> txnLineItems = new List<Txn_Line_Item__c>();
-            txnLineItems.addAll(DonorCompInvocableHelper.buildDonationLineItems(foundContact, targetRateRecord, addFundsRequest));
-
-            // Handle Bonus Level payments (levels that are active but not visible)
-            // These levels provide one time payments when the threshold is hit
-            List<Level__c> acheivedBonusLevels = donationThresholdToBonusLevels.get(totalVisitCount);
-            if (acheivedBonusLevels != null) {
-                txnLineItems.addAll(DonorCompInvocableHelper.buildBonusLevelLineItems(foundContact, acheivedBonusLevels, activeLastPromotionDatesByTier, addFundsRequest));
-            }
-
-            // Get the target promotional level, this should be the Next_Level__c on the current level
-            // If they don't have a current level reference (shouldn't happen), use the lowest level by non-zero threshold
-            Level__c targetPromotionLevel;
-
-            if (foundContact.Loyalty_Level__c != null) {
-                // Failing this case would indicate that they are at the highest level and can't promote any higher
-                if (foundContact.Loyalty_Level__r.Next_Level__c != null) {
-                    targetPromotionLevel = foundContact.Loyalty_Level__r.Next_Level__r;
-                }
-            } else if (lowestLoyaltyLevel != null) {
-                targetPromotionLevel = lowestLoyaltyLevel;
-            }
-
-            // Check if the amount of donations is equal to the donation threshold
-            // If it is and there is another level, promote the donor!
-            if (
-                foundContact.Loyalty_Level__c != null &&
-                targetPromotionLevel != null &&
-                totalVisitCount == targetPromotionLevel.Donation_Threshold__c
-            ) {
-                wasPromotionTriggered = true;
-
-                Account targetDonorToUpdate = donorsToUpdate.get(foundContact.AccountId);
-                if (targetDonorToUpdate == null) {
-                    targetDonorToUpdate = new Account(Id = foundContact.AccountId);
-                }
-
-                targetDonorToUpdate.Loyalty_Level__pc = targetPromotionLevel.Id;
-                donorsToUpdate.put(foundContact.AccountId, targetDonorToUpdate);
-
-                // Apply New Level Bonuses onto the line items
-                // Check to make sure the bonus level hasn't be triggered in the last 'Loyalty Threshold Window'
-                // If it has been triggered, the donor shouldn't receive the bonus
-                AggregateResult lastPromotionDate = activeLastPromotionDatesByTier?.get(targetPromotionLevel.Id);
-                if (
-                    activeLastPromotionDatesByTier == null ||
-                    lastPromotionDate == null ||
-                    lastPromotionDate.get('lastPromotionDate') == null
-                ) {
-                    txnLineItems.addAll(DonorCompInvocableHelper.buildPromotionLineItems(targetPromotionLevel, addFundsRequest));
-                }
-            }
-
-            // Line Items
-            List<Txn_Line_Item__c> existingTxnLineItems = (donorIdToTxnLineItems.get(foundContact.Id) != null) ? donorIdToTxnLineItems.get(foundContact.Id) : new List<Txn_Line_Item__c>();
-            existingTxnLineItems.addAll(txnLineItems);
-
-            donorIdToTxnLineItems.put(foundContact.Id, txnLineItems);
-
-            // Messages
-            List<Message__c> messages = (donorIdToMessages.get(foundContact.Id) != null) ? donorIdToMessages.get(foundContact.Id) : new List<Message__c>();
-            messages.add(DonorCompInvocableHelper.buildDonationNotificationMessage(foundContact, targetVisitRecord, wasPromotionTriggered));
-
-            donorIdToMessages.put(foundContact.Id, messages);
-
-            // Check if there needs to be an update to the last used center
-            if (foundContact.Account.Last_Used_Center__pc == null || foundContact.Account.Last_Used_Center__pc != targetVisitRecord.Center_Donation_Type__r.Center__c) {
-                Account donorToUpdate = donorsToUpdate.get(foundContact.AccountId);
-                if (donorToUpdate == null) {
-                    donorToUpdate = new Account(Id = foundContact.AccountId);
-                }
-
-                donorToUpdate.Last_Used_Center__pc = targetVisitRecord.Center_Donation_Type__r.Center__c;
-                donorsToUpdate.put(foundContact.AccountId, donorToUpdate);
+        Set<String> donorNumbers = new Set<String>();
+        for (List<Donor_Comp__e> recordList : inputRecords) {
+            for (Donor_Comp__e donorComp : recordList) {
+                donorNumbers.add(donorComp.Donor_Number__c);
             }
         }
 
-        DonorCompInvocableHelper.updateDonorLoyaltyLevels(donorsToUpdate);
-        DonorCompInvocableHelper.insertTransactionsAndLineItems(donorIdToTransaction, donorIdToTxnLineItems, donorIdToMessages);
-        DonorCompInvocableHelper.insertTransactionLogs(donorIdToMissingPaymentMethodLogs, donorIdToTransaction);
+        List<DonorPaymentService.DonationPaymentRequest> paymentRequests = new List<DonorPaymentService.DonationPaymentRequest>();
+        for(Contact foundContact : [
+            SELECT Id, (SELECT Id FROM Visits__r WHERE Status__c = 'Complete' AND Outcome__c = 'Donation' ORDER BY Appointment_Datetime__c DESC LIMIT 1) 
+            FROM Contact 
+            WHERE Account.DonorId__c IN :donorNumbers
+        ]) {
+            if (foundContact.Visits__r.isEmpty()) {
+                continue;
+            }
 
-        // Process the add fund requests in an async context to avoid callout exception
-        Database.executeBatch(new AddFundsBatchable(addFundsRequests), 100);
+            paymentRequests.add(new DonorPaymentService.DonationPaymentRequest(foundContact.Id, foundContact.Visits__r[0].Id));
+        }
+
+        DonorPaymentService.createDonationPayment(paymentRequests);
     }
 
     public static void updateCampaignVisitCounter(List<Visit__c> visitsToProcess) {
@@ -278,76 +176,6 @@ public without sharing class DonorCompInvocable {
         }
         if (!finalCampaignMemberUpdates.isEmpty()) {
             update finalCampaignMemberUpdates;
-        }
-    }
-
-    public class AddFundsRequest {
-        public Id donorContactId;
-        public Id visitId;
-        public Id debitTransactionId;
-        public String existingOnbeTransactionId;
-
-        public List<AddFundsLineItem> lineItems;
-        public String accountNumber;
-        public String transactionSubType;
-        public List<String> comments;
-        public Decimal total;
-
-        public Boolean isExceptionPayment;
-        public Boolean isSuccessfullyProcessed;
-        public String processResponse; // code - sub_code
-
-        public AddFundsRequest(Id donorContactId, Id visitId, String accountNumber, String transactionSubType) {
-            this(donorContactId, visitId, accountNumber, transactionSubType, null);
-        }
-
-        public AddFundsRequest(Id donorContactId, Id visitId, String accountNumber, String transactionSubType, Id debitTransactionId) {
-            this.donorContactId = donorContactId;
-            this.visitId = visitId;
-            this.accountNumber = accountNumber;
-            this.transactionSubType = transactionSubType;
-            this.debitTransactionId = debitTransactionId;
-            this.existingOnbeTransactionId = '';
-
-            this.comments = new List<String>();
-            this.lineItems = new List<AddFundsLineItem>();
-            this.total = 0;
-            this.isExceptionPayment = false;
-        }
-
-        public void setOnbeTransactionId(String transactionId) {
-            this.existingOnbeTransactionId = transactionId;
-        }
-
-        public void recordAPIResponse(Boolean wasSuccessful, String response) {
-            this.isSuccessfullyProcessed = wasSuccessful;
-            this.processResponse = response;
-        }
-
-        public void addLineItem(String item, String type, Decimal amount) {
-            this.lineItems.add(new AddFundsLineItem(item, type, amount));
-
-            if (type == 'Currency') {
-                this.total += amount;
-            }
-        }
-    }
-
-    public class AddFundsLineItem {
-        public String item;
-        public String type;
-        public Decimal amount;
-        public Integer quantity;
-
-        public AddFundsLineItem(String item, String type, Decimal amount) {
-            this(item, type, amount, 1);
-        }
-
-        public AddFundsLineItem(String item, String type, Decimal amount, Integer quantity) {
-            this.item = item;
-            this.type = type;
-            this.amount = amount;
-            this.quantity = quantity;
         }
     }
 }

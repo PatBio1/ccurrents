@@ -1,82 +1,121 @@
-public with sharing class DonorPaymentService {
+public without sharing class DonorPaymentService {
     public static List<DonationPaymentResponse> createDonationPayment(List<DonationPaymentRequest> paymentRequests) {
-        Set<Id> donorIds = new Set<Id>();
-
-        for (DonationPaymentRequest donationPaymentRequest : paymentRequests) {
-            donorIds.add(donationPaymentRequest.donorId);
-        }
-
-        Map<Id, String> donorIdToPaymentMethodAccountNumber = new Map<Id, String>();
-        for(Payment_Method__c paymentMethod : [
-            SELECT Id, Account_Number__c, Donor__c
-            FROM Payment_Method__c
-            WHERE Donor__c IN :donorIds AND
-                Is_Active__c = true AND 
-                isDefault__c = true
-        ]) {
-            donorIdToPaymentMethodAccountNumber.put(paymentMethod.Donor__c, paymentMethod.Account_Number__c);
-        }
-
-        Map<DonationPaymentRequest, Transaction__c> donationPaymentRequestToTransaction = new Map<DonationPaymentRequest, Transaction__c>();
-        Map<DonationPaymentRequest, List<Txn_Line_Item__c>> donationPaymentRequestToTxnLineItems = new Map<DonationPaymentRequest, List<Txn_Line_Item__c>>();
+        Set<Id> donorContactIds = new Set<Id>();
+        Set<Id> visitIds = new Set<Id>();
 
         for(DonationPaymentRequest paymentRequest : paymentRequests) {
-            donationPaymentRequestToTransaction.put(paymentRequest, new Transaction__c(
-                Donor__c = paymentRequest.donorId,
-                Visit__c = paymentRequest.visitId,
-                Type__c = 'Credit',
-                SubType__c = 'Donation Payment'
-            ));
-
-            List<Txn_Line_Item__c> donationPaymentLineItems = new List<Txn_Line_Item__c>();
-            for(DonationPaymentLineItem lineItem : paymentRequest.donationLineItems) {
-                donationPaymentLineItems.add(new Txn_Line_Item__c(
-                    Item__c = lineItem.description,
-                    Quantity__c = 1,
-                    Unit_Cost__c = lineItem.unitCost,
-                    Type__c = lineItem.type
-                ));
-            }
-
-            donationPaymentRequestToTxnLineItems.put(paymentRequest, donationPaymentLineItems);
+            donorContactIds.add(paymentRequest.donorId);
+            visitIds.add(paymentRequest.visitId);
         }
 
-        insert donationPaymentRequestToTransaction.values();
+        List<Contact> targetContacts = DonorPaymentServiceHelper.queryDonorContactInformation(donorContactIds, visitIds);
+        Map<Id, Integer> donorIdToTotalVisitCount = DonorBatchableHelper.calculateDonor365DayVisitTotals(targetContacts);
+
+        Map<String, Rate__c> centerAndDonationTypeToRate = DonorPaymentServiceHelper.getRatesByCenterDonationType(); // Get All Rates stored by a composite key of Center__c + Donation_Type__c
+        Map<Decimal, List<Level__c>> donationThresholdToBonusLevels = DonorPaymentServiceHelper.getBonusLevelsByDonationThreshold();
+        Map<Id, Map<Id, AggregateResult>> donorIdToActiveLastPromotionDatesByTier = DonorPaymentServiceHelper.getDonorLastPromotionDateByLevel(targetContacts);
+
+        Level__c lowestLoyaltyLevel = DonorPaymentServiceHelper.getLowestLoyaltyLevel();
+        Boolean wasPromotionTriggered = false;
 
         List<DonationPaymentResponse> donationPaymentResponses = new List<DonationPaymentResponse>();
-        List<Txn_Line_Item__c> allLineItems = new List<Txn_Line_Item__c>();
+        Map<Id, Account> donorsToUpdate = new Map<Id, Account>();
+        List<ProesisAddFundsRequest> addFundsRequests = new List<ProesisAddFundsRequest>();
+        List<DonorPaymentService.DonationPaymentRequest> donationPaymentRequests = new List<DonorPaymentService.DonationPaymentRequest>();
+        
+        for (Contact foundContact : targetContacts) {
+            for(Visit__c targetVisitRecord : foundContact.Visits__r) {
+                ProesisAddFundsRequest addFundsRequest = DonorPaymentServiceHelper.buildBaseAddFundsRequest(foundContact, targetVisitRecord);
+                addFundsRequests.add(addFundsRequest);
 
-        for(DonationPaymentRequest paymentRequest : paymentRequests) {
-            Transaction__c transactionRecord = donationPaymentRequestToTransaction.get(paymentRequest);
-            List<Txn_Line_Item__c> donationPaymentLineItems = donationPaymentRequestToTxnLineItems.get(paymentRequest);
+                DonationPaymentResponse donationPaymentResponse = new DonationPaymentResponse(foundContact.Id, targetVisitRecord.Id);
+                donationPaymentResponses.add(donationPaymentResponse);
 
-            for(Txn_Line_Item__c lineItem : donationPaymentLineItems) {
-                lineItem.Transaction__c = transactionRecord.Id;
-            }
+                Map<Id, AggregateResult> activeLastPromotionDatesByTier = donorIdToActiveLastPromotionDatesByTier.get(foundContact.Id);
+                Integer totalVisitCount = donorIdToTotalVisitCount.get(foundContact.Id);
 
-            allLineItems.addAll(donationPaymentLineItems);
+                Rate__c targetRateRecord = centerAndDonationTypeToRate.get(
+                    targetVisitRecord.Center_Donation_Type__r.Center__c + '-' + targetVisitRecord.Center_Donation_Type__r.Donation_Type__c
+                );
 
-            Decimal totalCurrencyPaid = 0;
-            Decimal totalPointsPaid = 0;
+                // Create the parent transaction record
+                donationPaymentResponse.transactionRecord = DonorPaymentServiceHelper.buildBaseTransaction(foundContact, targetVisitRecord);
 
-            for(Txn_Line_Item__c lineItem : donationPaymentLineItems) {
-                if (lineItem.Type__c == 'Currency') {
-                    totalCurrencyPaid += lineItem.Unit_Cost__c * lineItem.Quantity__c;
-                } else if (lineItem.Type__c == 'Points') {
-                    totalPointsPaid += lineItem.Unit_Cost__c * lineItem.Quantity__c;
+                // Two Txn Line items need to be created, one for points, one for currency
+                List<Txn_Line_Item__c> txnLineItems = new List<Txn_Line_Item__c>();
+                txnLineItems.addAll(DonorPaymentServiceHelper.buildDonationLineItems(foundContact, targetRateRecord, addFundsRequest));
+
+                // Handle Bonus Level payments (levels that are active but not visible)
+                // These levels provide one time payments when the threshold is hit
+                List<Level__c> acheivedBonusLevels = donationThresholdToBonusLevels.get(totalVisitCount);
+                if (acheivedBonusLevels != null) {
+                    txnLineItems.addAll(DonorPaymentServiceHelper.buildBonusLevelLineItems(foundContact, acheivedBonusLevels, activeLastPromotionDatesByTier, addFundsRequest));
+                }
+
+                // Get the target promotional level, this should be the Next_Level__c on the current level
+                // If they don't have a current level reference (shouldn't happen), use the lowest level by non-zero threshold
+                Level__c targetPromotionLevel;
+
+                if (foundContact.Loyalty_Level__c != null) {
+                    // Failing this case would indicate that they are at the highest level and can't promote any higher
+                    if (foundContact.Loyalty_Level__r.Next_Level__c != null) {
+                        targetPromotionLevel = foundContact.Loyalty_Level__r.Next_Level__r;
+                    }
+                } else if (lowestLoyaltyLevel != null) {
+                    targetPromotionLevel = lowestLoyaltyLevel;
+                }
+
+                // Check if the amount of donations is equal to the donation threshold
+                // If it is and there is another level, promote the donor!
+                if (
+                    foundContact.Loyalty_Level__c != null &&
+                    targetPromotionLevel != null &&
+                    totalVisitCount == targetPromotionLevel.Donation_Threshold__c
+                ) {
+                    wasPromotionTriggered = true;
+
+                    Account targetDonorToUpdate = donorsToUpdate.get(foundContact.AccountId);
+                    if (targetDonorToUpdate == null) {
+                        targetDonorToUpdate = new Account(Id = foundContact.AccountId);
+                    }
+
+                    targetDonorToUpdate.Loyalty_Level__pc = targetPromotionLevel.Id;
+                    donorsToUpdate.put(foundContact.AccountId, targetDonorToUpdate);
+
+                    // Apply New Level Bonuses onto the line items
+                    // Check to make sure the bonus level hasn't be triggered in the last 'Loyalty Threshold Window'
+                    // If it has been triggered, the donor shouldn't receive the bonus
+                    AggregateResult lastPromotionDate = activeLastPromotionDatesByTier?.get(targetPromotionLevel.Id);
+                    if (
+                        activeLastPromotionDatesByTier == null ||
+                        lastPromotionDate == null ||
+                        lastPromotionDate.get('lastPromotionDate') == null
+                    ) {
+                        txnLineItems.addAll(DonorPaymentServiceHelper.buildPromotionLineItems(targetPromotionLevel, addFundsRequest));
+                    }
+                }
+
+                donationPaymentResponse.txnLineItems.addAll(txnLineItems);
+                donationPaymentResponse.donationMessages.add(DonorPaymentServiceHelper.buildDonationNotificationMessage(foundContact, targetVisitRecord, wasPromotionTriggered));
+
+                // Check if there needs to be an update to the last used center
+                if (foundContact.Account.Last_Used_Center__pc == null || foundContact.Account.Last_Used_Center__pc != targetVisitRecord.Center_Donation_Type__r.Center__c) {
+                    Account donorToUpdate = donorsToUpdate.get(foundContact.AccountId);
+                    if (donorToUpdate == null) {
+                        donorToUpdate = new Account(Id = foundContact.AccountId);
+                    }
+
+                    donorToUpdate.Last_Used_Center__pc = targetVisitRecord.Center_Donation_Type__r.Center__c;
+                    donorsToUpdate.put(foundContact.AccountId, donorToUpdate);
                 }
             }
-
-            donationPaymentResponses.add(new DonationPaymentResponse(
-                paymentRequest.donorId,
-                paymentRequest.visitId,
-                transactionRecord.Id,
-                totalCurrencyPaid,
-                totalPointsPaid
-            ));
         }
 
-        insert allLineItems;
+        DonorPaymentServiceHelper.updateDonorLoyaltyLevels(donorsToUpdate);
+        DonorPaymentServiceHelper.insertTransactionsAndLineItems(donationPaymentResponses);
+
+        // Process the add fund requests in an async context to avoid callout exception
+        Database.executeBatch(new AddFundsBatchable(addFundsRequests), 100);
         return donationPaymentResponses;
     }
 
@@ -84,51 +123,31 @@ public with sharing class DonorPaymentService {
         public Id donorId;
         public Id visitId;
 
-        public List<DonationPaymentLineItem> donationLineItems = new List<DonationPaymentLineItem>();
-
         public DonationPaymentRequest(Id donorId, Id visitId) {
             this.donorId = donorId;
             this.visitId = visitId;
-
-            donationLineItems = new List<DonationPaymentLineItem>();
-        }
-
-        public void addDonationLineItem(String description, String type, Decimal unitCost) {
-            donationLineItems.add(new DonationPaymentLineItem(description, type, unitCost));
-        }
-    }
-
-    public class DonationPaymentLineItem {
-        public String description;
-        public String type;
-        public Decimal unitCost;
-
-        public DonationPaymentLineItem(String description, String type, Decimal unitCost) {
-            this.description = description;
-            this.type = type;
-            this.unitCost = unitCost;
         }
     }
 
     public class DonationPaymentResponse {
         public Id donorId;
         public Id visitId;
-        public Id transactionId;
 
-        public Decimal totalCurrencyPaid;
-        public Decimal totalPointsPaid;
+        public Transaction__c transactionRecord;
+        public List<Txn_Line_Item__c> txnLineItems;
+        public List<Message__c> donationMessages;
 
-        public DonationPaymentResponse(Id donorId, Id visitId, Id transactionId, Decimal totalCurrencyPaid, Decimal totalPointsPaid) {
+        public DonationPaymentResponse(Id donorId, Id visitId) {
             this.donorId = donorId;
             this.visitId = visitId;
-            this.transactionId = transactionId;
-            this.totalCurrencyPaid = totalCurrencyPaid;
-            this.totalPointsPaid = totalPointsPaid;
+
+            this.txnLineItems = new List<Txn_Line_Item__c>();
+            this.donationMessages = new List<Message__c>();
         }
     }
 
     public static List<ExceptionPaymentResponse> createExceptionPayment(List<ExceptionPaymentRequest> exceptionRequests) {
-        List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
+        List<ProesisAddFundsRequest> addFundsRequests = new List<ProesisAddFundsRequest>();
         
         Set<Id> exceptionRateIds = new Set<Id>();
         Set<Id> visitIds = new Set<Id>();
@@ -215,7 +234,7 @@ public with sharing class DonorPaymentService {
                 throw new DonorPaymentException(String.format(Constants.CENTER_INDIVIDUAL_EXCEPTION_LIMIT_ERROR, new List<object> { center.Name }));
             }
 
-            DonorCompInvocable.AddFundsRequest addFundsRequest = new DonorCompInvocable.AddFundsRequest(
+            ProesisAddFundsRequest addFundsRequest = new ProesisAddFundsRequest(
                 exceptionRequest.donorId, exceptionRequest.visitId, donorIdToPaymentMethodAccountNumber.get(exceptionRequest.donorId), 'Exception'
             );
 
@@ -382,7 +401,7 @@ public with sharing class DonorPaymentService {
         insert allTxnLineItems;
 
         // Process the payments through Onbe
-        List<DonorCompInvocable.AddFundsRequest> addFundsRequest = new List<DonorCompInvocable.AddFundsRequest>();
+        List<ProesisAddFundsRequest> addFundsRequest = new List<ProesisAddFundsRequest>();
         List<PromotionPaymentResponse> promotionPaymentResponses = new List<PromotionPaymentResponse>();
 
         for(Transaction__c updatedTransaction : [
@@ -393,7 +412,7 @@ public with sharing class DonorPaymentService {
             FROM Transaction__c 
             WHERE Id IN :promotionPaymentRequestToTransaction.values()
         ]) {
-            DonorCompInvocable.AddFundsRequest newRequest = new DonorCompInvocable.AddFundsRequest(
+            ProesisAddFundsRequest newRequest = new ProesisAddFundsRequest(
                 updatedTransaction.Donor__c, updatedTransaction.Visit__c, donorIdToAccountNumber.get(updatedTransaction.Donor__c), 'Promotion Payment'
             );
 

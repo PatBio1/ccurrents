@@ -35,15 +35,19 @@ public with sharing class DonationPaymentInvocableTest {
             Visit__c visit = new Visit__c();
             visit.Appointment__c = appointment.Id;
             visit.Donor__c = experienceUser.ContactId;
-            visit.Status__c = 'Scheduled';
+            visit.Status__c = 'Complete';
+            visit.Outcome__c = 'Donation';
             visit.Center_Donation_Type__c = centerDonationType.Id;
             insert visit;
 
+            List<DonationPaymentInvocable.DonationPaymentResponse> donationPaymentResponses;
             DonationPaymentInvocable.DonationPaymentRequest donationPaymentRequest = new DonationPaymentInvocable.DonationPaymentRequest();
             donationPaymentRequest.donorId = experienceUser.ContactId;
             donationPaymentRequest.visitId = visit.Id;
 
-            List<DonationPaymentInvocable.DonationPaymentResponse> donationPaymentResponses = DonationPaymentInvocable.invoke(new List<DonationPaymentInvocable.DonationPaymentRequest>{donationPaymentRequest});
+            Test.startTest();
+            donationPaymentResponses = DonationPaymentInvocable.invoke(new List<DonationPaymentInvocable.DonationPaymentRequest> { donationPaymentRequest });
+            Test.stopTest();
 
             System.assertEquals(1, donationPaymentResponses.size());
             System.assertEquals(experienceUser.ContactId, donationPaymentResponses[0].donorId);

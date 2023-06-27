@@ -27,6 +27,7 @@ public without sharing class CancelCardControllerTest {
         testPaymentMethod.Card_Number__c = '7890';
         testPaymentMethod.Is_Active__c = true;
         testPaymentMethod.isDefault__c = true;
+        testPaymentMethod.Partner_User_Id__c = donorContactRecord.Id;
         insert testPaymentMethod;
     }
     
@@ -57,6 +58,7 @@ public without sharing class CancelCardControllerTest {
             testPaymentMethod.Card_Number__c = '7890';
             testPaymentMethod.Is_Active__c = true;
             testPaymentMethod.isDefault__c = true;
+            testPaymentMethod.Partner_User_Id__c = experienceUser.ContactId;
             insert testPaymentMethod;
         }
 

@@ -592,7 +592,8 @@ public class VisitTriggerHandlerTest {
                 Is_Active__c = true,
                 isDefault__c = true,
                 User_Requested_Replace_Card__c = true,
-                Expiration__c = targetExpirationDate
+                Expiration__c = targetExpirationDate,
+                Partner_User_Id__c = targetDonorContact.Id
             ));
 
             testVisits.add(new Visit__c(
@@ -644,7 +645,8 @@ public class VisitTriggerHandlerTest {
                 Is_Active__c = true,
                 isDefault__c = true,
                 User_Requested_Replace_Card__c = true,
-                Expiration__c = targetExpirationDate
+                Expiration__c = targetExpirationDate,
+                Partner_User_Id__c = targetDonorContact.Id
             ));
 
             testVisits.add(new Visit__c(

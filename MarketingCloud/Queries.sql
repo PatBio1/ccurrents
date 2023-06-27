@@ -471,6 +471,23 @@ ON p.[Visit Id] = mp.VisitId
 WHERE pdsrp.VisitId IS NULL AND
 mp.VisitId IS NOT NULL
 
+-- Post Donation Survey Response Processing v2
+SELECT p.[Visit Id] AS VisitId,
+p.Rating AS Rating,
+p.Feedback AS Feedback,
+p.SubscriberKey AS SubscriberKey,
+p.DateAdded AS DateAdded,
+p.id AS RecordKey
+
+FROM [Post Donation Survey Responses] AS p
+
+LEFT JOIN (SELECT RecordKey AS RecordKey
+FROM [Post Donation Survey Response Processing v2])
+AS pdsrp2
+ON p.id = pdsrp2.RecordKey
+
+WHERE pdsrp2.RecordKey IS NULL
+
 -- Buddy Referral Lead Email
 SELECT cm.LeadOrContactId AS SubscriberKey,
 l.FirstName AS FirstName,

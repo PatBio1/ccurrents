@@ -1000,6 +1000,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Transaction__c.Description__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Transaction__c.Onbe_Transaction_Id__c</field>
         <readable>true</readable>
     </fieldPermissions>

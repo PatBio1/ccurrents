@@ -20,11 +20,6 @@
                             {baseVisitExceptionPaymentInfo.visitCenterName} @ <lightning-formatted-date-time value={baseVisitExceptionPaymentInfo.visitDatetime}></lightning-formatted-date-time>
                         </p>
                     </div>
-
-                    <div class="visit-info-row">
-                        <lightning-icon icon-name="standard:picklist_type" size="medium"></lightning-icon>
-                        <p>Credit</p>
-                    </div>
                 </div>
 
                 <template if:true={hasCenterLimits}>
@@ -58,8 +53,29 @@
                 <div class="exception-rate-section">
                     <h1 class="modal-section-header">Exception Rate Selection</h1>
 
-                    <lightning-radio-group if:true={hasExceptionRateInfo} variant="label-hidden" value={selectedRateId} options={exceptionRateOptions} onchange={handleChangeRateSelection}>
-                    </lightning-radio-group>
+                    <div style="display: flex; flex-direction: row; justify-content: space-around; gap: 2rem;" if:true={hasExceptionRateInfo}>
+                      <lightning-radio-group 
+                        style="flex: 0.33;" 
+                        label="Rates" 
+                        value={selectedRateId} 
+                        options={exceptionRateOptions} 
+                        onchange={handleChangeRateSelection} 
+                        required
+                      >
+                      </lightning-radio-group>
+
+                      <lightning-textarea 
+                        style="flex: 0.66;" 
+                        label="Exception Payment Notes" 
+                        max-length="50" 
+                        message-when-too-long="Notes can only be 50 characters long." 
+                        value={exceptionPaymentNotes} 
+                        onchange={handleChangeExceptionNotes} 
+                        required
+                      >
+                      </lightning-textarea>
+                    </div>
+                    
             
                     <div if:false={hasExceptionRateInfo}  class="slds-illustration slds-illustration_small">
                         <img src="/img/chatter/Desert.svg" class="slds-illustration__svg" alt="" />
@@ -89,15 +105,15 @@
                     </div>
 
                     <div class="payment-confirmation-row">
-                        <lightning-icon icon-name="standard:picklist_type" size="medium"></lightning-icon>
-                        <p>Credit</p>
-                    </div>
-
-                    <div class="payment-confirmation-row">
                         <lightning-icon icon-name="standard:currency" size="medium"></lightning-icon>
                         <p>
                             {selectedExceptionRateInfo.description} - <lightning-formatted-number value={selectedExceptionRateInfo.amount} format-style="currency" currency-code={userCurrency}></lightning-formatted-number>
                         </p>
+                    </div>
+
+                    <div if:true={exceptionPaymentNotes} class="payment-confirmation-row">
+                        <lightning-icon icon-name="standard:messaging_conversation" size="medium"></lightning-icon>
+                        <p>{exceptionPaymentNotes}</p>
                     </div>
                 </div>
 
@@ -115,7 +131,7 @@
                           <g transform="translate(11.000000, 61.000000)" class="slds-illustration__stroke-secondary" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
                             <path vector-effect="non-scaling-stroke" d="M205.678404,88.7060547 C241.204839,79.6402995 264.385375,73.6529948 275.22001,70.7441406 C284.386465,68.2831552 288.919667,66.3692913 289.659463,63.6132812 C290.231312,61.482937 289.575954,58.5184063 280.531534,56.4824219 C263.69169,53.375 221.886026,49.1894531 211.291014,47.6064453 C200.696003,46.0234375 163.447549,43.4306641 163.531534,32.3076172 C163.615518,21.1845703 191.456338,18.3017578 202.277343,16.6347656 C213.098347,14.9677734 215.910155,12.1396484 215.910155,9.08691406 C215.910155,7.05175781 210.827893,4.38736979 200.66337,1.09375"
                               transform="translate(226.670882, 44.899902) scale(-1, 1) translate(-226.670882, -44.899902) "></path>
-                            <path vector-effect="non-scaling-stroke" d="M1.31221526,0.5 C13.3068171,2.21419271 20.5131973,3.86816406 22.9313559,5.46191406 C26.5585938,7.85253906 27.8242188,13.1230469 21.7255859,15.6025391 C17.6598307,17.2555339 12.7158203,18.8808594 6.89355469,20.4785156 C2.33626302,22.3964844 0.0576171875,24.4661458 0.0576171875,26.6875 C0.0576171875,30.0195313 2.96846526,31.8701172 10.9206137,33.125 C18.8727621,34.3798828 78.7253012,39.5429688 83.3229575,39.7568359 C87.9206137,39.9707031 163.017293,45.9052734 190.737997,53.4716797 C218.4587,61.0380859 230.180095,69.3007812 231.721395,75.7050781 C232.748929,79.9746094 231.513997,83.4833984 228.016602,86.2314453"
+                            <path vector-effect="non-scaling-stroke" d="M1.31221526,0.5 C13.3068171,2.21419271 20.5131973,3.86816406 22.9313559,5.46191406 C26.5585938,7.85253906 27.8242188,13.1230469 21.7255859,15.6025391 C17.6598307,17.2555339 12.7158203,18.8808594 6.89355469,20.4785156 C2.33626302,22.3964844 0.0576171875,24.4661458 0.0576171875,26.6875 C0.0576171875,30.0195313 2.96846526,31.8701172 10.9206137,6625 C18.8727621,34.3798828 78.7253012,39.5429688 83.3229575,39.7568359 C87.9206137,39.9707031 163.017293,45.9052734 190.737997,53.4716797 C218.4587,61.0380859 230.180095,69.3007812 231.721395,75.7050781 C232.748929,79.9746094 231.513997,83.4833984 228.016602,86.2314453"
                               transform="translate(116.064507, 43.365723) scale(-1, 1) translate(-116.064507, -43.365723) "></path>
                           </g>
                           <path vector-effect="non-scaling-stroke" d="M0.96484375,61.5 L241.929687,61.5" class="slds-illustration__stroke-secondary" stroke-width="3" stroke-linecap="round"></path>

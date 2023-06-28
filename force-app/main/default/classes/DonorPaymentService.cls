@@ -268,6 +268,10 @@ public without sharing class DonorPaymentService {
                 SubType__c = 'Exception'
             );
 
+            if (!String.isEmpty(exceptionRequest.exceptionNotes)) {
+                exceptionTransaction.Description__c = exceptionRequest.exceptionNotes;
+            }
+
             Task exceptionPaymentTask = new Task(
                 WhoId = exceptionRequest.donorId,
                 WhatId = exceptionRequest.visitId,
@@ -323,6 +327,8 @@ public without sharing class DonorPaymentService {
         public Decimal exceptionAmount;
         public String exceptionReason;
 
+        public String exceptionNotes;
+
         public ExceptionPaymentRequest(Id donorId, Id visitId, Id exceptionRateId) {
             this.donorId = donorId;
             this.visitId = visitId;
@@ -334,6 +340,10 @@ public without sharing class DonorPaymentService {
             this.visitId = visitId;
             this.exceptionAmount = amount;
             this.exceptionReason = reason;
+        }
+
+        public void addExceptionNotes(String exceptionNotes) {
+            this.exceptionNotes = exceptionNotes;
         }
     }
 

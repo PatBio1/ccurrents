@@ -98,20 +98,26 @@ public class ExceptionPaymentControllerTest {
 
     @IsTest 
     static void testCreateExceptionPayment() {
+        final String TEST_EXCEPTION_NOTES = 'Notes Notes Notes and more Notes';
+
         Rate__c targetExceptionRate = [SELECT Id, Base_Payment__c, Description__c FROM Rate__c WHERE Type__c = 'Exception' LIMIT 1];
         Visit__c targetVisit = [SELECT Id, Donor__c FROM Visit__c LIMIT 1];
 
         Test.setMock(HttpCalloutMock.class, new OnbeWsPrepaidHttpCalloutMock());
 
         Test.startTest();
-        ExceptionPaymentController.createExceptionPayment(targetVisit.Donor__c, targetVisit.Id, targetExceptionRate.Id);
+        ExceptionPaymentController.createExceptionPayment(targetVisit.Donor__c, targetVisit.Id, targetExceptionRate.Id, TEST_EXCEPTION_NOTES);
         Test.stopTest();
 
-        List<Transaction__c> createdTransactions = [SELECT Id, Amount_Currency__c, Type__c, SubType__c, Status__c, (SELECT Id, Total__c, Item__c FROM Txn_Line_Items__r) FROM Transaction__c];
+        List<Transaction__c> createdTransactions = [SELECT Id, Amount_Currency__c, Type__c, SubType__c, Status__c, Description__c, (SELECT Id, Total__c, Item__c FROM Txn_Line_Items__r) FROM Transaction__c];
         Assert.areEqual(2, createdTransactions.size(), 'Amount of created transactions should be equal to 2');
         
         Set<String> expectedTypes = new Set<String> { 'Credit', 'Debit' };
         for(Transaction__c createdTransaction : createdTransactions) {
+            if (createdTransaction.Type__c == 'Credit') {
+                Assert.areEqual(TEST_EXCEPTION_NOTES, createdTransaction.Description__c, 'Description of created transaction should be equal to the notes passed in');
+            }
+
             Assert.areEqual(targetExceptionRate.Base_Payment__c, createdTransaction.Amount_Currency__c, 'Amount of created transaction should be equal to base payment of exception rate');
             Assert.areEqual(1, createdTransaction.Txn_Line_Items__r.size(), 'Amount of line items in created transaction should be equal to 1');
             Assert.areEqual(targetExceptionRate.Base_Payment__c, createdTransaction.Txn_Line_Items__r[0].Total__c, 'Total of line item in created transaction should be equal to base payment of exception rate');
@@ -177,7 +183,7 @@ public class ExceptionPaymentControllerTest {
 
         Test.startTest();
         try {
-            ExceptionPaymentController.createExceptionPayment(targetVisit.Donor__c, targetVisit.Id, targetExceptionRate.Id);
+            ExceptionPaymentController.createExceptionPayment(targetVisit.Donor__c, targetVisit.Id, targetExceptionRate.Id, '');
         } catch(AuraHandledException e) {
             wasExceptionThrown = true;
             exceptionMessage = e.getMessage();

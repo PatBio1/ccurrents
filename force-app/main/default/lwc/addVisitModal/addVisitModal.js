@@ -67,7 +67,7 @@ export default class AddVisitModal extends LightningModal {
         } catch(e) {
             this.dispatchEvent(new ShowToastEvent({
                 title: "Visit Create Failure",
-                message: `We encountered the following error while trying to create the visit.\t${e.message}`,
+                message: e.body.message,
                 variant: "error"
             }));
 

@@ -152,7 +152,10 @@ public with sharing class CenterScheduleController {
                 Status__c = 'Scheduled'
             ));
         } catch (Exception e) {
-            throw Util.createAuraHandledException(e);
+            AuraHandledException createVisitException = new AuraHandledException(e.getMessage());
+            createVisitException.setMessage(e.getMessage());
+
+            throw createVisitException;
         }
     }
 

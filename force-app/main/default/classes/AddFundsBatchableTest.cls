@@ -58,11 +58,11 @@ public without sharing class AddFundsBatchableTest {
         String targetTransactionSubType = 'Donation Payment';
 
         List<Contact> testDonors = [SELECT Id, (SELECT Id FROM Visits__r) FROM Contact WHERE Account.DonorId__c != null];
-        List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
+        List<ProesisAddFundsRequest> addFundsRequests = new List<ProesisAddFundsRequest>();
         Integer index = 0;
 
         for(Contact testDonor : testDonors) {
-            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', targetTransactionSubType);
+            ProesisAddFundsRequest newAddFundsRequest = new ProesisAddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', targetTransactionSubType);
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
             newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 
@@ -98,11 +98,11 @@ public without sharing class AddFundsBatchableTest {
         String targetTransactionSubType = 'Donation Payment';
 
         List<Contact> testDonors = [SELECT Id, (SELECT Id FROM Visits__r) FROM Contact WHERE Account.DonorId__c != null];
-        List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
+        List<ProesisAddFundsRequest> addFundsRequests = new List<ProesisAddFundsRequest>();
         Integer index = 0;
 
         for(Contact testDonor : testDonors) {
-            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', targetTransactionSubType);
+            ProesisAddFundsRequest newAddFundsRequest = new ProesisAddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', targetTransactionSubType);
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
             newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 
@@ -141,11 +141,11 @@ public without sharing class AddFundsBatchableTest {
         String targetTransactionSubType = 'Donation Payment';
 
         List<Contact> testDonors = [SELECT Id, (SELECT Id FROM Visits__r) FROM Contact WHERE Account.DonorId__c != null];
-        List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
+        List<ProesisAddFundsRequest> addFundsRequests = new List<ProesisAddFundsRequest>();
         Integer index = 0;
 
         for(Contact testDonor : testDonors) {
-            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', targetTransactionSubType);
+            ProesisAddFundsRequest newAddFundsRequest = new ProesisAddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', targetTransactionSubType);
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
             newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 
@@ -191,11 +191,11 @@ public without sharing class AddFundsBatchableTest {
         String targetTransactionSubType = 'Donation Payment';
 
         List<Contact> testDonors = [SELECT Id, (SELECT Id FROM Visits__r) FROM Contact WHERE Account.DonorId__c != null];
-        List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
+        List<ProesisAddFundsRequest> addFundsRequests = new List<ProesisAddFundsRequest>();
         Integer index = 0;
 
         for(Contact testDonor : testDonors) {
-            DonorCompInvocable.AddFundsRequest newAddFundsRequest = new DonorCompInvocable.AddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', targetTransactionSubType);
+            ProesisAddFundsRequest newAddFundsRequest = new ProesisAddFundsRequest(testDonor.Id, testDonor.Visits__r[0].Id, '001000000000001', targetTransactionSubType);
             newAddFundsRequest.comments = new List<String> { 'Test Comment ' + index };
             newAddFundsRequest.addLineItem('Test Line Item 1', 'Currency', 100);
 

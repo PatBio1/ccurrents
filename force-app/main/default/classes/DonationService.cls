@@ -4,7 +4,7 @@ public without sharing class DonationService {
     }
 
     public static void createExceptionTransactions(List<DonationExceptionRequest> exceptionRequests) {
-        List<DonorCompInvocable.AddFundsRequest> addFundsRequests = new List<DonorCompInvocable.AddFundsRequest>();
+        List<ProesisAddFundsRequest> addFundsRequests = new List<ProesisAddFundsRequest>();
         
         Set<Id> exceptionRateIds = new Set<Id>();
         Set<Id> visitIds = new Set<Id>();
@@ -92,7 +92,7 @@ public without sharing class DonationService {
                 throw new CreateExceptionPaymentException(String.format(Constants.CENTER_INDIVIDUAL_EXCEPTION_LIMIT_ERROR, new List<object> { center.Name }));
             }
 
-            DonorCompInvocable.AddFundsRequest addFundsRequest = new DonorCompInvocable.AddFundsRequest(
+            ProesisAddFundsRequest addFundsRequest = new ProesisAddFundsRequest(
                 exceptionRequest.donorId, exceptionRequest.visitId, donorIdToPaymentMethodAccountNumber.get(exceptionRequest.donorId), 'Exception'
             );
 

@@ -2,7 +2,9 @@ public without sharing class ExceptionPaymentController {
     @AuraEnabled
     public static void createExceptionPayment(Id donorId, Id visitId, Id exceptionRateId) {
         try {
-            DonationService.createExceptionTransaction(new DonationService.DonationExceptionRequest(donorId, visitId, exceptionRateId));
+            DonorPaymentService.createExceptionPayment(
+                new List<DonorPaymentService.ExceptionPaymentRequest> { new DonorPaymentService.ExceptionPaymentRequest(donorId, visitId, exceptionRateId) }
+            );
         } catch(Exception e) {
             AuraHandledException newException = new AuraHandledException(e.getMessage());
             newException.setMessage(e.getMessage()); // Without this line, the error message returns 'Script-thrown exception' in the apex unit test

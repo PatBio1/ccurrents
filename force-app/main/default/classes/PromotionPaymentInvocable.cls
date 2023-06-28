@@ -2,21 +2,33 @@ public without sharing class PromotionPaymentInvocable {
 
     @InvocableMethod(Label='Promotion Payment' Category='Payment' Description='Calls Promotion Payment in Donor Payment Service.')
     public static List<PromotionPaymentResponse> invoke(List<PromotionPaymentRequest> promotionPaymentRequests) {
-        List<PromotionPaymentResponse> promotionPaymentResponses = new List<PromotionPaymentResponse>();
-        List<PromotionPaymentRequest> promotionPaymentDonorServiceRequests = new List<PromotionPaymentRequest>();
+        List<DonorPaymentService.PromotionPaymentRequest> promotionPaymentDonorServiceRequests = new List<DonorPaymentService.PromotionPaymentRequest>();
 
         for (PromotionPaymentRequest promotionPaymentRequest : promotionPaymentRequests) {
-            PromotionPaymentRequest promotionRequest = new PromotionPaymentRequest();
-
-            promotionRequest.donorId = promotionPaymentRequest.donorId;
-            promotionRequest.visitId = promotionPaymentRequest.visitId;
-            promotionRequest.amount = promotionPaymentRequest.amount;
-            promotionRequest.reason = promotionPaymentRequest.reason;
-            
-            promotionPaymentDonorServiceRequests.add(promotionRequest);
+            promotionPaymentDonorServiceRequests.add(new DonorPaymentService.PromotionPaymentRequest(
+                promotionPaymentRequest.donorId,
+                promotionPaymentRequest.visitId,
+                promotionPaymentRequest.amount,
+                promotionPaymentRequest.reason
+            ));
         }
 
-        return DonorPaymentService.createPromotionPayment(promotionPaymentDonorServiceRequests);
+        List<DonorPaymentService.PromotionPaymentResponse> promotionPaymentDonorServiceResponses = DonorPaymentService.createPromotionPayment(promotionPaymentDonorServiceRequests);
+        List<PromotionPaymentResponse> promotionPaymentResponses = new List<PromotionPaymentResponse>();
+
+        for (DonorPaymentService.PromotionPaymentResponse promotionPaymentDonorServiceResponse : promotionPaymentDonorServiceResponses) {
+            PromotionPaymentResponse newResponse = new PromotionPaymentResponse();
+
+            newResponse.donorId = promotionPaymentDonorServiceResponse.donorId;
+            newResponse.visitId = promotionPaymentDonorServiceResponse.visitId;
+            newResponse.amount = promotionPaymentDonorServiceResponse.amount;
+            newResponse.reason = promotionPaymentDonorServiceResponse.reason;
+            newResponse.transactionId = promotionPaymentDonorServiceResponse.promotionTransactionId;
+            
+            promotionPaymentResponses.add(newResponse);
+        }
+
+        return promotionPaymentResponses;
     }
 
     public class PromotionPaymentRequest {

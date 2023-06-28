@@ -6,7 +6,6 @@ import CURRENCY from '@salesforce/i18n/currency';
 
 import getBaseVisitExceptionPaymentInfo from '@salesforce/apex/ExceptionPaymentController.getBaseVisitExceptionPaymentInfo';
 import createExceptionPayment from '@salesforce/apex/ExceptionPaymentController.createExceptionPayment';
-import Visits_Remaining_For_Tier from '@salesforce/label/c.Visits_Remaining_For_Tier';
 
 const EXCEPTION_RATE_SELECTION_SCREEN = 'exceptionRateSelection';
 const EXCEPTION_PAYMENT_CONFIRMATION_SCREEN = 'exceptionPaymentConfirmation';
@@ -20,6 +19,7 @@ export default class VisitExceptionPayment extends LightningElement {
 
     baseVisitExceptionPaymentInfo;
     selectedRateId;
+    exceptionPaymentNotes;
 
     userCurrency = CURRENCY;
 
@@ -148,13 +148,17 @@ export default class VisitExceptionPayment extends LightningElement {
 
     async getBaseVisitExceptionPaymentInfo() {
         this.baseVisitExceptionPaymentInfo = await getBaseVisitExceptionPaymentInfo({ targetVisitId: this._recordId });
-        console.log(this.baseVisitExceptionPaymentInfo);
+        console.log('baseVisitExceptionPaymentInfo', this.baseVisitExceptionPaymentInfo);
 
         this.isLoading = false;
     }
 
     handleChangeRateSelection(event) {
         this.selectedRateId = event.detail.value;
+    }
+
+    handleChangeExceptionNotes(event) {
+        this.exceptionPaymentNotes = event.detail.value;
     }
 
     handleNavigateBackToRateSelection(event) {
@@ -172,7 +176,8 @@ export default class VisitExceptionPayment extends LightningElement {
             await createExceptionPayment({
                 donorId: this.baseVisitExceptionPaymentInfo.visitDonorId,
                 visitId: this.recordId,
-                exceptionRateId: this.selectedRateId
+                exceptionRateId: this.selectedRateId,
+                exceptionNotes: this.exceptionPaymentNotes
             });
         } catch(e) {
             this.isLoading = false;

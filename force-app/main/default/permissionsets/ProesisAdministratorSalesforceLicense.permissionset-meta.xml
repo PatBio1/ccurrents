@@ -113,14 +113,6 @@
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>DonationService</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>DonationServiceTest</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
         <apexClass>DonorBatchable</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -1960,6 +1952,11 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>Transaction__c.Amount__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Transaction__c.Description__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>

@@ -2,11 +2,11 @@ public without sharing class AddFundsBatchableHelper {
     @TestVisible
     private static Boolean throwSalesforceException = false;
     
-    public static void createDebitTransactionsWithLineItems(List<DonorCompInvocable.AddFundsRequest> requests) {
-        Map<DonorCompInvocable.AddFundsRequest, Transaction__c> addFundsRequestToTransaction = new Map<DonorCompInvocable.AddFundsRequest, Transaction__c>();
-        Map<DonorCompInvocable.AddFundsRequest, List<Txn_Line_Item__c>> debitTransactionIdToLineItem = new Map<DonorCompInvocable.AddFundsRequest, List<Txn_Line_Item__c>>();
+    public static void createDebitTransactionsWithLineItems(List<ProesisAddFundsRequest> requests) {
+        Map<ProesisAddFundsRequest, Transaction__c> addFundsRequestToTransaction = new Map<ProesisAddFundsRequest, Transaction__c>();
+        Map<ProesisAddFundsRequest, List<Txn_Line_Item__c>> debitTransactionIdToLineItem = new Map<ProesisAddFundsRequest, List<Txn_Line_Item__c>>();
 
-        for(DonorCompInvocable.AddFundsRequest addFundsRequest : requests) {
+        for(ProesisAddFundsRequest addFundsRequest : requests) {
             // Transactions
             Transaction__c debitTransaction = new Transaction__c();
             debitTransaction.Type__c = 'Debit';
@@ -25,7 +25,7 @@ public without sharing class AddFundsBatchableHelper {
             // Line Items
             List<Txn_Line_Item__c> debitTransactionLineItems = new List<Txn_Line_Item__c>();
 
-            for(DonorCompInvocable.AddFundsLineItem lineItem : addFundsRequest.lineItems) {
+            for(ProesisAddFundsRequest.AddFundsLineItem lineItem : addFundsRequest.lineItems) {
                 if (lineItem.type == 'Points' && addFundsRequest.transactionSubType != 'Point Redemption') {
                     continue;
                 }
@@ -44,7 +44,7 @@ public without sharing class AddFundsBatchableHelper {
 
         // Parent line items to transactions
         List<Txn_Line_Item__c> lineItemsToInsert = new List<Txn_Line_Item__c>();
-        for(DonorCompInvocable.AddFundsRequest addFundsRequest : debitTransactionIdToLineItem.keySet()) {
+        for(ProesisAddFundsRequest addFundsRequest : debitTransactionIdToLineItem.keySet()) {
             Transaction__c transactionRecord = addFundsRequestToTransaction.get(addFundsRequest);
             addFundsRequest.debitTransactionId = transactionRecord.Id;
 
@@ -57,10 +57,10 @@ public without sharing class AddFundsBatchableHelper {
         insert lineItemsToInsert;
     }
 
-    public static void processAddFundsCallouts(List<DonorCompInvocable.AddFundsRequest> requests) {
+    public static void processAddFundsCallouts(List<ProesisAddFundsRequest> requests) {
         OnbePaymentService paymentService = new OnbePaymentService();
         
-        for(DonorCompInvocable.AddFundsRequest addFundsRequest : requests) {
+        for(ProesisAddFundsRequest addFundsRequest : requests) {
             if (String.isEmpty(addFundsRequest.accountNumber)) {
                 addFundsRequest.recordAPIResponse(false, 'Donor does not have an active payment method to process this transaction.');
                 continue;
@@ -103,7 +103,7 @@ public without sharing class AddFundsBatchableHelper {
         }
     }
     
-    public static void handleAddFundsResponses(List<DonorCompInvocable.AddFundsRequest> requests) {
+    public static void handleAddFundsResponses(List<ProesisAddFundsRequest> requests) {
         Proesis_Settings__c proesisSettings = Proesis_Settings__c.getOrgDefaults();
 
         Decimal baseRetryTime = proesisSettings.Payment_Service_Base_Retry__c;
@@ -117,8 +117,8 @@ public without sharing class AddFundsBatchableHelper {
         }
 
         // Transaction
-        Map<Id, DonorCompInvocable.AddFundsRequest> transactionIdToAddFundsRequest = new Map<Id, DonorCompInvocable.AddFundsRequest>();
-        for(DonorCompInvocable.AddFundsRequest request : requests) {
+        Map<Id, ProesisAddFundsRequest> transactionIdToAddFundsRequest = new Map<Id, ProesisAddFundsRequest>();
+        for(ProesisAddFundsRequest request : requests) {
             transactionIdToAddFundsRequest.put(request.debitTransactionId, request);
         }
 
@@ -126,7 +126,7 @@ public without sharing class AddFundsBatchableHelper {
         List<Transaction_Log__c> transactionLogs = new List<Transaction_Log__c>();
 
         for(Transaction__c transactionRecord : [SELECT Id, Retry_Count__c, Retry_Next__c, Onbe_Transaction_Id__c FROM Transaction__c WHERE Id IN :transactionIdToAddFundsRequest.keySet()]) {
-            DonorCompInvocable.AddFundsRequest request = transactionIdToAddFundsRequest.get(transactionRecord.Id);
+            ProesisAddFundsRequest request = transactionIdToAddFundsRequest.get(transactionRecord.Id);
 
             // Transaction
             transactionRecord.Status__c = (request.isSuccessfullyProcessed) ? 'Complete' : 'Error';

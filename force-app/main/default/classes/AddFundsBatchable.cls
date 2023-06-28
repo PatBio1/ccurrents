@@ -1,7 +1,7 @@
-public without sharing class AddFundsBatchable implements System.Schedulable, Database.Batchable<DonorCompInvocable.AddFundsRequest>, Database.AllowsCallouts, Database.Stateful {
+public without sharing class AddFundsBatchable implements System.Schedulable, Database.Batchable<ProesisAddFundsRequest>, Database.AllowsCallouts, Database.Stateful {
     public static String jobNameSearchString = 'Onbe - Add Funds Retry%';
     
-    List<DonorCompInvocable.AddFundsRequest> addFundRequests;
+    List<ProesisAddFundsRequest> addFundRequests;
     Boolean isRetry;
 
     // IF no specific requests are passed in, then we will look for any Add Funds Requests awaiting retry
@@ -10,14 +10,14 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
         this.isRetry = true;
     }
 
-    public AddFundsBatchable(List<DonorCompInvocable.AddFundsRequest> addFundRequests) {
+    public AddFundsBatchable(List<ProesisAddFundsRequest> addFundRequests) {
         AddFundsBatchableHelper.createDebitTransactionsWithLineItems(addFundRequests);
 
         this.addFundRequests = addFundRequests;
         this.isRetry = false;
     }
 
-    public Iterable<DonorCompInvocable.AddFundsRequest> start(Database.BatchableContext bc) {
+    public Iterable<ProesisAddFundsRequest> start(Database.BatchableContext bc) {
         Proesis_Settings__c proesisSettings = Proesis_Settings__c.getOrgDefaults();
         Decimal paymentServiceMaxRetry = proesisSettings.Payment_Service_Max_Retry__c;
 
@@ -26,7 +26,7 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
         }
         
         if (this.addFundRequests == null || this.addFundRequests.size() == 0) {
-            this.addFundRequests = new List<DonorCompInvocable.AddFundsRequest>();
+            this.addFundRequests = new List<ProesisAddFundsRequest>();
             Map<Id, String> donorIdToActivePaymentMethodNumber = new Map<Id, String>();
 
             for(Payment_Method__c paymentMethod : [
@@ -54,7 +54,7 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
                     (Retry_Next__c = null OR Retry_Next__c <= :System.now()) AND 
                     (Retry_Count__c = null OR Retry_Count__c < :paymentServiceMaxRetry)
             ]) {
-                DonorCompInvocable.AddFundsRequest newRetryRequest = new DonorCompInvocable.AddFundsRequest(
+                ProesisAddFundsRequest newRetryRequest = new ProesisAddFundsRequest(
                     erroredTransaction.Donor__c,
                     erroredTransaction.Visit__c,
                     donorIdToActivePaymentMethodNumber.get(erroredTransaction.Donor__c),
@@ -84,7 +84,7 @@ public without sharing class AddFundsBatchable implements System.Schedulable, Da
         Database.executeBatch(new AddFundsBatchable(), 100);
     }
 
-    public void execute(Database.BatchableContext info, List<DonorCompInvocable.AddFundsRequest> scope) {
+    public void execute(Database.BatchableContext info, List<ProesisAddFundsRequest> scope) {
         AddFundsBatchableHelper.processAddFundsCallouts(scope);
         AddFundsBatchableHelper.handleAddFundsResponses(scope);
     }

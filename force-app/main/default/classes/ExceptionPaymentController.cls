@@ -1,8 +1,15 @@
 public without sharing class ExceptionPaymentController {
     @AuraEnabled
-    public static void createExceptionPayment(Id donorId, Id visitId, Id exceptionRateId) {
+    public static void createExceptionPayment(Id donorId, Id visitId, Id exceptionRateId, String exceptionNotes) {
+        DonorPaymentService.ExceptionPaymentRequest exceptionPaymentRequest = new DonorPaymentService.ExceptionPaymentRequest(donorId, visitId, exceptionRateId);
+        if (!String.isEmpty(exceptionNotes)) {
+            exceptionPaymentRequest.addExceptionNotes(exceptionNotes);
+        }
+        
         try {
-            DonationService.createExceptionTransaction(new DonationService.DonationExceptionRequest(donorId, visitId, exceptionRateId));
+            DonorPaymentService.createExceptionPayment(
+                new List<DonorPaymentService.ExceptionPaymentRequest> { exceptionPaymentRequest }
+            );
         } catch(Exception e) {
             AuraHandledException newException = new AuraHandledException(e.getMessage());
             newException.setMessage(e.getMessage()); // Without this line, the error message returns 'Script-thrown exception' in the apex unit test
@@ -25,7 +32,7 @@ public without sharing class ExceptionPaymentController {
         ];
 
         Account targetCenterAccount = [
-            SELECT Id, Name, Max_Dollar_Per_Day__c, Individual_Exception_Limit__c
+            SELECT Id, Name, Max_Dollar_Per_Day__c, Individual_Exception_Limit__c, Center_Timezone__c
             FROM Account
             WHERE Id = :targetVisit.Center_Donation_Type__r.Center__c AND 
                 RecordType.DeveloperName = 'Center'
@@ -85,6 +92,9 @@ public without sharing class ExceptionPaymentController {
         public String visitCenterName;
 
         @AuraEnabled
+        public Datetime visitDatetime;
+
+        @AuraEnabled
         public Decimal visitDayLimit;
         @AuraEnabled
         public Decimal visitDayRemainingLimit;
@@ -112,6 +122,7 @@ public without sharing class ExceptionPaymentController {
             this.visitIndividualLimit = (targetCenter.Individual_Exception_Limit__c == null) ? 0 : targetCenter.Individual_Exception_Limit__c;
             this.visitIndividualRemainingLimit = visitIndividualLimit - usedIndividualLimit;
             this.visitAge = (Integer)targetVisit.Age_in_Days__c;
+            this.visitDatetime = Util.getTimezoneDateTime(targetVisit.Appointment_Datetime__c.date(), targetVisit.Appointment_Datetime__c.time(), targetCenter.Center_Timezone__c);
 
             Proesis_Settings__c proesisSettings = Proesis_Settings__c.getOrgDefaults();
             this.paymentWindowInDays = (proesisSettings == null || proesisSettings.Exception_Payment_Window__c == null) ? 5 : (Integer)proesisSettings.Exception_Payment_Window__c;

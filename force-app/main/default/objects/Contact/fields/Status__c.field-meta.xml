@@ -22,6 +22,7 @@ Excluded: Can never* give plasma for various reasons that are PHI</inlineHelpTex
     <required>false</required>
     <securityClassification>Confidential</securityClassification>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Picklist</type>
     <valueSet>
         <restricted>true</restricted>

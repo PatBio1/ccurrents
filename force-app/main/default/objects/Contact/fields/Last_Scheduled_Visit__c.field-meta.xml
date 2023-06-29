@@ -11,5 +11,6 @@
     </summaryFilterItems>
     <summaryForeignKey>Visit__c.Donor__c</summaryForeignKey>
     <summaryOperation>max</summaryOperation>
+    <trackHistory>false</trackHistory>
     <type>Summary</type>
 </CustomField>

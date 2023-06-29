@@ -6,5 +6,6 @@
     <externalId>false</externalId>
     <label>Addresses Verified?</label>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

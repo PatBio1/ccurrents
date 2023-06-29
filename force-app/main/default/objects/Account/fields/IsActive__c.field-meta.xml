@@ -7,5 +7,6 @@
     <inlineHelpText>Serves to hide a Center during development before it is open for business from the mobile app, etc.</inlineHelpText>
     <label>Active</label>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

@@ -5,7 +5,7 @@
     <description>Indicates the payment was processed outside of Salesforce and should not be processed.</description>
     <externalId>false</externalId>
     <label>Was Manually Processed</label>
-    <trackHistory>false</trackHistory>
+    <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Checkbox</type>
 </CustomField>

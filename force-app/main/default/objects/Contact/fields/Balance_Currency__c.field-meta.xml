@@ -8,5 +8,6 @@
     <summarizedField>Transaction__c.Amount_Currency__c</summarizedField>
     <summaryForeignKey>Transaction__c.Donor__c</summaryForeignKey>
     <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
     <type>Summary</type>
 </CustomField>

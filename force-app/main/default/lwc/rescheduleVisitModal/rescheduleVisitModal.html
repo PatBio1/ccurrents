@@ -7,20 +7,11 @@
         </lightning-spinner>
 
         <div class="reschedule-modal-header">
-            <div style="font-size: 16px; align-self: flex-end;">
-                <p><b>Soonest Next Visit Date</b></p>
+            <lightning-input style="flex: 0.5;" type="date" name="StartDate" label="Start Date" value={selectedStartDate} onchange={handleUpdateSearchDate} data-search-date="Start">
+            </lightning-input>
 
-                <lightning-formatted-date-time value={adjustedSoonestNextVisit}>
-                </lightning-formatted-date-time>
-            </div>
-
-            <div class="reschedule-date-range-selector">
-                <lightning-input style="flex: 0.5;" type="date" name="StartDate" label="Start Date" value={selectedStartDate} onchange={handleUpdateSearchDate} data-search-date="Start">
-                </lightning-input>
-
-                <lightning-input style="flex: 0.5;" type="date" name="EndDate" label="End Date" value={selectedEndDate} onchange={handleUpdateSearchDate} data-search-date="End">
-                </lightning-input>
-            </div>
+            <lightning-input style="flex: 0.5;" type="date" name="EndDate" label="End Date" value={selectedEndDate} onchange={handleUpdateSearchDate} data-search-date="End">
+            </lightning-input>
         </div>
         
         <div class="appointment-selector-container">
@@ -38,8 +29,13 @@
     
                 <div if:true={selectedAppointmentGroup} class="available-appointments">
                     <template for:each={selectedAppointmentGroup.appointments} for:item="appointment">
-                        <div key={appointment.timeDisplay} class="appointment-cell" onclick={handleSelectNewAppointment} data-appointment-id={appointment.appointmentId}>
+                        <div if:true={appointment.isValid} key={appointment.timeDisplay} class="appointment-cell" onclick={handleSelectNewAppointment} data-appointment-id={appointment.appointmentId}>
                             <p><b>{appointment.timeDisplay}</b></p>
+                        </div>
+
+                        <div if:false={appointment.isValid} key={appointment.timeDisplay} class="disabled-appointment-cell" data-appointment-id={appointment.appointmentId}>
+                            <p><b>{appointment.timeDisplay}</b></p>
+                            <lightning-helptext style="--lwc-spacingXxSmall: 0; margin-left: 0.5rem;" content={appointment.validationError}></lightning-helptext>
                         </div>
                     </template>
                 </div>

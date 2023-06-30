@@ -74,6 +74,7 @@
     cursor: pointer;
 }
 
+.disabled-appointment-cell,
 .appointment-cell {
     min-height: 36px;
 
@@ -86,6 +87,10 @@
     justify-content: center;
 
     user-select: none;
+}
+
+.disabled-appointment-cell {
+    background: #b6b6b6;
 }
 
 .appointment-cell:hover {

@@ -31,19 +31,26 @@ public without sharing class SchedulerController {
 
     @AuraEnabled
     public static List<AppointmentGroup> getAppointments(Id centerId, Date appointmentDate) {
-        User user = [SELECT Contact.Soonest_Next_Visit__c FROM User WHERE Id = :UserInfo.getUserId()];
-        return getAppointmentRecords(centerId, appointmentDate, user.Contact.Soonest_Next_Visit__c.date());
+        return getAppointmentRecords(centerId, appointmentDate);
     }
 
     @AuraEnabled
     public static List<AppointmentGroup> getRescheduleAppointments(Id centerId, Id visitToReschedule, Date appointmentDate) {
-        User user = [SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()];
-        Datetime rescheduleSoonestNextVisit = CoreSchedulerHandler.getSoonestNextRescheduleVisitDate(user.ContactId, visitToReschedule);
+        // Temporarily cancel the passed in visit in order to correctly calculate the availability
+        Savepoint savepoint = Database.setSavepoint();
+        update new Visit__c(
+            Id = visitToReschedule,
+            Status__c = 'Complete',
+            Outcome__c = 'Rescheduled'
+        );
 
-        return getAppointmentRecords(centerId, appointmentDate, rescheduleSoonestNextVisit.date());
+        List<AppointmentGroup> rescheduleAppointmentGroups = getAppointmentRecords(centerId, appointmentDate);
+        Database.rollback(savepoint);
+
+        return rescheduleAppointmentGroups;
     }
 
-    private static List<AppointmentGroup> getAppointmentRecords(Id centerId, Date appointmentDate, Date soonestNextVisit) {
+    private static List<AppointmentGroup> getAppointmentRecords(Id centerId, Date appointmentDate) {
         try {
             List<AppointmentGroup> appointmentGroups = new List<AppointmentGroup>{
                 new AppointmentGroup('AM'),
@@ -67,8 +74,6 @@ public without sharing class SchedulerController {
                     AND
                         Datetime__c > :DateTime.now()
                     AND
-                        Datetime__c >= :soonestNextVisit
-                    AND
                         Datetime__c >= :startTime
                     AND
                         Datetime__c <= :endTime
@@ -81,6 +86,10 @@ public without sharing class SchedulerController {
 
                 Contact targetDonor = [SELECT Loyalty_Level__c FROM Contact WHERE Id IN (SELECT ContactId FROM User WHERE Id = :UserInfo.getUserId()) LIMIT 1];
                 Integer loyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(targetDonor.Loyalty_Level__c);
+
+                List<FdaVisitValidator.FdaValidationRequest> validationRequests = new List<FdaVisitValidator.FdaValidationRequest>();
+                Map<Id, Appointment> appointmentIdToAppointmentWrapper = new Map<Id, Appointment>(); 
+                Center_Donation_Type__c donationType = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :centerId AND Donation_Type__r.Name = 'Normal Source Plasma' LIMIT 1];
 
                 for (Appointment__c appointmentRecord : appointmentRecords) {
                     Appointment appointment = new Appointment();
@@ -99,6 +108,18 @@ public without sharing class SchedulerController {
                     } else {
                         appointmentGroups[2].appointments.add(appointment);
                     }
+
+                    appointmentIdToAppointmentWrapper.put(appointmentRecord.Id, appointment);
+                    validationRequests.add(new FdaVisitValidator.FdaValidationRequest(appointmentRecord.Id, targetDonor.Id, donationType.Id));
+                }
+
+                FdaVisitValidator validatorInstance = new FdaVisitValidator(validationRequests, true);
+                validationRequests = validatorInstance.validateCreateVisitRequests();
+
+                for (FdaVisitValidator.FdaValidationRequest validationRequest : validationRequests) {
+                    Appointment appointment = appointmentIdToAppointmentWrapper.get(validationRequest.appointmentId);
+                    appointment.isValid = validationRequest.validationResult != null ? validationRequest.validationResult.isValid : false;
+                    appointment.validationError = validationRequest.validationResult != null ? validationRequest.validationResult.errorMessage : '';
                 }
             }
 
@@ -260,6 +281,11 @@ public without sharing class SchedulerController {
         @AuraEnabled
         public Integer availability {get; set;}
 
+        @AuraEnabled 
+        public Boolean isValid {get; set;}
+
+        @AuraEnabled 
+        public String validationError {get; set;}
     }
 
     public class Visit {

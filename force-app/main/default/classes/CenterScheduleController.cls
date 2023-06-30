@@ -192,8 +192,10 @@ public with sharing class CenterScheduleController {
     }
 
     @AuraEnabled
-    public static List<RescheduleSlot> getAvailableRescheduleAppointmentRange(Id centerId, DateTime currentDateTime, DateTime soonestNextVisit, DateTime searchStartDateTime, DateTime searchEndDateTime, Boolean isLoyaltyDonor) {
-        String appointmentQuery = 'SELECT DateTime__c, Schedule__r.Center__r.Center_Timezone__c FROM Appointment__c WHERE Schedule__r.Center__c = :centerId AND  DateTime__c >= :currentDateTime AND DateTime__c >= :soonestNextVisit AND DateTime__c >= :targetStartTime AND DateTime__c <= :targetEndTime';
+    public static List<RescheduleSlot> getAvailableRescheduleAppointmentRange(Id donorId, Id centerId, Id visitToReschedule, DateTime searchStartDateTime, DateTime searchEndDateTime, Boolean isLoyaltyDonor) {
+        String appointmentQuery = 'SELECT DateTime__c, Schedule__r.Center__r.Center_Timezone__c FROM Appointment__c';
+        appointmentQuery += ' WHERE Schedule__r.Center__c = :centerId AND  DateTime__c >= :currentDateTime AND DateTime__c >= :targetStartTime AND DateTime__c <= :targetEndTime';
+
         if (isLoyaltyDonor) {
             appointmentQuery += ' AND (Availability__c > 0 OR Availability_Loyalty__c > 0)';
         } else {
@@ -205,17 +207,39 @@ public with sharing class CenterScheduleController {
             appointmentQuery,
             new Map<String, Object> {
                 'centerId' => centerId,
-                'currentDateTime' => currentDateTime,
-                'soonestNextVisit' => soonestNextVisit,
+                'currentDateTime' => Datetime.newInstanceGmt(Datetime.now().date(), Time.newInstance(0, 0, 0, 0)),
                 'targetStartTime' => searchStartDateTime,
                 'targetEndTime' => searchEndDateTime
             },
             AccessLevel.USER_MODE
         );
 
-        List<RescheduleSlot> rescheduleSlots = new List<RescheduleSlot>();
+        Map<Id, Appointment__c> appointmentIdToAppointmentMap = new Map<Id, Appointment__c>();
+        List<FdaVisitValidator.FdaValidationRequest> validationRequests = new List<FdaVisitValidator.FdaValidationRequest>();
+        Center_Donation_Type__c centerDonationType = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :centerId AND Donation_Type__r.Name = 'Normal Source Plasma' LIMIT 1];
+
         for (Appointment__c appointment : queriedAppointments) {
-            rescheduleSlots.add(new RescheduleSlot(appointment));
+            appointmentIdToAppointmentMap.put(appointment.Id, appointment);
+            validationRequests.add(new FdaVisitValidator.FdaValidationRequest(appointment.Id, donorId, centerDonationType.Id));
+        }
+
+        Savepoint sp = Database.setSavepoint();
+        update new Visit__c(
+            Id = visitToReschedule,
+            Status__c = 'Complete',
+            Outcome__c = 'Rescheduled'
+        );
+
+        FdaVisitValidator visitValidator = new FdaVisitValidator(validationRequests, true);
+
+        validationRequests = visitValidator.validateCreateVisitRequests();
+        Database.rollback(sp);
+
+        List<RescheduleSlot> rescheduleSlots = new List<RescheduleSlot>();
+
+        for (FdaVisitValidator.FdaValidationRequest fdaValidationRequest : validationRequests) {
+            Appointment__c targetAppointment = appointmentIdToAppointmentMap.get(fdaValidationRequest.appointmentId);
+            rescheduleSlots.add(new RescheduleSlot(targetAppointment, fdaValidationRequest.validationResult?.errorMessage));
         }
 
         return rescheduleSlots;
@@ -477,10 +501,23 @@ public with sharing class CenterScheduleController {
         @AuraEnabled
         public String centerTimeZone;
 
+        @AuraEnabled
+        public Boolean isValid;
+
+        @AuraEnabled
+        public String validationError;
+
         public RescheduleSlot(Appointment__c source) {
             appointmentId = source.Id;
             appointmentDateTime = source.DateTime__c;
             centerTimeZone = source.Schedule__r.Center__r.Center_Timezone__c;
+        }
+
+        public RescheduleSlot(Appointment__c source, String validationError) {
+            this(source);
+
+            this.isValid = String.isEmpty(validationError);
+            this.validationError = validationError;
         }
     }
 

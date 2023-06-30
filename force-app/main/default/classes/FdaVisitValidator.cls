@@ -15,7 +15,8 @@ public without sharing class FdaVisitValidator {
     private Set<Id> appointmentIds;
     private Set<Id> donorContactIds;
 
-    private Datetime maximumDateTime;
+    private DateTime minimumDateTime;
+    private DateTime maximumDateTime;
 
     public FdaVisitValidator(FdaValidationRequest createVisitRequest) {
         this(new List<FdaValidationRequest>{createVisitRequest}, false);
@@ -50,14 +51,19 @@ public without sharing class FdaVisitValidator {
                 SELECT Id, Appointment_Datetime__c, Appointment__c 
                 FROM Visits__r
                 WHERE (Status__c IN :VALID_VISIT_STATUSES OR (Status__c = 'Complete' AND Outcome__c IN :VALID_VISIT_OUTCOMES)) AND
-                    Age_in_Days__c < 7 AND 
+                    Appointment_Datetime__c >= :minimumDateTime AND
                     Appointment_Datetime__c <= :maximumDateTime
                 ORDER BY Appointment_Datetime__c ASC
             )
             FROM Contact
             WHERE Id IN :donorContactIds
         ]) {
+            System.debug(donorContact.Visits__r);
             List<Visit__c> allDonorVisits = getAllDonorVisits(donorContact);
+            for(Visit__c visit : allDonorVisits) {
+                if (visit.Id != null)
+                    System.debug(visit.Id + ' / ' + visit.Appointment_Datetime__c);
+            }
             
             // No possible rule violations in this case
             if (allDonorVisits.size() < 2) {
@@ -68,20 +74,24 @@ public without sharing class FdaVisitValidator {
             // If any donor has more than 2 visits in a 7 day period OR more than 1 visit in a 48 hour period, throw an error
 
             Datetime currentSevenDayPeriodStart = allDonorVisits[0].Appointment_Datetime__c;
-            Datetime currentSevenDayPeriodEnd = currentSevenDayPeriodStart.addDays(6);
+            Datetime currentSevenDayPeriodEnd = Datetime.newInstanceGmt(currentSevenDayPeriodStart.addDays(6).date(), Time.newInstance(23, 59, 59, 999));
 
+            List<FdaValidationRequest> completedValidationRequestsInCurrentSevenDayPeriod = new List<FdaValidationRequest>();
+            List<String> visitDatetimeStringsInCurrentSevenDayPeriod = new List<String>();
             Integer visitsInCurrentSevenDayPeriod = 0;
             Datetime lastVisitDatetime = null;
             Boolean isPeriodStillValid = true; // If we find a rule violation, we can automatically mark the rest of the visits in the period as invalid
 
             for (Visit__c visit : allDonorVisits) {
                 FdaValidationRequest createVisitRequest = getCreateVisitRequest(visit.Appointment__c, donorContact.Id);
-                Boolean isNewVisit = (createVisitRequest != null);
+                Boolean isNewVisit = !visit.isSet('Id');
 
                 if (visit.Appointment_Datetime__c > currentSevenDayPeriodEnd) {
                     currentSevenDayPeriodStart = visit.Appointment_Datetime__c;
                     currentSevenDayPeriodEnd = currentSevenDayPeriodStart.addDays(6);
 
+                    completedValidationRequestsInCurrentSevenDayPeriod = new List<FdaValidationRequest>();
+                    visitDatetimeStringsInCurrentSevenDayPeriod = new List<String>();
                     visitsInCurrentSevenDayPeriod = 0;
                     isPeriodStillValid = true;
                 }
@@ -89,44 +99,64 @@ public without sharing class FdaVisitValidator {
                 // This should only be caused by the donor having more than 2 visits in a 7 day period
                 if (!isPeriodStillValid) {
                     if (createVisitRequest != null) {
-                        createVisitRequest.addValidationResult(false, 'Donor has more than 2 visits in a 7 day period');
+                        createVisitRequest.addValidationResult(false, 'Donor has more than 2 visits in a 7 day period (Conflicting visits: ' + String.join(visitDatetimeStringsInCurrentSevenDayPeriod, ', ') + ')');
                     }
 
                     continue;
                 }
 
+                // visitDatetimeStringsInCurrentSevenDayPeriod.add(visit.Appointment_Datetime__c.format('MM-dd-yyyy HH:mm'));
                 Boolean hasTriggeredSevenDayViolation = (visitsInCurrentSevenDayPeriod + 1 > 2);
                 Boolean hasTriggeredTwoDayViolation = (
                     lastVisitDatetime != null && 
                     visitsInCurrentSevenDayPeriod + 1 > 1 &&
-                    visit.Appointment_Datetime__c.addDays(-2) < lastVisitDatetime
+                    visit.Appointment_Datetime__c.addHours(-(visit.Appointment_Datetime__c.hourGmt() + 12)) < lastVisitDatetime
                 );
                 
                 if (hasTriggeredSevenDayViolation) {
+                    System.debug('7 day Violation Triggered');
                     isPeriodStillValid = false;
 
                     if (createVisitRequest != null) {
-                        createVisitRequest.addValidationResult(false, 'Donor has more than 2 visits in a 7 day period');
+                        createVisitRequest.addValidationResult(false, 'Donor has more than 2 visits in a 7 day period (Conflicting visits: ' + String.join(visitDatetimeStringsInCurrentSevenDayPeriod, ', ') + ')');
+                    }
+
+                    // If we had already evaluated other requests in this period, and newVisitComparisons is disabled
+                    // We need to invalidate those requests as well
+                    if (completedValidationRequestsInCurrentSevenDayPeriod.size() > 0 && dontCompareNewVisits) {
+                        for (FdaValidationRequest completedValidationRequest : completedValidationRequestsInCurrentSevenDayPeriod) {
+                            completedValidationRequest.addValidationResult(false, 'Donor has more than 2 visits in a 7 day period (Conflicting visits: ' + String.join(visitDatetimeStringsInCurrentSevenDayPeriod, ', ') + ')');
+                        }
                     }
 
                     continue;
                 }
 
                 if (hasTriggeredTwoDayViolation) {
+                    System.debug('2 day Violation Triggered');
                     if (createVisitRequest != null) {
-                        createVisitRequest.addValidationResult(false, 'Donor has more than 1 visit in a 2 day period');
+                        createVisitRequest.addValidationResult(false, 'Donor has more than 1 visit in a 2 day period (Conflicting visits: ' + String.join(visitDatetimeStringsInCurrentSevenDayPeriod, ', ') + ')');
                     }
 
                     continue;
                 }
 
                 if ((dontCompareNewVisits && !isNewVisit) || !dontCompareNewVisits) {
+                    System.debug('Setting violation tracking variables');
+                    System.debug('visitsInCurrentSevenDayPeriod: ' + visitsInCurrentSevenDayPeriod);
+                    System.debug('lastVisitDatetime: ' + lastVisitDatetime);
+
+                    visitDatetimeStringsInCurrentSevenDayPeriod.add(visit.Appointment_Datetime__c.format('MM-dd-yyyy'));
                     visitsInCurrentSevenDayPeriod++;
                     lastVisitDatetime = visit.Appointment_Datetime__c;
                 }
 
                 if (createVisitRequest != null) {
                     createVisitRequest.addValidationResult(true, '');
+
+                    if (isNewVisit) {
+                        completedValidationRequestsInCurrentSevenDayPeriod.add(createVisitRequest);
+                    }
                 }
             }
         }
@@ -155,6 +185,11 @@ public without sharing class FdaVisitValidator {
 
     private void calculateValidationStartAndEndDatetimes() {
         for(Appointment__c appointment : [SELECT Id, Datetime__c FROM Appointment__c WHERE Id IN :appointmentIds]) {
+            Datetime newMinimumDateTime = appointment.Datetime__c.addDays(-6);
+            if (minimumDateTime == null || newMinimumDateTime < minimumDateTime) {
+                minimumDateTime = newMinimumDateTime;
+            }
+            
             Datetime newMaximumDateTime = appointment.Datetime__c.addDays(6);
             if (maximumDateTime == null || newMaximumDateTime > maximumDateTime) {
                 maximumDateTime = newMaximumDateTime;

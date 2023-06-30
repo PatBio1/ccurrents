@@ -354,16 +354,27 @@ public with sharing class CenterSchedulerControllerTests {
     static void testGetAvailableRescheduleAppointmentRange() {
         List<CenterScheduleController.RescheduleSlot> rescheduleSlots;
         Schedule__c targetSchedule = [SELECT Id, Center__c FROM Schedule__c LIMIT 1];
+        Appointment__c targetAppointment = [SELECT Id FROM Appointment__c WHERE Schedule__c = :targetSchedule.Id LIMIT 1];
+        Contact targetDonor = [SELECT Id FROM Contact LIMIT 1];
         DateTime currentDateTime = DateTime.newInstance(currentDate, Time.newInstance(0, 0, 0, 0));
 
         User contextuser = TestUtil.createAdminUser();
 
+        Visit__c visitToReschedule = new Visit__c(
+            Appointment__c = targetAppointment.Id,
+            Center_Donation_Type__c = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :targetSchedule.Center__c LIMIT 1]?.Id,
+            Status__c = 'Scheduled',
+            Donor__c = targetDonor.Id
+        );
+
         Test.startTest();
         System.runAs(contextuser){
+            insert visitToReschedule;
+
             rescheduleSlots = CenterScheduleController.getAvailableRescheduleAppointmentRange(
+                contextuser.ContactId,
                 targetSchedule.Center__c,
-                currentDateTime,
-                currentDateTime.addDays(1),
+                visitToReschedule.Id,
                 DateTime.newInstance(startDate, Time.newInstance(0, 0, 0, 0)),
                 DateTime.newInstance(endDate, Time.newInstance(0, 0, 0, 0)),
                 true
@@ -379,16 +390,27 @@ public with sharing class CenterSchedulerControllerTests {
     static void testNoAvailableRescheduleAppointmentRange() {
         List<CenterScheduleController.RescheduleSlot> rescheduleSlots;
         Schedule__c targetSchedule = [SELECT Id, Center__c FROM Schedule__c LIMIT 1];
+        Appointment__c targetAppointment = [SELECT Id FROM Appointment__c WHERE Schedule__c = :targetSchedule.Id LIMIT 1];
+        Contact targetDonor = [SELECT Id FROM Contact LIMIT 1];
         DateTime currentDateTime = DateTime.newInstance(currentDate, Time.newInstance(0, 0, 0, 0));
 
         User contextuser = TestUtil.createAdminUser();
         
+        Visit__c visitToReschedule = new Visit__c(
+            Appointment__c = targetAppointment.Id,
+            Center_Donation_Type__c = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :targetSchedule.Center__c LIMIT 1]?.Id,
+            Status__c = 'Scheduled',
+            Donor__c = targetDonor.Id
+        );
+
         Test.startTest();
         System.runAs(contextuser){
+            insert visitToReschedule;
+
             rescheduleSlots = CenterScheduleController.getAvailableRescheduleAppointmentRange(
+                contextuser.ContactId,
                 targetSchedule.Center__c,
-                currentDateTime,
-                currentDateTime.addDays(1),
+                visitToReschedule.Id,
                 DateTime.newInstance(endDate, Time.newInstance(0, 0, 0, 0)),
                 DateTime.newInstance(startDate, Time.newInstance(0, 0, 0, 0)),
                 true

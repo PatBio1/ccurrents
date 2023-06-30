@@ -32,6 +32,14 @@ public with sharing class SchedulerControllerTest {
             center = TestUtil.createMiramarCenter();
             insert center;
 
+            Donation_Type__c targetDonationType = new Donation_Type__c(Name = 'Normal Source Plasma');
+            insert targetDonationType;
+
+            insert new Center_Donation_Type__c(
+                Center__c = center.Id,
+                Donation_Type__c = targetDonationType.Id
+            );
+
             Schedule__c schedule = new Schedule__c(
                 Center__c = center.Id,
                 Begin_Date__c = testDate.addDays(-10),
@@ -163,7 +171,7 @@ public with sharing class SchedulerControllerTest {
             appointment.Capacity__c = 5;
             insert appointment;
 
-            Donation_Type__c donationType = new Donation_Type__c();
+            Donation_Type__c donationType = new Donation_Type__c(Name = 'Normal Source Plasma');
             insert donationType;
 
             Center_Donation_Type__c centerDonationType = new Center_Donation_Type__c();
@@ -248,7 +256,7 @@ public with sharing class SchedulerControllerTest {
             appointment.Capacity__c = 5;
             insert appointment;
 
-            Donation_Type__c donationType = new Donation_Type__c();
+            Donation_Type__c donationType = new Donation_Type__c(Name = 'Normal Source Plasma');
             insert donationType;
 
             Center_Donation_Type__c centerDonationType = new Center_Donation_Type__c();
@@ -294,7 +302,7 @@ public with sharing class SchedulerControllerTest {
             appointment.Capacity__c = 5;
             insert appointment;
 
-            Donation_Type__c donationType = new Donation_Type__c();
+            Donation_Type__c donationType = new Donation_Type__c(Name = 'Normal Source Plasma');
             insert donationType;
 
             Center_Donation_Type__c centerDonationType = new Center_Donation_Type__c();
@@ -357,7 +365,7 @@ public with sharing class SchedulerControllerTest {
             appointment.Capacity__c = 5;
             insert appointment;
 
-            Donation_Type__c donationType = new Donation_Type__c();
+            Donation_Type__c donationType = new Donation_Type__c(Name = 'Normal Source Plasma');
             insert donationType;
 
             Center_Donation_Type__c centerDonationType = new Center_Donation_Type__c();
@@ -427,7 +435,7 @@ public with sharing class SchedulerControllerTest {
             };
             insert testAppointments;
 
-            Donation_Type__c donationType = new Donation_Type__c();
+            Donation_Type__c donationType = new Donation_Type__c(Name = 'Normal Source Plasma');
             insert donationType;
 
             Center_Donation_Type__c centerDonationType = new Center_Donation_Type__c();
@@ -486,7 +494,7 @@ public with sharing class SchedulerControllerTest {
             };
             insert testAppointments;
 
-            Donation_Type__c donationType = new Donation_Type__c();
+            Donation_Type__c donationType = new Donation_Type__c(Name = 'Normal Source Plasma');
             insert donationType;
 
             Center_Donation_Type__c centerDonationType = new Center_Donation_Type__c();

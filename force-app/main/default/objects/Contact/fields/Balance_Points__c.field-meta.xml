@@ -23,5 +23,6 @@
     </summaryFilterItems>
     <summaryForeignKey>Transaction__c.Donor__c</summaryForeignKey>
     <summaryOperation>sum</summaryOperation>
+    <trackHistory>false</trackHistory>
     <type>Summary</type>
 </CustomField>

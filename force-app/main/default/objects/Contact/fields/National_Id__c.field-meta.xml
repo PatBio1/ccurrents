@@ -11,5 +11,6 @@
     <maskType>all</maskType>
     <required>false</required>
     <securityClassification>Confidential</securityClassification>
+    <trackHistory>false</trackHistory>
     <type>EncryptedText</type>
 </CustomField>

@@ -8,5 +8,6 @@
     <label>Next Visit Option BECS</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>DateTime</type>
 </CustomField>

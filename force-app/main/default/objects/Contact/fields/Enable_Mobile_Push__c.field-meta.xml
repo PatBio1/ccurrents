@@ -7,5 +7,6 @@
     <inlineHelpText>Indicates donor enabled mobile push communications as a preferred channel. Defaults to true, as this is the default communication method for donors.</inlineHelpText>
     <label>Enable Mobile Push</label>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

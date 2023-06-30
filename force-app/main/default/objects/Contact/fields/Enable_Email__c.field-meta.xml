@@ -7,5 +7,6 @@
     <inlineHelpText>Indicates donor enabled Email communications as a preferred channel.</inlineHelpText>
     <label>Enable Email</label>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

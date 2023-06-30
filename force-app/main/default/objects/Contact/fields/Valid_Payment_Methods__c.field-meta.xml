@@ -17,5 +17,6 @@
     </summaryFilterItems>
     <summaryForeignKey>Payment_Method__c.Donor__c</summaryForeignKey>
     <summaryOperation>count</summaryOperation>
+    <trackHistory>false</trackHistory>
     <type>Summary</type>
 </CustomField>

@@ -7,5 +7,6 @@
     <inlineHelpText>Indicates if the Apology Campaign automation is active for this Center or not.</inlineHelpText>
     <label>Apology Campaign Active</label>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

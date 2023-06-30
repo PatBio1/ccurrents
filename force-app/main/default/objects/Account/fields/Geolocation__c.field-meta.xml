@@ -8,5 +8,6 @@
     <required>false</required>
     <scale>6</scale>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Location</type>
 </CustomField>

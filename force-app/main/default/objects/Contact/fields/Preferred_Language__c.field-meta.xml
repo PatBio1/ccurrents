@@ -6,6 +6,7 @@
     <formula>TEXT(User__r.LanguageLocaleKey)</formula>
     <label>Preferred Language</label>
     <required>false</required>
+    <trackHistory>false</trackHistory>
     <type>Text</type>
     <unique>false</unique>
 </CustomField>

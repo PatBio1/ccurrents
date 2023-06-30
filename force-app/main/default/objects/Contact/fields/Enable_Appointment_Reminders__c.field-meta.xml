@@ -7,5 +7,6 @@
     <inlineHelpText>Indicates donor enabled appointment reminder notifications. Defaults to true.</inlineHelpText>
     <label>Enable Appointment Reminders</label>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

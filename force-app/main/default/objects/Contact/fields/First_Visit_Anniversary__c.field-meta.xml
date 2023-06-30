@@ -10,5 +10,6 @@ IF(AND(DAY(DATEVALUE(First_Visit__c)) = 29,MONTH(DATEVALUE(First_Visit__c) ) = 0
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>First Visit Anniversary</label>
     <required>false</required>
+    <trackHistory>false</trackHistory>
     <type>Date</type>
 </CustomField>

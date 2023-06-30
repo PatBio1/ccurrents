@@ -7,5 +7,6 @@
     <inlineHelpText>Indicates donor enabled SMS communications as a preferred channel.</inlineHelpText>
     <label>Enable SMS</label>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

@@ -12,5 +12,6 @@
 )</formula>
     <label>Next Visit Option 7d</label>
     <required>false</required>
+    <trackHistory>false</trackHistory>
     <type>DateTime</type>
 </CustomField>

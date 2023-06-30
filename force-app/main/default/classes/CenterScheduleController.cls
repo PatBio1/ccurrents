@@ -429,6 +429,44 @@ public with sharing class CenterScheduleController {
         }
     }
 
+    @AuraEnabled
+    public static List<DonorSelector.DonorSearchResult> searchForEligableDonors(String nameSearchString, DateTime targetVisitDateString, Boolean allowDonors, String centerAccountId, String appointmentId) {
+        Boolean allowLoyaltyDonors = true; // As of writing, this should always be true
+        List<DonorSelector.DonorSearchResult> nameSearchResults = DonorSelector.searchVisitElgibleDonorByName(
+            nameSearchString, targetVisitDateString, allowLoyaltyDonors, allowDonors, centerAccountId
+        );
+
+        Map<Id, DonorSelector.DonorSearchResult> donorIdToDonorSearchResult = new Map<Id, DonorSelector.DonorSearchResult>();
+        List<FdaVisitValidator.FdaValidationRequest> validationRequests = new List<FdaVisitValidator.FdaValidationRequest>();
+        Center_Donation_Type__c centerDonationType = [SELECT Id FROM Center_Donation_Type__c WHERE Center__c = :centerAccountId AND Donation_Type__r.Name = 'Normal Source Plasma' LIMIT 1];
+        
+        for (DonorSelector.DonorSearchResult donorSearchResult : nameSearchResults) {
+            donorIdToDonorSearchResult.put(donorSearchResult.donorContactId, donorSearchResult);
+
+            if (!String.isEmpty(donorSearchResult.cantScheduleReason)) {
+                continue;
+            }
+
+            validationRequests.add(new FdaVisitValidator.FdaValidationRequest(
+                appointmentId, donorSearchResult.donorContactId, centerDonationType.Id
+            ));
+        }
+
+        FdaVisitValidator validatorInstance = new FdaVisitValidator(validationRequests);
+        List<FdaVisitValidator.FdaValidationRequest> fdaValidationResults = validatorInstance.validateCreateVisitRequests();
+
+        for(FdaVisitValidator.FdaValidationRequest fdaValidationResult : fdaValidationResults) {
+            if (fdaValidationResult.validationResult == null || fdaValidationResult.validationResult.isValid) {
+                continue;
+            }
+
+            DonorSelector.DonorSearchResult donorSearchResult = donorIdToDonorSearchResult.get(fdaValidationResult.donorContactId);
+            donorSearchResult.cantScheduleReason = fdaValidationResult.validationResult.errorMessage;
+        }
+
+        return nameSearchResults;
+    }
+
     public class RescheduleSlot {
         @AuraEnabled
         public Id appointmentId;

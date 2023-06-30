@@ -3,6 +3,10 @@ public without sharing class FdaVisitValidator {
     final Set<String> VALID_VISIT_OUTCOMES = new Set<String>{'Donation', 'No Donation'};
     
     public List<FdaValidationRequest> createVisitRequests;
+
+    // If true, the validator will not compare new visits against other new visits
+    // This allows us to pass in multiple validation requests for potential new visits without validation rules getting unnecessarily triggered
+    public Boolean dontCompareNewVisits = false;
     
     private Map<Id, List<Visit__c>> donorIdToNewVisits;
     private Map<Id, DateTime> appointmentIdToDateTime;
@@ -11,15 +15,23 @@ public without sharing class FdaVisitValidator {
     private Set<Id> appointmentIds;
     private Set<Id> donorContactIds;
 
-    private Datetime minimumDateTime;
     private Datetime maximumDateTime;
 
     public FdaVisitValidator(FdaValidationRequest createVisitRequest) {
-        this(new List<FdaValidationRequest>{createVisitRequest});
+        this(new List<FdaValidationRequest>{createVisitRequest}, false);
+    }
+
+    public FdaVisitValidator(FdaValidationRequest createVisitRequest, Boolean dontCompareNewVisits) {
+        this(new List<FdaValidationRequest>{createVisitRequest}, dontCompareNewVisits);
     }
 
     public FdaVisitValidator(List<FdaValidationRequest> createVisitRequests) {
+        this(createVisitRequests, false);
+    }
+
+    public FdaVisitValidator(List<FdaValidationRequest> createVisitRequests, Boolean dontCompareNewVisits) {
         this.createVisitRequests = createVisitRequests;
+        this.dontCompareNewVisits = dontCompareNewVisits;
         buildCreateVisitRequestMap();
 
         this.appointmentIdToDateTime = new Map<Id, DateTime>();
@@ -37,9 +49,9 @@ public without sharing class FdaVisitValidator {
             SELECT Id, (
                 SELECT Id, Appointment_Datetime__c, Appointment__c 
                 FROM Visits__r
-                WHERE Appointment_Datetime__c >= :minimumDateTime AND 
-                    Appointment_Datetime__c <= :maximumDateTime AND 
-                    (Status__c IN :VALID_VISIT_STATUSES OR (Status__c = 'Complete' AND Outcome__c IN :VALID_VISIT_OUTCOMES))
+                WHERE (Status__c IN :VALID_VISIT_STATUSES OR (Status__c = 'Complete' AND Outcome__c IN :VALID_VISIT_OUTCOMES)) AND
+                    Age_in_Days__c < 7 AND 
+                    Appointment_Datetime__c <= :maximumDateTime
                 ORDER BY Appointment_Datetime__c ASC
             )
             FROM Contact
@@ -59,22 +71,23 @@ public without sharing class FdaVisitValidator {
             Datetime currentSevenDayPeriodEnd = currentSevenDayPeriodStart.addDays(6);
 
             Integer visitsInCurrentSevenDayPeriod = 0;
-            Datetime lastVisitInCurrentSevenDayPeriod = null;
+            Datetime lastVisitDatetime = null;
             Boolean isPeriodStillValid = true; // If we find a rule violation, we can automatically mark the rest of the visits in the period as invalid
 
             for (Visit__c visit : allDonorVisits) {
+                FdaValidationRequest createVisitRequest = getCreateVisitRequest(visit.Appointment__c, donorContact.Id);
+                Boolean isNewVisit = (createVisitRequest != null);
+
                 if (visit.Appointment_Datetime__c > currentSevenDayPeriodEnd) {
                     currentSevenDayPeriodStart = visit.Appointment_Datetime__c;
                     currentSevenDayPeriodEnd = currentSevenDayPeriodStart.addDays(6);
 
                     visitsInCurrentSevenDayPeriod = 0;
-                    lastVisitInCurrentSevenDayPeriod = null;
                     isPeriodStillValid = true;
                 }
 
                 // This should only be caused by the donor having more than 2 visits in a 7 day period
                 if (!isPeriodStillValid) {
-                    FdaValidationRequest createVisitRequest = getCreateVisitRequest(visit.Appointment__c, donorContact.Id);
                     if (createVisitRequest != null) {
                         createVisitRequest.addValidationResult(false, 'Donor has more than 2 visits in a 7 day period');
                     }
@@ -82,11 +95,16 @@ public without sharing class FdaVisitValidator {
                     continue;
                 }
 
-                visitsInCurrentSevenDayPeriod++;
-                if (visitsInCurrentSevenDayPeriod > 2) {
+                Boolean hasTriggeredSevenDayViolation = (visitsInCurrentSevenDayPeriod + 1 > 2);
+                Boolean hasTriggeredTwoDayViolation = (
+                    lastVisitDatetime != null && 
+                    visitsInCurrentSevenDayPeriod + 1 > 1 &&
+                    visit.Appointment_Datetime__c.addDays(-2) < lastVisitDatetime
+                );
+                
+                if (hasTriggeredSevenDayViolation) {
                     isPeriodStillValid = false;
 
-                    FdaValidationRequest createVisitRequest = getCreateVisitRequest(visit.Appointment__c, donorContact.Id);
                     if (createVisitRequest != null) {
                         createVisitRequest.addValidationResult(false, 'Donor has more than 2 visits in a 7 day period');
                     }
@@ -94,22 +112,19 @@ public without sharing class FdaVisitValidator {
                     continue;
                 }
 
-                if (
-                    lastVisitInCurrentSevenDayPeriod != null && 
-                    visitsInCurrentSevenDayPeriod > 1 &&
-                    visit.Appointment_Datetime__c.addDays(-2) < lastVisitInCurrentSevenDayPeriod
-                ) {
-                    FdaValidationRequest createVisitRequest = getCreateVisitRequest(visit.Appointment__c, donorContact.Id);
+                if (hasTriggeredTwoDayViolation) {
                     if (createVisitRequest != null) {
-                        createVisitRequest.addValidationResult(false, 'Donor has more than 1 visit in a 48 hour period');
+                        createVisitRequest.addValidationResult(false, 'Donor has more than 1 visit in a 2 day period');
                     }
 
                     continue;
                 }
 
-                lastVisitInCurrentSevenDayPeriod = visit.Appointment_Datetime__c;
+                if ((dontCompareNewVisits && !isNewVisit) || !dontCompareNewVisits) {
+                    visitsInCurrentSevenDayPeriod++;
+                    lastVisitDatetime = visit.Appointment_Datetime__c;
+                }
 
-                FdaValidationRequest createVisitRequest = getCreateVisitRequest(visit.Appointment__c, donorContact.Id);
                 if (createVisitRequest != null) {
                     createVisitRequest.addValidationResult(true, '');
                 }
@@ -121,11 +136,10 @@ public without sharing class FdaVisitValidator {
 
      private void buildCreateVisitRequestMap() {
         this.createVisitRequestMap = new Map<String, FdaValidationRequest>();
+
         for (FdaValidationRequest createVisitRequest : createVisitRequests) {
             createVisitRequestMap.put(createVisitRequest.appointmentId + '-' + createVisitRequest.donorContactId, createVisitRequest);
         }
-
-        System.debug(createVisitRequestMap);
     }
 
     private FdaValidationRequest getCreateVisitRequest(String appointmentId, String donorContactId) {
@@ -141,11 +155,6 @@ public without sharing class FdaVisitValidator {
 
     private void calculateValidationStartAndEndDatetimes() {
         for(Appointment__c appointment : [SELECT Id, Datetime__c FROM Appointment__c WHERE Id IN :appointmentIds]) {
-            Datetime newMinimumDateTime = appointment.Datetime__c.addDays(-6);
-            if (minimumDateTime == null || newMinimumDateTime < minimumDateTime) {
-                minimumDateTime = newMinimumDateTime;
-            }
-
             Datetime newMaximumDateTime = appointment.Datetime__c.addDays(6);
             if (maximumDateTime == null || newMaximumDateTime > maximumDateTime) {
                 maximumDateTime = newMaximumDateTime;
@@ -185,7 +194,18 @@ public without sharing class FdaVisitValidator {
             allDonorVisits.addAll(newVisitsForDonor);
         }
 
-        return allDonorVisits;
+        List<VisitDatetimeComparer> visitDatetimeComparers = new List<VisitDatetimeComparer>();
+        for(Visit__c visit : allDonorVisits) {
+            visitDatetimeComparers.add(new VisitDatetimeComparer(visit));
+        }
+        visitDatetimeComparers.sort();
+
+        List<Visit__c> sortedAllDonorVisits = new List<Visit__c>();
+        for(VisitDatetimeComparer visitDatetimeComparer : visitDatetimeComparers) {
+            sortedAllDonorVisits.add(visitDatetimeComparer.visitRecord);
+        }
+
+        return sortedAllDonorVisits;
     } 
 
     public class FdaValidationRequest {

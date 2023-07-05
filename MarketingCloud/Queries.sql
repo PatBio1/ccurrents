@@ -655,10 +655,11 @@ c.FirstName IS NOT NULL AND
 cent.Name IS NOT NULL
 
 -- New Donor Program Query (1st Donation)
-SELECT v.Id AS VisitId,
-v.Donor__c AS SubscriberKey,
+SELECT DISTINCT c.Email AS Email,
 c.FirstName AS FirstName,
-c.Email AS Email
+v.Donor__c AS SubscriberKey,
+MIN(v.Appointment_Datetime__c) AS ApptDateTime,
+MIN(v.Id) AS VisitId
 
 FROM Visit__c_Salesforce AS v
 
@@ -672,7 +673,7 @@ CreatedDate
 FROM Contact_Salesforce
 )
 AS c
-ON v.Id = c.Id
+ON v.Donor__c = c.Id
 
 LEFT JOIN
 (SELECT SubscriberKey
@@ -687,3 +688,26 @@ ndp1.SubscriberKey IS NULL AND
 c.Total_Donations__c = 1 AND
 c.isLegacyDonor__c = 0 AND
 c.CreatedDate >=  DATEFROMPARTS(2023, 06, 01)
+
+GROUP BY c.FirstName,
+c.Email,
+v.Donor__c
+
+--- 6 Donations / Month
+SELECT a.SubscriberKey AS SubscriberKey,
+a.MonthYear AS MonthYear,
+a.MailingKey AS MailingKey,
+a.VisitCount AS VisitCount,
+a.FirstName AS FirstName,
+a.Email AS Email
+
+FROM [Donors with 6 or More Donations By Month] AS a
+
+LEFT JOIN (
+SELECT MailingKey
+FROM [6 Donations Per Month]
+)
+AS b
+ON a.MailingKey = b.MailingKey
+
+WHERE b.MailingKey IS NULL

@@ -203,50 +203,6 @@ public class CoreSchedulerHandlerTest {
     }
 
     @IsTest 
-    static void testScheduleBeforeSoonestNextVisit() {
-        Appointment__c targetAppointment = [SELECT Id, Datetime__c, Schedule__c, Schedule__r.Center__r.Center_Timezone__c FROM Appointment__c LIMIT 1];
-        Contact targetDonor = [SELECT Id FROM Contact LIMIT 1];
-        Center_Donation_Type__c targetCenterDonationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
-
-        Visit__c testVisit = new Visit__c(
-            Appointment__c = targetAppointment.Id,
-            Donor__c = targetDonor.Id,
-            Center_Donation_Type__c = targetCenterDonationType.Id,
-            Status__c = 'Scheduled'
-        );
-        insert testVisit;
-
-        targetDonor = [SELECT Id, Soonest_Next_Visit__c FROM Contact WHERE Id = :targetDonor.Id LIMIT 1];
-
-        Datetime soonestNextVisitGmt = Datetime.newInstanceGmt(targetDonor.Soonest_Next_Visit__c.date(), targetDonor.Soonest_Next_Visit__c.time());
-        Datetime centerAdjustedSoonestNextVisit = Util.getTimeZoneDateTime(soonestNextVisitGmt.date(), soonestNextVisitGmt.time(), targetAppointment.Schedule__r.Center__r.Center_Timezone__c);
-
-        Appointment__c beforeSoonestNextVisitAppointment = new Appointment__c(
-            Datetime__c = centerAdjustedSoonestNextVisit.addDays(-1),
-            Schedule__c = targetAppointment.Schedule__c,
-            Capacity__c = BASE_CAPACITY,
-            Booked__c = 0
-        );
-        insert beforeSoonestNextVisitAppointment;
-
-        Boolean wasExceptionThrown = false;
-        Test.startTest();
-        try {
-            CoreSchedulerHandler.createVisit(new Visit__c(
-                Appointment__c = beforeSoonestNextVisitAppointment.Id,
-                Donor__c = targetDonor.Id,
-                Center_Donation_Type__c = targetCenterDonationType.Id,
-                Status__c = 'Scheduled'
-            ));
-        } catch (CoreSchedulerHandler.CoreScheduleException createVisitException) {
-            wasExceptionThrown = true;
-            Assert.areEqual(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE, createVisitException.getMessage(), 'An unexpected exception was thrown.');
-        }
-
-        Assert.isTrue(wasExceptionThrown, 'An exception should be thrown when trying to schedule a visit before the soonest next visit.');
-    }
-
-    @IsTest 
     static void testCancelVisit() {
         Appointment__c targetAppointment = [SELECT Id, Datetime__c FROM Appointment__c LIMIT 1];
         Contact targetDonor = [SELECT Id FROM Contact LIMIT 1];
@@ -310,28 +266,5 @@ public class CoreSchedulerHandlerTest {
         for (Appointment__c updatedAppointment : [SELECT Id, Booked__c FROM Appointment__c WHERE Id IN :bookedAppointmentsSlots]) {
             Assert.areEqual(0, updatedAppointment.Booked__c, 'Appointment should be marked as booked.');
         }
-    }
-
-    @IsTest
-    static void testGetSoonestNextRescheduleVisitDate() {
-        List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c FROM Appointment__c LIMIT 1];
-        List<Contact> targetDonors = [SELECT Id, Soonest_Next_Visit__c FROM Contact LIMIT 1];
-        Center_Donation_Type__c targetCenterDonationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
-
-        Datetime startingSoonestNextVisit = targetDonors[0].Soonest_Next_Visit__c;
-        Datetime rescheduleSoonestNextVisit;
-
-        Visit__c testVisit = CoreSchedulerHandler.createVisit(new Visit__c(
-            Appointment__c = targetAppointments[0].Id,
-            Donor__c = targetDonors[0].Id,
-            Center_Donation_Type__c = targetCenterDonationType.Id,
-            Status__c = 'Scheduled'
-        ));
-
-        Test.startTest();
-        rescheduleSoonestNextVisit = CoreSchedulerHandler.getSoonestNextRescheduleVisitDate(targetDonors[0].Id, testVisit.Id);
-        Test.stopTest();
-
-        Assert.areEqual(startingSoonestNextVisit, rescheduleSoonestNextVisit, 'The soonest next visit date should have recalculate to the original date');
     }
 }

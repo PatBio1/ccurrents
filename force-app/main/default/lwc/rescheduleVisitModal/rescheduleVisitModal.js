@@ -2,7 +2,6 @@ import { LightningElement, api } from 'lwc';
 import LightningModal from 'lightning/modal';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-import getSoonestNextRescheduleVisitDate from '@salesforce/apex/CoreSchedulerHandler.getSoonestNextRescheduleVisitDate';
 import getAvailableRescheduleAppointmentRange from '@salesforce/apex/CenterScheduleController.getAvailableRescheduleAppointmentRange';
 import changeVisitAppointment from '@salesforce/apex/CenterScheduleController.changeVisitAppointment';
 

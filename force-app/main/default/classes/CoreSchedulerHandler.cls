@@ -47,7 +47,7 @@ public without sharing class CoreSchedulerHandler {
         }
 
         Map<Id, Appointment__c> appointments = new Map<Id, Appointment__c>([SELECT Id, Availability__c, Availability_Loyalty__c, Datetime__c, Schedule__r.Center__r.Center_Timezone__c FROM Appointment__c WHERE Id IN :appointmentIds FOR UPDATE]);
-        Map<Id, Contact> donors = new Map<Id, Contact>([SELECT Id, Loyalty_Level__c, Soonest_Next_Visit__c FROM Contact WHERE Id IN :donorIds]);
+        Map<Id, Contact> donors = new Map<Id, Contact>([SELECT Id, Loyalty_Level__c FROM Contact WHERE Id IN :donorIds]);
 
         Map<Id, Decimal> appointmentAvailabilities = new Map<Id, Decimal>();
         Map<Id, Decimal> appointmentLoyaltyAvailabilities = new Map<Id, Decimal>();
@@ -55,15 +55,6 @@ public without sharing class CoreSchedulerHandler {
         for(Visit__c visit : newVisits) {
             Appointment__c appointment = appointments.get(visit.Appointment__c);
             Contact donor = donors.get(visit.Donor__c);
-            
-            // if (donor.Soonest_Next_Visit__c != null) {
-            //     Datetime adjustedSoonestNextVisit = Datetime.newInstanceGmt(donor.Soonest_Next_Visit__c.date(), donor.Soonest_Next_Visit__c.time());
-            //     Datetime adjustedAppointmentDatetime = Util.getTimeZoneDateTime(appointment.Datetime__c.date(), appointment.Datetime__c.time(), appointment.Schedule__r.Center__r.Center_Timezone__c);
-
-            //     if (adjustedAppointmentDatetime.date() < adjustedSoonestNextVisit.date()) {
-            //         throw new CoreScheduleException(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE);
-            //     }
-            // }
 
             Integer donorLoyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__c);
             Boolean qualifiesForLoyalty = donorLoyaltyLevel > 0;
@@ -105,29 +96,6 @@ public without sharing class CoreSchedulerHandler {
         }
 
         update visitsToUpdate;
-    }
-
-    @AuraEnabled
-    public static DateTime getSoonestNextRescheduleVisitDate(Id donorId, Id visitToReschedule) {
-        // Create a database savepoint and mark the visit as rescheduled in order to force recalculation
-        Savepoint sp = Database.setSavepoint();
-        Datetime newRescheduleDate = null;
-
-        try {
-            update new Visit__c(
-                Id = visitToReschedule,
-                Status__c = 'Complete',
-                Outcome__c = 'Rescheduled'
-            );
-
-            newRescheduleDate = [SELECT Soonest_Next_Visit__c FROM Contact WHERE Id = :donorId LIMIT 1]?.Soonest_Next_Visit__c;
-        } catch(Exception e) {
-            throw new AuraHandledException(e.getMessage());
-        } finally {
-            Database.rollback(sp);
-        }
-
-        return newRescheduleDate;
     }
 
     public class RescheduleBatchRequest {

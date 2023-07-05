@@ -451,16 +451,42 @@ DATEDIFF(DAY, DATEADD(DAY, -7, t.CreatedDate), t.CreatedDate) <= 7
 SELECT DISTINCT p.[Visit Id] AS VisitId,
 p.Rating AS Rating,
 p.Feedback AS Feedback,
-p.SubscriberKey AS SubscriberKey
+p.SubscriberKey AS SubscriberKey,
+mp.DateAdded AS DateAdded
 
-FROM [Post Donation Survey Responses] as p
+FROM [Post Donation Survey Responses] AS p
 
-LEFT JOIN (Select p2.VisitId AS VisitId
-FROM [Post Donation Survey Response Processing] AS p2)
+LEFT JOIN (SELECT VisitId AS VisitId
+FROM [Post Donation Survey Response Processing])
 AS pdsrp
 ON p.[Visit Id] = pdsrp.VisitId
 
-WHERE pdsrp.VisitId IS NULL
+LEFT JOIN (SELECT m.[Visit Id] AS VisitId,
+MAX(m.DateAdded) AS DateAdded
+FROM [Post Donation Survey Responses] AS m
+GROUP BY m.[Visit Id])
+AS mp
+ON p.[Visit Id] = mp.VisitId
+
+WHERE pdsrp.VisitId IS NULL AND
+mp.VisitId IS NOT NULL
+
+-- Post Donation Survey Response Processing v2
+SELECT p.[Visit Id] AS VisitId,
+p.Rating AS Rating,
+p.Feedback AS Feedback,
+p.SubscriberKey AS SubscriberKey,
+p.DateAdded AS DateAdded,
+p.id AS RecordKey
+
+FROM [Post Donation Survey Responses] AS p
+
+LEFT JOIN (SELECT RecordKey AS RecordKey
+FROM [Post Donation Survey Response Processing v2])
+AS pdsrp2
+ON p.id = pdsrp2.RecordKey
+
+WHERE pdsrp2.RecordKey IS NULL
 
 -- Buddy Referral Lead Email
 SELECT cm.LeadOrContactId AS SubscriberKey,

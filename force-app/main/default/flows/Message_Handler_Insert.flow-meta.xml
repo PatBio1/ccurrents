@@ -4,8 +4,8 @@
     <assignments>
         <name>Assign_User_Id_to_Recipient_Collection</name>
         <label>Assign User Id to Recipient Collection</label>
-        <locationX>1238</locationX>
-        <locationY>1055</locationY>
+        <locationX>1370</locationX>
+        <locationY>971</locationY>
         <assignmentItems>
             <assignToReference>Recipient_Id_Collection</assignToReference>
             <operator>Add</operator>
@@ -20,8 +20,8 @@
     <decisions>
         <name>Donor_Has_User_Record_Decision</name>
         <label>Donor Has User Record Decision</label>
-        <locationX>1964</locationX>
-        <locationY>815</locationY>
+        <locationX>2162</locationX>
+        <locationY>755</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Donor_Has_User_Record</name>
@@ -43,7 +43,7 @@
         <name>Gets_Appointment_Reminders_Decision</name>
         <label>Gets Appointment Reminders Decision</label>
         <locationX>974</locationX>
-        <locationY>1295</locationY>
+        <locationY>1187</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Receives_Appointment_Reminders</name>
@@ -64,8 +64,8 @@
     <decisions>
         <name>Has_Message_Type_Value_Decision</name>
         <label>Has Message Type Value Decision</label>
-        <locationX>2838</locationX>
-        <locationY>335</locationY>
+        <locationX>3086</locationX>
+        <locationY>323</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Has_Message_Type</name>
@@ -86,8 +86,8 @@
     <decisions>
         <name>Message_Handler_Type_Decision</name>
         <label>Message Handler Type Decision</label>
-        <locationX>1238</locationX>
-        <locationY>1175</locationY>
+        <locationX>1370</locationX>
+        <locationY>1079</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Welcome_New_Donor</name>
@@ -209,12 +209,27 @@
             </connector>
             <label>Payment Notification</label>
         </rules>
+        <rules>
+            <name>Generic</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Message_Handler_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Generic</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Fire_Generic_Notification</targetReference>
+            </connector>
+            <label>Generic</label>
+        </rules>
     </decisions>
     <decisions>
         <name>Receives_Mobile_Push_Notifications_Decision</name>
         <label>Receives Mobile Push Notifications Decision</label>
-        <locationX>2459</locationX>
-        <locationY>575</locationY>
+        <locationX>2690</locationX>
+        <locationY>539</locationY>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
             <name>Mobile_Notifications_Enabled</name>
@@ -256,7 +271,7 @@
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <start>
-        <locationX>2712</locationX>
+        <locationX>2960</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Has_Message_Type_Value_Decision</targetReference>
@@ -270,7 +285,7 @@
         <name>Annual_Physical_Reminder_Notification</name>
         <label>Annual Physical Reminder Notification</label>
         <locationX>578</locationX>
-        <locationY>1295</locationY>
+        <locationY>1187</locationY>
         <flowName>Annual_Physical_Reminder_Notification</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
@@ -307,7 +322,7 @@
         <name>Apology_Notification_Transaction_Records</name>
         <label>Apology Notification and Transaction Records</label>
         <locationX>314</locationX>
-        <locationY>1295</locationY>
+        <locationY>1187</locationY>
         <flowName>Apology_Notification_Transaction_Records</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
@@ -344,7 +359,7 @@
         <name>Appointment_Reminder_Notification</name>
         <label>Appointment Reminder Notification</label>
         <locationX>842</locationX>
-        <locationY>1415</locationY>
+        <locationY>1295</locationY>
         <flowName>Appointment_Reminder</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
@@ -381,7 +396,7 @@
         <name>Buddy_Referral_Notification</name>
         <label>Buddy Referral Notification</label>
         <locationX>1898</locationX>
-        <locationY>1295</locationY>
+        <locationY>1187</locationY>
         <flowName>Buddy_Referral</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
@@ -418,8 +433,45 @@
         <name>Fire_Donor_Payment_Notification</name>
         <label>Fire Donor Payment Notification</label>
         <locationX>2162</locationX>
-        <locationY>1295</locationY>
+        <locationY>1187</locationY>
         <flowName>Donation_Payment_Notification</flowName>
+        <inputAssignments>
+            <name>Custom_Notification_Id_Input</name>
+            <value>
+                <elementReference>Custom_Notification_Type_Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_Record_Input</name>
+            <value>
+                <elementReference>Donor_Contact_Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Donor_User_Record_Input</name>
+            <value>
+                <elementReference>Donor_User_Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Message_Record_Input</name>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>Recipient_Id_Collection_Input</name>
+            <value>
+                <elementReference>Recipient_Id_Collection</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <name>Fire_Generic_Notification</name>
+        <label>Fire Generic Notification</label>
+        <locationX>2426</locationX>
+        <locationY>1187</locationY>
+        <flowName>Generic_Notification</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
             <value>
@@ -455,8 +507,8 @@
         <description>Runs in system context, to ensure this flow fires correctly.</description>
         <name>Get_Custom_Notification_Type_Id</name>
         <label>Get Custom Notification Type Id</label>
-        <locationX>1238</locationX>
-        <locationY>935</locationY>
+        <locationX>1370</locationX>
+        <locationY>863</locationY>
         <connector>
             <targetReference>Assign_User_Id_to_Recipient_Collection</targetReference>
         </connector>
@@ -470,8 +522,8 @@
         <description>Runs in system mode, to get the contact communication preference info, so we can run the flow correctly.</description>
         <name>Get_Donor_Communication_Preferences</name>
         <label>Get Donor Communication Preferences</label>
-        <locationX>2459</locationX>
-        <locationY>455</locationY>
+        <locationX>2690</locationX>
+        <locationY>431</locationY>
         <connector>
             <targetReference>Receives_Mobile_Push_Notifications_Decision</targetReference>
         </connector>
@@ -490,8 +542,8 @@
     <subflows>
         <name>Get_User_Record_From_Donor_Id</name>
         <label>Get User Record From Donor Id</label>
-        <locationX>1964</locationX>
-        <locationY>695</locationY>
+        <locationX>2162</locationX>
+        <locationY>647</locationY>
         <connector>
             <targetReference>Donor_Has_User_Record_Decision</targetReference>
         </connector>
@@ -511,7 +563,7 @@
         <name>Reschedule_Appointment</name>
         <label>Reschedule Appointment</label>
         <locationX>1634</locationX>
-        <locationY>1295</locationY>
+        <locationY>1187</locationY>
         <flowName>Reschedule_Appointment</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
@@ -548,7 +600,7 @@
         <name>SPE_Reminder_Notification</name>
         <label>SPE Reminder Notification</label>
         <locationX>1370</locationX>
-        <locationY>1295</locationY>
+        <locationY>1187</locationY>
         <flowName>SPE_Reminder_Notification</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>
@@ -585,7 +637,7 @@
         <name>Welcome_New_Donor_Notification</name>
         <label>Welcome New Donor Notification</label>
         <locationX>50</locationX>
-        <locationY>1295</locationY>
+        <locationY>1187</locationY>
         <flowName>Welcome_New_Donor_Notification</flowName>
         <inputAssignments>
             <name>Custom_Notification_Id_Input</name>

@@ -8,5 +8,6 @@
     <inlineHelpText>The first trianniversary from First Visit Anniversary</inlineHelpText>
     <label>Trianniversary 1</label>
     <required>false</required>
+    <trackHistory>false</trackHistory>
     <type>Date</type>
 </CustomField>

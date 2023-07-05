@@ -6,5 +6,6 @@
     <externalId>false</externalId>
     <label>Has Viewed Intro Video</label>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

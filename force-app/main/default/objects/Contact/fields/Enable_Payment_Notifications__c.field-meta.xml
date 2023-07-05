@@ -7,5 +7,6 @@
     <inlineHelpText>Indicates donor enabled payment notifications. Defaults to true.</inlineHelpText>
     <label>Enable Payment Notifications</label>
     <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

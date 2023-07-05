@@ -6,7 +6,7 @@
     <inlineHelpText>Datetime of next retry time</inlineHelpText>
     <label>Retry Next</label>
     <required>false</required>
-    <trackHistory>false</trackHistory>
+    <trackHistory>true</trackHistory>
     <trackTrending>false</trackTrending>
     <type>DateTime</type>
 </CustomField>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Apology_Campaign_Details</fullName>
+    <active>true</active>
+    <description>When Apology_Campaign_Active__c is TRUE, ensure that we have values for the payment amount and time threshold.</description>
+    <errorConditionFormula>Apology_Campaign_Active__c &amp;&amp;
+(ISBLANK(Apology_Campaign_Payment_Amount__c) ||
+Apology_Campaign_Payment_Amount__c &lt; 1 ||
+ISBLANK(Apology_Campaign_Time_Threshold__c) || 
+Apology_Campaign_Time_Threshold__c &lt; 1)</errorConditionFormula>
+    <errorMessage>When activating this Center&apos;s Apology Campaign, please ensure the Amount and Time Thresholds have values greater than zero.</errorMessage>
+</ValidationRule>

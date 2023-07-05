@@ -5,6 +5,16 @@
     <description>The Center for this Donation Type</description>
     <externalId>false</externalId>
     <label>Center</label>
+    <lookupFilter>
+        <active>true</active>
+        <errorMessage>The Center account does not exist.</errorMessage>
+        <filterItems>
+            <field>Account.RecordType.DeveloperName</field>
+            <operation>equals</operation>
+            <value>Center</value>
+        </filterItems>
+        <isOptional>false</isOptional>
+    </lookupFilter>
     <referenceTo>Account</referenceTo>
     <relationshipLabel>Center Donation Types</relationshipLabel>
     <relationshipName>Center_Donation_Types</relationshipName>

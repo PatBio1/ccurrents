@@ -56,14 +56,14 @@ public without sharing class CoreSchedulerHandler {
             Appointment__c appointment = appointments.get(visit.Appointment__c);
             Contact donor = donors.get(visit.Donor__c);
             
-            if (donor.Soonest_Next_Visit__c != null) {
-                Datetime adjustedSoonestNextVisit = Datetime.newInstanceGmt(donor.Soonest_Next_Visit__c.date(), donor.Soonest_Next_Visit__c.time());
-                Datetime adjustedAppointmentDatetime = Util.getTimeZoneDateTime(appointment.Datetime__c.date(), appointment.Datetime__c.time(), appointment.Schedule__r.Center__r.Center_Timezone__c);
+            // if (donor.Soonest_Next_Visit__c != null) {
+            //     Datetime adjustedSoonestNextVisit = Datetime.newInstanceGmt(donor.Soonest_Next_Visit__c.date(), donor.Soonest_Next_Visit__c.time());
+            //     Datetime adjustedAppointmentDatetime = Util.getTimeZoneDateTime(appointment.Datetime__c.date(), appointment.Datetime__c.time(), appointment.Schedule__r.Center__r.Center_Timezone__c);
 
-                if (adjustedAppointmentDatetime.date() < adjustedSoonestNextVisit.date()) {
-                    throw new CoreScheduleException(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE);
-                }
-            }
+            //     if (adjustedAppointmentDatetime.date() < adjustedSoonestNextVisit.date()) {
+            //         throw new CoreScheduleException(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE);
+            //     }
+            // }
 
             Integer donorLoyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__c);
             Boolean qualifiesForLoyalty = donorLoyaltyLevel > 0;

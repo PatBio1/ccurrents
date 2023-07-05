@@ -711,3 +711,40 @@ AS b
 ON a.MailingKey = b.MailingKey
 
 WHERE b.MailingKey IS NULL
+
+-- Buddy Referral Payments
+SELECT a.Id AS CampaignMemberId,
+a.CampaignId AS CampaignId,
+a.Referring_Contact__c AS SubscriberKey,
+a.FirstName AS ReferralFirstName,
+c.FirstName AS FirstName,
+c.Email AS Email,
+100 AS AwardAmount
+
+FROM CampaignMember_Salesforce AS a
+
+INNER JOIN (
+SELECT Id
+FROM Campaign_Salesforce
+WHERE External_Id__c = 3)
+AS b
+ON a.CampaignId = b.Id
+
+INNER JOIN
+(SELECT Id,
+FirstName,
+Email
+FROM Contact_Salesforce)
+AS c
+ON a.Referring_Contact__c = c.Id
+
+LEFT JOIN(
+SELECT CampaignMemberId
+FROM [Buddy Referral Contact Payments]
+)
+AS d
+ON a.Id = d.CampaignMemberId
+
+WHERE d.CampaignMemberId IS NULL AND
+a.Total_Eligible_Donation_Count__c >= 2 AND
+a.Incentive_Eligible__c = 1

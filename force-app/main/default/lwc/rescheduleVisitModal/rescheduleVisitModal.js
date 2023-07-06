@@ -2,7 +2,6 @@ import { LightningElement, api } from 'lwc';
 import LightningModal from 'lightning/modal';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-import getSoonestNextRescheduleVisitDate from '@salesforce/apex/CoreSchedulerHandler.getSoonestNextRescheduleVisitDate';
 import getAvailableRescheduleAppointmentRange from '@salesforce/apex/CenterScheduleController.getAvailableRescheduleAppointmentRange';
 import changeVisitAppointment from '@salesforce/apex/CenterScheduleController.changeVisitAppointment';
 
@@ -14,7 +13,6 @@ export default class RescheduleVisitModal extends LightningModal {
     @api centerId;
 
     groupedAppointments;
-    soonestNextVisit;
 
     selectedAppointmentGroupIndex;
     selectedStartDate;
@@ -28,33 +26,8 @@ export default class RescheduleVisitModal extends LightningModal {
     isInitialized = false;
     isDefaultAppointmentGroupInitialized = false;
 
-    get adjustedSoonestNextVisit() {
-        if (!this.soonestNextVisit) {
-            return Date.now();
-        }
-
-        if (this.soonestNextVisit < Date.now()) {
-            return Date.now();
-        }
-
-        return this.soonestNextVisit;
-    }
-
     get minimumStartDate() {
-        if (!this.soonestNextVisit && !this.selectedEndDate) {
-            return null;
-        }
-
-        let targetMinDate;
-        if (!this.selectedEndDate) {
-            targetMinDate = this.soonestNextVisit;
-        } else if (!this.soonestNextVisit) {
-            targetMinDate = this.selectedEndDate;
-        } else {
-            targetMinDate = this.selectedEndDate > this.soonestNextVisit ? this.selectedEndDate : this.soonestNextVisit;
-        }
-
-        return new Date(targetMinDate);
+        return new Date();
     }
 
     get selectedAppointmentGroup() {
@@ -67,8 +40,8 @@ export default class RescheduleVisitModal extends LightningModal {
 
     async renderedCallback() {
         if (!this.isInitialized) {
-            await this.initSoonestNextVisitDate();
             this.initDefaultDateRange();
+            this.isInitialized = true;
         }
 
         if (!this.isDefaultAppointmentGroupInitialized) {
@@ -78,20 +51,6 @@ export default class RescheduleVisitModal extends LightningModal {
 
             this.isDefaultAppointmentGroupInitialized = true;
         }
-    }
-
-    async initSoonestNextVisitDate() {
-        if (!this.donorId) {
-            return;
-        }
-
-        this.isLoading = true;
-
-        let serverSoonestNextVisitDateTime = await getSoonestNextRescheduleVisitDate({ donorId: this.donorId, visitToReschedule: this.existingVisitId });
-        this.soonestNextVisit = new Date(serverSoonestNextVisitDateTime);
-
-        this.isLoading = false;
-        this.isInitialized = true;
     }
 
     initDefaultDateRange() {
@@ -118,9 +77,9 @@ export default class RescheduleVisitModal extends LightningModal {
     async fetchRescheduleAppointmentsByRange() {
         this.isLoading = true;
         let availableAppointments = await getAvailableRescheduleAppointmentRange({
+            donorId: this.donorId,
             centerId: this.centerId,
-            currentDateTime: new Date(Date.now()),
-            soonestNextVisit: this.soonestNextVisit,
+            visitToReschedule: this.existingVisitId,
             searchStartDateTime: this.adjustedStartDate,
             searchEndDateTime: this.adjustedEndDate,
             isLoyaltyDonor: false

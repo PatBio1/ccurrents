@@ -12,24 +12,24 @@ public without sharing class CoreSchedulerHandler {
 
         for(RescheduleRequest request : rescheduleBatchRequest.rescheduleRequests) {
             visitsToInsert.add(request.createNewVisit());
+            visitsToUpdate.add(request.markOriginalVisitAsRescheduled());
+        }
+
+        if (visitsToUpdate.size() > 0) {
+            update visitsToUpdate;
         }
 
         if (visitsToInsert.size() > 0) {
-            insert visitsToInsert;
+            createVisits(visitsToInsert);
         }
 
         // We need to insert the new visits before we can reparent the tasks
         for(RescheduleRequest request : rescheduleBatchRequest.rescheduleRequests) {
             tasksToUpdate.addAll(request.reparentTasksToNewVisit());
-            visitsToUpdate.add(request.markOriginalVisitAsRescheduled());
         }
 
         if (tasksToUpdate.size() > 0) {
             update tasksToUpdate;
-        }
-
-        if (visitsToUpdate.size() > 0) {
-            update visitsToUpdate;
         }
     }
 
@@ -40,10 +40,21 @@ public without sharing class CoreSchedulerHandler {
     public static List<Visit__c> createVisits(List<Visit__c> newVisits) {
         Set<Id> appointmentIds = new Set<Id>();
         Set<Id> donorIds = new Set<Id>();
+        List<FdaVisitValidator.FdaValidationRequest> fdaVisitValidationRequests = new List<FdaVisitValidator.FdaValidationRequest>();
 
         for(Visit__c visit : newVisits) {
             appointmentIds.add(visit.Appointment__c);
             donorIds.add(visit.Donor__c);
+            fdaVisitValidationRequests.add(new FdaVisitValidator.FdaValidationRequest(visit.Appointment__c, visit.Donor__c, visit.Center_Donation_Type__c));
+        }
+
+        FdaVisitValidator validatorInstance = new FdaVisitValidator(fdaVisitValidationRequests);
+        fdaVisitValidationRequests = validatorInstance.validateCreateVisitRequests();
+        
+        for(FdaVisitValidator.FdaValidationRequest request : fdaVisitValidationRequests) {
+            if (request.validationResult != null && !request.validationResult.isValid) {
+                throw new CoreScheduleException(request.validationResult.errorMessage);
+            }
         }
 
         Map<Id, Appointment__c> appointments = new Map<Id, Appointment__c>([SELECT Id, Availability__c, Availability_Loyalty__c, Datetime__c, Schedule__r.Center__r.Center_Timezone__c FROM Appointment__c WHERE Id IN :appointmentIds FOR UPDATE]);

@@ -202,6 +202,42 @@ public class CoreSchedulerHandlerTest {
         Assert.isTrue(wasExceptionThrown, 'An exception should be thrown when trying to create a visit over capacity.');
     }
 
+    @IsTest
+    static void testCreateVisitWithValidationError() {
+        List<Appointment__c> targetAppointments = [SELECT Id, Datetime__c, Schedule__c FROM Appointment__c LIMIT 1];
+        List<Contact> targetDonors = [SELECT Id FROM Contact LIMIT :1];
+        Center_Donation_Type__c targetCenterDonationType = [SELECT Id FROM Center_Donation_Type__c LIMIT 1];
+
+        Appointment__c validationErrorAppt = new Appointment__c(
+            Datetime__c = targetAppointments[0].Datetime__c.addHours(3),
+            Schedule__c = targetAppointments[0].Schedule__c,
+            Capacity__c = 5
+        );
+        insert validationErrorAppt;
+        targetAppointments.add(validationErrorAppt);
+
+        List<Visit__c> testVisits = new List<Visit__c>();
+        for (Integer i = 0; i < targetAppointments.size(); i++) {
+            testVisits.add(new Visit__c(
+                Appointment__c = targetAppointments[i].Id,
+                Donor__c = targetDonors[0].Id,
+                Center_Donation_Type__c = targetCenterDonationType.Id,
+                Status__c = 'Scheduled'
+            ));
+        }
+
+        Boolean wasExceptionThrown = false;
+        Test.startTest();
+        try {
+            CoreSchedulerHandler.createVisits(testVisits);
+        } catch (CoreSchedulerHandler.CoreScheduleException createVisitException) {
+            wasExceptionThrown = true;
+        }
+        Test.stopTest();
+
+        Assert.isTrue(wasExceptionThrown, 'An exception should be thrown when trying to create a visit over capacity.');
+    }
+
     @IsTest 
     static void testCancelVisit() {
         Appointment__c targetAppointment = [SELECT Id, Datetime__c FROM Appointment__c LIMIT 1];

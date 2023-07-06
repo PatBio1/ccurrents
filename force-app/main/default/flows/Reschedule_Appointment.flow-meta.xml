@@ -4,9 +4,12 @@
         <name>Send_Notification</name>
         <label>Send Notification</label>
         <locationX>176</locationX>
-        <locationY>158</locationY>
+        <locationY>134</locationY>
         <actionName>customNotificationAction</actionName>
         <actionType>customNotificationAction</actionType>
+        <connector>
+            <targetReference>Assign_Correct_Values_to_Subject_and_Body</targetReference>
+        </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>customNotifTypeId</name>
@@ -40,6 +43,36 @@
         </inputParameters>
     </actionCalls>
     <apiVersion>57.0</apiVersion>
+    <assignments>
+        <name>Assign_Correct_Values_to_Subject_and_Body</name>
+        <label>Assign Correct Values to Subject and Body</label>
+        <locationX>176</locationX>
+        <locationY>242</locationY>
+        <assignmentItems>
+            <assignToReference>Message_Record_Update.Id</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Message_Record_Input.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message_Record_Update.Name</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Notification_Title</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Message_Record_Update.Body__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Notification_Body</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Reschedule_Appointment_Message_Values</targetReference>
+        </connector>
+    </assignments>
     <environments>Default</environments>
     <interviewLabel>Reschedule Appointment {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Reschedule Appointment</label>
@@ -62,6 +95,13 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <recordUpdates>
+        <name>Update_Reschedule_Appointment_Message_Values</name>
+        <label>Update Reschedule Appointment Message Values</label>
+        <locationX>176</locationX>
+        <locationY>350</locationY>
+        <inputReference>Message_Record_Update</inputReference>
+    </recordUpdates>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
@@ -109,6 +149,14 @@
         <dataType>SObject</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Message__c</objectType>
+    </variables>
+    <variables>
+        <name>Message_Record_Update</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
         <isOutput>false</isOutput>
         <objectType>Message__c</objectType>
     </variables>

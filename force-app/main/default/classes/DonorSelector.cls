@@ -14,7 +14,7 @@ public without sharing class DonorSelector {
 
         List<DonorSearchResult> donorSearchResults = new List<DonorSearchResult>();
         for(Account donor : [
-            SELECT Id, Name, PersonEmail, PersonMobilePhone, Soonest_Next_Visit__pc, Loyalty_Level__pc, Loyalty_Level__pr.Name
+            SELECT Id, Name, PersonEmail, PersonMobilePhone, Soonest_Next_Visit__pc, Loyalty_Level__pc, Loyalty_Level__pr.Name, PersonContactId
             FROM Account
             WHERE Name LIKE :(nameSearchString + '%') AND
                 RecordTypeId = :Schema.SObjectType.Account.getRecordTypeInfosByName().get('Donor').getRecordTypeId()
@@ -35,9 +35,9 @@ public without sharing class DonorSelector {
                 System.debug(adjustedSoonestNextVisit);
                 System.debug(adjustedVisitDateTime);
 
-                if (adjustedSoonestNextVisit != null && adjustedSoonestNextVisit > adjustedVisitDateTime) {
-                    newSearchResult.setCantScheduleReason(String.format(Constants.CANT_SCHEDULE_SOONEST_NEXT_VISIT_MESSAGE, new List<Object> { adjustedSoonestNextVisit.format('MM/dd/yyyy') }));
-                }
+                // if (adjustedSoonestNextVisit != null && adjustedSoonestNextVisit > adjustedVisitDateTime) {
+                //     newSearchResult.setCantScheduleReason(String.format(Constants.CANT_SCHEDULE_SOONEST_NEXT_VISIT_MESSAGE, new List<Object> { adjustedSoonestNextVisit.format('MM/dd/yyyy') }));
+                // }
             } 
 
             donorSearchResults.add(newSearchResult);
@@ -105,6 +105,8 @@ public without sharing class DonorSelector {
         @AuraEnabled
         public String donorId;
         @AuraEnabled
+        public String donorContactId;
+        @AuraEnabled
         public String donorName;
         @AuraEnabled
         public String donorEmail;
@@ -121,6 +123,7 @@ public without sharing class DonorSelector {
 
         public DonorSearchResult(Account donor) {
             this.donorId = donor.Id;
+            this.donorContactId = donor.PersonContactId;
             this.donorName = donor.Name;
             this.donorEmail = donor.PersonEmail;
             this.donorPhone = donor.PersonMobilePhone;

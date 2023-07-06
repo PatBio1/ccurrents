@@ -12,24 +12,24 @@ public without sharing class CoreSchedulerHandler {
 
         for(RescheduleRequest request : rescheduleBatchRequest.rescheduleRequests) {
             visitsToInsert.add(request.createNewVisit());
+            visitsToUpdate.add(request.markOriginalVisitAsRescheduled());
+        }
+
+        if (visitsToUpdate.size() > 0) {
+            update visitsToUpdate;
         }
 
         if (visitsToInsert.size() > 0) {
-            insert visitsToInsert;
+            createVisits(visitsToInsert);
         }
 
         // We need to insert the new visits before we can reparent the tasks
         for(RescheduleRequest request : rescheduleBatchRequest.rescheduleRequests) {
             tasksToUpdate.addAll(request.reparentTasksToNewVisit());
-            visitsToUpdate.add(request.markOriginalVisitAsRescheduled());
         }
 
         if (tasksToUpdate.size() > 0) {
             update tasksToUpdate;
-        }
-
-        if (visitsToUpdate.size() > 0) {
-            update visitsToUpdate;
         }
     }
 
@@ -40,14 +40,25 @@ public without sharing class CoreSchedulerHandler {
     public static List<Visit__c> createVisits(List<Visit__c> newVisits) {
         Set<Id> appointmentIds = new Set<Id>();
         Set<Id> donorIds = new Set<Id>();
+        List<FdaVisitValidator.FdaValidationRequest> fdaVisitValidationRequests = new List<FdaVisitValidator.FdaValidationRequest>();
 
         for(Visit__c visit : newVisits) {
             appointmentIds.add(visit.Appointment__c);
             donorIds.add(visit.Donor__c);
+            fdaVisitValidationRequests.add(new FdaVisitValidator.FdaValidationRequest(visit.Appointment__c, visit.Donor__c, visit.Center_Donation_Type__c));
+        }
+
+        FdaVisitValidator validatorInstance = new FdaVisitValidator(fdaVisitValidationRequests);
+        fdaVisitValidationRequests = validatorInstance.validateCreateVisitRequests();
+        
+        for(FdaVisitValidator.FdaValidationRequest request : fdaVisitValidationRequests) {
+            if (request.validationResult != null && !request.validationResult.isValid) {
+                throw new CoreScheduleException(request.validationResult.errorMessage);
+            }
         }
 
         Map<Id, Appointment__c> appointments = new Map<Id, Appointment__c>([SELECT Id, Availability__c, Availability_Loyalty__c, Datetime__c, Schedule__r.Center__r.Center_Timezone__c FROM Appointment__c WHERE Id IN :appointmentIds FOR UPDATE]);
-        Map<Id, Contact> donors = new Map<Id, Contact>([SELECT Id, Loyalty_Level__c, Soonest_Next_Visit__c FROM Contact WHERE Id IN :donorIds]);
+        Map<Id, Contact> donors = new Map<Id, Contact>([SELECT Id, Loyalty_Level__c FROM Contact WHERE Id IN :donorIds]);
 
         Map<Id, Decimal> appointmentAvailabilities = new Map<Id, Decimal>();
         Map<Id, Decimal> appointmentLoyaltyAvailabilities = new Map<Id, Decimal>();
@@ -55,15 +66,6 @@ public without sharing class CoreSchedulerHandler {
         for(Visit__c visit : newVisits) {
             Appointment__c appointment = appointments.get(visit.Appointment__c);
             Contact donor = donors.get(visit.Donor__c);
-            
-            if (donor.Soonest_Next_Visit__c != null) {
-                Datetime adjustedSoonestNextVisit = Datetime.newInstanceGmt(donor.Soonest_Next_Visit__c.date(), donor.Soonest_Next_Visit__c.time());
-                Datetime adjustedAppointmentDatetime = Util.getTimeZoneDateTime(appointment.Datetime__c.date(), appointment.Datetime__c.time(), appointment.Schedule__r.Center__r.Center_Timezone__c);
-
-                if (adjustedAppointmentDatetime.date() < adjustedSoonestNextVisit.date()) {
-                    throw new CoreScheduleException(Constants.BEFORE_SOONEST_NEXT_VISIT_EXCEPTION_MESSAGE);
-                }
-            }
 
             Integer donorLoyaltyLevel = LoyaltyLevelService.getLoyaltyLevel(donor.Loyalty_Level__c);
             Boolean qualifiesForLoyalty = donorLoyaltyLevel > 0;
@@ -105,29 +107,6 @@ public without sharing class CoreSchedulerHandler {
         }
 
         update visitsToUpdate;
-    }
-
-    @AuraEnabled
-    public static DateTime getSoonestNextRescheduleVisitDate(Id donorId, Id visitToReschedule) {
-        // Create a database savepoint and mark the visit as rescheduled in order to force recalculation
-        Savepoint sp = Database.setSavepoint();
-        Datetime newRescheduleDate = null;
-
-        try {
-            update new Visit__c(
-                Id = visitToReschedule,
-                Status__c = 'Complete',
-                Outcome__c = 'Rescheduled'
-            );
-
-            newRescheduleDate = [SELECT Soonest_Next_Visit__c FROM Contact WHERE Id = :donorId LIMIT 1]?.Soonest_Next_Visit__c;
-        } catch(Exception e) {
-            throw new AuraHandledException(e.getMessage());
-        } finally {
-            Database.rollback(sp);
-        }
-
-        return newRescheduleDate;
     }
 
     public class RescheduleBatchRequest {

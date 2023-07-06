@@ -73,8 +73,24 @@
                         <div class="slds-grid slds-wrap slds-gutters_xxx-small">
                             <template for:each={appointmentGroup.appointments} for:item="appointment" for:index="appointmentIndex">
                                 <div key={appointment.id} class="slds-col slds-size_1-of-4 slds-m-bottom_xx-small">
-                                    <lightning-button if:true={appointment.available} label={appointment.name} stretch="true" class={appointment.classes} data-group-index={appointmentGroupIndex} data-index={appointmentIndex} onclick={onAppointmentButtonClick}></lightning-button>
-                                    <button if:false={appointment.available} class="slds-button slds-button_neutral slds-button_stretch appointment-button" disabled>{appointment.name}</button>
+                                    <lightning-button 
+                                        if:true={appointment.isValid} 
+                                        label={appointment.name} 
+                                        stretch="true" 
+                                        class={appointment.classes} 
+                                        data-group-index={appointmentGroupIndex} 
+                                        data-index={appointmentIndex} 
+                                        onclick={onAppointmentButtonClick}
+                                    >
+                                    </lightning-button>
+
+                                    <button 
+                                        if:false={appointment.isValid} 
+                                        class="slds-button slds-button_neutral slds-button_stretch appointment-button" 
+                                        disabled
+                                    >
+                                        {appointment.name}
+                                    </button>
                                 </div>
                             </template>
                         </div>

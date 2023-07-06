@@ -2,7 +2,8 @@ import { api } from 'lwc';
 import LightningModal from 'lightning/modal';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-import searchVisitElgibleDonorByName from '@salesforce/apex/DonorSelector.searchVisitElgibleDonorByName';
+// import searchVisitElgibleDonorByName from '@salesforce/apex/DonorSelector.searchVisitElgibleDonorByName';
+import searchForEligableDonors from '@salesforce/apex/CenterScheduleController.searchForEligableDonors';
 import addVisit from '@salesforce/apex/CenterScheduleController.addVisit';
 
 export default class AddVisitModal extends LightningModal {
@@ -43,12 +44,12 @@ export default class AddVisitModal extends LightningModal {
 
     async executeSearch() {
         this.isSearching = true;
-        this.foundDonors = await searchVisitElgibleDonorByName({ 
+        this.foundDonors = await searchForEligableDonors({ 
             nameSearchString: this.template.querySelector("lightning-input[data-donor-name-search]").value,
-            targetVisitDateString: this.fullAppointmentDateTimeString, // this.appointmentSlotDate
-            allowLoyaltyDonors: this.hasAvailability || this.hasLoyaltyAvailability,
+            targetVisitDateString: this.fullAppointmentDateTimeString,
             allowDonors: this.hasAvailability,
-            centerAccountId: this.centerId
+            centerAccountId: this.centerId,
+            appointmentId: this.appointmentSlotId
         });
         
         this.updateSearchTimeout = null;

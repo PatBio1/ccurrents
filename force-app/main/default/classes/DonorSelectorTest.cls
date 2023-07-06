@@ -115,7 +115,8 @@ public with sharing class DonorSelectorTest {
 
             Proesis_Wallet__c newWalletSettings = new Proesis_Wallet__c(
                 Minimum_Withdrawal__c = 2000,
-                Points_to_Dollar__c = 100
+                Points_to_Dollar__c = 100,
+                Dollar_Increment__c = 20
             );
             insert newWalletSettings;
         }
@@ -223,6 +224,7 @@ public with sharing class DonorSelectorTest {
         Assert.areEqual('Level 2', donorRewardsInfo.nextLoyaltyLevel, 'Expected to find donor next level as Level 2');
         Assert.areEqual(8, donorRewardsInfo.remainingVisitsForNextTier, 'Expected to find donor visits needed for next level as 8');
         Assert.areEqual(2000, donorRewardsInfo.minimumWithdrawalAmount, 'Expected to find minimum equal to org default (2000)');
+        Assert.areEqual(20, donorRewardsInfo.dollarIncrementAmount, 'Expected to find dollar increment amount equal to org default (20)');
         Assert.areEqual(12, donorRewardsInfo.donorVisitCount, 'Expected to find 12 visits for donor');
         Assert.areEqual(10, donorRewardsInfo.currentTierDonationThreshold, 'Expected to find current tier donation threshold as 10');
         Assert.areEqual(20, donorRewardsInfo.nextTierDonationThreshold, 'Expected to find next tier donation threshold as 20');

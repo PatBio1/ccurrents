@@ -32,7 +32,8 @@ export default class RedeemPoints extends LightningElement {
             return 0;
         }
 
-        return this.donorRewardsInfo.pointsToDollarsConversionRate;
+        let multiplier = (this.donorRewardsInfo.dollarIncrementAmount) ? this.donorRewardsInfo.dollarIncrementAmount : 1;
+        return this.donorRewardsInfo.pointsToDollarsConversionRate * multiplier;
     }
 
     get maxAmountOfPointsToRedeem() {
@@ -48,7 +49,7 @@ export default class RedeemPoints extends LightningElement {
             return 0;
         }
 
-        let conversationRate = this.conversationRate;
+        let conversationRate = this.donorRewardsInfo.pointsToDollarsConversionRate;
         return Math.floor(amountOfPointsToRedeem / conversationRate);
     }
 

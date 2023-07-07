@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Permission to update the donor id field which should only be used to by Operations as a fallback if the Donor ID isn&apos;t automatically populated.</description>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Account.DonorId__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Update Donor Id (Salesforce)</label>
+    <license>Salesforce</license>
+</PermissionSet>

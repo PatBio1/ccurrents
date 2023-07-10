@@ -5,6 +5,8 @@
     <columns>Donor__c</columns>
     <columns>Reason_Description__c</columns>
     <columns>Status__c</columns>
+    <columns>Approval_Required__c</columns>
+    <columns>Donor_Last_Used_Center_Name__c</columns>
     <filterScope>Everything</filterScope>
     <label>All</label>
 </ListView>

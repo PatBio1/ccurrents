@@ -7,14 +7,23 @@
     <columns>Amount_Points__c</columns>
     <columns>Status__c</columns>
     <columns>Visit__c</columns>
-    <filterScope>Queue</filterScope>
+    <filterScope>Everything</filterScope>
     <filters>
         <field>Status__c</field>
         <operation>equals</operation>
         <value>New,Submitted</value>
     </filters>
+    <filters>
+        <field>Donor_Last_Used_Center_Name__c</field>
+        <operation>equals</operation>
+        <value>Proesis Miramar</value>
+    </filters>
+    <filters>
+        <field>Approval_Required__c</field>
+        <operation>equals</operation>
+        <value>1</value>
+    </filters>
     <label>Center Manager Miramar Approval Queue</label>
-    <queue>Center_Manager_Miramar</queue>
     <sharedTo>
         <allInternalUsers></allInternalUsers>
     </sharedTo>

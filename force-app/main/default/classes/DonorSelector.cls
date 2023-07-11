@@ -163,6 +163,9 @@ public without sharing class DonorSelector {
         public Decimal pointsToDollarsConversionRate;
 
         @AuraEnabled
+        public Decimal dollarIncrementAmount;
+
+        @AuraEnabled
         public String nextLoyaltyLevel;
 
         @AuraEnabled
@@ -200,6 +203,7 @@ public without sharing class DonorSelector {
             Proesis_Wallet__c proesisWalletConfig = Proesis_Wallet__c.getOrgDefaults();
             this.minimumWithdrawalAmount = proesisWalletConfig.Minimum_Withdrawal__c;
             this.pointsToDollarsConversionRate = (proesisWalletConfig.Points_to_Dollar__c != null) ? proesisWalletConfig.Points_to_Dollar__c : 100;
+            this.dollarIncrementAmount = (proesisWalletConfig.Dollar_Increment__c != null) ? proesisWalletConfig.Dollar_Increment__c : 20;
 
             if (donorInfo.Loyalty_Level__r.Next_Level__r != null) {
                 this.nextLoyaltyLevel = donorInfo.Loyalty_Level__r.Next_Level__r.Name;

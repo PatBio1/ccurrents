@@ -45,9 +45,6 @@
                             <value>RecordShareHierarchy</value>
                         </valueListItems>
                         <valueListItems>
-                            <value>Delete</value>
-                        </valueListItems>
-                        <valueListItems>
                             <value>LoginToNetworkAsPersonUser</value>
                         </valueListItems>
                         <valueListItems>

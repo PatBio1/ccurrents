@@ -110,10 +110,8 @@ public without sharing class FdaVisitValidator {
                                     evaluatedVisitsForLastSevenDays.remove(i);
                                     visitDatetimeStringsInCurrentSevenDayPeriod.remove(i);
 
-                                    if ((dontCompareNewVisits && !isNewVisit) || !dontCompareNewVisits) {
-                                        visitDatetimeStringsInCurrentSevenDayPeriod.add(evaluatedVisit.visit.Appointment_Datetime__c.format('MM-dd-yyyy'));
-                                        evaluatedVisitsForLastSevenDays.add(evaluatedVisit);
-                                    }
+                                    visitDatetimeStringsInCurrentSevenDayPeriod.add(evaluatedVisit.visit.Appointment_Datetime__c.format('MM-dd-yyyy'));
+                                    evaluatedVisitsForLastSevenDays.add(evaluatedVisit);
 
                                     evaluatedVisitIterator.createVisitRequest.addValidationResult(
                                         false, 'Donor has more than 2 visits in a 7 day period (Conflicting visits: ' + String.join(visitDatetimeStringsInCurrentSevenDayPeriod, ', ') + ')'
@@ -136,7 +134,28 @@ public without sharing class FdaVisitValidator {
 
                     Integer dateDifference = Math.abs(visitTimeToValidate.date().daysBetween(visitToCheck2DayAgainst.date()));
                     if (dateDifference < 2) {
-                        createVisitRequest?.addValidationResult(false, 'Donor has more than 1 visit in a 2 day period (Conflicting visits: ' + String.join(visitDatetimeStringsInCurrentSevenDayPeriod, ', ') + ')');
+                        if (isNewVisit) {
+                            createVisitRequest?.addValidationResult(false, 'Donor has more than 1 visit in a 2 day period (Conflicting visits: ' + String.join(visitDatetimeStringsInCurrentSevenDayPeriod, ', ') + ')');
+                            continue;
+                        }
+
+                        // As with the 7 day rule, if we have a 2 day violation triggered by an existing visit
+                        // We need to go back and remove the closest "newest" visit as that is the one that triggered the rule
+                        // There should only be one visit in the evaluatedVisitsForLastSevenDays list at this point, and it should be a new visit
+                        // If it's not, then two conflicting visits got inserted which shouldn't happen
+
+                        EvaluatedVisit evaluatedVisitIterator = evaluatedVisitsForLastSevenDays[0];
+                        if (evaluatedVisitIterator.isNewVisit) {
+                            evaluatedVisitsForLastSevenDays.remove(0);
+                            visitDatetimeStringsInCurrentSevenDayPeriod.remove(0);
+
+                            visitDatetimeStringsInCurrentSevenDayPeriod.add(evaluatedVisit.visit.Appointment_Datetime__c.format('MM-dd-yyyy'));
+                            evaluatedVisitsForLastSevenDays.add(evaluatedVisit);
+
+                            evaluatedVisitIterator.createVisitRequest.addValidationResult(
+                                false, 'Donor has more than 1 visit in a 2 day period (Conflicting visits: ' + String.join(visitDatetimeStringsInCurrentSevenDayPeriod, ', ') + ')'
+                            );
+                        }
                     }
                 }
 

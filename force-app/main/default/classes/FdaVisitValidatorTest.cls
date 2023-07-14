@@ -183,6 +183,59 @@ public class FdaVisitValidatorTest {
         Assert.areEqual(expectedErrorMessage, fdaValidationRequests[0].validationResult.errorMessage, 'An error stating the 2 day validation should have been returned');
     }
 
+    @IsTest 
+    static void testTwoDayValidationErrorWithExistingReverse() {
+        Datetime testDate1 = Datetime.newInstanceGmt(2020, 1, 1, 0, 0, 0);
+        Datetime testDate2 = Datetime.newInstanceGmt(2020, 1, 2, 0, 0, 0);
+
+        List<String> dateTimeFormattedStrings = new List<String> { testDate2.format('MM-dd-yyyy') };
+        String expectedErrorMessage = 'Donor has more than 1 visit in a 2 day period (Conflicting visits: ' + String.join(dateTimeFormattedStrings, ', ') + ')';
+
+        Center_Donation_Type__c testCenterDonationType = [SELECT Id, Center__c FROM Center_Donation_Type__c LIMIT 1];
+        Schedule__c testSchedule = [SELECT Id FROM Schedule__c WHERE Center__c = :testCenterDonationType.Center__c LIMIT 1];
+        Account testDonor = [SELECT Id, PersonContactId FROM Account WHERE DonorId__c != null LIMIT 1];
+
+        List<Appointment__c> testAppointments = new List<Appointment__c> {
+            new Appointment__c(
+                Schedule__c = testSchedule.Id,
+                Capacity__c = 5,
+                Datetime__c = testDate1
+            ),
+            new Appointment__c(
+                Schedule__c = testSchedule.Id,
+                Capacity__c = 5,
+                Datetime__c = testDate2
+            )
+        };
+        insert testAppointments;
+
+        List<Visit__c> testVisits = new List<Visit__c> {
+            new Visit__c(
+                Appointment__c = testAppointments[1].Id,
+                Donor__c = testDonor.PersonContactId,
+                Center_Donation_Type__c = testCenterDonationType.Id,
+                Status__c = 'Scheduled'
+            )
+        };
+        insert testVisits;
+
+        List<FdaVisitValidator.FdaValidationRequest> fdaValidationRequests = new List<FdaVisitValidator.FdaValidationRequest>{
+            new FdaVisitValidator.FdaValidationRequest(testAppointments[0].Id, testDonor.PersonContactId, testCenterDonationType.Id)
+        };
+
+        Test.startTest();
+        FdaVisitValidator fdaValidatorInstance = new FdaVisitValidator(fdaValidationRequests, false);
+        fdaValidationRequests = fdaValidatorInstance.validateCreateVisitRequests();
+        Test.stopTest();
+
+        Assert.areEqual(1, fdaValidationRequests.size(), 'All requests should have been returned');
+
+        // The first request should fail since a conflicting visit already exist
+        Assert.isNotNull(fdaValidationRequests[0].validationResult, 'A validation result should have been returned');
+        Assert.isFalse(fdaValidationRequests[0].validationResult.isValid, 'The validation result should have been invalid');
+        Assert.areEqual(expectedErrorMessage, fdaValidationRequests[0].validationResult.errorMessage, 'An error stating the 2 day validation should have been returned');
+    }
+
     @IsTest
     static void testSevenDayValidationError() {
         Datetime testDate1 = Datetime.newInstanceGmt(2020, 1, 1, 0, 0, 0);

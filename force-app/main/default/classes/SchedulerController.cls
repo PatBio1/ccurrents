@@ -118,7 +118,7 @@ public without sharing class SchedulerController {
 
                 for (FdaVisitValidator.FdaValidationRequest validationRequest : validationRequests) {
                     Appointment appointment = appointmentIdToAppointmentWrapper.get(validationRequest.appointmentId);
-                    appointment.isValid = validationRequest.validationResult != null ? validationRequest.validationResult.isValid : false;
+                    appointment.isValid = validationRequest.validationResult != null ? validationRequest.validationResult.isValid : true;
                     appointment.validationError = validationRequest.validationResult != null ? validationRequest.validationResult.errorMessage : '';
                 }
             }

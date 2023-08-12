@@ -1,0 +1,2 @@
+View Web Version: %%view_email_url%%
+----------

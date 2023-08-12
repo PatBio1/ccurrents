@@ -1,0 +1,47 @@
+// Leads for Sam
+/*SELECT Id,
+    FirstName,
+    LastName,
+    Street,
+    City,
+    State,
+    PostalCode,
+    First_Visit_Code__c,
+    isLegacyDonor__c,
+    Date_Migrated__c,
+    Donations_Last_365_Days_Migrated__c,
+    Last_Donation_Date_Migrated__c
+FROM Lead*/
+
+// Contacts for Sam
+
+/*SELECT Id,
+    FirstName,
+    LastName,
+    MailingStreet,
+    MailingCity,
+    MailingState,
+    MailingPostalCode,
+    isLegacyDonor__c,
+    Date_Migrated__c,
+    Donations_Last_365_Days_Migrated__c,
+    Last_Donation_Date_Migrated__c
+FROM Contact*/
+
+// Accounts for Sam
+
+/*
+SELECT Id,
+    PersonContactId,
+    FirstName,
+    LastName,
+    PersonMailingStreet,
+    PersonMailingCity,
+    PersonMailingState,
+    PersonMailingPostalCode,
+    First_Visit_Code__c,
+    isLegacyDonor__pc,
+    Date_Migrated__pc,
+    Donations_Last_365_Days_Migrated__pc,
+    Last_Donation_Date_Migrated__pc
+FROM Account*/
